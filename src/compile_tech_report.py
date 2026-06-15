@@ -286,8 +286,7 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
         "--headless",
         "--disable-gpu",
         "--no-sandbox",
-        "--virtual-time-budget=10000",
-        "--run-all-compositor-stages-before-draw",
+        "--timeout=5000",
         f"--print-to-pdf={pdf_path}",
         temp_html_path
     ]
