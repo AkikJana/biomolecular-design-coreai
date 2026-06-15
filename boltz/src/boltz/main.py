@@ -13,6 +13,18 @@ from typing import Literal, Optional
 
 import click
 import torch
+try:
+    import omegaconf
+    if hasattr(torch.serialization, "add_safe_globals"):
+        torch.serialization.add_safe_globals([
+            omegaconf.dictconfig.DictConfig,
+            omegaconf.listconfig.ListConfig,
+            omegaconf.nodes.AnyNode,
+            omegaconf.base.ContainerMetadata,
+            omegaconf.base.Metadata
+        ])
+except Exception:
+    pass
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.strategies import DDPStrategy
 from pytorch_lightning.utilities import rank_zero_only
@@ -1322,6 +1334,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
             pairformer_args=asdict(pairformer_args),
             msa_args=asdict(msa_args),
             steering_args=asdict(steering_args),
+            weights_only=False,
         )
         model_module.eval()
 
@@ -1399,6 +1412,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
             msa_args=asdict(msa_args),
             steering_args=asdict(steering_args),
             affinity_mw_correction=affinity_mw_correction,
+            weights_only=False,
         )
         model_module.eval()
 
