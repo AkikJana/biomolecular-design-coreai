@@ -43,6 +43,21 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
 <head>
     <meta charset="UTF-8">
     <title>Boltz-Fast Technical Report</title>
+    <!-- MathJax Setup for LaTeX Rendering -->
+    <script>
+    window.MathJax = {{
+      tex: {{
+        inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+        displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
+        processEscapes: true
+      }},
+      options: {{
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }}
+    }};
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @page {{
             size: A4;
@@ -270,6 +285,9 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
         chrome_path,
         "--headless",
         "--disable-gpu",
+        "--no-sandbox",
+        "--virtual-time-budget=10000",
+        "--run-all-compositor-stages-before-draw",
         f"--print-to-pdf={pdf_path}",
         temp_html_path
     ]

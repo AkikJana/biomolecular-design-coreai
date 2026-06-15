@@ -1,3 +1,4 @@
+import math
 import torch
 from torch import Tensor, nn
 
@@ -39,7 +40,7 @@ def kernel_triangular_mult(
 class TriangleMultiplicationOutgoing(nn.Module):
     """TriangleMultiplicationOutgoing."""
 
-    def __init__(self, dim: int = 128) -> None:
+    def __init__(self, dim: int = 128, use_fold_cp: bool = False, num_devices: int = 4) -> None:
         """Initialize the TriangularUpdate module.
 
         Parameters
@@ -49,6 +50,8 @@ class TriangleMultiplicationOutgoing(nn.Module):
 
         """
         super().__init__()
+        self.use_fold_cp = use_fold_cp
+        self.num_devices = num_devices
 
         self.norm_in = nn.LayerNorm(dim, eps=1e-5)
         self.p_in = nn.Linear(dim, 2 * dim, bias=False)
@@ -116,7 +119,44 @@ class TriangleMultiplicationOutgoing(nn.Module):
         a, b = torch.chunk(x.float(), 2, dim=-1)
 
         # Triangular projection
-        x = torch.einsum("bikd,bjkd->bijd", a, b)
+        if self.use_fold_cp:
+            P = self.num_devices
+            P_row = int(math.sqrt(P))
+            while P % P_row != 0:
+                P_row -= 1
+            P_col = P // P_row
+            
+            B, N, _, D = a.shape
+            R_shard = N // P_row
+            C_shard = N // P_col
+            
+            a_shards = a.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
+            b_shards = b.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
+            
+            out_shards = []
+            for batch_idx in range(B):
+                a_s = a_shards[batch_idx]
+                b_s = b_shards[batch_idx]
+                
+                c_out = torch.zeros_like(a_s)
+                for step in range(P_row):
+                    for r in range(P_row):
+                        for c in range(P_col):
+                            k = (r + c + step) % P_row
+                            a_block = a_s[r, k]
+                            b_block = b_s[c, k]
+                            
+                            a_b = a_block.permute(2, 0, 1)
+                            b_b = b_block.permute(2, 0, 1)
+                            prod = torch.bmm(a_b, b_b.transpose(-1, -2))
+                            c_out[r, c] += prod.permute(1, 2, 0)
+                out_shards.append(c_out)
+                
+            c_stacked = torch.stack(out_shards, dim=0)
+            c_p = c_stacked.permute(0, 1, 3, 2, 4, 5)
+            x = c_p.reshape(B, N, N, D)
+        else:
+            x = torch.einsum("bikd,bjkd->bijd", a, b)
 
         # Output gating
         x = self.p_out(self.norm_out(x)) * self.g_out(x_in).sigmoid()
@@ -127,7 +167,7 @@ class TriangleMultiplicationOutgoing(nn.Module):
 class TriangleMultiplicationIncoming(nn.Module):
     """TriangleMultiplicationIncoming."""
 
-    def __init__(self, dim: int = 128) -> None:
+    def __init__(self, dim: int = 128, use_fold_cp: bool = False, num_devices: int = 4) -> None:
         """Initialize the TriangularUpdate module.
 
         Parameters
@@ -137,6 +177,8 @@ class TriangleMultiplicationIncoming(nn.Module):
 
         """
         super().__init__()
+        self.use_fold_cp = use_fold_cp
+        self.num_devices = num_devices
 
         self.norm_in = nn.LayerNorm(dim, eps=1e-5)
         self.p_in = nn.Linear(dim, 2 * dim, bias=False)
@@ -204,7 +246,44 @@ class TriangleMultiplicationIncoming(nn.Module):
         a, b = torch.chunk(x.float(), 2, dim=-1)
 
         # Triangular projection
-        x = torch.einsum("bkid,bkjd->bijd", a, b)
+        if self.use_fold_cp:
+            P = self.num_devices
+            P_row = int(math.sqrt(P))
+            while P % P_row != 0:
+                P_row -= 1
+            P_col = P // P_row
+            
+            B, N, _, D = a.shape
+            R_shard = N // P_row
+            C_shard = N // P_col
+            
+            a_shards = a.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
+            b_shards = b.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
+            
+            out_shards = []
+            for batch_idx in range(B):
+                a_s = a_shards[batch_idx]
+                b_s = b_shards[batch_idx]
+                
+                c_out = torch.zeros_like(a_s)
+                for step in range(P_row):
+                    for r in range(P_row):
+                        for c in range(P_col):
+                            k = (r + c + step) % P_row
+                            a_block = a_s[k, r]
+                            b_block = b_s[k, c]
+                            
+                            a_b = a_block.permute(2, 0, 1)
+                            b_b = b_block.permute(2, 0, 1)
+                            prod = torch.bmm(a_b.transpose(-1, -2), b_b)
+                            c_out[r, c] += prod.permute(1, 2, 0)
+                out_shards.append(c_out)
+                
+            c_stacked = torch.stack(out_shards, dim=0)
+            c_p = c_stacked.permute(0, 1, 3, 2, 4, 5)
+            x = c_p.reshape(B, N, N, D)
+        else:
+            x = torch.einsum("bkid,bkjd->bijd", a, b)
 
         # Output gating
         x = self.p_out(self.norm_out(x)) * self.g_out(x_in).sigmoid()
