@@ -21,29 +21,24 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
 
     cover_page_html = """
     <div class="cover-page">
-        <div class="cover-header">BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE, PILANI</div>
-        <div class="cover-subheader">WORK INTEGRATED LEARNING PROGRAMMES (WILP) DIVISION</div>
-        <div class="cover-divider"></div>
-        <div class="cover-title">Efficiency-Optimized Generative Paradigms for Large-Scale Biomolecular Design</div>
-        <div class="cover-subtitle">Integrating Speculative Decoding and Preference Alignment</div>
+        <div class="cover-title">EFFICIENCY-OPTIMIZED GENERATIVE PARADIGMS FOR LARGE-SCALE BIOMOLECULAR DESIGN</div>
+        <div class="cover-subtitle">BITS ZG628T: Dissertation</div>
+        <div class="cover-by">by</div>
+        <div class="cover-author">Akik Jana</div>
+        <div class="cover-id">(2024AB05287)</div>
         
-        <div class="cover-meta-grid">
-            <div class="meta-label">Course:</div>
-            <div class="meta-val">AIMLCZG628T — Dissertation</div>
-            
-            <div class="meta-label">Submitted by:</div>
-            <div class="meta-val">Akik Jana (BITS Student ID: 2024AB05287)</div>
-            
-            <div class="meta-label">Employing Organization:</div>
-            <div class="meta-val">Mu Sigma, Bangalore</div>
-            
-            <div class="meta-label">Supervisor:</div>
-            <div class="meta-val">Dr. Arnab Bandyopadhyay (Dr. Reddy's Laboratories)</div>
-            
-            <div class="meta-label">Additional Examiner:</div>
-            <div class="meta-val">Dr. Ahana Das (Sanofi India)</div>
-        </div>
-        <div class="cover-footer">June 2026</div>
+        <div class="cover-carried-out">Dissertation work carried out at</div>
+        <div class="cover-org">Mu Sigma, Bangalore</div>
+        
+        <div class="cover-submitted">Submitted in partial fulfilment of M.Tech. in Artificial Intelligence and Machine Learning degree programme</div>
+        
+        <div class="cover-supervision">Under the Supervision of</div>
+        <div class="cover-supervisor">Dr. Arnab Bandyopadhyay</div>
+        <div class="cover-supervisor-org">RnD Division, Dr. Reddy's Laboratories, Hyderabad</div>
+        
+        <div class="cover-institute">BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE</div>
+        <div class="cover-location">PILANI (RAJASTHAN)</div>
+        <div class="cover-date">June 2026</div>
     </div>
     <div class="page-break"></div>
     """
@@ -109,87 +104,144 @@ graph TD
             margin: 2.5cm;
             @bottom-right {{
                 content: counter(page);
-                font-family: Arial, sans-serif;
-                font-size: 9pt;
+                font-family: "Times New Roman", Times, serif;
+                font-size: 10pt;
             }}
         }}
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: "Times New Roman", Times, serif;
             font-size: 11pt;
-            line-height: 1.6;
-            color: #2d3748;
+            line-height: 1.5;
+            color: #111111;
             margin: 0;
             padding: 0;
         }}
         
         /* --- COVER PAGE STYLING --- */
         .cover-page {{
-            height: 85vh;
+            height: 95vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             text-align: center;
             box-sizing: border-box;
-            padding-top: 5cm;
-        }}
-        .cover-header {{
-            font-size: 12pt;
-            font-weight: bold;
-            color: #1a365d;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }}
-        .cover-subheader {{
-            font-size: 9pt;
-            color: #718096;
-            letter-spacing: 0.5px;
-            margin-bottom: 40px;
-        }}
-        .cover-divider {{
-            width: 80px;
-            height: 3px;
-            background-color: #3182ce;
-            margin-bottom: 50px;
+            padding: 1cm 0;
+            font-family: "Times New Roman", Times, serif;
         }}
         .cover-title {{
-            font-size: 20pt;
-            font-weight: 800;
-            color: #0c2340;
-            line-height: 1.3;
-            max-width: 650px;
-            margin-bottom: 15px;
+            font-size: 16pt;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            color: #000000;
+            line-height: 1.4;
+            max-width: 550px;
         }}
         .cover-subtitle {{
+            font-size: 12pt;
+            margin-bottom: 30px;
+            color: #000000;
+        }}
+        .cover-by {{
+            font-size: 11pt;
+            margin-bottom: 10px;
+            color: #000000;
+        }}
+        .cover-author {{
             font-size: 13pt;
-            color: #4a5568;
-            margin-bottom: 60px;
-        }}
-        .cover-meta-grid {{
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 12px;
-            text-align: left;
-            max-width: 550px;
-            width: 100%;
-            margin-bottom: 60px;
-            font-size: 9.5pt;
-            border-top: 1px solid #e2e8f0;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 20px 0;
-        }}
-        .meta-label {{
             font-weight: bold;
-            color: #718096;
+            color: #000000;
         }}
-        .meta-val {{
-            color: #2d3748;
+        .cover-id {{
+            font-size: 11pt;
+            margin-bottom: 40px;
+            color: #000000;
         }}
-        .cover-footer {{
-            font-size: 9.5pt;
-            color: #718096;
+        .cover-carried-out {{
+            font-size: 11pt;
+            margin-bottom: 8px;
+            font-style: italic;
+            color: #000000;
+        }}
+        .cover-org {{
+            font-size: 12pt;
+            font-weight: bold;
+            margin-bottom: 50px;
+            color: #000000;
+        }}
+        .cover-submitted {{
+            font-size: 11pt;
+            max-width: 500px;
+            margin-bottom: 50px;
+            color: #000000;
+            line-height: 1.4;
+        }}
+        .cover-supervision {{
+            font-size: 11pt;
+            margin-bottom: 8px;
+            font-style: italic;
+            color: #000000;
+        }}
+        .cover-supervisor {{
+            font-size: 12pt;
+            font-weight: bold;
+            color: #000000;
+        }}
+        .cover-supervisor-org {{
+            font-size: 11pt;
+            margin-bottom: 70px;
+            color: #000000;
+        }}
+        .cover-institute {{
+            font-size: 13pt;
+            font-weight: bold;
+            color: #000000;
             margin-top: auto;
+            letter-spacing: 0.5px;
         }}
+        .cover-location {{
+            font-size: 12pt;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 25px;
+        }}
+        .cover-date {{
+            font-size: 11pt;
+            color: #000000;
+        }}
+        
+        /* --- SIGNATURE BLOCK STYLING --- */
+        .signature-block {{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3cm;
+            font-size: 10.5pt;
+            font-family: "Times New Roman", Times, serif;
+            page-break-inside: avoid;
+            text-align: left;
+        }}
+        .sig-col {{
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }}
+        .sig-line {{
+            width: 100%;
+            border-bottom: 1.5px solid #000000;
+            margin-bottom: 8px;
+        }}
+        .sig-title {{
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #000000;
+        }}
+        .sig-field {{
+            margin-bottom: 4px;
+            color: #000000;
+        }}
+        
         .page-break {{
             page-break-before: always;
         }}
