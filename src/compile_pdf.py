@@ -1,6 +1,23 @@
 import os
 import subprocess
 import markdown
+import base64
+
+def get_base64_image_uri(image_path: str) -> str:
+    if not os.path.exists(image_path):
+        print(f"Warning: Image not found at {image_path}")
+        return ""
+    
+    mime_type = "image/png"
+    if image_path.endswith(".jpg") or image_path.endswith(".jpeg"):
+        mime_type = "image/jpeg"
+    elif image_path.endswith(".svg"):
+        mime_type = "image/svg+xml"
+        
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+        
+    return f"data:{mime_type};base64,{encoded_string}"
 
 def convert_md_to_pdf(md_path: str, pdf_path: str):
     if not os.path.exists(md_path):
@@ -9,6 +26,13 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     # Read the markdown content
     with open(md_path, 'r', encoding='utf-8') as f:
         md_content = f.read()
+
+    # Find logo path
+    logo_path = "/Users/akikjana/Documents/BiomolecularDesign/src/bits_logo.png"
+    if not os.path.exists(logo_path):
+        logo_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/bits_logo.png"
+    
+    logo_uri = get_base64_image_uri(logo_path)
 
     # 1. Structural Enhancement: Replace the markdown metadata header with a formal Cover Page
     # Find the cover block (between start and first '---')
@@ -19,7 +43,21 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     else:
         body_content = md_content
 
-    cover_page_html = """
+    # Base64 encode other figures in the document
+    backbone_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/backbone_3d_plot.png"
+    structure_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/protein_structure_rendering_1781545391670.jpg"
+    insulin_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/backbone_3d_insulin.png"
+    
+    backbone_uri = get_base64_image_uri(backbone_path)
+    structure_uri = get_base64_image_uri(structure_path)
+    insulin_uri = get_base64_image_uri(insulin_path)
+    
+    # Replace absolute file paths with base64 URIs in the body content
+    body_content = body_content.replace(backbone_path, backbone_uri)
+    body_content = body_content.replace(structure_path, structure_uri)
+    body_content = body_content.replace(insulin_path, insulin_uri)
+
+    cover_page_html = f"""
     <div class="cover-page">
         <div class="cover-title">EFFICIENCY-OPTIMIZED GENERATIVE PARADIGMS FOR LARGE-SCALE BIOMOLECULAR DESIGN</div>
         <div class="cover-subtitle">BITS ZG628T: Dissertation</div>
@@ -34,7 +72,9 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
         
         <div class="cover-supervision">Under the Supervision of</div>
         <div class="cover-supervisor">Dr. Arnab Bandyopadhyay</div>
-        <div class="cover-supervisor-org">RnD Division, Dr. Reddy's Laboratories, Hyderabad</div>
+        <div class="cover-supervisor-org">RnD Division, Dr. Reddy\'s Laboratories, Hyderabad</div>
+        
+        <img class="cover-logo" src="{logo_uri}" alt="BITS Pilani Logo">
         
         <div class="cover-institute">BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE</div>
         <div class="cover-location">PILANI (RAJASTHAN)</div>
@@ -209,6 +249,11 @@ graph TD
         .cover-date {{
             font-size: 11pt;
             color: #000000;
+        }}
+        .cover-logo {{
+            width: 100px;
+            height: auto;
+            margin: 20px 0;
         }}
         
         /* --- SIGNATURE BLOCK STYLING --- */

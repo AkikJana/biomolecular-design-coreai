@@ -105,5 +105,28 @@ def run_test():
     l2_low = torch.norm(baseline_result - res_low).item()
     print(f"Discrepancy (L2 distance) with baseline: {l2_low:.6f}")
 
+    # 5. Speculative Flow Matching: Case D - Biophysical Constraints Enabled
+    print("\n=======================================================")
+    print("5. SPECULATIVE FLOW MATCHING: CASE D (BIOPHYSICAL CONSTRAINTS ENABLED)")
+    print("=======================================================")
+    spec_sampler_bio = SpeculativeFlowMatchingSampler(
+        draft_vf_fn=draft_vector_field,
+        target_vf_fn=target_vector_field,
+        step_size=step_size,
+        speculative_lookahead=4,
+        tolerance=0.08,
+        enable_biophysical=True
+    )
+    res_bio, stats_bio = spec_sampler_bio.sample(x_init)
+    print("Execution Statistics (Biophysical Constraints):")
+    for k, v in stats_bio.items():
+        print(f"  {k}: {v:.4f}" if isinstance(v, float) else f"  {k}: {v}")
+        
+    # Check bond-length constraints (adjacent residues)
+    diffs = res_bio[:, 1:] - res_bio[:, :-1]
+    dists = torch.norm(diffs, p=2, dim=-1)
+    mean_dist = dists.mean().item()
+    print(f"Mean adjacent residue distance (C-alpha to C-alpha): {mean_dist:.4f} A (Target: 3.80 A)")
+
 if __name__ == "__main__":
     run_test()

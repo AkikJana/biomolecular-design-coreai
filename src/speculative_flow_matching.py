@@ -44,7 +44,8 @@ class SpeculativeFlowMatchingSampler:
         target_vf_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
         step_size: float = 0.02,
         speculative_lookahead: int = 4,
-        tolerance: float = 0.05
+        tolerance: float = 0.05,
+        enable_biophysical: bool = False
     ):
         """
         Args:
@@ -53,12 +54,69 @@ class SpeculativeFlowMatchingSampler:
             step_size: Integration step size (dt).
             speculative_lookahead (K): Number of draft steps to speculate before verification.
             tolerance (epsilon): Maximum allowed difference between draft and target vector fields.
+            enable_biophysical: Whether to apply biophysical manifold constraints during draft integration.
         """
         self.draft_vf_fn = draft_vf_fn
         self.target_vf_fn = target_vf_fn
         self.step_size = step_size
         self.K = speculative_lookahead
         self.tolerance = tolerance
+        self.enable_biophysical = enable_biophysical
+
+    def project_manifold(self, x: torch.Tensor) -> torch.Tensor:
+        """Projects coordinate state onto hard CA-CA bond length constraints (3.80 Angstroms)."""
+        if x.shape[1] <= 1:
+            return x
+        
+        x_proj = x.clone()
+        target_dist = 3.80
+        
+        # 3 projection iterations
+        for _ in range(3):
+            for i in range(x.shape[1] - 1):
+                p1 = x_proj[:, i]
+                p2 = x_proj[:, i + 1]
+                diff = p2 - p1
+                dist = torch.norm(diff, p=2, dim=-1, keepdim=True) + 1e-8
+                delta = (dist - target_dist) * 0.5 * (diff / dist)
+                x_proj[:, i] = x_proj[:, i] + delta
+                x_proj[:, i + 1] = x_proj[:, i + 1] - delta
+                
+        return x_proj
+
+    def avoid_steric_clash(self, x: torch.Tensor, threshold: float = 2.0, lr: float = 0.1) -> torch.Tensor:
+        """Applies a soft repulsive force to coordinates to prevent steric clashes (atomic overlaps)."""
+        B, N, D = x.shape
+        if N <= 2:
+            return x
+            
+        x_proj = x.clone()
+        
+        # Compute pair-wise differences and distances
+        diff = x_proj.unsqueeze(2) - x_proj.unsqueeze(1) # [B, N, N, 3]
+        dist = torch.norm(diff, p=2, dim=-1) + 1e-8 # [B, N, N]
+        
+        # Create mask to exclude diagonal and adjacent residues
+        mask = torch.eye(N, device=x.device).bool()
+        mask |= torch.diag(torch.ones(N - 1, device=x.device), 1).bool()
+        mask |= torch.diag(torch.ones(N - 1, device=x.device), -1).bool()
+        
+        # Identify clashing pairs
+        clash_mask = (dist < threshold) & (~mask.unsqueeze(0))
+        if not clash_mask.any():
+            return x_proj
+            
+        # Repulsive force
+        repulsion = (threshold - dist) / threshold
+        repulsion[~clash_mask] = 0.0
+        
+        # Force vectors
+        force = repulsion.unsqueeze(-1) * (diff / dist.unsqueeze(-1)) # [B, N, N, 3]
+        total_force = force.sum(dim=2) # [B, N, 3]
+        
+        # Apply step
+        x_proj = x_proj + lr * total_force
+        return x_proj
 
     @torch.no_grad()
     def sample(self, 
@@ -68,7 +126,7 @@ class SpeculativeFlowMatchingSampler:
         
         Returns:
             final_x: The generated 3D coordinates.
-            stats: A dictionary with execution statistics (e.g., acceptance rate, target steps saved).
+            stats: A dictionary with execution statistics.
         """
         device = x_init.device
         dtype = x_init.dtype
@@ -99,6 +157,12 @@ class SpeculativeFlowMatchingSampler:
                 
                 v_draft = self.draft_vf_fn(curr_x, t_tensor, **extra_args)
                 curr_x = curr_x + v_draft * dt
+                
+                # Apply Biophysical Manifold Constraint Projection if enabled
+                if self.enable_biophysical:
+                    curr_x = self.project_manifold(curr_x)
+                    curr_x = self.avoid_steric_clash(curr_x)
+                    
                 draft_x.append(curr_x.clone())
                 curr_t += dt
                 total_drafts_proposed += 1
@@ -109,7 +173,6 @@ class SpeculativeFlowMatchingSampler:
                 break
                 
             # 2. PARALLEL VERIFICATION BY TARGET MODEL
-            # Batch the verification queries together: shape [actual_k * B, N, D]
             batch_size = x.shape[0]
             verify_x_batch = torch.cat(draft_x[:-1], dim=0) # Exclude the final point
             verify_t_batch = torch.tensor(draft_t, device=device, dtype=dtype).repeat_interleave(batch_size)
@@ -118,7 +181,6 @@ class SpeculativeFlowMatchingSampler:
             batched_extra_args = {}
             for key, val in extra_args.items():
                 if isinstance(val, torch.Tensor):
-                    # Repeat along batch dimension
                     dims = [1] * len(val.shape)
                     dims[0] = actual_k
                     batched_extra_args[key] = val.repeat(*dims)
@@ -129,7 +191,7 @@ class SpeculativeFlowMatchingSampler:
             v_target_batch = self.target_vf_fn(verify_x_batch, verify_t_batch, **batched_extra_args)
             total_evals_target += 1
             
-            # Reshape target outputs back to list of steps: [actual_k, B, N, D]
+            # Reshape target outputs back to list of steps
             v_target_steps = v_target_batch.chunk(actual_k, dim=0)
             
             # 3. VERIFY STEP-BY-STEP
@@ -159,7 +221,6 @@ class SpeculativeFlowMatchingSampler:
                 else:
                     # Reject step: correct the current step using the target model's trajectory
                     curr_verified_x = x_k + v_target * dt
-                    # Reject subsequent steps in this speculative block
                     break
             
             # Move simulation time forward
