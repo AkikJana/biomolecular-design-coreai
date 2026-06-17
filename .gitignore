@@ -50,5 +50,11 @@ Desktop.ini
 *.pdf
 *.svg
 *.json
+*.aimodel
+*.aimodelc
+*.png
 /tmp/
 biomolecular_design/
+/compiled_surrogate*/
+/boltz_results*/
+/scratch/
