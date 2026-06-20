@@ -26,6 +26,19 @@ def autocast_device_type(device_type: str) -> str:
     return device_type if is_autocast_available(device_type) else "cpu"
 
 
+def empty_device_cache(device = "cuda") -> None:
+    """Clear memory cache for the active device type (CUDA or MPS)."""
+    if isinstance(device, torch.device):
+        device_type = device.type
+    else:
+        device_type = str(device)
+
+    if device_type == "cuda" and torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    elif device_type == "mps" and hasattr(torch, "mps"):
+        torch.mps.empty_cache()
+
+
 def exists(v):
     return v is not None
 

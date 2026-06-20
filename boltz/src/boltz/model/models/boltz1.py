@@ -33,7 +33,7 @@ from boltz.model.modules.trunk import (
     MSAModule,
     PairformerModule,
 )
-from boltz.model.modules.utils import ExponentialMovingAverage
+from boltz.model.modules.utils import ExponentialMovingAverage, empty_device_cache
 from boltz.model.optim.scheduler import AlphaFoldLRScheduler
 
 
@@ -1198,7 +1198,7 @@ class Boltz1(LightningModule):
         except RuntimeError as e:  # catch out of memory exceptions
             if "out of memory" in str(e):
                 print("| WARNING: ran out of memory, skipping batch")
-                torch.cuda.empty_cache()
+                empty_device_cache(self.device)
                 gc.collect()
                 return {"exception": True}
             else:

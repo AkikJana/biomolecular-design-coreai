@@ -2,6 +2,7 @@ from typing import Optional
 
 import torch
 from torch import Tensor, nn
+from boltz.model.modules.utils import autocast_device_type
 
 from boltz.data import const
 from boltz.model.layers.attention import AttentionPairBias
@@ -102,7 +103,7 @@ class PairformerLayer(nn.Module):
         z = z + self.transition_z(z)
 
         # Compute sequence stack
-        with torch.autocast("cuda", enabled=False):
+        with torch.autocast(autocast_device_type(s.device.type), enabled=False):
             s_normed = self.pre_norm_s(s.float())
             s = s.float() + self.attention(
                 s=s_normed, z=z.float(), mask=mask.float(), k_in=s_normed

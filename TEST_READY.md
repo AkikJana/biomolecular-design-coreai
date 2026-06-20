@@ -1,0 +1,91 @@
+# Test Readiness Report
+
+## Test Runner Commands
+You can run the tests using either command below:
+
+```bash
+# Option 1: Run directly via pytest
+.venv/bin/pytest -v /Users/akikjana/Documents/BiomolecularDesign/tests/test_e2e_suite.py
+
+# Option 2: Run via the custom test runner script
+.venv/bin/python /Users/akikjana/Documents/BiomolecularDesign/run_e2e_tests.py
+```
+
+## E2E Test Suite Checklist (49/49 Tests)
+
+### Tier 1: Feature Specific Functional Tests (20 Tests)
+#### Feature 1: Apple Silicon MPS Native Execution (F1)
+- [x] `test_t1_f1_float32_casting_compatibility`: Check float32 casting compatibility.
+- [x] `test_t1_f1_dynamic_autocast_wrappers`: Check dynamic autocast wrappers.
+- [x] `test_t1_f1_device_selection`: Check device selection (CPU/MPS/CUDA).
+- [x] `test_t1_f1_mps_execution_simulated`: Verify standard normalization/einsum operations on selected device.
+- [x] `test_t1_f1_diffusion_attention_on_mps`: Verify error-free attention execution on selected device.
+
+#### Feature 2: Low-Rank Pair Updates (F2)
+- [x] `test_t1_f2_low_rank_tensor_product_shape`: Verify `LowRankTensorProduct` forward output shape.
+- [x] `test_t1_f2_gradient_consistency`: Run gradient consistency check (`gradcheck`).
+- [x] `test_t1_f2_memory_scaling`: Verify activation memory footprint comparison vs baseline.
+- [x] `test_t1_f2_weight_initialization`: Verify learnable weight matrix initialization.
+- [x] `test_t1_f2_small_tensors_stability`: Verify mathematical stability under small tensors.
+
+#### Feature 3: CFG Distillation & Speculative Sampling (F3)
+- [x] `test_t1_f3_teacher_student_matching`: Verify teacher network and student distilled model alignment.
+- [x] `test_t1_f3_speculative_sampler_lookahead`: Check speculative sampler lookahead ($K$).
+- [x] `test_t1_f3_guidance_embeddings_dimension`: Verify sinusoidal guidance embeddings dimension.
+- [x] `test_t1_f3_step_acceptance_logic`: Verify step acceptance/rejection logic.
+- [x] `test_t1_f3_student_forward_efficiency`: Check student forward-pass efficiency.
+
+#### Feature 4: Neural Refinement (F4)
+- [x] `test_t1_f4_resnet_coordinate_refiner_shape`: Verify shape preservation of coordinate trace.
+- [x] `test_t1_f4_supervised_loss_calculation`: Verify MSE and distance profile loss computation.
+- [x] `test_t1_f4_clash_index_improvement`: Verify clash index improvement.
+- [x] `test_t1_f4_bond_length_error_correction`: Verify consecutive residue bond length error correction.
+- [x] `test_t1_f4_refiner_loading_inference`: Verify refiner weight loading and inference.
+
+---
+
+### Tier 2: Boundary & Corner Cases (20 Tests)
+#### Feature 1: Apple Silicon MPS Native Execution (F1)
+- [x] `test_t2_f1_empty_residue_sequence`: Verify empty sequence boundary checks.
+- [x] `test_t2_f1_large_sequence_prediction`: Verify stability of sequence of size 1000+ residues.
+- [x] `test_t2_f1_autocast_enabled_vs_disabled`: Verify autocast enabled vs disabled settings.
+- [x] `test_t2_f1_device_fallback`: Verify fallback behavior when device is unavailable.
+- [x] `test_t2_f1_zero_rank_scalar_tensors`: Verify scalar/0D tensor compatibility for parameters.
+
+#### Feature 2: Low-Rank Pair Updates (F2)
+- [x] `test_t2_f2_minimum_rank_d1`: Verify minimum rank $d=1$ boundary.
+- [x] `test_t2_f2_over_complete_rank`: Verify rank $d \ge C_z$ configuration.
+- [x] `test_t2_f2_sparse_zero_input_tensors`: Verify gradient safety under sparse/zero input tensors.
+- [x] `test_t2_f2_inf_nan_gradients`: Verify backward safety against infinity/nan gradients.
+- [x] `test_t2_f2_memory_scaling_limits`: Verify memory limits under high dimension.
+
+#### Feature 3: CFG Distillation & Speculative Sampling (F3)
+- [x] `test_t2_f3_guidance_scale_s0`: Verify scale $s=0$ behavior.
+- [x] `test_t2_f3_negative_extreme_guidance_scale`: Verify behavior under negative or extreme guidance scales.
+- [x] `test_t2_f3_lookahead_size`: Verify lookahead size limits $K=1$ vs $K=10$.
+- [x] `test_t2_f3_step_rejection_100`: Verify trajectory completion under 100% rejection.
+- [x] `test_t2_f3_time_boundaries`: Verify time boundary conditions at $t=0.0$ and $t=1.0$.
+
+#### Feature 4: Neural Refinement (F4)
+- [x] `test_t2_f4_coordinates_nan_zero`: Verify behavior under inputs containing NaNs or all-zeros.
+- [x] `test_t2_f4_multi_chain_boundaries`: Verify chain break gap preservation.
+- [x] `test_t2_f4_perfect_coordinates_refinement`: Verify already perfect coordinates stability.
+- [x] `test_t2_f4_extreme_clashing_coordinates`: Verify separation of extreme overlapping coordinates.
+- [x] `test_t2_f4_residue_length_mismatch`: Verify length mismatch error catching.
+
+---
+
+### Tier 3: Cross-Feature Combinations (4 Tests)
+- [x] `test_t3_f1_f2_low_rank_updates_mps`: Verify low-rank pair updates under MPS backend.
+- [x] `test_t3_f1_f3_speculative_sampler_mps`: Verify speculative sampler running under MPS.
+- [x] `test_t3_f3_f4_neural_refiner_post_speculative`: Verify refiner post-processing of coordinates generated by speculative sampler.
+- [x] `test_t3_pipeline_integration`: Verify E2E pipeline integration of F1 + F2 + F3 + F4 under MPS backend.
+
+---
+
+### Tier 4: Real-World Scenarios (5 Tests)
+- [x] `test_t4_1_human_insulin_monomer`: Evaluate Human Insulin Monomer (51 residues), verifying RMSD and pLDDT.
+- [x] `test_t4_2_hemoglobin_subunit_alpha`: Evaluate Hemoglobin alpha subunit (142 residues), verifying RMSD and latency.
+- [x] `test_t4_3_tnf_alpha_complex`: Evaluate TNF-alpha complex structure (157 residues), verifying clash penalty and PDB parsing.
+- [x] `test_t4_4_vegfa_monomer`: Evaluate VEGFA monomer structure (110 residues) predicting coordinates.
+- [x] `test_t4_5_large_scale_validation`: Validate on large sequence (>500 residues), verifying latency and activation memory reduction compared to baseline.

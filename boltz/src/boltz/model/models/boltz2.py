@@ -35,7 +35,7 @@ from boltz.model.modules.trunkv2 import (
 )
 from boltz.model.optim.ema import EMA
 from boltz.model.optim.scheduler import AlphaFoldLRScheduler
-from boltz.model.modules.utils import autocast_device_type
+from boltz.model.modules.utils import autocast_device_type, empty_device_cache
 
 
 class Boltz2(LightningModule):
@@ -985,18 +985,14 @@ class Boltz2(LightningModule):
             if p.requires_grad and p.grad is not None
         ]
         if len(parameters) == 0:
-            return torch.tensor(
-                0.0, device="cuda" if torch.cuda.is_available() else "cpu"
-            )
+            return torch.tensor(0.0, device=self.device)
         norm = torch.stack(parameters).sum().sqrt()
         return norm
 
     def parameter_norm(self, module):
         parameters = [p.norm(p=2) ** 2 for p in module.parameters() if p.requires_grad]
         if len(parameters) == 0:
-            return torch.tensor(
-                0.0, device="cuda" if torch.cuda.is_available() else "cpu"
-            )
+            return torch.tensor(0.0, device=self.device)
         norm = torch.stack(parameters).sum().sqrt()
         return norm
 
@@ -1023,7 +1019,7 @@ class Boltz2(LightningModule):
                 if "out of memory" in str(e):
                     msg = f"| WARNING: ran out of memory, skipping batch, {idx_dataset}"
                     print(msg)
-                    torch.cuda.empty_cache()
+                    empty_device_cache(self.device)
                     gc.collect()
                     return
                 raise e
@@ -1043,7 +1039,7 @@ class Boltz2(LightningModule):
                 if "out of memory" in str(e):
                     msg = f"| WARNING: ran out of memory, skipping batch, {idx_dataset}"
                     print(msg)
-                    torch.cuda.empty_cache()
+                    empty_device_cache(self.device)
                     gc.collect()
                     return
                 raise e
@@ -1124,7 +1120,7 @@ class Boltz2(LightningModule):
         except RuntimeError as e:  # catch out of memory exceptions
             if "out of memory" in str(e):
                 print("| WARNING: ran out of memory, skipping batch")
-                torch.cuda.empty_cache()
+                empty_device_cache(self.device)
                 gc.collect()
                 return {"exception": True}
             else:
