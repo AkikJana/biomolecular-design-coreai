@@ -646,6 +646,33 @@ def create_docx(md_path: str, docx_path: str):
         
         i += 1
         
+    # Render any remaining table at the end of the file (e.g., Abbreviations table)
+    if in_table and len(table_rows) > 0:
+        num_cols = len(table_rows[0])
+        doc_table = doc.add_table(rows=len(table_rows), cols=num_cols)
+        set_table_borders(doc_table)
+        for r_idx, row_data in enumerate(table_rows):
+            row = doc_table.rows[r_idx]
+            for c_idx, cell_text in enumerate(row_data):
+                if c_idx >= num_cols:
+                    break
+                cell = row.cells[c_idx]
+                set_cell_margins(cell, 100, 100, 120, 120)
+                if r_idx == 0:
+                    set_cell_background(cell, "ebf8ff")
+                    p = cell.paragraphs[0]
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    run = p.add_run(clean_inline_formatting(cell_text))
+                    run.bold = True
+                    run.font.size = Pt(9.5)
+                    run.font.color.rgb = RGBColor(0x2b, 0x6c, 0xb0)
+                else:
+                    if r_idx % 2 == 0:
+                        set_cell_background(cell, "f7fafc")
+                    p = cell.paragraphs[0]
+                    run = p.add_run(clean_inline_formatting(cell_text))
+                    run.font.size = Pt(9.0)
+                    
     doc.save(docx_path)
     print(f"[DOCX] Successfully generated DOCX report at: {docx_path}")
 
