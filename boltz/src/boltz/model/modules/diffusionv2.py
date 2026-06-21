@@ -300,6 +300,12 @@ class AtomDiffusion(Module):
         multiplicity=1,
         max_parallel_samples=None,
         steering_args=None,
+        student_model=None,
+        teacher_model=None,
+        s=None,
+        c=None,
+        coordinate_refiner=None,
+        refine_coords=False,
         **network_condition_kwargs,
     ):
         if steering_args is not None and (
@@ -386,14 +392,110 @@ class AtomDiffusion(Module):
                 )
 
                 for sample_ids_chunk in sample_ids_chunks:
-                    atom_coords_denoised_chunk = self.preconditioned_network_forward(
-                        atom_coords_noisy[sample_ids_chunk],
-                        t_hat,
-                        network_condition_kwargs=dict(
-                            multiplicity=sample_ids_chunk.numel(),
-                            **network_condition_kwargs,
-                        ),
-                    )
+                    if student_model is not None:
+                        chunk_device = atom_coords_noisy.device
+                        t_norm = float(step_idx) / num_sampling_steps
+                        t_tensor = torch.full(
+                            (sample_ids_chunk.numel(),),
+                            t_norm,
+                            device=chunk_device,
+                            dtype=atom_coords_noisy.dtype
+                        )
+                        s_val = s if s is not None else 1.0
+                        if isinstance(s_val, torch.Tensor):
+                            s_tensor = s_val[sample_ids_chunk].to(chunk_device)
+                        else:
+                            s_tensor = torch.full(
+                                (sample_ids_chunk.numel(),),
+                                s_val,
+                                device=chunk_device,
+                                dtype=atom_coords_noisy.dtype
+                            )
+                        if c is not None:
+                            c_tensor = c[sample_ids_chunk].to(chunk_device)
+                        else:
+                            extracted_c = network_condition_kwargs.get(
+                                "c",
+                                network_condition_kwargs.get(
+                                    "seq_embeddings",
+                                    network_condition_kwargs.get("s_trunk")
+                                )
+                            )
+                            if extracted_c is not None:
+                                c_tensor = extracted_c[sample_ids_chunk].to(chunk_device)
+                            else:
+                                raise ValueError("Sequence embeddings 'c' must be provided for student_model.")
+                        
+                        dev_type = "cpu" if chunk_device.type == "cpu" else chunk_device.type
+                        with torch.autocast(autocast_device_type(dev_type), enabled=False):
+                            v_pred = student_model(
+                                atom_coords_noisy[sample_ids_chunk],
+                                t_tensor,
+                                c_tensor,
+                                s_tensor
+                            )
+                            atom_coords_denoised_chunk = atom_coords_noisy[sample_ids_chunk] + (1.0 - t_norm) * v_pred
+                    elif teacher_model is not None:
+                        chunk_device = atom_coords_noisy.device
+                        t_norm = float(step_idx) / num_sampling_steps
+                        t_tensor = torch.full(
+                            (sample_ids_chunk.numel(),),
+                            t_norm,
+                            device=chunk_device,
+                            dtype=atom_coords_noisy.dtype
+                        )
+                        s_val = s if s is not None else 1.0
+                        if isinstance(s_val, torch.Tensor):
+                            s_tensor = s_val[sample_ids_chunk].to(chunk_device)
+                        else:
+                            s_tensor = torch.full(
+                                (sample_ids_chunk.numel(),),
+                                s_val,
+                                device=chunk_device,
+                                dtype=atom_coords_noisy.dtype
+                            )
+                        if c is not None:
+                            c_tensor = c[sample_ids_chunk].to(chunk_device)
+                        else:
+                            extracted_c = network_condition_kwargs.get(
+                                "c",
+                                network_condition_kwargs.get(
+                                    "seq_embeddings",
+                                    network_condition_kwargs.get("s_trunk")
+                                )
+                            )
+                            if extracted_c is not None:
+                                c_tensor = extracted_c[sample_ids_chunk].to(chunk_device)
+                            else:
+                                raise ValueError("Sequence embeddings 'c' must be provided for teacher_model.")
+                        
+                        dev_type = "cpu" if chunk_device.type == "cpu" else chunk_device.type
+                        with torch.autocast(autocast_device_type(dev_type), enabled=False):
+                            cond_mask_1 = torch.ones((sample_ids_chunk.numel(),), device=chunk_device, dtype=atom_coords_noisy.dtype)
+                            cond_mask_0 = torch.zeros((sample_ids_chunk.numel(),), device=chunk_device, dtype=atom_coords_noisy.dtype)
+                            v_cond = teacher_model(
+                                atom_coords_noisy[sample_ids_chunk],
+                                t_tensor,
+                                c_tensor,
+                                cond_mask=cond_mask_1
+                            )
+                            v_uncond = teacher_model(
+                                atom_coords_noisy[sample_ids_chunk],
+                                t_tensor,
+                                c_tensor,
+                                cond_mask=cond_mask_0
+                            )
+                            v_pred = v_cond + s_tensor.view(-1, 1, 1) * (v_cond - v_uncond)
+                            atom_coords_denoised_chunk = atom_coords_noisy[sample_ids_chunk] + (1.0 - t_norm) * v_pred
+                    else:
+                        atom_coords_denoised_chunk = self.preconditioned_network_forward(
+                            atom_coords_noisy[sample_ids_chunk],
+                            t_hat,
+                            network_condition_kwargs=dict(
+                                multiplicity=sample_ids_chunk.numel(),
+                                **network_condition_kwargs,
+                            ),
+                        )
                     atom_coords_denoised[sample_ids_chunk] = atom_coords_denoised_chunk
 
                 if steering_args["fk_steering"] and (
@@ -527,6 +629,24 @@ class AtomDiffusion(Module):
             )
 
             atom_coords = atom_coords_next
+
+        if refine_coords and coordinate_refiner is not None:
+            if c is not None:
+                seq_embeddings = c
+            else:
+                seq_embeddings = network_condition_kwargs.get(
+                    "c",
+                    network_condition_kwargs.get(
+                        "seq_embeddings",
+                        network_condition_kwargs.get("s_trunk")
+                    )
+                )
+            
+            if seq_embeddings is not None:
+                dev_type = "cpu" if atom_coords.device.type == "cpu" else atom_coords.device.type
+                with torch.autocast(autocast_device_type(dev_type), enabled=False):
+                    seq_embeddings = seq_embeddings.to(atom_coords.device)
+                    atom_coords = coordinate_refiner(seq_embeddings, atom_coords)
 
         return dict(sample_atom_coords=atom_coords, diff_token_repr=token_repr)
 

@@ -14,7 +14,9 @@ class SinusoidalEmbedding(nn.Module):
         self.dim = dim
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # Input shape: (B,) or (B, 1)
+        # Input shape: scalar, (B,) or (B, 1)
+        if x.ndim == 0:
+            x = x.unsqueeze(0)
         if x.ndim == 2:
             x = x.squeeze(-1)
         device = x.device
@@ -336,6 +338,12 @@ def train_teacher_model(
             
             epoch_loss += loss.item()
             
+        # Dynamic cache clearing
+        if device.type == "cuda" and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        elif device.type == "mps" and hasattr(torch, "mps"):
+            torch.mps.empty_cache()
+            
         avg_loss = epoch_loss / len(dataloader)
         loss_history.append(avg_loss)
         if (epoch + 1) % max(1, epochs // 5) == 0 or epoch == epochs - 1:
@@ -418,6 +426,12 @@ def train_distilled_model(
             optimizer.step()
             
             epoch_loss += loss.item()
+            
+        # Dynamic cache clearing
+        if device.type == "cuda" and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        elif device.type == "mps" and hasattr(torch, "mps"):
+            torch.mps.empty_cache()
             
         avg_loss = epoch_loss / len(dataloader)
         loss_history.append(avg_loss)

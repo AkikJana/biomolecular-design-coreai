@@ -87,8 +87,14 @@ def run_experiment():
     num_train_samples = 1200
     num_test_samples = 256
     
-    teacher_epochs = 15
-    student_epochs = 12
+    import argparse
+    parser = argparse.ArgumentParser(description="Run CFG Distillation")
+    parser.add_argument("--epochs", type=int, default=2, help="Number of student distillation epochs")
+    parser.add_argument("--teacher_epochs", type=int, default=2, help="Number of teacher pre-training epochs")
+    args, unknown = parser.parse_known_args()
+    
+    teacher_epochs = args.teacher_epochs
+    student_epochs = args.epochs
     learning_rate = 1e-3
     guidance_range = (0.0, 4.0)
     

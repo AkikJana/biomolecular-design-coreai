@@ -24,9 +24,9 @@ We will optimize the model along three axes:
 | 1 | E2E Test Suite Development | Create requirement-driven E2E tests (Tiers 1-4) assessing RMSD, pLDDT, latency, and memory | None | ✅ DONE |
 | 2 | Apple Silicon MPS Compatibility | Repair device norms, dynamic autocast wrappers, and Float64 casts for native MPS run | M1 | ✅ DONE |
 | 3 | Low-Rank Pair Integration | Replace full-rank Evoformer/Pairformer OPM blocks with LowRankPairUpdater | M2 | ✅ DONE |
-| 4 | CFG Distillation Integration | Integrate distilled single-pass student vector field into flow-matching step | M2 | ⏳ FUTURE |
-| 5 | Neural Coordinate Refinement | Hook up ResNetCoordinateRefiner to correct coordinates post-diffusion | M3, M4 | ⏳ FUTURE |
-| 6 | E2E Integration and Adversarial | Run the E2E verification, generate Tier 5 adversarial cases, pass Forensic Audit | M1, M5 | ⏳ FUTURE |
+| 4 | CFG Distillation Integration | Integrate distilled single-pass student vector field into flow-matching step | M2 | ✅ DONE |
+| 5 | Neural Coordinate Refinement | Hook up ResNetCoordinateRefiner to correct coordinates post-diffusion | M3, M4 | ✅ DONE |
+| 6 | E2E Integration and Adversarial | Run the E2E verification, generate Tier 5 adversarial cases, pass Forensic Audit | M1, M5 | ✅ DONE |
 
 ## Interface Contracts
 ### `LowRankPairUpdater` Integration

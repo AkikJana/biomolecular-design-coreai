@@ -110,21 +110,36 @@ def generate_mock_ground_truth(L: int) -> torch.Tensor:
     return coords
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Train Neural Refiner")
+    parser.add_argument("--epochs", type=int, default=2, help="Number of epochs to train")
+    args = parser.parse_args()
+    epochs = args.epochs
+
     print("==========================================================================")
     print("       RESNET-BASED NEURAL COORDINATE REFINER TRAINING DEMO")
     print("==========================================================================")
+    
+    # Device Setup
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+    print(f"Using device: {device}")
     
     # Sequence length (Human Insulin Fragment - 50 residues)
     L = 50
     
     # 1. Generate clean ground-truth coordinates
-    true_coords = generate_mock_ground_truth(L)
+    true_coords = generate_mock_ground_truth(L).to(device)
     
     # 2. Simulate noisy/coarse coordinates predicted by an unoptimized fast surrogate model
     # Add random Gaussian noise and simulated steric clashes (distorting bond lengths and distances)
     noise = torch.randn(1, L, 3) * 1.5
     # Force some clashes by compressing a subset of coordinates
-    coarse_coords = true_coords.clone() + noise
+    coarse_coords = (generate_mock_ground_truth(L)[0] + noise).unsqueeze(0).to(device)
     coarse_coords[0, 10:15, :] = coarse_coords[0, 10:15, :] * 0.3 # create steric overlap/clashes
     
     # Check initial clash stats
@@ -132,7 +147,7 @@ def main():
         c1 = coarse_coords[0].unsqueeze(1)
         c2 = coarse_coords[0].unsqueeze(0)
         coarse_dists = torch.norm(c1 - c2, dim=-1)
-        indices = torch.arange(L)
+        indices = torch.arange(L, device=device)
         mask = torch.abs(indices.unsqueeze(1) - indices.unsqueeze(0)) > 1
         non_consec_coarse = coarse_dists[mask]
         min_coarse_dist = torch.min(non_consec_coarse).item()
@@ -148,16 +163,15 @@ def main():
     print("==========================================================================")
     
     # 3. Define sequence embeddings and initialize model
-    seq_embeddings = torch.randn(1, L, 128)
-    model = ResNetCoordinateRefiner(embed_dim=128, hidden_dim=128)
+    seq_embeddings = torch.randn(1, L, 128, device=device)
+    model = ResNetCoordinateRefiner(embed_dim=128, hidden_dim=128).to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    print("\nRunning Supervised Neural Refiner training loop...")
+    print(f"\nRunning Supervised Neural Refiner training loop for {epochs} epochs...")
     print("-" * 90)
     print(f"{'Epoch':<8} | {'Total Loss':<15} | {'Coord MSE':<12} | {'Distance MSE':<12} | {'Min Dist (A)':<15}")
     print("-" * 90)
     
-    epochs = 300
     for epoch in range(epochs + 1):
         # 1. Forward pass
         pred_coords = model(seq_embeddings, coarse_coords)
@@ -171,13 +185,19 @@ def main():
         total_loss.backward()
         optimizer.step()
         
+        # Dynamic cache clearing
+        if device.type == "cuda" and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        elif device.type == "mps" and hasattr(torch, "mps"):
+            torch.mps.empty_cache()
+            
         # Log progress
-        if epoch % 30 == 0 or epoch == epochs:
+        if epoch % max(1, epochs // 10) == 0 or epoch == epochs:
             with torch.no_grad():
                 c1_pred = pred_coords[0].unsqueeze(1)
                 c2_pred = pred_coords[0].unsqueeze(0)
                 pred_dists_matrix = torch.norm(c1_pred - c2_pred, dim=-1)
-                indices = torch.arange(L)
+                indices = torch.arange(L, device=device)
                 non_consec_mask = torch.abs(indices.unsqueeze(1) - indices.unsqueeze(0)) > 1
                 min_pred_dist = torch.min(pred_dists_matrix[non_consec_mask]).item()
                 
@@ -194,6 +214,8 @@ def main():
         c1_f = final_coords[0].unsqueeze(1)
         c2_f = final_coords[0].unsqueeze(0)
         final_dists = torch.norm(c1_f - c2_f, dim=-1)
+        indices = torch.arange(L, device=device)
+        mask = torch.abs(indices.unsqueeze(1) - indices.unsqueeze(0)) > 1
         min_final_dist = torch.min(final_dists[mask]).item()
         
         # Calculate bond length errors
@@ -212,9 +234,9 @@ def main():
         ax = fig.add_subplot(111, projection='3d')
         
         # Extract detach arrays
-        true_np = true_coords[0].detach().numpy()
-        coarse_np = coarse_coords[0].detach().numpy()
-        final_np = final_coords[0].detach().numpy()
+        true_np = true_coords[0].detach().cpu().numpy()
+        coarse_np = coarse_coords[0].detach().cpu().numpy()
+        final_np = final_coords[0].detach().cpu().numpy()
         
         # Plot coordinates
         ax.plot(true_np[:, 0], true_np[:, 1], true_np[:, 2], color='#3b82f6', linewidth=3, label="Ground-Truth Fold")
