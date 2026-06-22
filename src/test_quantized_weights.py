@@ -185,7 +185,7 @@ def main():
         print(f"SeqLen: {seq_len:4d} | MSE FP32: {res['mse_fp32']:.6f} | Cos FP32: {res['cos_fp32']:.6f} | Avg Bits: {res['avg_bitwidth']:.2f}")
 
     # Write results to json file in correct path
-    output_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2"
+    output_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     os.makedirs(output_dir, exist_ok=True)
     results_path = os.path.join(output_dir, "summary_quantized.json")
     with open(results_path, "w") as f:

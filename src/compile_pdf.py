@@ -44,9 +44,9 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
         body_content = md_content
 
     # Base64 encode other figures in the document
-    backbone_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/backbone_3d_plot.png"
-    structure_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/protein_structure_rendering_1781545391670.jpg"
-    insulin_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/backbone_3d_insulin.png"
+    backbone_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92/backbone_3d_plot.png"
+    structure_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92/protein_structure_rendering_1781545391670.jpg"
+    insulin_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92/backbone_3d_insulin.png"
     
     backbone_uri = get_base64_image_uri(backbone_path)
     structure_uri = get_base64_image_uri(structure_path)
@@ -480,7 +480,7 @@ graph TD
     print(f"[PDF] Successfully generated PDF at: {pdf_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2"
+    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     md_file = os.path.join(brain_dir, "mid_semester_report.md")
     pdf_file = "/Users/akikjana/Documents/BiomolecularDesign/mid_semester_report.pdf"
     

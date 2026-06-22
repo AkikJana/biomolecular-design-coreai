@@ -298,7 +298,7 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
     print(f"[PDF] Successfully generated PDF at: {pdf_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2"
+    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     md_file = os.path.join(brain_dir, "boltz_fast_technical_report.md")
     pdf_file = "/Users/akikjana/Documents/BiomolecularDesign/boltz_fast_technical_report.pdf"
     

@@ -677,7 +677,7 @@ def create_docx(md_path: str, docx_path: str):
     print(f"[DOCX] Successfully generated DOCX report at: {docx_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2"
+    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     md_file = os.path.join(brain_dir, "mid_semester_report.md")
     docx_file = "/Users/akikjana/Documents/BiomolecularDesign/mid_semester_report.docx"
     

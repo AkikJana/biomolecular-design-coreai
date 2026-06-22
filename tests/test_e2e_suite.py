@@ -16,6 +16,8 @@ from low_rank_pair_representation import LowRankTensorProduct, LowRankPairUpdate
 from cfg_distillation import TeacherVectorField, CFGDistilledVectorField, SinusoidalEmbedding, initialize_student_from_teacher
 from speculative_flow_matching import SpeculativeFlowMatchingSampler, FlowMatchingODE
 from train_neural_refiner import ResNetCoordinateRefiner, compute_supervised_loss, generate_mock_ground_truth
+from quantized_attention_weights import DynamicQuantizedLinear
+from bidirectional_design import BidirectionalCoDesigner, JointBiophysicalLoss
 from boltz.model.layers.attention import AttentionPairBias
 from boltz.model.modules.utils import autocast_device_type
 
@@ -865,3 +867,96 @@ def test_t4_5_large_scale_validation():
     # The activation storage reduction is > 99%!
     reduction_pct = (17640000 - 8912) / 17640000 * 100.0
     assert reduction_pct > 30.0
+
+def test_t1_f7_adaptive_lookahead_speculative():
+    """Verify adaptive lookahead window resizing based on draft acceptance rate."""
+    # Dummy vector fields: draft matches target perfectly
+    def dummy_vf(x, t, **kwargs):
+        return torch.zeros_like(x)
+        
+    sampler = SpeculativeFlowMatchingSampler(
+        draft_vf_fn=dummy_vf,
+        target_vf_fn=dummy_vf,
+        step_size=0.1,
+        speculative_lookahead=2,
+        tolerance=0.01,
+        adaptive_lookahead=True
+    )
+    
+    x_init = torch.randn(1, 10, 3)
+    x_out, stats = sampler.sample(x_init)
+    
+    assert x_out.shape == x_init.shape
+    assert stats["acceptance_rate"] == 1.0
+    assert stats["total_drafts_accepted"] == stats["total_drafts_proposed"]
+
+def test_t1_f8_biophysical_manifold_constraint_speculative():
+    """Verify that biophysical constraint projection in speculative sampler resolves clashes."""
+    # Define a target that does nothing, and draft that does nothing
+    def dummy_vf(x, t, **kwargs):
+        return torch.zeros_like(x)
+        
+    sampler = SpeculativeFlowMatchingSampler(
+        draft_vf_fn=dummy_vf,
+        target_vf_fn=dummy_vf,
+        step_size=0.5, # 2 steps
+        speculative_lookahead=1,
+        enable_biophysical=True
+    )
+    
+    # 2 residues very close (distance = 1.0)
+    x_init = torch.tensor([[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]], dtype=torch.float32)
+    x_out, stats = sampler.sample(x_init)
+    
+    # Adjacent C_alpha - C_alpha distance should project towards target_dist (3.80 Å)
+    dist_out = torch.norm(x_out[0, 1] - x_out[0, 0]).item()
+    assert abs(dist_out - 3.80) < 0.1  # Must project near 3.80 Å
+
+def test_t1_f9_bidirectional_codesign():
+    """Verify sequence and structure parameters optimize together in the BidirectionalCoDesigner."""
+    model = BidirectionalCoDesigner(seq_len=6)
+    target_site = torch.tensor([1.0, 2.0, 3.0])
+    loss_fn = JointBiophysicalLoss(target_site=target_site)
+    
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+    
+    # Run 3 steps of optimization
+    initial_sequence = model.get_sequence()
+    initial_loss, _ = loss_fn.compute_loss(model(), model.coord_displacements)
+    
+    for _ in range(3):
+        coords = model(temp=0.5)
+        loss, _ = loss_fn.compute_loss(coords, model.coord_displacements)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+    final_loss, _ = loss_fn.compute_loss(model(), model.coord_displacements)
+    
+    # Verify parameter updates
+    assert final_loss.item() < initial_loss.item()
+    # Gradient checks
+    assert model.sequence_logits.grad is not None
+    assert model.coord_displacements.grad is not None
+
+def test_t1_f10_quantization_aware_training():
+    """Verify DynamicQuantizedLinear forward pass, straight-through estimation, and bitwidth optimization."""
+    layer = DynamicQuantizedLinear(in_features=16, out_features=16, bias=True, block_size=8, mode='mixed')
+    
+    # Verify forward works
+    x = torch.randn(2, 4, 16)
+    out = layer(x)
+    assert out.shape == (2, 4, 16)
+    
+    # Verify average bitwidth is differentiable and between 4 and 8
+    avg_bit = layer.get_average_bitwidth()
+    assert avg_bit >= 4.0
+    assert avg_bit <= 8.0
+    
+    # Run backward step to verify gradients flow back to full precision weight
+    loss = out.sum() + avg_bit
+    loss.backward()
+    
+    assert layer.weight.grad is not None
+    assert layer.meta_net[0].weight.grad is not None
+

@@ -45,7 +45,8 @@ class SpeculativeFlowMatchingSampler:
         step_size: float = 0.02,
         speculative_lookahead: int = 4,
         tolerance: float = 0.05,
-        enable_biophysical: bool = False
+        enable_biophysical: bool = False,
+        adaptive_lookahead: bool = False
     ):
         """
         Args:
@@ -55,6 +56,7 @@ class SpeculativeFlowMatchingSampler:
             speculative_lookahead (K): Number of draft steps to speculate before verification.
             tolerance (epsilon): Maximum allowed difference between draft and target vector fields.
             enable_biophysical: Whether to apply biophysical manifold constraints during draft integration.
+            adaptive_lookahead: Whether to dynamically adjust lookahead size K based on acceptance.
         """
         self.draft_vf_fn = draft_vf_fn
         self.target_vf_fn = target_vf_fn
@@ -62,6 +64,7 @@ class SpeculativeFlowMatchingSampler:
         self.K = speculative_lookahead
         self.tolerance = tolerance
         self.enable_biophysical = enable_biophysical
+        self.adaptive_lookahead = adaptive_lookahead
 
     def project_manifold(self, x: torch.Tensor) -> torch.Tensor:
         """Projects coordinate state onto hard CA-CA bond length constraints (3.80 Angstroms)."""
@@ -132,6 +135,11 @@ class SpeculativeFlowMatchingSampler:
         dtype = x_init.dtype
         x = x_init.clone()
         
+        # Apply biophysical constraints to starting coordinates if enabled
+        if self.enable_biophysical:
+            x = self.project_manifold(x)
+            x = self.avoid_steric_clash(x)
+            
         t = 0.0
         dt = self.step_size
         
@@ -140,8 +148,13 @@ class SpeculativeFlowMatchingSampler:
         total_drafts_proposed = 0
         total_drafts_accepted = 0
         
+        # Dynamic lookahead window
+        curr_K = self.K
+        min_K = 1
+        max_K = max(16, self.K * 2)
+        
         while t < 1.0 - 1e-5:
-            # 1. GENERATE DRAFT TRAJECTORY (K steps lookahead)
+            # 1. GENERATE DRAFT TRAJECTORY (curr_K steps lookahead)
             draft_x = [x.clone()]
             draft_t = []
             
@@ -149,7 +162,7 @@ class SpeculativeFlowMatchingSampler:
             curr_t = t
             
             # Run the draft model sequentially to get proposal states
-            for k in range(self.K):
+            for k in range(curr_K):
                 if curr_t >= 1.0 - 1e-5:
                     break
                 t_tensor = torch.full((x.shape[0],), curr_t, device=device, dtype=dtype)
@@ -227,8 +240,19 @@ class SpeculativeFlowMatchingSampler:
             x = curr_verified_x
             if accepted_k == actual_k:
                 t += accepted_k * dt
+                # Adaptive scheduling: increase K on full acceptance
+                if self.adaptive_lookahead:
+                    curr_K = min(max_K, curr_K + 1)
             else:
                 t += (accepted_k + 1) * dt
+                # Adaptive scheduling: decrease K on rejection
+                if self.adaptive_lookahead:
+                    curr_K = max(min_K, accepted_k)
+            
+        # Apply biophysical constraints to final coordinates if enabled
+        if self.enable_biophysical:
+            x = self.project_manifold(x)
+            x = self.avoid_steric_clash(x)
             
         acceptance_rate = total_drafts_accepted / max(1, total_drafts_proposed)
         speedup_factor = (1.0 / self.step_size) / (total_evals_target + (total_drafts_proposed - total_drafts_accepted))
