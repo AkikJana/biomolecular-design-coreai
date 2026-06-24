@@ -11,6 +11,7 @@ print(f"[Test] Using boltz package located at: {boltz.__file__}")
 
 from boltz.model.layers.attention import AttentionPairBias
 from boltz.model.layers.triangular_mult import TriangleMultiplicationOutgoing, TriangleMultiplicationIncoming
+from boltz.model.layers.outer_product_mean import OuterProductMean
 
 
 class TestBoltzModifiedLayers(unittest.TestCase):
@@ -91,6 +92,49 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         error_in = torch.max(torch.abs(in_mono - in_opt)).item()
         print(f"Triangle Multiplication Incoming Equivalence Error: {error_in:.2e}")
         self.assertLess(error_in, 1e-4)
+
+
+    def _opm_per_row_reference(self, opm, m, mask):
+        """Previous per-row implementation: materialize (B, S, N, N, c_out) then mean over S."""
+        B, S, N, C = m.shape
+        m_normed = opm.norm(m)
+        U = opm.low_rank_updater(m_normed.reshape(B * S, N, C)).reshape(B, S, N, N, -1)
+        mk = mask.unsqueeze(-1).to(m)
+        pmask = mk[:, :, :, None, :] * mk[:, :, None, :, :]
+        sum_U = (U * pmask).sum(dim=1)
+        num = pmask.sum(dim=1).clamp(min=1)
+        return sum_U / num
+
+    def test_outer_product_mean_s_contraction_equivalence(self):
+        """S-contracted OuterProductMean must match the per-row reference (fwd + grad)."""
+        torch.manual_seed(0)
+        c_in, c_hidden, c_out = 64, 32, 128
+        opm = OuterProductMean(c_in, c_hidden, c_out)
+
+        for B, S, N in [(1, 8, 32), (1, 64, 48), (2, 16, 40)]:
+            m = torch.randn(B, S, N, c_in)
+            mask = (torch.rand(B, S, N) > 0.15).float()
+            with torch.no_grad():
+                # chunk_size is passed and must be safely ignored
+                new = opm(m, mask, chunk_size=4)
+                ref = self._opm_per_row_reference(opm, m, mask)
+            self.assertEqual(tuple(new.shape), (B, N, N, c_out))
+            err = torch.max(torch.abs(new - ref)).item()
+            print(f"OPM S-contraction equivalence (B={B},S={S},N={N}): {err:.2e}")
+            self.assertLess(err, 1e-4)
+
+        # Gradient equivalence
+        m = torch.randn(1, 16, 40, c_in, requires_grad=True)
+        mask = (torch.rand(1, 16, 40) > 0.15).float()
+        g = torch.randn(1, 40, 40, c_out)
+        opm(m, mask).backward(g)
+        grad_new = m.grad.clone()
+        m.grad = None
+        self._opm_per_row_reference(opm, m, mask).backward(g)
+        grad_ref = m.grad.clone()
+        grad_err = torch.max(torch.abs(grad_new - grad_ref)).item()
+        print(f"OPM S-contraction gradient equivalence: {grad_err:.2e}")
+        self.assertLess(grad_err, 1e-4)
 
 
 if __name__ == "__main__":
