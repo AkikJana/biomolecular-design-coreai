@@ -13,6 +13,7 @@ from boltz.data import const
 from boltz.data.mol import (
     minimum_lddt_symmetry_coords,
 )
+from boltz.model.layers.cfg_student import CFGDistilledStudent, load_cfg_student
 from boltz.model.layers.coordinate_refiner import (
     CoordinateRefiner,
     load_coordinate_refiner,
@@ -112,6 +113,10 @@ class Boltz2(LightningModule):
         use_coordinate_refiner: bool = False,
         coordinate_refiner_args: Optional[dict] = None,
         coordinate_refiner_checkpoint: Optional[str] = None,
+        use_cfg_student: bool = False,
+        cfg_student_args: Optional[dict] = None,
+        cfg_student_checkpoint: Optional[str] = None,
+        cfg_guidance_scale: float = 1.0,
     ) -> None:
         super().__init__()
         self.save_hyperparameters(ignore=["validators"])
@@ -309,6 +314,22 @@ class Boltz2(LightningModule):
                 )
         else:
             self.coordinate_refiner = None
+
+        # Optional single-pass CFG-distilled student denoiser (default off).
+        # No safe identity: requires a trained checkpoint to be useful.
+        self.use_cfg_student = use_cfg_student
+        self.cfg_guidance_scale = cfg_guidance_scale
+        if use_cfg_student:
+            if cfg_student_checkpoint is not None:
+                self.cfg_student = load_cfg_student(
+                    cfg_student_checkpoint, token_s=token_s, **(cfg_student_args or {})
+                )
+            else:
+                self.cfg_student = CFGDistilledStudent(
+                    token_s=token_s, **(cfg_student_args or {})
+                )
+        else:
+            self.cfg_student = None
 
         self.distogram_module = DistogramModule(
             token_z,
@@ -556,6 +577,23 @@ class Boltz2(LightningModule):
                     "token_trans_bias": token_trans_bias,
                 }
 
+                # Optional single-pass CFG student: replaces the iterative
+                # teacher denoiser. Token conditioning is expanded to the
+                # sampler's effective multiplicity so its per-sample slicing
+                # (c[sample_ids_chunk]) aligns with the atom batch.
+                student_kwargs = {}
+                if self.use_cfg_student and self.cfg_student is not None:
+                    eff_mult = diffusion_samples
+                    if self.steering_args is not None and self.steering_args.get(
+                        "fk_steering"
+                    ):
+                        eff_mult *= self.steering_args["num_particles"]
+                    student_kwargs = {
+                        "student_model": self.cfg_student,
+                        "c": s.float().repeat_interleave(eff_mult, 0),
+                        "s": self.cfg_guidance_scale,
+                    }
+
                 with torch.autocast(autocast_device_type(s.device.type), enabled=False):
                     struct_out = self.structure_module.sample(
                         s_trunk=s.float(),
@@ -569,6 +607,7 @@ class Boltz2(LightningModule):
                         diffusion_conditioning=diffusion_conditioning,
                         coordinate_refiner=self.coordinate_refiner,
                         refine_coords=self.use_coordinate_refiner,
+                        **student_kwargs,
                     )
                     dict_out.update(struct_out)
 

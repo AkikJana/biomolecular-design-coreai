@@ -330,6 +330,69 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         self.assertFalse(torch.isnan(pred2.grad).any().item())
         print("distance_loss chunked==dense and NaN-free: OK")
 
+    def test_cfg_student_contract_and_hook_replay(self):
+        """CFG student matches the sampler hook contract and the c-expansion /
+        per-sample slicing / denoise math used by boltz2 + AtomDiffusion.sample."""
+        from boltz.model.layers.cfg_student import CFGDistilledStudent
+
+        token_s = 32
+        student = CFGDistilledStudent(token_s=token_s, hidden_dim=32, num_layers=2).eval()
+
+        # 1. Contract: token N != atom M, returns (B, M, 3).
+        B, N, M = 2, 6, 25
+        x = torch.randn(B, M, 3)
+        t = torch.full((B,), 0.4)
+        c = torch.randn(B, N, token_s)
+        s = torch.full((B,), 1.5)
+        out = student(x, t, c, s)
+        self.assertEqual(tuple(out.shape), (B, M, 3))
+        self.assertTrue(torch.isfinite(out).all())
+
+        # 2. Replay the sampler's student branch with diffusion multiplicity.
+        #    boltz2 passes c = s_trunk.repeat_interleave(mult); the hook slices
+        #    c[sample_ids_chunk] and computes denoised = x + (1 - t) * v.
+        mult, num_steps, step_idx = 3, 10, 4
+        s_trunk = torch.randn(1, N, token_s)
+        c_full = s_trunk.repeat_interleave(mult, 0)          # boltz2 expansion
+        atom_coords_noisy = torch.randn(1 * mult, M, 3)
+        sample_ids = torch.arange(mult)
+        t_norm = float(step_idx) / num_steps
+        t_tensor = torch.full((sample_ids.numel(),), t_norm)
+        s_tensor = torch.full((sample_ids.numel(),), 1.5)
+        c_tensor = c_full[sample_ids]                        # hook slice
+        v_pred = student(atom_coords_noisy[sample_ids], t_tensor, c_tensor, s_tensor)
+        denoised = atom_coords_noisy[sample_ids] + (1.0 - t_norm) * v_pred
+        self.assertEqual(tuple(denoised.shape), (mult, M, 3))
+        self.assertTrue(torch.isfinite(denoised).all())
+        print("CFG student hook-replay (mult=3, N=6 tokens, M=25 atoms): OK")
+
+    def test_cfg_student_load_roundtrip_and_wiring(self):
+        from boltz.model.layers.cfg_student import (
+            CFGDistilledStudent, load_cfg_student,
+        )
+        import tempfile
+        token_s = 32
+        torch.manual_seed(0)
+        student = CFGDistilledStudent(token_s=token_s, hidden_dim=48, num_layers=2)
+        with tempfile.TemporaryDirectory() as d:
+            ckpt = os.path.join(d, "student.pt")
+            torch.save(
+                {"state_dict": student.state_dict(),
+                 "config": {"token_s": token_s, "hidden_dim": 48, "num_layers": 2}},
+                ckpt,
+            )
+            loaded = load_cfg_student(ckpt, token_s=token_s).eval()
+            self.assertEqual(loaded.hidden_dim, 48)
+            x = torch.randn(1, 12, 3); t = torch.full((1,), 0.3)
+            c = torch.randn(1, 4, token_s); s = torch.full((1,), 2.0)
+            with torch.no_grad():
+                self.assertLess((loaded(x, t, c, s) - student(x, t, c, s)).abs().max().item(), 1e-6)
+            with self.assertRaises(ValueError):
+                load_cfg_student(ckpt, token_s=token_s + 1)
+
+        import boltz.model.models.boltz2 as b2
+        self.assertTrue(hasattr(b2, "CFGDistilledStudent"))
+
 
 if __name__ == "__main__":
     unittest.main()
