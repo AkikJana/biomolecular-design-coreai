@@ -294,6 +294,42 @@ class TestBoltzModifiedLayers(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_coordinate_refiner(ckpt, token_s=token_s + 1)
 
+    def test_distance_loss_chunked_matches_dense(self):
+        """Chunked distance loss equals the dense off-diagonal reference, is
+        chunk-size invariant, and has finite gradients."""
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from train_coordinate_refiner import distance_loss
+
+        def dense_ref(pred, true, mask):
+            pm = mask.unsqueeze(1) * mask.unsqueeze(2)
+            eye = torch.eye(mask.shape[1], device=mask.device).unsqueeze(0)
+            pm = pm * (1 - eye)  # exclude diagonal
+            dp = torch.cdist(pred, pred)
+            dt = torch.cdist(true, true)
+            return (((dp - dt) ** 2) * pm).sum() / (pm.sum() + 1e-8)
+
+        torch.manual_seed(0)
+        B, M = 2, 70  # M in the cdist mm-mode regime
+        pred = torch.randn(B, M, 3, requires_grad=True)
+        true = torch.randn(B, M, 3)
+        mask = torch.ones(B, M)
+        mask[:, -4:] = 0  # padding
+
+        ref = dense_ref(pred, true, mask)
+        for cs in (16, 64, 1024):  # spans the chunk boundary and full-matrix
+            val = distance_loss(pred, true, mask, chunk_size=cs)
+            self.assertLess(abs(val.item() - ref.item()), 1e-5)
+
+        # finite gradients (incl. an exact clash)
+        pred2 = torch.randn(B, M, 3)
+        pred2[0, 3] = pred2[0, 4]
+        pred2 = pred2.clone().requires_grad_(True)
+        distance_loss(pred2, true, mask, chunk_size=32).backward()
+        self.assertFalse(torch.isnan(pred2.grad).any().item())
+        print("distance_loss chunked==dense and NaN-free: OK")
+
 
 if __name__ == "__main__":
     unittest.main()

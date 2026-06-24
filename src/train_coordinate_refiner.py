@@ -133,11 +133,30 @@ def coord_loss(pred, true_aligned, mask):
     return se.sum() / (mask.sum() + 1e-8)
 
 
-def distance_loss(pred, true, mask):
-    pair_mask = mask.unsqueeze(1) * mask.unsqueeze(2)  # (B, M, M)
-    dp = torch.cdist(pred, pred)
-    dt = torch.cdist(true, true)
-    return (((dp - dt) ** 2) * pair_mask).sum() / (pair_mask.sum() + 1e-8)
+def distance_loss(pred, true, mask, chunk_size=512, eps=1e-8):
+    """Rotation/translation-invariant pairwise distance-matrix MSE.
+
+    Excludes self-pairs (the diagonal carries no geometric signal) and is
+    computed in row chunks so peak memory is O(B * chunk_size * M) rather than
+    O(B * M^2) -- the full distance matrix is never materialized, which matters
+    at real atom counts (M in the thousands). The off-diagonal result is exactly
+    the same as the dense formulation.
+    """
+    B, M, _ = pred.shape
+    total = pred.new_zeros(())
+    denom = pred.new_zeros(())
+    for start in range(0, M, chunk_size):
+        end = min(start + chunk_size, M)
+        dp = torch.cdist(pred[:, start:end], pred)  # (B, c, M)
+        dt = torch.cdist(true[:, start:end], true)  # (B, c, M)
+        rm = mask[:, start:end].unsqueeze(-1) * mask.unsqueeze(1)  # (B, c, M)
+        # Zero the diagonal entries that fall inside this row block.
+        rows = torch.arange(end - start, device=pred.device)
+        cols = torch.arange(start, end, device=pred.device)
+        rm[:, rows, cols] = 0.0
+        total = total + (((dp - dt) ** 2) * rm).sum()
+        denom = denom + rm.sum()
+    return total / (denom + eps)
 
 
 def aligned_rmsd(pred, true, mask):
