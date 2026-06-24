@@ -534,6 +534,52 @@ class TestBoltzModifiedLayers(unittest.TestCase):
               f"(active {active}/{nb*nb} block pairs)")
         self.assertLess(err, 1e-4)
 
+    def test_benchmark_metrics_and_harness(self):
+        """Ranking-agreement metrics are correct and the harness reports
+        latency/size/agreement for pluggable scorers."""
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from benchmark_surrogate_vs_reference import (
+            spearman, kendall_tau, topk_recall, benchmark,
+            SyntheticReferenceScorer, NoisySurrogateScorer,
+        )
+
+        # Metric correctness on known orderings.
+        a = torch.tensor([1.0, 2, 3, 4, 5])
+        self.assertAlmostEqual(spearman(a, a), 1.0, places=6)
+        self.assertAlmostEqual(spearman(a, torch.flip(a, [0])), -1.0, places=6)
+        self.assertAlmostEqual(kendall_tau(a, a), 1.0, places=6)
+        self.assertEqual(topk_recall(a, a, 3), 1.0)
+        # disjoint top-k -> 0 recall
+        self.assertEqual(topk_recall(a, torch.flip(a, [0]), 2), 0.0)
+
+        # More noise -> lower agreement (monotone sanity).
+        interface = [2, 4, 8, 12, 15]
+        motif = "WYFML"
+        wt = "MATEVLADIGSAKLRPQ"
+        import random
+        random.seed(0)
+        aa = "ACDEFGHIKLMNPQRSTVWY"
+        pairs = []
+        for _ in range(30):
+            b = list(wt)
+            for p in interface:
+                if random.random() < 0.5:
+                    b[p] = random.choice(aa)
+            pairs.append((wt, "".join(b)))
+
+        ref = SyntheticReferenceScorer(motif, interface)
+        low = benchmark(pairs, ref, NoisySurrogateScorer(ref, noise=0.05, seed=1), verbose=False)
+        high = benchmark(pairs, ref, NoisySurrogateScorer(ref, noise=1.0, seed=1), verbose=False)
+        self.assertGreater(low["spearman"], high["spearman"])
+        # harness reports the expected fields
+        self.assertIn(5, low["topk_recall"])
+        self.assertIsNotNone(low["model_size_bytes"]["surrogate(edge)"])
+        self.assertGreater(low["latency_ms_per_candidate"]["surrogate(edge)"], 0.0)
+        print(f"Benchmark harness: Spearman noise0.05={low['spearman']:.2f} "
+              f"vs noise1.0={high['spearman']:.2f}")
+
 
 if __name__ == "__main__":
     unittest.main()
