@@ -131,12 +131,22 @@ def main():
         shutil.rmtree(compiled_path)
     compiled_path.mkdir(exist_ok=True)
     
-    print("Compiling model asset to specialized binaries using coreai-build...")
+    # Locate coreai-build dynamically. The Metal toolchain cryptex mount path is
+    # version-pinned (its UUID changes across OS/toolchain updates), so resolve
+    # the binary at runtime rather than hardcoding it.
+    build_bin = find_coreai_build()
+    if build_bin is None:
+        print("coreai-build not found (PATH / xcrun / Metal toolchain cryptex).")
+        print("Skipping optional AOT .aimodelc compilation -- the .aimodel asset is")
+        print("already runnable via coreai.runtime (see src/predict_structure.py).")
+        return
+
+    print(f"Compiling model asset to specialized binaries using {build_bin}...")
     cmd = [
-        "/var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.1.5194.15.XMbTDO/Metal.xctoolchain/usr/bin/coreai-build", "compile",
+        build_bin, "compile",
         str(output_path),
         "--platform", "macOS",
-        "--output", str(compiled_path)
+        "--output", str(compiled_path),
     ]
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0:
@@ -146,6 +156,29 @@ def main():
         print(f"Compilation failed with exit code: {res.returncode}")
         print("STDOUT:", res.stdout)
         print("STDERR:", res.stderr)
+
+
+def find_coreai_build():
+    """Resolve the coreai-build CLI across PATH, xcrun, and Metal toolchain cryptex mounts."""
+    import glob
+    import shutil
+
+    found = shutil.which("coreai-build")
+    if found:
+        return found
+    try:
+        r = subprocess.run(["xcrun", "--find", "coreai-build"], capture_output=True, text=True)
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    pattern = (
+        "/var/run/com.apple.security.cryptexd/mnt/*MetalToolchain*"
+        "/Metal.xctoolchain/usr/bin/coreai-build"
+    )
+    matches = glob.glob(pattern)
+    return matches[0] if matches else None
+
 
 if __name__ == "__main__":
     main()
