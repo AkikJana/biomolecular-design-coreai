@@ -639,6 +639,31 @@ class TestBoltzModifiedLayers(unittest.TestCase):
             self.assertIsNotNone(m["model_size_bytes"]["surrogate(edge)"])
             print("Surrogate affinity + Boltz predict_fn wired into benchmark: OK")
 
+    def test_affinity_distillation_improves_ranking(self):
+        """Distillation trainer raises the surrogate's benchmark ranking and writes
+        a loadable checkpoint."""
+        import tempfile
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from train_surrogate_affinity import train_surrogate_affinity
+        from surrogate_affinity import AffinitySurrogate
+
+        with tempfile.TemporaryDirectory() as d:
+            ckpt = os.path.join(d, "surr.pt")
+            hist = train_surrogate_affinity(
+                epochs=60, n_train=96, n_eval=48, device="cpu",
+                ckpt_path=ckpt, seed=0, verbose=False,
+            )
+            print(f"Affinity distillation Spearman {hist['initial_spearman']:.2f} "
+                  f"-> {hist['final_spearman']:.2f}")
+            self.assertTrue(os.path.exists(ckpt))
+            self.assertGreater(hist["final_spearman"], hist["initial_spearman"] + 0.05)
+            # checkpoint loads into a fresh surrogate
+            c = torch.load(ckpt, map_location="cpu")
+            s = AffinitySurrogate(**c["config"])
+            s.load_state_dict(c["state_dict"])
+
 
 if __name__ == "__main__":
     unittest.main()
