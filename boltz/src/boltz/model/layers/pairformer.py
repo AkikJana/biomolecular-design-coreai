@@ -32,6 +32,8 @@ class PairformerLayer(nn.Module):
         pairwise_num_heads: int = 4,
         post_layer_norm: bool = False,
         v2: bool = False,
+        use_fold_cp: bool = False,
+        num_devices: int = 4,
     ) -> None:
         super().__init__()
         self.token_z = token_z
@@ -41,12 +43,21 @@ class PairformerLayer(nn.Module):
 
         self.pre_norm_s = nn.LayerNorm(token_s)
         if v2:
-            self.attention = AttentionPairBiasV2(token_s, token_z, num_heads)
+            self.attention = AttentionPairBiasV2(
+                token_s, token_z, num_heads,
+                use_fold_cp=use_fold_cp, num_devices=num_devices,
+            )
         else:
             self.attention = AttentionPairBias(token_s, token_z, num_heads)
 
-        self.tri_mul_out = TriangleMultiplicationOutgoing(token_z)
-        self.tri_mul_in = TriangleMultiplicationIncoming(token_z)
+        # Fold-CP sharded (ring) triangular multiplication is numerically
+        # identical to the dense path; it is opt-in and defaults off.
+        self.tri_mul_out = TriangleMultiplicationOutgoing(
+            token_z, use_fold_cp=use_fold_cp, num_devices=num_devices
+        )
+        self.tri_mul_in = TriangleMultiplicationIncoming(
+            token_z, use_fold_cp=use_fold_cp, num_devices=num_devices
+        )
 
         self.tri_att_start = TriangleAttentionStartingNode(
             token_z, pairwise_head_width, pairwise_num_heads, inf=1e9
@@ -129,6 +140,8 @@ class PairformerModule(nn.Module):
         post_layer_norm: bool = False,
         activation_checkpointing: bool = False,
         v2: bool = False,
+        use_fold_cp: bool = False,
+        num_devices: int = 4,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -151,6 +164,8 @@ class PairformerModule(nn.Module):
                     pairwise_num_heads,
                     post_layer_norm,
                     v2,
+                    use_fold_cp=use_fold_cp,
+                    num_devices=num_devices,
                 ),
             )
 

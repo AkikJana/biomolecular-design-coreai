@@ -127,9 +127,18 @@ class TriangleMultiplicationOutgoing(nn.Module):
             P_col = P // P_row
             
             B, N, _, D = a.shape
-            R_shard = N // P_row
-            C_shard = N // P_col
-            
+            # Zero-pad token dims to a multiple of P so the P_row x P_col shard
+            # grid divides evenly for arbitrary N. a and b are already masked
+            # (zeros at pad positions), so padding contributes nothing to the
+            # contraction and is sliced off afterwards -> result is unchanged.
+            N_pad = ((N + P - 1) // P) * P
+            if N_pad != N:
+                pad = (0, 0, 0, N_pad - N, 0, N_pad - N)
+                a = torch.nn.functional.pad(a, pad)
+                b = torch.nn.functional.pad(b, pad)
+            R_shard = N_pad // P_row
+            C_shard = N_pad // P_col
+
             a_shards = a.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
             b_shards = b.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
             
@@ -154,7 +163,9 @@ class TriangleMultiplicationOutgoing(nn.Module):
                 
             c_stacked = torch.stack(out_shards, dim=0)
             c_p = c_stacked.permute(0, 1, 3, 2, 4, 5)
-            x = c_p.reshape(B, N, N, D)
+            x = c_p.reshape(B, N_pad, N_pad, D)
+            if N_pad != N:
+                x = x[:, :N, :N, :]
         else:
             x = torch.einsum("bikd,bjkd->bijd", a, b)
 
@@ -254,9 +265,18 @@ class TriangleMultiplicationIncoming(nn.Module):
             P_col = P // P_row
             
             B, N, _, D = a.shape
-            R_shard = N // P_row
-            C_shard = N // P_col
-            
+            # Zero-pad token dims to a multiple of P so the P_row x P_col shard
+            # grid divides evenly for arbitrary N. a and b are already masked
+            # (zeros at pad positions), so padding contributes nothing to the
+            # contraction and is sliced off afterwards -> result is unchanged.
+            N_pad = ((N + P - 1) // P) * P
+            if N_pad != N:
+                pad = (0, 0, 0, N_pad - N, 0, N_pad - N)
+                a = torch.nn.functional.pad(a, pad)
+                b = torch.nn.functional.pad(b, pad)
+            R_shard = N_pad // P_row
+            C_shard = N_pad // P_col
+
             a_shards = a.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
             b_shards = b.view(B, P_row, R_shard, P_col, C_shard, D).permute(0, 1, 3, 2, 4, 5)
             
@@ -281,7 +301,9 @@ class TriangleMultiplicationIncoming(nn.Module):
                 
             c_stacked = torch.stack(out_shards, dim=0)
             c_p = c_stacked.permute(0, 1, 3, 2, 4, 5)
-            x = c_p.reshape(B, N, N, D)
+            x = c_p.reshape(B, N_pad, N_pad, D)
+            if N_pad != N:
+                x = x[:, :N, :N, :]
         else:
             x = torch.einsum("bkid,bkjd->bijd", a, b)
 

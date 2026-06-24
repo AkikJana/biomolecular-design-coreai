@@ -1,7 +1,10 @@
 import os
 import random
 import time
-import psutil
+try:
+    import psutil
+except ImportError:  # optional: only needed for memory logging
+    psutil = None
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -285,6 +288,8 @@ def get_memory_usage():
     """
     Monitors RAM and GPU VRAM consumption.
     """
+    if psutil is None:
+        return 0.0, 0.0, "cpu"
     process = psutil.Process()
     cpu_mem = process.memory_info().rss / (1024 * 1024) # MB
     
