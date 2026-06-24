@@ -167,6 +167,30 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         print(f"Pairformer Fold-CP end-to-end equivalence (N=30, padded): {err:.2e}")
         self.assertLess(err, 1e-4)
 
+    def test_attentionv2_fold_cp_equivalence(self):
+        """Fold-CP ported into AttentionPairBias v2 (the class the model uses)
+        must match the dense path, including N not divisible by num_devices."""
+        from boltz.model.layers.attentionv2 import AttentionPairBias as AttnV2
+
+        c_s, c_z, num_heads = 64, 32, 4
+        for B, N in [(1, 64), (1, 30), (2, 18)]:
+            torch.manual_seed(N)
+            s = torch.randn(B, N, c_s)
+            z = torch.randn(B, N, N, c_z)
+            mask = torch.ones(B, N)
+            mask[:, -3:] = 0  # exercise key masking
+
+            dense = AttnV2(c_s, c_z, num_heads).eval()
+            fold = AttnV2(c_s, c_z, num_heads, use_fold_cp=True, num_devices=4).eval()
+            fold.load_state_dict(dense.state_dict())
+
+            with torch.no_grad():
+                out_dense = dense(s, z, mask, k_in=s)
+                out_fold = fold(s, z, mask, k_in=s)
+            err = (out_dense - out_fold).abs().max().item()
+            print(f"AttentionV2 Fold-CP equivalence (B={B},N={N}): {err:.2e}")
+            self.assertLess(err, 1e-4)
+
 
 if __name__ == "__main__":
     unittest.main()

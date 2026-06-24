@@ -43,7 +43,10 @@ class PairformerLayer(nn.Module):
 
         self.pre_norm_s = nn.LayerNorm(token_s)
         if v2:
-            self.attention = AttentionPairBiasV2(token_s, token_z, num_heads)
+            self.attention = AttentionPairBiasV2(
+                token_s, token_z, num_heads,
+                use_fold_cp=use_fold_cp, num_devices=num_devices,
+            )
         else:
             self.attention = AttentionPairBias(token_s, token_z, num_heads)
 
