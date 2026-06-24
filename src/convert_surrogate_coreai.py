@@ -126,11 +126,7 @@ def main():
     
     # Compile the asset to produced compiled spécializations (.aimodelc)
     compiled_path = Path("/Users/akikjana/Documents/BiomolecularDesign/compiled_surrogate")
-    if compiled_path.exists():
-        import shutil
-        shutil.rmtree(compiled_path)
-    compiled_path.mkdir(exist_ok=True)
-    
+
     # Locate coreai-build dynamically. The Metal toolchain cryptex mount path is
     # version-pinned (its UUID changes across OS/toolchain updates), so resolve
     # the binary at runtime rather than hardcoding it.
@@ -139,7 +135,15 @@ def main():
         print("coreai-build not found (PATH / xcrun / Metal toolchain cryptex).")
         print("Skipping optional AOT .aimodelc compilation -- the .aimodel asset is")
         print("already runnable via coreai.runtime (see src/predict_structure.py).")
+        print(f"Existing compiled artifacts in {compiled_path} are left untouched.")
         return
+
+    # Only clear/recreate the output dir once we know we will actually compile,
+    # so a skipped compilation never destroys existing .aimodelc artifacts.
+    if compiled_path.exists():
+        import shutil
+        shutil.rmtree(compiled_path)
+    compiled_path.mkdir(exist_ok=True)
 
     print(f"Compiling model asset to specialized binaries using {build_bin}...")
     cmd = [
