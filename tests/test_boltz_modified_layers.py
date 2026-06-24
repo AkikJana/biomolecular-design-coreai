@@ -191,6 +191,47 @@ class TestBoltzModifiedLayers(unittest.TestCase):
             print(f"AttentionV2 Fold-CP equivalence (B={B},N={N}): {err:.2e}")
             self.assertLess(err, 1e-4)
 
+    def test_coordinate_refiner_contract_and_identity(self):
+        """Refiner must match the sampler hook contract (token/atom mismatch +
+        diffusion multiplicity), be identity at init, and be learnable."""
+        from boltz.model.layers.coordinate_refiner import CoordinateRefiner
+
+        torch.manual_seed(0)
+        token_s = 64
+        B, N, M = 1, 20, 73   # tokens N != atoms M (as in the real model)
+        refiner = CoordinateRefiner(token_s=token_s, hidden_dim=32, num_layers=2)
+
+        seq = torch.randn(B, N, token_s)
+        atom_coords = torch.randn(B, M, 3)
+
+        # 1. Shape contract + identity at init (zero-init delta head).
+        out = refiner(seq, atom_coords)
+        self.assertEqual(tuple(out.shape), (B, M, 3))
+        id_err = (out - atom_coords).abs().max().item()
+        print(f"CoordinateRefiner identity-at-init error: {id_err:.2e}")
+        self.assertLess(id_err, 1e-6)
+
+        # 2. Diffusion multiplicity: atom batch is a multiple of token batch.
+        mult = 5
+        atom_coords_m = torch.randn(B * mult, M, 3)
+        out_m = refiner(seq, atom_coords_m)  # seq batch B, coords batch B*mult
+        self.assertEqual(tuple(out_m.shape), (B * mult, M, 3))
+
+        # 3. Learnable: after one optimizer step it is no longer the identity.
+        opt = torch.optim.SGD(refiner.parameters(), lr=1.0)
+        target = atom_coords + 0.5
+        loss = ((refiner(seq, atom_coords) - target) ** 2).mean()
+        opt.zero_grad(); loss.backward(); opt.step()
+        moved = (refiner(seq, atom_coords) - atom_coords).abs().max().item()
+        print(f"CoordinateRefiner post-step delta magnitude: {moved:.2e}")
+        self.assertGreater(moved, 1e-4)
+
+    def test_boltz2_refiner_wiring_imports(self):
+        """The refiner is importable and wired into boltz2 (default off)."""
+        from boltz.model.layers.coordinate_refiner import CoordinateRefiner  # noqa: F401
+        import boltz.model.models.boltz2 as b2
+        self.assertTrue(hasattr(b2, "CoordinateRefiner"))
+
 
 if __name__ == "__main__":
     unittest.main()

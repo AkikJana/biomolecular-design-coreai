@@ -13,6 +13,7 @@ from boltz.data import const
 from boltz.data.mol import (
     minimum_lddt_symmetry_coords,
 )
+from boltz.model.layers.coordinate_refiner import CoordinateRefiner
 from boltz.model.layers.pairformer import PairformerModule
 from boltz.model.loss.bfactor import bfactor_loss_fn
 from boltz.model.loss.confidencev2 import (
@@ -105,6 +106,8 @@ class Boltz2(LightningModule):
         checkpoint_diffusion_conditioning: bool = False,
         use_templates_v2: bool = False,
         use_kernels: bool = False,
+        use_coordinate_refiner: bool = False,
+        coordinate_refiner_args: Optional[dict] = None,
     ) -> None:
         super().__init__()
         self.save_hyperparameters(ignore=["validators"])
@@ -284,6 +287,15 @@ class Boltz2(LightningModule):
             compile_score=compile_structure,
             **diffusion_process_args,
         )
+        # Optional post-diffusion atom coordinate refiner (default off).
+        self.use_coordinate_refiner = use_coordinate_refiner
+        if use_coordinate_refiner:
+            self.coordinate_refiner = CoordinateRefiner(
+                token_s=token_s, **(coordinate_refiner_args or {})
+            )
+        else:
+            self.coordinate_refiner = None
+
         self.distogram_module = DistogramModule(
             token_z,
             num_bins,
@@ -541,6 +553,8 @@ class Boltz2(LightningModule):
                         max_parallel_samples=max_parallel_samples,
                         steering_args=self.steering_args,
                         diffusion_conditioning=diffusion_conditioning,
+                        coordinate_refiner=self.coordinate_refiner,
+                        refine_coords=self.use_coordinate_refiner,
                     )
                     dict_out.update(struct_out)
 
