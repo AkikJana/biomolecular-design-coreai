@@ -580,6 +580,65 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         print(f"Benchmark harness: Spearman noise0.05={low['spearman']:.2f} "
               f"vs noise1.0={high['spearman']:.2f}")
 
+    def test_surrogate_affinity_head_and_boltz_predict_fn(self):
+        """Affinity head produces rankable scores + is trainable; Boltz predict_fn
+        reads real-format outputs; full benchmark loop runs with both."""
+        import json, tempfile
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from surrogate_affinity import AffinitySurrogate, SurrogateAffinityScorer
+        from boltz2_predict import read_boltz_outputs, BoltzCliPredictFn, BoltzAffinityScorer
+        from benchmark_surrogate_vs_reference import benchmark
+
+        target = "MATEVLADIGSAKLRPQ"
+        binders = ["MATEVLADIGSAKLRPQ", "MATWVLAYIGSFKLMPQ", "MACEVLADIGSAKLRPQ"]
+        pairs = [(target, b) for b in binders]
+
+        # 1. Surrogate affinity head: scores + structure, correct shapes.
+        surr = AffinitySurrogate(embed_dim=32, num_heads=4, hidden=32)
+        out = surr.predict(target, binders[0])
+        self.assertEqual(tuple(out["affinity_probability_binary"].shape), (1,))
+        self.assertEqual(out["sample_atom_coords"].shape[-1], 3)
+
+        scorer = SurrogateAffinityScorer(surr)
+        scores = scorer.score(pairs)
+        self.assertEqual(tuple(scores.shape), (3,))
+        self.assertGreater(scorer.model_size_bytes(), 0)
+
+        # 2. Trainable: one step on the affinity head changes the output.
+        opt = torch.optim.SGD(surr.parameters(), lr=0.5)
+        before = surr.predict(target, binders[0])["affinity_pred_value"].item()
+        k, v = surr.target_kv(target)
+        loss = (surr.forward(surr.embed_seq(binders[0]), k, v)["affinity_pred_value"] - 5.0) ** 2
+        opt.zero_grad(); loss.mean().backward(); opt.step()
+        after = surr.predict(target, binders[0])["affinity_pred_value"].item()
+        self.assertNotAlmostEqual(before, after, places=4)
+
+        # 3. Boltz predict_fn reads real-format confidence + affinity JSON.
+        with tempfile.TemporaryDirectory() as d:
+            name = "cplx0"
+            pred_dir = os.path.join(d, "predictions", name)
+            os.makedirs(pred_dir)
+            with open(os.path.join(pred_dir, f"confidence_{name}_model_0.json"), "w") as f:
+                json.dump({"complex_plddt": 0.82, "iptm": 0.61, "ptm": 0.55,
+                           "confidence_score": 0.78}, f)
+            with open(os.path.join(pred_dir, f"affinity_{name}.json"), "w") as f:
+                json.dump({"affinity_pred_value": 1.3, "affinity_probability_binary": 0.9}, f)
+
+            got = read_boltz_outputs(d, name)
+            self.assertAlmostEqual(got["complex_plddt"].item(), 0.82, places=5)
+            self.assertAlmostEqual(got["affinity_probability_binary"].item(), 0.9, places=5)
+
+            # 4. Full benchmark loop: surrogate vs a (file-backed) Boltz reference.
+            #    name_fn returns the same record here; just exercises the wiring.
+            predict_fn = BoltzCliPredictFn(d, name_fn=lambda t, b: name)
+            ref = BoltzAffinityScorer(predict_fn, size_bytes=400_000_000)
+            m = benchmark(pairs, ref, scorer, ks=(1, 2), verbose=False)
+            self.assertIn("spearman", m)
+            self.assertIsNotNone(m["model_size_bytes"]["surrogate(edge)"])
+            print("Surrogate affinity + Boltz predict_fn wired into benchmark: OK")
+
 
 if __name__ == "__main__":
     unittest.main()
