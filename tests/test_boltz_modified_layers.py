@@ -1,6 +1,7 @@
 import sys
 import os
 import torch
+import torch.nn as nn
 import unittest
 
 # Ensure the local modified boltz is used
@@ -478,6 +479,60 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         last = sum(h["mean_reward"] for h in hist[-3:]) / 3
         print(f"GRPO co-design mean reward: {first:.3f} -> {last:.3f}")
         self.assertGreater(last, first + 0.05)
+
+    def test_fp8_linear_accuracy_and_memory(self):
+        """FP8 weight-only linear: ~4x smaller weights, small relative error,
+        and a recursive model converter."""
+        from boltz.model.layers.fp8_linear import FP8Linear, quantize_linears_
+
+        torch.manual_seed(0)
+        lin = nn.Linear(256, 256)
+        fp8 = FP8Linear.from_linear(lin).eval()
+
+        x = torch.randn(8, 256)
+        with torch.no_grad():
+            ref, out = lin(x), fp8(x)
+        rel = ((out - ref).norm() / (ref.norm() + 1e-8)).item()
+        print(f"FP8Linear output relative error: {rel:.4f}")
+        self.assertLess(rel, 0.05)  # e4m3 weight-only, per-channel scale
+
+        # ~4x weight compression (fp8 1B vs fp32 4B; scale negligible).
+        fp32_bytes = lin.weight.numel() * 4
+        ratio = fp32_bytes / fp8.weight_bytes()
+        print(f"FP8Linear weight compression: {ratio:.2f}x")
+        self.assertGreater(ratio, 3.5)
+
+        # Recursive converter replaces Linears in a module.
+        mlp = nn.Sequential(nn.Linear(64, 128), nn.ReLU(), nn.Linear(128, 64))
+        n = quantize_linears_(mlp)
+        self.assertEqual(n, 2)
+        self.assertIsInstance(mlp[0], FP8Linear)
+
+    def test_block_sparse_attention_exact_vs_masked_dense(self):
+        """Block-sparse attention equals dense attention with the same block mask."""
+        from boltz.model.layers.block_sparse import (
+            block_sparse_attention, dense_block_masked_attention,
+        )
+
+        torch.manual_seed(0)
+        B, H, d, bs, nb = 2, 4, 16, 8, 5
+        N = bs * nb
+        q, k, v = (torch.randn(B, H, N, d) for _ in range(3))
+        bias = torch.randn(B, H, N, N)
+        key_mask = torch.ones(B, N)
+        key_mask[:, -3:] = 0
+
+        # Random active blocks with a True diagonal (every query block has a key).
+        block_mask = torch.rand(nb, nb) > 0.5
+        block_mask = block_mask | torch.eye(nb, dtype=torch.bool)
+
+        sparse = block_sparse_attention(q, k, v, block_mask, bias, key_mask, block_size=bs)
+        dense = dense_block_masked_attention(q, k, v, block_mask, bias, key_mask, block_size=bs)
+        err = (sparse - dense).abs().max().item()
+        active = int(block_mask.sum().item())
+        print(f"Block-sparse vs masked-dense error: {err:.2e} "
+              f"(active {active}/{nb*nb} block pairs)")
+        self.assertLess(err, 1e-4)
 
 
 if __name__ == "__main__":
