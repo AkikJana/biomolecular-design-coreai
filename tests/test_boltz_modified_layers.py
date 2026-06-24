@@ -417,6 +417,68 @@ class TestBoltzModifiedLayers(unittest.TestCase):
             loaded = load_cfg_student(ckpt, token_s=32)
             self.assertEqual(loaded.hidden_dim, 64)
 
+    def test_boltz_reward_matches_real_formula(self):
+        """Reward uses Boltz's confidence formula and penalizes clashes."""
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from boltz_reward import (
+            boltz_confidence_score, compute_design_reward, BoltzRewardModel,
+        )
+
+        out = {
+            "complex_plddt": torch.tensor([0.8]),
+            "iptm": torch.tensor([0.6]),
+            "ptm": torch.tensor([0.5]),
+        }
+        # Boltz: (4*complex_plddt + iptm)/5 = (3.2 + 0.6)/5 = 0.76
+        self.assertAlmostEqual(boltz_confidence_score(out).item(), 0.76, places=5)
+
+        # iptm all-zero -> falls back to ptm.
+        out0 = {"complex_plddt": torch.tensor([0.8]),
+                "iptm": torch.tensor([0.0]), "ptm": torch.tensor([0.5])}
+        self.assertAlmostEqual(boltz_confidence_score(out0).item(), (3.2 + 0.5) / 5, places=5)
+
+        # Clashes reduce reward: coincident atoms vs well-spaced.
+        spaced = (torch.arange(10, dtype=torch.float32).unsqueeze(-1)
+                  * torch.tensor([3.8, 0.0, 0.0])).unsqueeze(0)
+        clashed = torch.zeros(1, 10, 3)
+        base = dict(out)
+        r_ok = compute_design_reward({**base, "sample_atom_coords": spaced}, clash_weight=1.0)
+        r_clash = compute_design_reward({**base, "sample_atom_coords": clashed}, clash_weight=1.0)
+        self.assertGreater(r_ok.item(), r_clash.item())
+
+        # BoltzRewardModel wraps a predict_fn and scores a list of sequences.
+        rm = BoltzRewardModel(predict_fn=lambda s: {**base, "sample_atom_coords": spaced},
+                              clash_weight=0.0)
+        scored = rm.score(["AAAA", "CCCC"])
+        self.assertEqual(tuple(scored.shape), (2,))
+
+    def test_grpo_codesign_improves_reward(self):
+        """The GRPO co-design loop increases mean Boltz reward over iterations."""
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from agentic_design_loop import run_codesign_loop
+        from boltz_reward import SyntheticSequenceBoltzReward
+
+        torch.manual_seed(0)
+        wt = "MATEVLADIGSAKLR"
+        interface = [2, 4, 8, 12]
+        target = list(wt)
+        for p, aa in zip(interface, "WYFM"):
+            target[p] = aa
+        rm = SyntheticSequenceBoltzReward("".join(target), interface, clash_weight=1.0)
+
+        hist = run_codesign_loop(
+            reward_model=rm, wt_sequence=wt, interface_positions=interface,
+            iterations=18, group_size=8, device="cpu", verbose=False,
+        )
+        first = sum(h["mean_reward"] for h in hist[:3]) / 3
+        last = sum(h["mean_reward"] for h in hist[-3:]) / 3
+        print(f"GRPO co-design mean reward: {first:.3f} -> {last:.3f}")
+        self.assertGreater(last, first + 0.05)
+
 
 if __name__ == "__main__":
     unittest.main()
