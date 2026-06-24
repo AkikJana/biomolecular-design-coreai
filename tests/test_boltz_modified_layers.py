@@ -136,6 +136,37 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         print(f"OPM S-contraction gradient equivalence: {grad_err:.2e}")
         self.assertLess(grad_err, 1e-4)
 
+    def test_pairformer_fold_cp_end_to_end(self):
+        """Fold-CP threaded through the live PairformerLayer must match the dense
+        path, including a token count NOT divisible by num_devices (padding)."""
+        from boltz.model.layers.pairformer import PairformerLayer
+
+        torch.manual_seed(0)
+        token_s, token_z, num_heads = 64, 32, 4
+        # N = 30 is NOT a multiple of num_devices=4 -> exercises the pad/unpad path.
+        B, N = 1, 30
+        s = torch.randn(B, N, token_s)
+        z = torch.randn(B, N, N, token_z)
+        mask = torch.ones(B, N)
+        pair_mask = torch.ones(B, N, N)
+
+        # v2=True so attention is the dense AttentionPairBiasV2 in both layers;
+        # the only difference is the Fold-CP triangular multiplication.
+        dense = PairformerLayer(token_s, token_z, num_heads, dropout=0.0, v2=True).eval()
+        fold = PairformerLayer(
+            token_s, token_z, num_heads, dropout=0.0, v2=True,
+            use_fold_cp=True, num_devices=4,
+        ).eval()
+        fold.load_state_dict(dense.state_dict())
+
+        with torch.no_grad():
+            s_d, z_d = dense(s, z, mask, pair_mask)
+            s_f, z_f = fold(s, z, mask, pair_mask)
+
+        err = max((s_d - s_f).abs().max().item(), (z_d - z_f).abs().max().item())
+        print(f"Pairformer Fold-CP end-to-end equivalence (N=30, padded): {err:.2e}")
+        self.assertLess(err, 1e-4)
+
 
 if __name__ == "__main__":
     unittest.main()
