@@ -78,3 +78,35 @@ class CoordinateRefiner(nn.Module):
 
         delta = self.delta(h)  # (B', M, 3), zero at init
         return atom_coords + delta
+
+
+def load_coordinate_refiner(
+    checkpoint_path: str, token_s: int, **overrides
+) -> "CoordinateRefiner":
+    """Build a CoordinateRefiner and load trained weights from a checkpoint.
+
+    Accepts either a dict saved as ``{"state_dict": ..., "config": {...}}`` (the
+    format written by ``src/train_coordinate_refiner.py``) or a raw state_dict.
+    The checkpoint ``config`` defines the architecture (hidden_dim, num_layers);
+    ``token_s`` must match the surrounding model and any ``overrides`` win last.
+    """
+    ckpt = torch.load(checkpoint_path, map_location="cpu")
+
+    if isinstance(ckpt, dict) and "state_dict" in ckpt:
+        state_dict = ckpt["state_dict"]
+        config = dict(ckpt.get("config", {}))
+    else:
+        state_dict = ckpt
+        config = {}
+
+    ckpt_token_s = config.pop("token_s", token_s)
+    if ckpt_token_s != token_s:
+        raise ValueError(
+            f"CoordinateRefiner checkpoint token_s ({ckpt_token_s}) does not match "
+            f"model token_s ({token_s})."
+        )
+    config.update(overrides)
+
+    refiner = CoordinateRefiner(token_s=token_s, **config)
+    refiner.load_state_dict(state_dict, strict=True)
+    return refiner

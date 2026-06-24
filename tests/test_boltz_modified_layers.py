@@ -252,6 +252,48 @@ class TestBoltzModifiedLayers(unittest.TestCase):
             # Refinement should meaningfully beat the coarse (identity) baseline.
             self.assertLess(hist["final_rmsd"], 0.8 * hist["initial_rmsd"])
 
+    def test_refiner_checkpoint_load_roundtrip(self):
+        """train -> save -> load_coordinate_refiner reproduces the trained model."""
+        import tempfile
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from train_coordinate_refiner import train_refiner
+        from boltz.model.layers.coordinate_refiner import (
+            CoordinateRefiner, load_coordinate_refiner,
+        )
+
+        token_s = 32
+        with tempfile.TemporaryDirectory() as d:
+            ckpt = os.path.join(d, "refiner.pt")
+            train_refiner(
+                epochs=10, batch_size=8, num_examples=16, num_atoms=18,
+                num_tokens=5, token_s=token_s, hidden_dim=48, num_layers=2,
+                lr=1e-3, device="cpu", ckpt_path=ckpt, verbose=False,
+            )
+
+            # Loader rebuilds the architecture from the checkpoint config.
+            loaded = load_coordinate_refiner(ckpt, token_s=token_s).eval()
+            self.assertEqual(loaded.hidden_dim, 48)
+
+            # Loaded weights reproduce the saved model's output (not identity).
+            torch.manual_seed(7)
+            seq = torch.randn(1, 5, token_s)
+            coords = torch.randn(1, 18, 3)
+            ref = CoordinateRefiner(token_s=token_s, hidden_dim=48, num_layers=2)
+            sd = torch.load(ckpt, map_location="cpu")["state_dict"]
+            ref.load_state_dict(sd)
+            ref.eval()
+            with torch.no_grad():
+                out_loaded = loaded(seq, coords)
+                out_ref = ref(seq, coords)
+            self.assertLess((out_loaded - out_ref).abs().max().item(), 1e-6)
+            self.assertGreater((out_loaded - coords).abs().max().item(), 1e-4)
+
+            # token_s mismatch must raise.
+            with self.assertRaises(ValueError):
+                load_coordinate_refiner(ckpt, token_s=token_s + 1)
+
 
 if __name__ == "__main__":
     unittest.main()

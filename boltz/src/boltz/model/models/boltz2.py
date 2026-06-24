@@ -13,7 +13,10 @@ from boltz.data import const
 from boltz.data.mol import (
     minimum_lddt_symmetry_coords,
 )
-from boltz.model.layers.coordinate_refiner import CoordinateRefiner
+from boltz.model.layers.coordinate_refiner import (
+    CoordinateRefiner,
+    load_coordinate_refiner,
+)
 from boltz.model.layers.pairformer import PairformerModule
 from boltz.model.loss.bfactor import bfactor_loss_fn
 from boltz.model.loss.confidencev2 import (
@@ -108,6 +111,7 @@ class Boltz2(LightningModule):
         use_kernels: bool = False,
         use_coordinate_refiner: bool = False,
         coordinate_refiner_args: Optional[dict] = None,
+        coordinate_refiner_checkpoint: Optional[str] = None,
     ) -> None:
         super().__init__()
         self.save_hyperparameters(ignore=["validators"])
@@ -290,9 +294,19 @@ class Boltz2(LightningModule):
         # Optional post-diffusion atom coordinate refiner (default off).
         self.use_coordinate_refiner = use_coordinate_refiner
         if use_coordinate_refiner:
-            self.coordinate_refiner = CoordinateRefiner(
-                token_s=token_s, **(coordinate_refiner_args or {})
-            )
+            if coordinate_refiner_checkpoint is not None:
+                # Load trained weights; the checkpoint config defines the
+                # architecture (token_s must match this model).
+                self.coordinate_refiner = load_coordinate_refiner(
+                    coordinate_refiner_checkpoint,
+                    token_s=token_s,
+                    **(coordinate_refiner_args or {}),
+                )
+            else:
+                # Untrained (zero-init identity) -> safe no-op until trained.
+                self.coordinate_refiner = CoordinateRefiner(
+                    token_s=token_s, **(coordinate_refiner_args or {})
+                )
         else:
             self.coordinate_refiner = None
 
