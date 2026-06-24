@@ -27,6 +27,12 @@ We will optimize the model along three axes:
 | 4 | CFG Distillation Integration | Integrate distilled single-pass student vector field into flow-matching step | M2 | ✅ DONE |
 | 5 | Neural Coordinate Refinement | Hook up ResNetCoordinateRefiner to correct coordinates post-diffusion | M3, M4 | ✅ DONE |
 | 6 | E2E Integration and Adversarial | Run the E2E verification, generate Tier 5 adversarial cases, pass Forensic Audit | M1, M5 | ✅ DONE |
+| M1 | Exploration & Design | Perform design analysis and architecture planning | None | ✅ DONE |
+| M2 | Core GRPO | Implement Group Relative Policy Optimization training steps | M1 | 🔄 IN_PROGRESS |
+| M3 | Search-Guided Inference | Implement search-guided speculative sampler with lookahead rollouts | M2 | 🔄 IN_PROGRESS |
+| M4 | Closed-Loop Agentic Co-Design | Link sequence design policy, structure sampler and biophysical feedback | M2, M3 | 🔄 IN_PROGRESS |
+| M5 | Verification & Testing | Test GRPO advantage calculation, search-guided trajectory, and loop convergence | M4 | 🔄 IN_PROGRESS |
+| M6 | Forensic Audit | Validate execution and pass the forensic auditor requirements | M5 | 🔄 IN_PROGRESS |
 
 ## Interface Contracts
 ### `LowRankPairUpdater` Integration

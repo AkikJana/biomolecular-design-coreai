@@ -237,6 +237,47 @@ def dpo_loss(policy_chosen_logps, policy_rejected_logps, ref_chosen_logps, ref_r
     loss = -F.logsigmoid(logits)
     return loss.mean()
 
+
+def grpo_loss(policy_logps, old_logps, rewards, beta=0.1, clip_eps=0.2):
+    """
+    DeepSeek-style GRPO training loss.
+    
+    Parameters:
+      - policy_logps: torch.Tensor of shape (G,) - active policy sequence log-probabilities
+      - old_logps: torch.Tensor of shape (G,) - detached reference/old policy log-probabilities
+      - rewards: torch.Tensor of shape (G,) - biophysical rewards
+      - beta: float - KL penalty coefficient
+      - clip_eps: float - PPO clip epsilon
+      
+    Returns:
+      - loss: scalar tensor
+      - kl: scalar tensor (mean KL divergence)
+      - advantages: torch.Tensor of shape (G,) - standardized advantages
+    """
+    # Advantage calculation: standardize rewards across group
+    mean_r = rewards.mean()
+    std_r = rewards.std(unbiased=False) + 1e-8
+    advantages = (rewards - mean_r) / std_r
+    
+    # Policy ratio calculation
+    ratios = torch.exp(policy_logps - old_logps)
+    
+    # Clipped surrogate loss
+    surr1 = ratios * advantages
+    surr2 = torch.clamp(ratios, 1.0 - clip_eps, 1.0 + clip_eps) * advantages
+    clip_loss = torch.min(surr1, surr2)
+    
+    # Reference-free KL divergence penalty:
+    # KL = exp(old_logps - policy_logps) - (old_logps - policy_logps) - 1
+    log_ratio = old_logps - policy_logps
+    kl = torch.exp(log_ratio) - log_ratio - 1
+    
+    # Total loss (negative to maximize surrogate objective)
+    loss = -(clip_loss - beta * kl).mean()
+    
+    return loss, kl.mean(), advantages
+
+
 # ==========================================
 # 6. Memory and VRAM Monitoring
 # ==========================================
@@ -333,7 +374,10 @@ def train_preference_alignment(
     beta=2.0,
     gamma=0.5,
     lr=1e-3,
-    use_simpo=True
+    use_simpo=True,
+    use_grpo=False,
+    grpo_beta=0.1,
+    grpo_clip_eps=0.2
 ):
     print("==================================================")
     print("Initializing Preference Alignment Training Pipeline")
@@ -394,7 +438,8 @@ def train_preference_alignment(
     cpu_base, gpu_base, dev_name = get_memory_usage()
     print(f"Baseline System Memory: CPU {cpu_base:.2f} MB | {dev_name.upper()} VRAM {gpu_base:.2f} MB")
     
-    print(f"\n[Step 4] Starting training loop using {'SimPO' if use_simpo else 'DPO'} loss...")
+    loss_name = "GRPO" if use_grpo else ("SimPO" if use_simpo else "DPO")
+    print(f"\n[Step 4] Starting training loop using {loss_name} loss...")
     
     metrics = []
     
@@ -414,7 +459,7 @@ def train_preference_alignment(
             
             # Policy forward pass
             policy_logits = policy_model(tokens) # (M, L, vocab_size)
-            policy_logps = get_sequence_logps(policy_logits, tokens, length_normalize=use_simpo) # (M,)
+            policy_logps = get_sequence_logps(policy_logits, tokens, length_normalize=(use_simpo or use_grpo)) # (M,)
             
             # Identify the single best candidate (highest binding affinity label)
             best_idx = torch.argmax(affinities).item()
@@ -424,21 +469,42 @@ def train_preference_alignment(
             rejected_indices = [i for i in range(tokens.shape[0]) if i != best_idx]
             rejected_logps = policy_logps[rejected_indices]
             
-            # Compute loss
-            if use_simpo:
-                # SimPO loss
-                loss = simpo_loss(chosen_logps, rejected_logps, beta=beta, gamma=gamma)
-            else:
-                # Standard DPO loss
-                ref_logps = get_sequence_logps(ref_logits, tokens, length_normalize=False)
-                ref_chosen_logps = ref_logps[best_idx].expand(tokens.shape[0] - 1)
-                ref_rejected_logps = ref_logps[rejected_indices]
-                loss = dpo_loss(chosen_logps, rejected_logps, ref_chosen_logps, ref_rejected_logps, beta=0.1)
+            # Compute loss and optimize
+            if use_grpo:
+                old_logps = policy_logps.detach()
+                for inner_step in range(3):
+                    if inner_step > 0:
+                        policy_logits = policy_model(tokens)
+                        policy_logps = get_sequence_logps(policy_logits, tokens, length_normalize=True)
+                    loss, kl_mean, advantages = grpo_loss(
+                        policy_logps=policy_logps,
+                        old_logps=old_logps,
+                        rewards=affinities,
+                        beta=grpo_beta,
+                        clip_eps=grpo_clip_eps
+                    )
+                    optimizer.zero_grad()
+                    loss.backward()
+                    optimizer.step()
                 
-            # Optimize
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+                # Recompute chosen_logps and rejected_logps for metrics
+                chosen_logps = policy_logps[best_idx].expand(tokens.shape[0] - 1)
+                rejected_logps = policy_logps[rejected_indices]
+            else:
+                if use_simpo:
+                    # SimPO loss
+                    loss = simpo_loss(chosen_logps, rejected_logps, beta=beta, gamma=gamma)
+                else:
+                    # Standard DPO loss
+                    ref_logps = get_sequence_logps(ref_logits, tokens, length_normalize=False)
+                    ref_chosen_logps = ref_logps[best_idx].expand(tokens.shape[0] - 1)
+                    ref_rejected_logps = ref_logps[rejected_indices]
+                    loss = dpo_loss(chosen_logps, rejected_logps, ref_chosen_logps, ref_rejected_logps, beta=0.1)
+                
+                # Optimize
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
             
             # Record metrics
             epoch_loss += loss.item()
@@ -476,4 +542,7 @@ def train_preference_alignment(
     return metrics
 
 if __name__ == "__main__":
-    train_preference_alignment(epochs=5, max_union_size=4, use_simpo=True)
+    import sys
+    use_grpo = "--grpo" in sys.argv
+    train_preference_alignment(epochs=5, max_union_size=4, use_simpo=not use_grpo, use_grpo=use_grpo)
+

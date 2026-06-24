@@ -228,12 +228,18 @@ class SpeculativeFlowMatchingSampler:
                 
                 if mean_diff <= self.tolerance:
                     # Accept step: update state using the target vector field (semi-correction)
-                    curr_verified_x = x_k + v_target * dt
+                    curr_verified_x = curr_verified_x + v_target * dt
+                    if self.enable_biophysical:
+                        curr_verified_x = self.project_manifold(curr_verified_x)
+                        curr_verified_x = self.avoid_steric_clash(curr_verified_x)
                     accepted_k += 1
                     total_drafts_accepted += 1
                 else:
                     # Reject step: correct the current step using the target model's trajectory
-                    curr_verified_x = x_k + v_target * dt
+                    curr_verified_x = curr_verified_x + v_target * dt
+                    if self.enable_biophysical:
+                        curr_verified_x = self.project_manifold(curr_verified_x)
+                        curr_verified_x = self.avoid_steric_clash(curr_verified_x)
                     break
             
             # Move simulation time forward
@@ -266,3 +272,200 @@ class SpeculativeFlowMatchingSampler:
         }
         
         return x, stats
+
+
+class SearchGuidedSpeculativeSampler:
+    """
+    Search-guided speculative sampler performing lookahead rollouts
+    to bias trajectory generation toward high biophysical rewards.
+    """
+    def __init__(
+        self,
+        draft_vf_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
+        target_vf_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
+        step_size: float = 0.02,
+        speculative_lookahead: int = 4,
+        tolerance: float = 0.05,
+        num_candidates: int = 4,
+        perturb_scale: float = 0.05
+    ):
+        self.draft_vf_fn = draft_vf_fn
+        self.target_vf_fn = target_vf_fn
+        self.step_size = step_size
+        self.K = speculative_lookahead
+        self.tolerance = tolerance
+        self.C = num_candidates
+        self.perturb_scale = perturb_scale
+
+    def project_manifold(self, x: torch.Tensor) -> torch.Tensor:
+        """Projects coordinate state onto hard CA-CA bond length constraints (3.80 Angstroms)."""
+        if x.shape[1] <= 1:
+            return x
+        x_proj = x.clone()
+        target_dist = 3.80
+        for _ in range(3):
+            for i in range(x.shape[1] - 1):
+                p1 = x_proj[:, i]
+                p2 = x_proj[:, i + 1]
+                diff = p2 - p1
+                dist = torch.norm(diff, p=2, dim=-1, keepdim=True) + 1e-8
+                delta = (dist - target_dist) * 0.5 * (diff / dist)
+                x_proj[:, i] = x_proj[:, i] + delta
+                x_proj[:, i + 1] = x_proj[:, i + 1] - delta
+        return x_proj
+
+    def avoid_steric_clash(self, x: torch.Tensor, threshold: float = 2.0, lr: float = 0.1) -> torch.Tensor:
+        """Applies a soft repulsive force to coordinates to prevent steric clashes."""
+        B, N, D = x.shape
+        if N <= 2:
+            return x
+        x_proj = x.clone()
+        diff = x_proj.unsqueeze(2) - x_proj.unsqueeze(1) # [B, N, N, 3]
+        dist = torch.norm(diff, p=2, dim=-1) + 1e-8 # [B, N, N]
+        mask = torch.eye(N, device=x.device).bool()
+        mask |= torch.diag(torch.ones(N - 1, device=x.device), 1).bool()
+        mask |= torch.diag(torch.ones(N - 1, device=x.device), -1).bool()
+        clash_mask = (dist < threshold) & (~mask.unsqueeze(0))
+        if not clash_mask.any():
+            return x_proj
+        repulsion = (threshold - dist) / threshold
+        repulsion[~clash_mask] = 0.0
+        force = repulsion.unsqueeze(-1) * (diff / dist.unsqueeze(-1))
+        total_force = force.sum(dim=2)
+        x_proj = x_proj + lr * total_force
+        return x_proj
+
+    def compute_biophysical_reward(self, x: torch.Tensor, pocket_coords: torch.Tensor) -> torch.Tensor:
+        """
+        x: [B, N, 3] - Binder coordinates
+        pocket_coords: [P, 3] or [B, P, 3] - Target pocket coordinates
+        """
+        B, N, _ = x.shape
+        
+        # 1. Pocket Affinity Score (higher distance-based contact is better)
+        if len(pocket_coords.shape) == 2:
+            p_coords = pocket_coords.unsqueeze(0) # [1, P, 3]
+        else:
+            p_coords = pocket_coords # [B, P, 3]
+            
+        dist_matrix = torch.cdist(x, p_coords) 
+        pocket_reward = torch.exp(-dist_matrix / 5.0).sum(dim=(1, 2)) # [B]
+
+        # 2. Steric Clash Penalty
+        diff = x.unsqueeze(2) - x.unsqueeze(1) # [B, N, N, 3]
+        dist = torch.norm(diff, p=2, dim=-1) + 1e-8 # [B, N, N]
+        # Exclude diagonal and adjacent
+        mask = torch.eye(N, device=x.device).bool()
+        mask |= torch.diag(torch.ones(N - 1, device=x.device), 1).bool()
+        mask |= torch.diag(torch.ones(N - 1, device=x.device), -1).bool()
+        clash_vals = torch.clamp(2.0 - dist, min=0.0)
+        clash_vals[..., mask] = 0.0
+        clash_penalty = -10.0 * (clash_vals ** 2).sum(dim=(1, 2)) # [B]
+
+        return pocket_reward + clash_penalty
+
+    def run_draft_lookahead(self, x_start: torch.Tensor, t_start: float, pocket_coords: torch.Tensor, extra_args: dict) -> torch.Tensor:
+        """
+        Runs lookahead rollout for a batch of candidate states to t=1.0 using draft model.
+        x_start: [C, N, 3] or [B * C, N, 3] - Candidate states
+        t_start: float
+        """
+        x_roll = x_start.clone()
+        t_curr = t_start
+        dt = self.step_size
+        device = x_start.device
+        dtype = x_start.dtype
+
+        while t_curr < 1.0 - 1e-5:
+            t_tensor = torch.full((x_roll.shape[0],), t_curr, device=device, dtype=dtype)
+            v_draft = self.draft_vf_fn(x_roll, t_tensor, **extra_args)
+            x_roll = x_roll + v_draft * dt
+            
+            x_roll = self.project_manifold(x_roll)
+            x_roll = self.avoid_steric_clash(x_roll)
+            t_curr += dt
+
+        # Evaluate final structure reward
+        rewards = self.compute_biophysical_reward(x_roll, pocket_coords)
+        return rewards
+
+    @torch.no_grad()
+    def sample(self, x_init: torch.Tensor, pocket_coords: torch.Tensor, extra_args: dict = {}) -> Tuple[torch.Tensor, dict]:
+        device = x_init.device
+        dtype = x_init.dtype
+        x = x_init.clone()
+        t = 0.0
+        dt = self.step_size
+        
+        B, N, _ = x.shape
+        
+        # Track statistics
+        accepted_steps = 0
+        total_steps = 0
+
+        while t < 1.0 - 1e-5:
+            t_tensor = torch.full((B,), t, device=device, dtype=dtype)
+            v_base = self.draft_vf_fn(x, t_tensor, **extra_args) # [B, N, 3]
+            
+            # Create candidates: [B * C, N, 3]
+            v_base_expanded = v_base.unsqueeze(1).expand(B, self.C, N, 3)
+            candidates = x.unsqueeze(1) + v_base_expanded * dt
+            perturbations = torch.randn_like(candidates) * self.perturb_scale * dt
+            candidates = candidates + perturbations
+            candidates = candidates.view(B * self.C, N, 3)
+            
+            candidates = self.project_manifold(candidates)
+            candidates = self.avoid_steric_clash(candidates)
+
+            # 2. Run draft-model lookahead rollouts to t=1.0
+            # Repeat pocket_coords and extra_args for the Candidates batch size
+            if len(pocket_coords.shape) == 3:
+                p_coords = pocket_coords.repeat_interleave(self.C, dim=0) # [B * C, P, 3]
+            else:
+                p_coords = pocket_coords # [P, 3]
+                
+            batched_args = {}
+            for k, v in extra_args.items():
+                if isinstance(v, torch.Tensor):
+                    batched_args[k] = torch.repeat_interleave(v, self.C, dim=0)
+                else:
+                    batched_args[k] = v
+
+            rewards = self.run_draft_lookahead(candidates, t + dt, p_coords, batched_args) # [B * C]
+            rewards_reshaped = rewards.view(B, self.C)
+
+            # 3. Select best candidate for each batch element
+            best_idx = torch.argmax(rewards_reshaped, dim=-1) # [B]
+            best_cand = candidates.view(B, self.C, N, 3)[torch.arange(B), best_idx] # [B, N, 3]
+
+            # 4. Speculative step verification
+            v_target = self.target_vf_fn(x, t_tensor, **extra_args) # [B, N, 3]
+            x_target_step = x + v_target * dt
+            x_target_step = self.project_manifold(x_target_step)
+            x_target_step = self.avoid_steric_clash(x_target_step)
+
+            # Check deviation between selected draft step and target model step
+            diff = torch.norm(best_cand - x_target_step, p=2, dim=-1) / (torch.norm(x_target_step, p=2, dim=-1) + 1e-8)
+            diff_mean = diff.mean(dim=-1) # [B]
+            
+            # Update state per batch element based on tolerance
+            new_x = x.clone()
+            for b in range(B):
+                if diff_mean[b].item() <= self.tolerance:
+                    new_x[b] = best_cand[b]
+                    accepted_steps += 1
+                else:
+                    new_x[b] = x_target_step[b]
+            
+            x = new_x
+            t += dt
+            total_steps += B
+
+        stats = {
+            "acceptance_rate": accepted_steps / total_steps if total_steps > 0 else 1.0,
+            "total_steps": total_steps,
+            "accepted_steps": accepted_steps
+        }
+        
+        return x, stats
+
