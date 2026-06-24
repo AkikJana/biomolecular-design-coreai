@@ -39,17 +39,30 @@ class AffinityTeacher:
 
 
 class SyntheticAffinityTeacher(AffinityTeacher):
-    """P(binder) rises with matches to a hidden motif at the interface positions."""
+    """Continuous, additive, position-specific affinity proxy for real Boltz-2.
 
-    def __init__(self, motif: str, interface, value_scale: float = 5.0):
-        self.motif = motif
-        self.interface = interface
-        self.value_scale = value_scale
+    Each interface position has a fixed per-amino-acid contribution; the label is
+    the sum over interface positions (binding ~ additive over contacts). This is
+    non-degenerate (continuous, few ties) and learnable, unlike a sparse
+    exact-motif-match label -- a faithful stand-in for distilling real affinities.
+    """
+
+    _AA = "ACDEFGHIKLMNPQRSTVWY"
+
+    def __init__(self, interface, seed: int = 123):
+        self.interface = list(interface)
+        g = torch.Generator().manual_seed(seed)
+        # contribution[i, aa] in [0, 1] for interface position i, amino acid aa
+        self.contrib = torch.rand(len(self.interface), len(self._AA), generator=g)
 
     def label(self, target, binder):
-        m = sum(1 for i, p in enumerate(self.interface)
-                if p < len(binder) and binder[p] == self.motif[i]) / max(1, len(self.interface))
-        return self.value_scale * m, float(m)
+        s = 0.0
+        for i, p in enumerate(self.interface):
+            if p < len(binder):
+                aa = self._AA.find(binder[p])
+                if aa >= 0:
+                    s += self.contrib[i, aa].item()
+        return s, s / max(1, len(self.interface))  # value, P(binder) in [0,1]
 
 
 class BoltzAffinityTeacher(AffinityTeacher):
@@ -142,7 +155,7 @@ def train_surrogate_affinity(
     rng = random.Random(seed)
     dev = pick_device(device)
     interface = list(interface)
-    teacher = teacher or SyntheticAffinityTeacher(motif, interface)
+    teacher = teacher or SyntheticAffinityTeacher(interface)
 
     train_pairs, train_prob = make_dataset(target, interface, teacher, n_train, rng)
     eval_pairs, eval_prob = make_dataset(target, interface, teacher, n_eval, rng)

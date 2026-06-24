@@ -14,6 +14,7 @@ Untrained it is meaningless; train it by distilling Boltz-2 affinities
 (predict_fn from boltz2_predict) into the affinity head.
 """
 
+import math
 from typing import Dict, List, Optional, Sequence
 
 import torch
@@ -45,6 +46,11 @@ class AffinitySurrogate(nn.Module):
         self.out_proj = nn.Linear(embed_dim, embed_dim, bias=False)
 
         self.coord_head = nn.Linear(embed_dim, 3)
+        # Per-position affinity contributions, summed over the binder. Binding is
+        # ~additive over contacts, so summing position-wise terms (each aware of
+        # its residue + position via the PE in embed_seq) is the right inductive
+        # bias -- it lets the head represent "match at pos 2 + match at pos 4 + ..."
+        # which a single pooled vector cannot.
         self.affinity_head = nn.Sequential(
             nn.Linear(embed_dim, hidden), nn.SiLU(), nn.Linear(hidden, 1)
         )
@@ -53,9 +59,24 @@ class AffinitySurrogate(nn.Module):
         b, l, _ = x.shape
         return x.view(b, l, self.num_heads, self.head_dim).permute(0, 2, 1, 3)
 
+    def _positional_encoding(self, length: int, device) -> torch.Tensor:
+        pe = torch.zeros(length, self.embed_dim, device=device)
+        pos = torch.arange(length, device=device, dtype=torch.float32).unsqueeze(1)
+        div = torch.exp(
+            torch.arange(0, self.embed_dim, 2, device=device, dtype=torch.float32)
+            * (-math.log(10000.0) / self.embed_dim)
+        )
+        pe[:, 0::2] = torch.sin(pos * div)
+        pe[:, 1::2] = torch.cos(pos * div)
+        return pe.unsqueeze(0)  # (1, L, D)
+
     def embed_seq(self, seq: str) -> torch.Tensor:
-        idx = torch.tensor([self.alphabet.find(c) if c in self.alphabet else 0 for c in seq])
-        return self.embed(idx).unsqueeze(0)  # (1, L, D)
+        idx = torch.tensor(
+            [self.alphabet.find(c) if c in self.alphabet else 0 for c in seq],
+            device=self.embed.weight.device,
+        )
+        emb = self.embed(idx).unsqueeze(0)  # (1, L, D)
+        return emb + self._positional_encoding(emb.shape[1], emb.device)
 
     def target_kv(self, target_seq: str):
         """Precompute (and cache) receptor key/value once per target."""
@@ -68,10 +89,15 @@ class AffinitySurrogate(nn.Module):
         scale = 1.0 / (self.head_dim ** 0.5)
         attn = (q @ target_k.transpose(-2, -1) * scale).softmax(dim=-1)
         o = (attn @ target_v).permute(0, 2, 1, 3).reshape(1, -1, self.embed_dim)
-        o = self.out_proj(o)                                               # (1, Lb, D)
+        # Residual: keep the binder's own (PE-aware) features so the affinity head
+        # sees binder residue identity + position directly, not only the
+        # target-derived cross-attention output.
+        o = self.out_proj(o) + h                                           # (1, Lb, D)
 
         coords = self.coord_head(o)                                        # (1, Lb, 3)
-        raw = self.affinity_head(o.mean(dim=1))                            # (1, 1)
+
+        # Sum of per-position affinity contributions (additive over contacts).
+        raw = self.affinity_head(o).sum(dim=1)                             # (1, 1)
         return {
             "sample_atom_coords": coords,
             "affinity_pred_value": raw.reshape(-1),
