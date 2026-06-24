@@ -393,6 +393,30 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         import boltz.model.models.boltz2 as b2
         self.assertTrue(hasattr(b2, "CFGDistilledStudent"))
 
+    def test_cfg_distillation_entrypoint_reduces_vfield_error(self):
+        """The distillation entrypoint trains the student to match the teacher's
+        guided field and writes a loadable checkpoint."""
+        import tempfile
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from train_cfg_student import train_cfg_student
+        from boltz.model.layers.cfg_student import load_cfg_student
+
+        with tempfile.TemporaryDirectory() as d:
+            ckpt = os.path.join(d, "student.pt")
+            hist = train_cfg_student(
+                epochs=40, steps_per_epoch=20, batch_size=16, num_atoms=20,
+                num_tokens=5, token_s=32, hidden_dim=64, num_layers=2,
+                lr=1e-3, device="cpu", ckpt_path=ckpt, verbose=False,
+            )
+            print(f"CFG distillation vfield RMSE: {hist['initial_rmse']:.2f} -> {hist['final_rmse']:.2f}")
+            self.assertTrue(os.path.exists(ckpt))
+            self.assertLess(hist["final_rmse"], 0.5 * hist["initial_rmse"])
+            # Checkpoint loads back into a student via the boltz loader.
+            loaded = load_cfg_student(ckpt, token_s=32)
+            self.assertEqual(loaded.hidden_dim, 64)
+
 
 if __name__ == "__main__":
     unittest.main()
