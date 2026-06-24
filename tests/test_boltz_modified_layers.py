@@ -232,6 +232,26 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         import boltz.model.models.boltz2 as b2
         self.assertTrue(hasattr(b2, "CoordinateRefiner"))
 
+    def test_refiner_training_entrypoint_improves_rmsd(self):
+        """The supervised entrypoint trains the refiner and reduces aligned RMSD."""
+        import tempfile
+        sys.path.insert(
+            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+        )
+        from train_coordinate_refiner import train_refiner
+
+        with tempfile.TemporaryDirectory() as d:
+            ckpt = os.path.join(d, "refiner.pt")
+            hist = train_refiner(
+                epochs=40, batch_size=8, num_examples=24, num_atoms=20,
+                num_tokens=6, token_s=32, hidden_dim=64, num_layers=2,
+                lr=1e-3, device="cpu", ckpt_path=ckpt, verbose=False,
+            )
+            print(f"Refiner training RMSD: {hist['initial_rmsd']:.3f} -> {hist['final_rmsd']:.3f} A")
+            self.assertTrue(os.path.exists(ckpt))
+            # Refinement should meaningfully beat the coarse (identity) baseline.
+            self.assertLess(hist["final_rmsd"], 0.8 * hist["initial_rmsd"])
+
 
 if __name__ == "__main__":
     unittest.main()
