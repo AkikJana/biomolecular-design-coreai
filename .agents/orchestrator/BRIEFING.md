@@ -1,14 +1,14 @@
-# BRIEFING — 2026-06-20T21:05:30Z
+# BRIEFING — 2026-06-24T10:46:59+05:30
 
 ## Mission
-Optimize Boltz structure prediction architecture for Apple Silicon (MPS/CPU) with high accuracy and low latency/memory.
+Implement DeepSeek-style GRPO reinforcement learning, Google-style search-guided inference, and closed-loop Agentic Co-Design loop for protein binder discovery.
 
 ## 🔒 My Identity
 - Archetype: teamwork_preview_orchestrator
 - Roles: orchestrator, user_liaison, human_reporter, successor
 - Working directory: /Users/akikjana/Documents/BiomolecularDesign/.agents/orchestrator
 - Original parent: parent
-- Original parent conversation ID: f08e1261-4b32-4099-8a09-6208c792188a
+- Original parent conversation ID: eee6bb53-9b66-4b29-8705-6ac4cba09a5c
 
 ## 🔒 My Workflow
 - **Pattern**: Project Pattern
@@ -25,12 +25,15 @@ Optimize Boltz structure prediction architecture for Apple Silicon (MPS/CPU) wit
    - Escalate: report to parent (sub-orchestrators only, last resort)
 4. **Succession**: Self-succeed at 16 spawns, write handoff.md, spawn successor.
 - **Work items**:
-  1. Explore codebase and profile current performance [pending]
-  2. Implement E2E test suite [pending]
-  3. Optimize architecture modules (MPS, scaling, flow matching, coordinate refiner) [pending]
-  4. Perform validation and final verification [pending]
-- **Current phase**: 1
-- **Current focus**: Codebase exploration and baseline profiling
+  1. Explore codebase and profile current performance [completed]
+  2. Implement E2E test suite [completed]
+  3. Optimize architecture modules (MPS, scaling, flow matching, coordinate refiner) [completed]
+  4. Perform validation and final verification [completed]
+  5. Explore & design GRPO and search-guided co-design [completed]
+  6. Implement GRPO, search-guided inference, and agentic design loop [completed]
+  7. Verify and audit the implementation [in-progress]
+- **Current phase**: 3
+- **Current focus**: Remediation of GRPO degeneracy, Speculative Sampler drift, and Forensic Audit verification.
 
 ## 🔒 Key Constraints
 - Never write, modify, or create source code files directly.
@@ -39,33 +42,35 @@ Optimize Boltz structure prediction architecture for Apple Silicon (MPS/CPU) wit
 - Succession threshold: 16 spawns.
 
 ## Current Parent
-- Conversation ID: f08e1261-4b32-4099-8a09-6208c792188a
-- Updated: not yet
+- Conversation ID: eee6bb53-9b66-4b29-8705-6ac4cba09a5c
+- Updated: 2026-06-24T10:46:59+05:30
 
 ## Key Decisions Made
-- Initialized tracks and planned implementation milestones.
-- Consolidated all implementation milestones (Milestones 2, 3, 4, 5, 6) into a single worker pass to save token budget under 10% constraint.
-- Instructed E2E Testing and Implementation tracks to wrap up immediately without spawning new subagents.
+- Resumed Project Pattern from predecessor handoff.
+- Decided to spawn worker for mathematical remediations of GRPO loss and speculative sampler.
 
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
-| 5a7f6904-c805-4e8b-a661-ba134da9804d | teamwork_preview_explorer | Explore codebase and profile current performance | completed | 5a7f6904-c805-4e8b-a661-ba134da9804d |
-| 3b22170c-2360-4307-8490-eadba5d7ed35 | self | E2E Testing Track Orchestrator | in-progress | 3b22170c-2360-4307-8490-eadba5d7ed35 |
-| 223a8feb-d33c-4a64-ab9e-3a0187d84371 | self | Implementation Track Orchestrator | in-progress | 223a8feb-d33c-4a64-ab9e-3a0187d84371 |
+| 1e23a5e0-d209-435f-84d1-7ad9bd1c36b9 | teamwork_preview_worker | Code Remediation Specialist | completed | 1e23a5e0-d209-435f-84d1-7ad9bd1c36b9 |
+| 5a275c20-cd3e-4e95-8a9e-835fa2db82ae | teamwork_preview_reviewer | Reviewer Agent | completed | 5a275c20-cd3e-4e95-8a9e-835fa2db82ae |
+| 681798bb-543c-4ef1-88ec-b17da8aba171 | teamwork_preview_auditor | Forensic Auditor | completed | 681798bb-543c-4ef1-88ec-b17da8aba171 |
 
 ## Succession Status
 - Succession required: no
 - Spawn count: 3 / 16
-- Pending subagents: 3b22170c-2360-4307-8490-eadba5d7ed35, 223a8feb-d33c-4a64-ab9e-3a0187d84371
-- Predecessor: none
+- Pending subagents: none
+- Predecessor: f08e1261-4b32-4099-8a09-6208c792188a
 - Successor: not yet spawned
+- Successor generation: gen2
 
 ## Active Timers
-- Heartbeat cron: 28bb360b-18d2-4d24-ad05-eeccd08bc10c/task-17
-- Safety timer: 28bb360b-18d2-4d24-ad05-eeccd08bc10c/task-120 (E2E), 28bb360b-18d2-4d24-ad05-eeccd08bc10c/task-100 (Impl)
+- Heartbeat cron: none
+- Safety timer: none
 - On succession: kill all timers before spawning successor
 - On context truncation: run `manage_task(Action="list")` — re-create if missing
 
 ## Artifact Index
 - /Users/akikjana/Documents/BiomolecularDesign/PROJECT.md — Global project plan and milestones
+- /Users/akikjana/Documents/BiomolecularDesign/.agents/orchestrator/plan.md — Specific milestones for the RL and co-design loop requirements
+- /Users/akikjana/Documents/BiomolecularDesign/.agents/orchestrator/progress.md — Progress tracking file

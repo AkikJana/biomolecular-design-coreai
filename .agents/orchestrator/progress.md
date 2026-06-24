@@ -1,13 +1,26 @@
 ## Current Status
-Last visited: 2026-06-20T21:30:00+05:30
+Last visited: 2026-06-24T11:10:00+05:30
 - [x] Investigate codebase and baseline performance (Exploration)
 - [x] Define project milestones and write PROJECT.md
-- [/] Initialize E2E test track (wrapping up under subagent 3b22170c-2360-4307-8490-eadba5d7ed35)
-- [/] Implement optimizations (consolidating Milestones 2-6 under subagent 223a8feb-d33c-4a64-ab9e-3a0187d84371)
-- [ ] Verify using E2E test suite and Forensic Auditor
+- [x] Initialize E2E test track
+- [x] Implement initial optimizations (Milestones 2 & 3: MPS Compatibility, Low-Rank Pair Updates)
+- [x] Integrate CFG Distillation (M4) and Neural Coordinate Refiner (M5)
+- [x] Resolve E2E test suite integrity violations via Lightweight PyTorch Predictor (Remediation)
+- [x] Pass E2E Verification & Forensic Integrity Audit with CLEAN verdict (M6 Complete)
+- [x] M1: Explore & Design GRPO / Search-guided speculative inference / Closed-loop agentic co-design loop
+- [x] M2: Core GRPO implementation
+- [x] M3: Search-guided inference implementation
+- [x] M4: Agentic Co-design Loop implementation
+- [x] M5: Verification & Testing
+- [x] M6: Forensic Audit [CLEAN VERDICT OBTAINED]
+- [x] M7: Remediation of GRPO Degeneracy and Speculative Sampler Drift [COMPLETED]
 
 ## Iteration Status
-Current iteration: 1 / 32
+Current iteration: 2 / 32
 
 ## Retrospective Notes
-None yet.
+- Successfully identified and resolved two critical mathematical and logic violations in PyTorch calculations:
+  1. GRPO loss degeneracy where policy ratios and KL collapsed to zero was fixed by caching the baseline sequence log probabilities once and optimizing over 3 inner steps, allowing the active policy's parameters to update and diverge.
+  2. Discarded speculative sampler intermediate target corrections was fixed by initializing `curr_verified_x = x.clone()` and accumulating updates sequentially as `curr_verified_x = curr_verified_x + v_target * dt`, along with applying biophysical constraints on both accept/reject steps when enabled.
+- Added test coverage in `tests/test_agentic_design_loop.py` asserting non-zero loss and positive KL divergence.
+- Re-ran the verification and forensic audits, obtaining a CLEAN verdict from the Forensic Auditor.
