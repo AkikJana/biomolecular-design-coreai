@@ -1,0 +1,11 @@
+# Base reproducibility configuration template.
+# Copy into experiments/<run-id>/config.yaml and replace placeholders per run.
+seed: 12345
+metric_version: PLACEHOLDER_METRIC_VERSION
+benchmark_manifest: data/benchmarks/frozen/manifest.json
+weights_dir: weights/
+results_dir: results/synthetic/
+run:
+  deterministic: true
+  command: PLACEHOLDER_COMMAND
+  notes: PLACEHOLDER_RUN_NOTES
