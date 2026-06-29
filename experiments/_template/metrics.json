@@ -1,0 +1,6 @@
+{
+  "template": true,
+  "template_note": "PLACEHOLDER TEMPLATE ONLY - replace with measured metrics after a run.",
+  "metric_version": "PLACEHOLDER_METRIC_VERSION",
+  "metrics": {}
+}
