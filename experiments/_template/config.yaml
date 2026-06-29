@@ -3,7 +3,7 @@ seed: 12345
 metric_version: PLACEHOLDER_METRIC_VERSION
 benchmark_manifest: data/benchmarks/frozen/manifest.json
 weights_dir: weights/
-results_dir: results/synthetic/
+results_dir: results/synthetic/ # CHANGE to results/real/ for provenance-backed runs
 run:
   id: PLACEHOLDER_RUN_ID
   command: PLACEHOLDER_COMMAND

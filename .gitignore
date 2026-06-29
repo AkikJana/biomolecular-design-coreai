@@ -69,9 +69,10 @@ biomolecular_design/
 /scratch/
 ~$*
 
-# Reproducibility scaffolding templates that must stay versioned.
-!data/benchmarks/frozen/manifest.json
-!experiments/_template/metrics.json
+# Reproducibility provenance JSON that must stay versioned.
+!data/benchmarks/frozen/**/*.json
+!experiments/**/metrics.json
+!results/real/**/*.json
 
 # Model weights are fetched separately; keep only directory docs/placeholders.
 weights/*
