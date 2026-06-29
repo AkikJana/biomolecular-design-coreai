@@ -47,6 +47,15 @@ Desktop.ini
 *.pth
 *.pt
 *.ckpt
+*.safetensors
+*.bin
+*.onnx
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pkl
+*.joblib
 *.pdf
 *.svg
 *.json
@@ -59,3 +68,12 @@ biomolecular_design/
 /boltz_results*/
 /scratch/
 ~$*
+
+# Reproducibility scaffolding templates that must stay versioned.
+!data/benchmarks/frozen/manifest.json
+!experiments/_template/metrics.json
+
+# Model weights are fetched separately; keep only directory docs/placeholders.
+weights/*
+!weights/.gitkeep
+!weights/README.md
