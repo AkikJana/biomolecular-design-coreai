@@ -1,13 +1,13 @@
 {
-  "run_id": "e2_profile_confirm_20260630T185546Z",
+  "run_id": "e2_profile_confirm_20260630T191521Z",
   "experiment": "E2-confirm - profiler-backed confirmation pass",
   "parent_experiment": "E2 - MPS op-coverage / device-fallback (e2_mps_opcoverage.py)",
-  "timestamp_utc": "2026-06-30T18:55:47.578936+00:00",
+  "timestamp_utc": "2026-06-30T19:15:22.733207+00:00",
   "device": "mps",
   "dtype": "fp16",
   "seed": 0,
-  "code_sha": "89ead998774ee693758a085617e7eb2a15108aa7",
-  "boltz_commit": "89ead998774ee693758a085617e7eb2a15108aa7",
+  "code_sha": "7915a23c69d2673bef5e05c477d41dcac0e70340",
+  "boltz_commit": "7915a23c69d2673bef5e05c477d41dcac0e70340",
   "hardware": "arm",
   "os": "Darwin 25.6.0 (macOS-26.6-arm64-arm-64bit-Mach-O)",
   "python": "3.13.5",
@@ -31,12 +31,12 @@
   "weights_sha256": "fea245d912c570ec117b2277c2719f312a6fc109c07b6f6ef741690ee775c2f5",
   "ran_on_device": "yes",
   "warmup_wall_clock_by_stage_s": {
-    "input_featurization": 1.1364787080092356,
-    "trunk_msa_module": 1.0141502500046045,
-    "trunk_pairformer": 4.562418750021607,
-    "distogram": 0.010315207997336984,
-    "diffusion_sampler": 2.582357792009134,
-    "confidence_head": 7.166795124998316
+    "input_featurization": 0.8176056660013273,
+    "trunk_msa_module": 0.7310287919826806,
+    "trunk_pairformer": 3.665751291962806,
+    "distogram": 0.007904959027655423,
+    "diffusion_sampler": 2.0596651249798015,
+    "confidence_head": 4.591195625020191
   },
   "op_coverage": {
     "input_featurization": {
@@ -3451,71 +3451,75 @@
   "fallback_ops": [
     "aten::linalg_svd"
   ],
+  "warmup_iterations_breakdown": {
+    "profiled_pass": 1,
+    "extra_plain_passes": 0
+  },
   "steady_state_wall_clock_by_stage_s": {
     "input_featurization": {
-      "mean_s": 0.347591000245302,
-      "std_s": 0.32584774417897516,
+      "mean_s": 0.10614333349803928,
+      "std_s": 0.039875508288914785,
       "n": 4,
       "samples_s": [
-        0.27002204197924584,
-        0.8280894170165993,
-        0.16126745799556375,
-        0.13098508398979902
+        0.0853701249579899,
+        0.09085412503918633,
+        0.1657355419592932,
+        0.08261354203568771
       ]
     },
     "trunk_msa_module": {
-      "mean_s": 0.36457164550665766,
-      "std_s": 0.19113555901958182,
+      "mean_s": 0.18509323950274847,
+      "std_s": 0.037974084421187264,
       "n": 4,
       "samples_s": [
-        0.2634085409808904,
-        0.6510767079889774,
-        0.26470829104073346,
-        0.27909304201602936
+        0.17029037501197308,
+        0.16576075000921264,
+        0.24185104196658358,
+        0.1624707910232246
       ]
     },
     "trunk_pairformer": {
-      "mean_s": 0.8510572812374448,
-      "std_s": 0.2337327558591428,
+      "mean_s": 0.4286928122601239,
+      "std_s": 0.00882091096459893,
       "n": 4,
       "samples_s": [
-        0.8552045829710551,
-        1.180197167035658,
-        0.6832813749788329,
-        0.6855459999642335
+        0.4412381250294857,
+        0.4276928330073133,
+        0.4249687080155127,
+        0.42087158298818395
       ]
     },
     "distogram": {
-      "mean_s": 0.010654781246557832,
-      "std_s": 0.0024690074895518995,
+      "mean_s": 0.005983395778457634,
+      "std_s": 0.0019342205527708093,
       "n": 4,
       "samples_s": [
-        0.01312754099490121,
-        0.011550166993401945,
-        0.0072825829847715795,
-        0.010658834013156593
+        0.008878750028088689,
+        0.005185042042285204,
+        0.004982208018191159,
+        0.004887583025265485
       ]
     },
     "diffusion_sampler": {
-      "mean_s": 1.0923746562475571,
-      "std_s": 0.3283660315747627,
+      "mean_s": 0.6319053750048624,
+      "std_s": 0.13299050008733282,
       "n": 4,
       "samples_s": [
-        1.414409999968484,
-        1.3356742500327528,
-        0.7900921250111423,
-        0.8293222499778494
+        0.7267561249900609,
+        0.7627060830127448,
+        0.5464167920290492,
+        0.4917424999875948
       ]
     },
     "confidence_head": {
-      "mean_s": 1.3689443124894751,
-      "std_s": 0.1861443576609958,
+      "mean_s": 0.730322551986319,
+      "std_s": 0.029817709049251774,
       "n": 4,
       "samples_s": [
-        1.611617958988063,
-        1.3931453749537468,
-        1.3020724160014652,
-        1.1689415000146255
+        0.7474617909756489,
+        0.7567185829975642,
+        0.7276484169997275,
+        0.6894614169723354
       ]
     }
   },
@@ -3598,127 +3602,125 @@
       {
         "op": "aten::mul",
         "calls": 3041,
-        "self_cpu_us_total": 3280818.2,
-        "self_cpu_us_avg": 1078.86
+        "self_cpu_us_total": 2338637.7,
+        "self_cpu_us_avg": 769.04
       },
       {
         "op": "aten::copy_",
         "calls": 14548,
-        "self_cpu_us_total": 2429432.3,
-        "self_cpu_us_avg": 166.99
+        "self_cpu_us_total": 1903281.7,
+        "self_cpu_us_avg": 130.83
       },
       {
         "op": "aten::slice",
         "calls": 2243,
-        "self_cpu_us_total": 1751014.3,
-        "self_cpu_us_avg": 780.66
+        "self_cpu_us_total": 1257131.3,
+        "self_cpu_us_avg": 560.47
       },
       {
         "op": "aten::add",
         "calls": 1458,
-        "self_cpu_us_total": 1653116.3,
-        "self_cpu_us_avg": 1133.82
+        "self_cpu_us_total": 1131193.6,
+        "self_cpu_us_avg": 775.85
       },
       {
         "op": "aten::transpose",
         "calls": 1159,
-        "self_cpu_us_total": 1232934.9,
-        "self_cpu_us_avg": 1063.79
+        "self_cpu_us_total": 873329.8,
+        "self_cpu_us_avg": 753.52
       },
       {
         "op": "aten::div",
         "calls": 625,
-        "self_cpu_us_total": 714192.7,
-        "self_cpu_us_avg": 1142.71
+        "self_cpu_us_total": 490796.6,
+        "self_cpu_us_avg": 785.27
       },
       {
         "op": "aten::ge",
         "calls": 424,
-        "self_cpu_us_total": 530769.2,
-        "self_cpu_us_avg": 1251.81
+        "self_cpu_us_total": 379031.0,
+        "self_cpu_us_avg": 893.94
       },
       {
         "op": "aten::add_",
         "calls": 420,
-        "self_cpu_us_total": 457265.0,
-        "self_cpu_us_avg": 1088.73
+        "self_cpu_us_total": 315334.4,
+        "self_cpu_us_avg": 750.8
       },
       {
         "op": "aten::linear",
         "calls": 8810,
-        "self_cpu_us_total": 434380.9,
-        "self_cpu_us_avg": 49.31
+        "self_cpu_us_total": 300862.9,
+        "self_cpu_us_avg": 34.15
       },
       {
         "op": "aten::sub",
         "calls": 416,
-        "self_cpu_us_total": 338324.4,
-        "self_cpu_us_avg": 813.28
-      },
-      {
-        "op": "aten::rsub",
-        "calls": 178,
-        "self_cpu_us_total": 304358.4,
-        "self_cpu_us_avg": 1709.88
+        "self_cpu_us_total": 253477.6,
+        "self_cpu_us_avg": 609.32
       },
       {
         "op": "aten::bmm",
         "calls": 1046,
-        "self_cpu_us_total": 301324.3,
-        "self_cpu_us_avg": 288.07
+        "self_cpu_us_total": 219032.7,
+        "self_cpu_us_avg": 209.4
       },
       {
         "op": "aten::split",
         "calls": 278,
-        "self_cpu_us_total": 296948.8,
-        "self_cpu_us_avg": 1068.16
+        "self_cpu_us_total": 216960.9,
+        "self_cpu_us_avg": 780.43
       },
       {
         "op": "aten::_to_copy",
         "calls": 12627,
-        "self_cpu_us_total": 290041.8,
-        "self_cpu_us_avg": 22.97
+        "self_cpu_us_total": 193289.0,
+        "self_cpu_us_avg": 15.31
       },
       {
         "op": "aten::div_",
         "calls": 208,
-        "self_cpu_us_total": 222405.6,
-        "self_cpu_us_avg": 1069.26
+        "self_cpu_us_total": 157532.1,
+        "self_cpu_us_avg": 757.37
+      },
+      {
+        "op": "aten::rsub",
+        "calls": 178,
+        "self_cpu_us_total": 132699.5,
+        "self_cpu_us_avg": 745.5
       }
     ],
     "svd_self_cpu_rows": [
       {
         "op": "aten::linalg_svd",
         "calls": 2,
-        "self_cpu_us_total": 2500.6,
-        "self_cpu_us_avg": 1250.3
+        "self_cpu_us_total": 2462.7,
+        "self_cpu_us_avg": 1231.34
       },
       {
         "op": "aten::_linalg_svd",
         "calls": 2,
-        "self_cpu_us_total": 7370.0,
-        "self_cpu_us_avg": 3685.01
+        "self_cpu_us_total": 6477.9,
+        "self_cpu_us_avg": 3238.97
       }
     ],
     "scalar_sync_self_cpu_rows": [
       {
         "op": "aten::item",
         "calls": 469,
-        "self_cpu_us_total": 1218.1,
-        "self_cpu_us_avg": 2.6
+        "self_cpu_us_total": 931.6,
+        "self_cpu_us_avg": 1.99
       },
       {
         "op": "aten::_local_scalar_dense",
         "calls": 469,
-        "self_cpu_us_total": 10836.5,
-        "self_cpu_us_avg": 23.11
+        "self_cpu_us_total": 21404.2,
+        "self_cpu_us_avg": 45.64
       }
     ],
     "ops_with_higher_avg_self_cpu_than_svd": [
       "aten::_cdist_forward",
       "aten::_unique2",
-      "aten::cat",
-      "aten::clamp",
       "aten::constant_pad_nd",
       "aten::eq",
       "aten::gt",
@@ -3728,7 +3730,16 @@
       "aten::max",
       "aten::ne",
       "aten::norm",
+      "aten::prod",
+      "aten::repeat",
       "aten::scatter_"
     ]
-  }
+  },
+  "notes": [
+    "WEIGHTS CAVEAT (same as E2): the loaded checkpoint is **Boltz-1**, not Boltz-2. Profiling real Boltz-2 needs Boltz-2 weights.",
+    "INPUT CAVEAT (same as E2): synthetic feats are used because op-coverage and timing-shape are architecture driven; default sizes here match E2's --fast config for run-to-run numerical stability across the timed iterations (the default-sized config is known per E2 to occasionally hit synthetic-coordinate SVD non-convergence on CPU).",
+    "torch.profiler has no ProfilerActivity.MPS in this torch build (2.9.1); device_type reports DeviceType.CPU for every op regardless of actual execution device, and self-CPU time is dominated by MPS dispatch/sync overhead. The profiler is therefore used here for op-presence corroboration and explicit scalar-sync separation, NOT for timing-based device classification - see 'Why self-CPU time is not used to classify fallbacks' in the report.",
+    "PyTorch's MPS-unsupported fallback warning is a process-global warn-once (empirically verified: it fires on an op's first invocation in the process and never again, regardless of Python warnings-filter state) - re-harvesting it per iteration cannot confirm the fallback recurs on every iteration. TorchDispatchMode's own device tracking is also no use here: the fallback is transparent at the dispatch boundary it intercepts (aten::linalg_svd's inputs/outputs are still tagged mps there; the host round-trip happens inside the kernel via internal sub-calls like aten::_to_cpu that never reach the tracer). Recurrence was instead confirmed via torch.profiler re-observing aten::_to_cpu on 3 dedicated passes: confirmed_every_iteration=True.",
+    "profiler cross-check verdict: CONFIRMED: sole unsupported-MPS fallback is aten::linalg_svd."
+  ]
 }
