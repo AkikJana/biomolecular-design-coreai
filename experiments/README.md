@@ -198,22 +198,22 @@ non-convergence):
 
 | stage | warmup (1 pass, profiler-instrumented) | steady-state mean ± std (4 iters) |
 |---|---:|---:|
-| input_featurization | 1.1365 s | 0.3476 s ± 0.3258 s |
-| trunk_msa_module | 1.0142 s | 0.3646 s ± 0.1911 s |
-| trunk_pairformer | 4.5624 s | 0.8511 s ± 0.2337 s |
-| distogram | 0.0103 s | 0.0107 s ± 0.0025 s |
-| diffusion_sampler | 2.5824 s | 1.0924 s ± 0.3284 s |
-| confidence_head | 7.1668 s | 1.3689 s ± 0.1861 s |
-| **total** | **16.47 s** | **4.04 s** |
+| input_featurization | 0.8176 s | 0.1061 s ± 0.0399 s |
+| trunk_msa_module | 0.7310 s | 0.1851 s ± 0.0380 s |
+| trunk_pairformer | 3.6658 s | 0.4287 s ± 0.0088 s |
+| distogram | 0.0079 s | 0.0060 s ± 0.0019 s |
+| diffusion_sampler | 2.0597 s | 0.6319 s ± 0.1330 s |
+| confidence_head | 4.5912 s | 0.7303 s ± 0.0298 s |
+| **total** | **11.87 s** | **2.09 s** |
 
-(Numbers from the committed run `results/real/e2_profile_confirm_20260630T185546Z.*`;
+(Numbers from the committed run `results/real/e2_profile_confirm_20260630T191521Z.*`;
 expect run-to-run variance on shared/thermally-throttled hardware — see `samples_s`
 in the manifest for the raw per-iteration values behind each std.) The one-time
-warmup cost is **~4.1×** the steady-state total — confirming E2's own caveat that
+warmup cost is **~5.7×** the steady-state total — confirming E2's own caveat that
 its single-smoke-run total was not steady-state. The std on the lighter early stages
 is large relative to their mean (first-iteration-of-the-loop noise on top of an
-already-small ~0.01-0.3s signal); the heavier stages (`trunk_pairformer`,
-`diffusion_sampler`, `confidence_head`) are comparatively tighter in relative terms.
+already-small ~0.01-0.2s signal); the heavier, more compute-bound stages
+(`trunk_pairformer`, `confidence_head`) are comparatively tighter in relative terms.
 
 ### Reproduce
 
@@ -227,11 +227,17 @@ PYTHONPATH=boltz/src .e2venv/bin/python experiments/e2_profile_confirm.py --stat
 
 Key flags: same as E2 (`--device`, `--dtype`, `--checkpoint`, `--n-tokens/--n-atoms/
 --n-msa`, `--recycling-steps`, `--sampling-steps`, `--static-only`, `--out-dir`) plus
-`--warmup-iters` (default 1) and `--timed-iters` (default 4, recommended 3-5).
+`--warmup-iters` (default 1, minimum 1 - the profiler cross-check pass is mandatory
+and always counts as the first warmup pass; values above 1 run additional plain,
+fully-discarded warmup passes afterwards) and `--timed-iters` (default 4; errors
+below 1, warns but proceeds outside the recommended 3-5 range).
 
 ### Committed artifacts
 
-- `results/real/e2_profile_confirm_20260630T185546Z*` — default config,
+- `results/real/e2_profile_confirm_20260630T191521Z*` — default config,
   `ran_on_device: yes`, profiler cross-check verdict `CONFIRMED`, `linalg_svd`
   residency re-confirmed on all 3 dedicated check passes, full warmup +
-  steady-state timing table.
+  steady-state timing table. `code_sha`/`boltz_commit`: `7915a23c69d2673bef5e05c477d41dcac0e70340`
+  (the commit that added this script, verified to actually contain
+  `experiments/e2_profile_confirm.py` - provenance must be traceable to the exact
+  code that produced the artifact, not merely to "some recent commit").

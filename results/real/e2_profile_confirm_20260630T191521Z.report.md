@@ -1,15 +1,15 @@
 # E2-confirm - profiler-backed confirmation pass
 
-- run_id: `e2_profile_confirm_20260630T185546Z`
+- run_id: `e2_profile_confirm_20260630T191521Z`
 - parent_experiment: E2 - MPS op-coverage / device-fallback (e2_mps_opcoverage.py)
-- timestamp: 2026-06-30T18:55:47.578936+00:00
+- timestamp: 2026-06-30T19:15:22.733207+00:00
 - device: **mps** | dtype: **fp16**
 - real model ran end-to-end on MPS: **yes**
 - weights: `/Users/akikjana/.boltz/boltz1_conf.ckpt`
   - weights_version: **Boltz-1 (boltz1_conf.ckpt)**
   - weights_sha256: `fea245d912c570ec117b2277c2719f312a6fc109c07b6f6ef741690ee775c2f5`
 - input: **SYNTHETIC feats (n_tokens=24, n_atoms=64, n_msa=8) - real model + real weights, synthetic input (identical methodology to E2)**
-- code_sha: `89ead998774ee693758a085617e7eb2a15108aa7` | boltz_commit: `89ead998774ee693758a085617e7eb2a15108aa7`
+- code_sha: `7915a23c69d2673bef5e05c477d41dcac0e70340` | boltz_commit: `7915a23c69d2673bef5e05c477d41dcac0e70340`
 - opm_mode (BOLTZMAC_OPM): **stock**
 - hardware: arm | os: Darwin 25.6.0 (macOS-26.6-arm64-arm-64bit-Mach-O)
 - torch: 2.9.1
@@ -38,62 +38,62 @@
 
 ### Why self-CPU time is not used to classify fallbacks
 
-`torch.profiler`'s `device_type` field reports `DeviceType.CPU` for *every* op on this MPS build (there is no `ProfilerActivity.MPS` in torch 2.9.1), and self-CPU time is dominated by MPS command-buffer dispatch/sync overhead rather than actual execution device. Empirical evidence from this run: the following ops - all classified `mps` by the device-tracking tracer, i.e. **not** fallbacks - show a *higher* average self-CPU time per call than `aten::linalg_svd` itself: `['aten::_cdist_forward', 'aten::_unique2', 'aten::cat', 'aten::clamp', 'aten::constant_pad_nd', 'aten::eq', 'aten::gt', 'aten::index_select', 'aten::le', 'aten::lt', 'aten::max', 'aten::ne', 'aten::norm', 'aten::scatter_']`. A timing-threshold classifier would therefore misclassify ops in both directions; fallback identity is decided solely by PyTorch's own fallback-warning ground truth, exactly as in E2.
+`torch.profiler`'s `device_type` field reports `DeviceType.CPU` for *every* op on this MPS build (there is no `ProfilerActivity.MPS` in torch 2.9.1), and self-CPU time is dominated by MPS command-buffer dispatch/sync overhead rather than actual execution device. Empirical evidence from this run: the following ops - all classified `mps` by the device-tracking tracer, i.e. **not** fallbacks - show a *higher* average self-CPU time per call than `aten::linalg_svd` itself: `['aten::_cdist_forward', 'aten::_unique2', 'aten::constant_pad_nd', 'aten::eq', 'aten::gt', 'aten::index_select', 'aten::le', 'aten::lt', 'aten::max', 'aten::ne', 'aten::norm', 'aten::prod', 'aten::repeat', 'aten::scatter_']`. A timing-threshold classifier would therefore misclassify ops in both directions; fallback identity is decided solely by PyTorch's own fallback-warning ground truth, exactly as in E2.
 
 ### Legitimate scalar syncs vs. true op fallback (not conflated)
 
 | op | calls | self_cpu_us_total | self_cpu_us_avg | classification |
 |---|---:|---:|---:|---|
-| `aten::item` | 469 | 1218.1 | 2.6 | legitimate host scalar sync (NOT a fallback) |
-| `aten::_local_scalar_dense` | 469 | 10836.5 | 23.11 | legitimate host scalar sync (NOT a fallback) |
-| `aten::linalg_svd` | 2 | 2500.6 | 1250.3 | **true unsupported-op CPU fallback** (confirmed by PyTorch fallback warning) |
-| `aten::_linalg_svd` | 2 | 7370.0 | 3685.01 | **true unsupported-op CPU fallback** (confirmed by PyTorch fallback warning) |
+| `aten::item` | 469 | 931.6 | 1.99 | legitimate host scalar sync (NOT a fallback) |
+| `aten::_local_scalar_dense` | 469 | 21404.2 | 45.64 | legitimate host scalar sync (NOT a fallback) |
+| `aten::linalg_svd` | 2 | 2462.7 | 1231.34 | **true unsupported-op CPU fallback** (confirmed by PyTorch fallback warning) |
+| `aten::_linalg_svd` | 2 | 6477.9 | 3238.97 | **true unsupported-op CPU fallback** (confirmed by PyTorch fallback warning) |
 
 ### Top ops by total self-CPU time (informational only)
 
 | op | calls | self_cpu_us_total | self_cpu_us_avg |
 |---|---:|---:|---:|
-| `aten::mul` | 3041 | 3280818.2 | 1078.86 |
-| `aten::copy_` | 14548 | 2429432.3 | 166.99 |
-| `aten::slice` | 2243 | 1751014.3 | 780.66 |
-| `aten::add` | 1458 | 1653116.3 | 1133.82 |
-| `aten::transpose` | 1159 | 1232934.9 | 1063.79 |
-| `aten::div` | 625 | 714192.7 | 1142.71 |
-| `aten::ge` | 424 | 530769.2 | 1251.81 |
-| `aten::add_` | 420 | 457265.0 | 1088.73 |
-| `aten::linear` | 8810 | 434380.9 | 49.31 |
-| `aten::sub` | 416 | 338324.4 | 813.28 |
-| `aten::rsub` | 178 | 304358.4 | 1709.88 |
-| `aten::bmm` | 1046 | 301324.3 | 288.07 |
-| `aten::split` | 278 | 296948.8 | 1068.16 |
-| `aten::_to_copy` | 12627 | 290041.8 | 22.97 |
-| `aten::div_` | 208 | 222405.6 | 1069.26 |
+| `aten::mul` | 3041 | 2338637.7 | 769.04 |
+| `aten::copy_` | 14548 | 1903281.7 | 130.83 |
+| `aten::slice` | 2243 | 1257131.3 | 560.47 |
+| `aten::add` | 1458 | 1131193.6 | 775.85 |
+| `aten::transpose` | 1159 | 873329.8 | 753.52 |
+| `aten::div` | 625 | 490796.6 | 785.27 |
+| `aten::ge` | 424 | 379031.0 | 893.94 |
+| `aten::add_` | 420 | 315334.4 | 750.8 |
+| `aten::linear` | 8810 | 300862.9 | 34.15 |
+| `aten::sub` | 416 | 253477.6 | 609.32 |
+| `aten::bmm` | 1046 | 219032.7 | 209.4 |
+| `aten::split` | 278 | 216960.9 | 780.43 |
+| `aten::_to_copy` | 12627 | 193289.0 | 15.31 |
+| `aten::div_` | 208 | 157532.1 | 757.37 |
+| `aten::rsub` | 178 | 132699.5 | 745.5 |
 
 ## Timing: one-time warmup vs. steady state
 
-Warmup = first forward pass after model load (pays one-time MPS kernel-compile cost; also the profiler-instrumented pass above, so its absolute numbers run slightly high vs. a bare pass and are reported separately, never mixed into the steady-state stats below).
+Warmup = first forward pass after model load (pays one-time MPS kernel-compile cost; also the profiler-instrumented pass above, so its absolute numbers run slightly high vs. a bare pass and are reported separately, never mixed into the steady-state stats below). `--warmup-iters=1` -> 1 profiled pass (timed below) + 0 additional plain warmup pass(es) (discarded entirely, not shown in any table).
 
 | stage | warmup seconds (1 pass, profiler-instrumented) |
 |---|---:|
-| input_featurization | 1.1365 |
-| trunk_msa_module | 1.0142 |
-| trunk_pairformer | 4.5624 |
-| distogram | 0.0103 |
-| diffusion_sampler | 2.5824 |
-| confidence_head | 7.1668 |
-| **total** | **16.4725** |
+| input_featurization | 0.8176 |
+| trunk_msa_module | 0.7310 |
+| trunk_pairformer | 3.6658 |
+| distogram | 0.0079 |
+| diffusion_sampler | 2.0597 |
+| confidence_head | 4.5912 |
+| **total** | **11.8732** |
 
 Steady state: mean +/- std over 4 timed iterations (warmup discarded), `torch.mps.synchronize()` around every stage.
 
 | stage | mean (s) | std (s) | n |
 |---|---:|---:|---:|
-| input_featurization | 0.3476 | 0.3258 | 4 |
-| trunk_msa_module | 0.3646 | 0.1911 | 4 |
-| trunk_pairformer | 0.8511 | 0.2337 | 4 |
-| distogram | 0.0107 | 0.0025 | 4 |
-| diffusion_sampler | 1.0924 | 0.3284 | 4 |
-| confidence_head | 1.3689 | 0.1861 | 4 |
-| **total (sum of stage means)** | **4.0352** | | |
+| input_featurization | 0.1061 | 0.0399 | 4 |
+| trunk_msa_module | 0.1851 | 0.0380 | 4 |
+| trunk_pairformer | 0.4287 | 0.0088 | 4 |
+| distogram | 0.0060 | 0.0019 | 4 |
+| diffusion_sampler | 0.6319 | 0.1330 | 4 |
+| confidence_head | 0.7303 | 0.0298 | 4 |
+| **total (sum of stage means)** | **2.0881** | | |
 
 ## Relationship to E2
 
