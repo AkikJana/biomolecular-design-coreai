@@ -9,6 +9,7 @@
   - weights_sha256: `fea245d912c570ec117b2277c2719f312a6fc109c07b6f6ef741690ee775c2f5`
 - input: **SYNTHETIC feats (n_tokens=24, n_atoms=64, n_msa=8) - real model + real weights, synthetic input**
 - code_sha: `e41b76714692c5f99fff7876bed9594cc1740972` | boltz_commit: `e41b76714692c5f99fff7876bed9594cc1740972`
+- opm_mode (BOLTZMAC_OPM): **stock**
 - hardware: arm | os: Darwin 25.6.0 (macOS-26.6-arm64-arm-64bit-Mach-O)
 - torch: 2.9.1
 - seed: 0
@@ -22,6 +23,8 @@
 - MPS CPU-fallback ops detected via warnings: ['aten::linalg_svd']
 
 ## Wall-clock by stage
+
+> Smoke-run timings, not steady-state: the total includes one-time MPS kernel compilation / warmup (no separate warmup pass is run).
 
 | stage | seconds | % |
 |---|---:|---:|
@@ -38,6 +41,8 @@
 Verdicts: **mps** = ran on MPS; **cpu_fallback** = MPS-unsupported, fell back to CPU (confirmed by PyTorch's own fallback UserWarning); **cpu_native** = only ever saw CPU tensors; **unsupported** = raised.
 
 > `direct_mps_kernel` is informational only (does the op have a *dedicated* MPS registration). `NO` does **not** imply a fallback: structural/factory ops (view/expand/clone/_to_copy/arange/randn) run on MPS via composite or fall-through kernels. Fallback verdicts come solely from the fallback warning set.
+
+> **Ground truth for fallbacks is PyTorch's own *unsupported-MPS* fallback warnings.** Silent host<->device scalar syncs (e.g. `.item()` / `aten::_local_scalar_dense`) emit no such warning, so they are classified **mps** and never appear here. This table therefore reports *unsupported-op* CPU fallbacks, not data-transfer / sync overhead — so the defensible claim is "the only unsupported-MPS fallback **observed** was `aten::linalg_svd`", not "everything else runs on MPS".
 
 ### Per-op rollup (all stages)
 
@@ -121,18 +126,18 @@ Verdicts: **mps** = ran on MPS; **cpu_fallback** = MPS-unsupported, fell back to
 
 | stage | total ops | distinct ops | cpu_fallback ops |
 |---|---:|---:|---|
-| input_featurization | 424 | 35 | - (all on MPS) |
-| trunk_msa_module | 890 | 29 | - (all on MPS) |
-| trunk_pairformer | 6336 | 25 | - (all on MPS) |
-| distogram | 6 | 4 | - (all on MPS) |
+| input_featurization | 424 | 35 | - (none observed) |
+| trunk_msa_module | 890 | 29 | - (none observed) |
+| trunk_pairformer | 6336 | 25 | - (none observed) |
+| distogram | 6 | 4 | - (none observed) |
 | diffusion_sampler | 4197 | 61 | `aten::linalg_svd` |
-| confidence_head | 8032 | 58 | - (all on MPS) |
+| confidence_head | 8032 | 58 | - (none observed) |
 
 ## Static analysis: Boltz ops with known MPS risk
 
 | stage | op | where | risk |
 |---|---|---|---|
-| diffusion / SVD alignment | `aten::linalg_svd` | boltz.model.loss.diffusion.weighted_rigid_align (torch.linalg.svd, driver='gesvd' on CUDA only), called from AtomDiffusion.sample under `alignment_reverse_diff` | CONFIRMED empirically: linalg_svd has no MPS kernel and falls back to CPU. It is hit on EVERY reverse-diffusion step of the DEFAULT (unsteered) sampler via alignment_reverse_diff - i.e. on every Boltz inference - not only in training/steered sampling. This is the one true CPU fallback on this path. |
+| diffusion / SVD alignment | `aten::linalg_svd` | boltz.model.loss.diffusion.weighted_rigid_align (torch.linalg.svd, driver='gesvd' on CUDA only), called from AtomDiffusion.sample under `alignment_reverse_diff` | OBSERVED empirically: linalg_svd has no MPS kernel and falls back to CPU (PyTorch emits its unsupported-MPS fallback warning). It is hit on EVERY reverse-diffusion step of the DEFAULT (unsteered) sampler via alignment_reverse_diff - i.e. on every Boltz inference - not only in training/steered sampling. It was the ONLY unsupported-MPS fallback observed on this path (silent host<->device scalar syncs are not counted as fallbacks). |
 | diffusion / SVD alignment | `aten::linalg_qr / aten::linalg_eigh` | linear-algebra helpers around rigid alignment | linalg factorizations are commonly CPU-only on MPS. |
 | trunk / triangle attention | `aten::scaled_dot_product_attention / softmax / einsum` | TriangleAttentionStartingNode / EndingNode, AttentionPairBias | Generally supported on MPS, but the fused SDPA kernel coverage varies by torch version; einsum decomposes to bmm/permute which are supported. |
 | trunk / triangle multiplication | `aten::einsum -> aten::bmm` | TriangleMultiplicationOutgoing / Incoming | Supported on MPS (bmm/mul/sigmoid). Watch for fp16 autocast edge cases. |

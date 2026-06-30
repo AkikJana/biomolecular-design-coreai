@@ -60,13 +60,20 @@ coarse wall-clock-by-stage breakdown.
 
 ### Headline finding
 
-On torch 2.9.1 / macOS arm64, the Boltz-1 model **runs end-to-end on MPS**. The *only*
-CPU fallback observed is **`aten::linalg_svd`**, inside
+On torch 2.9.1 / macOS arm64, the Boltz-1 model **runs end-to-end on MPS**, and the
+**only unsupported-MPS fallback _observed_** was **`aten::linalg_svd`**, inside
 `weighted_rigid_align` (`boltz.model.loss.diffusion`), which is called on **every**
 reverse-diffusion step of the default sampler via `alignment_reverse_diff` — i.e. on
-every inference, not just training/steered sampling. Everything else (linear,
+every inference, not just training/steered sampling. Every other op traced (linear,
 layer-norm, softmax, bmm, einsum→bmm in triangle mult/attention, sigmoid, silu, cdist,
-scatter/gather, randn, etc.) ran on MPS.
+scatter/gather, randn, …) ran on MPS.
+
+> **Ground truth for fallbacks is PyTorch's own _unsupported-MPS_ fallback warnings.**
+> So this is a statement about *op support*, not data movement: silent host↔device
+> scalar syncs (e.g. `.item()` / `aten::_local_scalar_dense`) emit no such warning and
+> are classified **mps**, so they never show up as fallbacks. The claim is therefore
+> "the only unsupported-MPS fallback observed was `aten::linalg_svd`", **not**
+> "nothing else touches the CPU".
 
 > `direct_mps_kernel: NO` in the table is **informational** and does *not* mean
 > fallback — structural/factory ops (`view`/`expand`/`clone`/`_to_copy`/`arange`/

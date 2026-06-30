@@ -113,10 +113,12 @@ KNOWN_MPS_RISK_OPS: list[dict[str, str]] = [
         "where": "boltz.model.loss.diffusion.weighted_rigid_align "
         "(torch.linalg.svd, driver='gesvd' on CUDA only), called from "
         "AtomDiffusion.sample under `alignment_reverse_diff`",
-        "risk": "CONFIRMED empirically: linalg_svd has no MPS kernel and falls back to "
-        "CPU. It is hit on EVERY reverse-diffusion step of the DEFAULT (unsteered) "
-        "sampler via alignment_reverse_diff - i.e. on every Boltz inference - not only "
-        "in training/steered sampling. This is the one true CPU fallback on this path.",
+        "risk": "OBSERVED empirically: linalg_svd has no MPS kernel and falls back to "
+        "CPU (PyTorch emits its unsupported-MPS fallback warning). It is hit on EVERY "
+        "reverse-diffusion step of the DEFAULT (unsteered) sampler via "
+        "alignment_reverse_diff - i.e. on every Boltz inference - not only in "
+        "training/steered sampling. It was the ONLY unsupported-MPS fallback observed "
+        "on this path (silent host<->device scalar syncs are not counted as fallbacks).",
     },
     {
         "stage": "diffusion / SVD alignment",
@@ -582,6 +584,7 @@ def write_artifacts(
     lines.append(f"  - weights_sha256: `{manifest['weights_sha256']}`")
     lines.append(f"- input: **{manifest['input_kind']}**")
     lines.append(f"- code_sha: `{manifest['code_sha']}` | boltz_commit: `{manifest['boltz_commit']}`")
+    lines.append(f"- opm_mode (BOLTZMAC_OPM): **{manifest.get('opm_mode', 'stock')}**")
     lines.append(f"- hardware: {manifest['hardware']} | os: {manifest['os']}")
     lines.append(f"- torch: {manifest['torch_version']}")
     lines.append(f"- seed: {manifest['seed']}")
@@ -595,6 +598,10 @@ def write_artifacts(
 
     if not static_only and timings:
         lines.append("## Wall-clock by stage\n")
+        lines.append(
+            "> Smoke-run timings, not steady-state: the total includes one-time MPS "
+            "kernel compilation / warmup (no separate warmup pass is run).\n"
+        )
         total = sum(timings.values()) or 1.0
         lines.append("| stage | seconds | % |")
         lines.append("|---|---:|---:|")
@@ -617,6 +624,15 @@ def write_artifacts(
             "ops (view/expand/clone/_to_copy/arange/randn) run on MPS via composite or "
             "fall-through kernels. Fallback verdicts come solely from the fallback "
             "warning set.\n"
+        )
+        lines.append(
+            "> **Ground truth for fallbacks is PyTorch's own *unsupported-MPS* fallback "
+            "warnings.** Silent host<->device scalar syncs (e.g. `.item()` / "
+            "`aten::_local_scalar_dense`) emit no such warning, so they are classified "
+            "**mps** and never appear here. This table therefore reports "
+            "*unsupported-op* CPU fallbacks, not data-transfer / sync overhead - so the "
+            "defensible claim is \"the only unsupported-MPS fallback **observed** was "
+            "`aten::linalg_svd`\", not \"everything else runs on MPS\".\n"
         )
         # global per-op rollup
         rollup: dict[str, dict[str, Any]] = {}
@@ -660,7 +676,7 @@ def write_artifacts(
                 if classify_op(r, fallback_ops, name) in ("cpu_fallback", "unsupported")
             )
             total_calls = sum(r.calls for r in ops.values())
-            fb_str = ", ".join(f"`{x}`" for x in fb) if fb else "- (all on MPS)"
+            fb_str = ", ".join(f"`{x}`" for x in fb) if fb else "- (none observed)"
             lines.append(f"| {st} | {total_calls} | {len(ops)} | {fb_str} |")
         lines.append("")
 
@@ -724,6 +740,15 @@ def main() -> int:
     ckpt_path = Path(os.path.expanduser(args.checkpoint))
     notes: list[str] = []
 
+    # Resolve the BOLTZMAC_OPM mode actually in effect for this run (provenance).
+    # Prefer boltz's own resolver; fall back to the raw env var / default 'stock'.
+    try:
+        from boltz.model.layers.outer_product_mean import resolve_opm_mode
+
+        opm_mode = resolve_opm_mode()
+    except Exception:
+        opm_mode = (os.environ.get("BOLTZMAC_OPM", "stock") or "stock").strip().lower()
+
     manifest: dict[str, Any] = {
         "run_id": run_id,
         "experiment": "E2 - MPS op-coverage / device-fallback",
@@ -743,6 +768,7 @@ def main() -> int:
             f"n_msa={args.n_msa}) - real model + real weights, synthetic input"
         ),
         "pytorch_enable_mps_fallback": os.environ.get("PYTORCH_ENABLE_MPS_FALLBACK"),
+        "opm_mode": opm_mode,
         "command": "python " + " ".join([Path(sys.argv[0]).name, *sys.argv[1:]]),
         "config": {
             "recycling_steps": args.recycling_steps,
