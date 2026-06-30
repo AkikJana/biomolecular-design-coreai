@@ -124,3 +124,120 @@ Key flags: `--device {mps,cpu,cuda}`, `--dtype {fp16,fp32,bf16}`, `--checkpoint`
 - `results/real/*153317Z*` — primary: `--fast`, `ran_on_device: yes`, all 6 stages.
 - `results/real/*153417Z*` — default config, `ran_on_device: partial` (SVD CPU
   fallback failed to converge on synthetic coords; full op table + partial timings).
+
+---
+
+## E2-confirm — profiler-backed confirmation pass (`e2_profile_confirm.py`)
+
+E2's headline finding (op-coverage / fallback table above) rests on a single smoke
+run whose wall-clock total mixes in one-time MPS kernel-compile / warmup cost, and on
+two signals for the fallback claim (a `TorchDispatchMode` device tracer + PyTorch's
+own fallback `UserWarning`s). This script does **not** redo the E2 smoke run — it
+imports and reuses E2's model-loading, synthetic-feats, staged-forward-driver and
+op-classification code verbatim (`import e2_mps_opcoverage as e2`; `e2_mps_opcoverage.py`
+itself is unmodified) and adds two things on top, in the same process / same
+execution, so everything below describes literally the same forward passes as E2:
+
+1. **An independent `torch.profiler` cross-check.** `torch.profiler` is wrapped
+   around the same staged forward pass as E2's tracer, and the two op inventories
+   are diffed: the profiler's (RecordFunction-based, sees composite/Python-API
+   entry points before they decompose) is a strict superset of the tracer's
+   (post-decomposition ATen primitives) — confirmed empirically: 0 ops were seen by
+   the tracer and missed by the profiler. The profiler-only ops are exactly the
+   SVD/rigid-alignment linear-algebra call graph (`_linalg_svd`,
+   `_linalg_check_errors`, `linalg_lu_factor_ex`, `det`, `linalg_det`,
+   `frobenius_norm`, `_to_cpu`, ...) plus generic composite wrappers
+   (`matmul`, `cdist`, `einsum`, `softmax`, `layer_norm`, ...) that decompose to
+   MPS-supported primitives elsewhere — no new fallback surface.
+
+   Self-CPU timing is reported for transparency but **deliberately not used to
+   classify device residency** — fallback identity still comes only from PyTorch's
+   own fallback-warning ground truth, exactly as in E2. This is a documented,
+   empirically-justified methodology choice, not an oversight: `torch.profiler` has
+   no `ProfilerActivity.MPS` on this torch build, so `device_type` reports
+   `DeviceType.CPU` for *every* op regardless of actual execution device, and
+   several confirmed-MPS ops (`aten::cat`, `aten::eq`, `aten::ne`, ...) show *higher*
+   average self-CPU time per call than `aten::linalg_svd` itself (dispatch/sync
+   overhead noise dominates the signal). A timing-threshold classifier would
+   misclassify in both directions.
+
+   Legitimate host scalar syncs (`aten::item`, `aten::_local_scalar_dense`) are
+   reported with their own self-CPU stats and excluded from the fallback
+   classification *by identity*, never by timing, so they are never conflated with
+   the true `aten::linalg_svd` fallback.
+
+   Recurrence across iterations needed a third approach: PyTorch's fallback warning
+   turned out to be a **process-global warn-once** (fires only on an op's very
+   first invocation in the process, confirmed empirically — re-harvesting it on
+   later iterations always returns empty) and `TorchDispatchMode`'s device tracking
+   is transparent to the fallback (`linalg_svd`'s tensors are still tagged `mps` at
+   the dispatch boundary it intercepts; the host round-trip happens *inside* the
+   kernel via internal sub-calls that never reach the tracer). Recurrence is instead
+   confirmed via the profiler re-observing the `aten::_to_cpu` marker call on
+   dedicated, separately-run passes every iteration.
+
+2. **Warmup vs. steady-state timing.** One untimed warmup pass (the same pass used
+   for the profiler cross-check, since it already pays the one-time MPS
+   kernel-compile cost) is discarded from the timing figures and reported
+   separately. `--timed-iters` (default 4) plain, uninstrumented forward passes are
+   then run back-to-back, each wrapped in `torch.mps.synchronize()` before/after
+   every stage, and the per-stage **mean ± sample std** is reported as the
+   steady-state figure.
+
+### Headline finding
+
+**CONFIRMED** — re-deriving E2's headline claim with an independent instrumentation
+method does not change it: the sole unsupported-MPS-op CPU fallback is
+`aten::linalg_svd`, recurring on every reverse-diffusion step, every iteration.
+
+Steady state vs. one-time warmup (default config, n_tokens=24/n_atoms=64/n_msa=8,
+0 recycles, 2 sampling steps — same sizes as E2's `--fast`, chosen here for
+run-to-run numerical stability across repeated iterations since the default-sized
+config is known per E2 to occasionally hit synthetic-coordinate SVD
+non-convergence):
+
+| stage | warmup (1 pass, profiler-instrumented) | steady-state mean ± std (4 iters) |
+|---|---:|---:|
+| input_featurization | 0.8176 s | 0.1061 s ± 0.0399 s |
+| trunk_msa_module | 0.7310 s | 0.1851 s ± 0.0380 s |
+| trunk_pairformer | 3.6658 s | 0.4287 s ± 0.0088 s |
+| distogram | 0.0079 s | 0.0060 s ± 0.0019 s |
+| diffusion_sampler | 2.0597 s | 0.6319 s ± 0.1330 s |
+| confidence_head | 4.5912 s | 0.7303 s ± 0.0298 s |
+| **total** | **11.87 s** | **2.09 s** |
+
+(Numbers from the committed run `results/real/e2_profile_confirm_20260630T191521Z.*`;
+expect run-to-run variance on shared/thermally-throttled hardware — see `samples_s`
+in the manifest for the raw per-iteration values behind each std.) The one-time
+warmup cost is **~5.7×** the steady-state total — confirming E2's own caveat that
+its single-smoke-run total was not steady-state. The std on the lighter early stages
+is large relative to their mean (first-iteration-of-the-loop noise on top of an
+already-small ~0.01-0.2s signal); the heavier, more compute-bound stages
+(`trunk_pairformer`, `confidence_head`) are comparatively tighter in relative terms.
+
+### Reproduce
+
+Same env as E2 (`PYTHONPATH=boltz/src` + the `.e2venv` venv above):
+
+```bash
+PYTHONPATH=boltz/src .e2venv/bin/python experiments/e2_profile_confirm.py
+PYTHONPATH=boltz/src .e2venv/bin/python experiments/e2_profile_confirm.py --timed-iters 5
+PYTHONPATH=boltz/src .e2venv/bin/python experiments/e2_profile_confirm.py --static-only
+```
+
+Key flags: same as E2 (`--device`, `--dtype`, `--checkpoint`, `--n-tokens/--n-atoms/
+--n-msa`, `--recycling-steps`, `--sampling-steps`, `--static-only`, `--out-dir`) plus
+`--warmup-iters` (default 1, minimum 1 - the profiler cross-check pass is mandatory
+and always counts as the first warmup pass; values above 1 run additional plain,
+fully-discarded warmup passes afterwards) and `--timed-iters` (default 4; errors
+below 1, warns but proceeds outside the recommended 3-5 range).
+
+### Committed artifacts
+
+- `results/real/e2_profile_confirm_20260630T191521Z*` — default config,
+  `ran_on_device: yes`, profiler cross-check verdict `CONFIRMED`, `linalg_svd`
+  residency re-confirmed on all 3 dedicated check passes, full warmup +
+  steady-state timing table. `code_sha`/`boltz_commit`: `7915a23c69d2673bef5e05c477d41dcac0e70340`
+  (the commit that added this script, verified to actually contain
+  `experiments/e2_profile_confirm.py` - provenance must be traceable to the exact
+  code that produced the artifact, not merely to "some recent commit").
