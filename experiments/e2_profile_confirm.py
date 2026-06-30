@@ -52,12 +52,15 @@ code directly (``import e2_mps_opcoverage as e2``, no changes to that file):
        "Profiler cross-check verdict" in the report for the full chain of reasoning
        and the numbers behind each ruled-out approach.
 
-2. **Warmup vs. steady-state timing.** One untimed warmup forward pass (the same
-   pass used for the profiler cross-check above, since it is the one that pays the
-   one-time MPS kernel-compile cost anyway) is discarded from the timing figures and
-   reported separately. Then ``--timed-iters`` (default 4, range 3-5) plain forward
-   passes are run back-to-back, each wrapped in ``torch.mps.synchronize()`` before
-   and after every stage (reusing E2's ``stage()`` timing helper), and the
+2. **Warmup vs. steady-state timing.** ``--warmup-iters`` (default 1, minimum 1)
+   untimed warmup forward passes are discarded from the timing figures and reported
+   separately: the first one is always the profiler cross-check pass above (it pays
+   the one-time MPS kernel-compile cost anyway, so the timing is "free" to capture
+   there); any additional ones (``--warmup-iters`` > 1) are plain, fully discarded
+   passes run afterwards, useful if a single pass doesn't fully stabilize MPS
+   kernel-compile state. Then ``--timed-iters`` (default 4, recommended 3-5) plain
+   forward passes are run back-to-back, each wrapped in ``torch.mps.synchronize()``
+   before and after every stage (reusing E2's ``stage()`` timing helper), and the
    per-stage mean +/- (sample) std is reported as the steady-state figure.
 
 Artifacts are written into ``results/real/`` with the same manifest sidecar schema as
@@ -396,8 +399,10 @@ def write_artifacts(
 ) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = manifest["run_id"]
+    sidecar = dict(manifest)
+    sidecar["notes"] = notes
     (out_dir / f"{stem}.manifest.json").write_text(
-        __import__("json").dumps(manifest, indent=2)
+        __import__("json").dumps(sidecar, indent=2)
     )
 
     lines: list[str] = []
@@ -516,11 +521,16 @@ def write_artifacts(
 
     if not static_only:
         lines.append("## Timing: one-time warmup vs. steady state\n")
+        wib = manifest.get("warmup_iterations_breakdown", {})
         lines.append(
             "Warmup = first forward pass after model load (pays one-time MPS "
             "kernel-compile cost; also the profiler-instrumented pass above, so its "
             "absolute numbers run slightly high vs. a bare pass and are reported "
-            "separately, never mixed into the steady-state stats below).\n"
+            "separately, never mixed into the steady-state stats below). "
+            f"`--warmup-iters={manifest.get('warmup_iterations')}` -> "
+            f"{wib.get('profiled_pass', 1)} profiled pass (timed below) + "
+            f"{wib.get('extra_plain_passes', 0)} additional plain warmup pass(es) "
+            "(discarded entirely, not shown in any table).\n"
         )
         warm = manifest.get("warmup_wall_clock_by_stage_s", {})
         lines.append("| stage | warmup seconds (1 pass, profiler-instrumented) |")
@@ -590,14 +600,17 @@ def main() -> int:
         "--warmup-iters",
         type=int,
         default=1,
-        help="untimed warmup passes before steady-state timing (also doubles as the "
-        "profiler cross-check pass; only 1 is supported/meaningful)",
+        help="total untimed warmup passes before steady-state timing (minimum 1: the "
+        "first warmup pass always doubles as the profiler cross-check pass; "
+        "warmup_iters > 1 runs additional plain discarded passes after it, in case a "
+        "single pass doesn't fully stabilize MPS kernel-compile state)",
     )
     ap.add_argument(
         "--timed-iters",
         type=int,
         default=4,
-        help="timed steady-state iterations after warmup (recommended 3-5)",
+        help="timed steady-state iterations after warmup (recommended 3-5; any "
+        "positive int is accepted, with a warning outside that range)",
     )
     ap.add_argument(
         "--static-only",
@@ -605,6 +618,22 @@ def main() -> int:
         help="skip the live run; emit methodology only (mirrors E2's --static-only)",
     )
     args = ap.parse_args()
+
+    if args.warmup_iters < 1:
+        print(
+            f"[e2-confirm] WARNING: --warmup-iters={args.warmup_iters} < 1; clamping "
+            "to 1 (the profiler cross-check pass is mandatory and always counts as "
+            "the first warmup pass)."
+        )
+        args.warmup_iters = 1
+    if args.timed_iters < 1:
+        print(f"[e2-confirm] ERROR: --timed-iters={args.timed_iters} must be >= 1.")
+        return 1
+    if not (3 <= args.timed_iters <= 5):
+        print(
+            f"[e2-confirm] WARNING: --timed-iters={args.timed_iters} is outside the "
+            "recommended 3-5 range for stable mean/std estimates; proceeding anyway."
+        )
 
     if args.device == "mps" and not (
         torch.backends.mps.is_available() and torch.backends.mps.is_built()
@@ -741,6 +770,31 @@ def main() -> int:
     manifest["op_coverage"] = warm["op_coverage"]
     manifest["fallback_ops"] = sorted(warm["fallback_ops"])
 
+    # ---- extra plain warmup passes (warmup_iters > 1), discarded entirely ----
+    extra_warmup = args.warmup_iters - 1
+    extra_warmup_err = None
+    if extra_warmup > 0:
+        print(f"[e2-confirm] running {extra_warmup} additional plain warmup pass(es) "
+              "(discarded, not the profiled one) ...")
+        for i in range(extra_warmup):
+            _timings_w, _fb_w, err_w = run_timed_iteration(
+                model,
+                feats,
+                device,
+                recycling_steps=args.recycling_steps,
+                sampling_steps=args.sampling_steps,
+                autocast_ctx=autocast_ctx,
+            )
+            if err_w is not None:
+                extra_warmup_err = err_w
+            print(f"[e2-confirm]   extra warmup {i + 1}/{extra_warmup}: "
+                  f"{'ok' if err_w is None else 'ERROR'} "
+                  f"total={sum(_timings_w.values()):.4f}s (discarded)")
+    manifest["warmup_iterations_breakdown"] = {
+        "profiled_pass": 1,
+        "extra_plain_passes": extra_warmup,
+    }
+
     # ---- steady-state timed iterations (clean, uninstrumented) ----
     print(f"[e2-confirm] running {args.timed_iters} timed steady-state iterations ...")
     per_stage_samples: dict[str, list[float]] = {}
@@ -799,7 +853,12 @@ def main() -> int:
         residency_confirmed_each_iter
     )
 
-    all_ok = warmup_ok and last_err is None and residency_err is None
+    all_ok = (
+        warmup_ok
+        and extra_warmup_err is None
+        and last_err is None
+        and residency_err is None
+    )
     manifest["ran_on_device"] = (
         "yes" if (all_ok and device.type == "mps") else
         ("partial" if device.type == "mps" else f"yes ({device.type})")
