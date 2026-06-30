@@ -14,6 +14,7 @@
   "mps_available": true,
   "input_kind": "SYNTHETIC feats (n_tokens=48, n_atoms=256, n_msa=16) - real model + real weights, synthetic input",
   "pytorch_enable_mps_fallback": "1",
+  "opm_mode": "stock",
   "command": "python e2_mps_opcoverage.py",
   "config": {
     "recycling_steps": 1,
