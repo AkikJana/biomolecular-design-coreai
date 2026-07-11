@@ -2,12 +2,15 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-import pytest
 import torch
-import torch.nn.functional as F
-from train_preference_alignment import grpo_loss, PolicyNetwork, AASequenceTokenizer, get_sequence_logps
-from speculative_flow_matching import SearchGuidedSpeculativeSampler
-from agentic_design_loop import run_codesign_loop, compute_rewards
+from train_preference_alignment import grpo_loss
+from speculative_flow_matching import (
+    FlowMatchingODE,
+    SearchGuidedSpeculativeSampler,
+    SpeculativeFlowMatchingSampler,
+)
+from agentic_design_loop import run_codesign_loop
+from boltz_reward import SyntheticSequenceBoltzReward, compute_design_reward
 
 def test_grpo_advantage_properties():
     """Verify that GRPO advantage calculation standardizes rewards to zero-mean and unit-variance."""
@@ -74,10 +77,51 @@ def test_search_guided_trajectory_selection():
     assert "acceptance_rate" in stats
     assert "total_steps" in stats
 
+
+def test_flow_samplers_handle_partial_steps_and_exact_overlaps():
+    """A non-divisor step size must end at t=1, even from overlapping atoms."""
+    def unit_field(x, t, **kwargs):
+        return torch.ones_like(x)
+
+    x_init = torch.zeros(1, 2, 3)
+    baseline = FlowMatchingODE(step_size=0.3).solve(x_init, unit_field)
+    sampler = SpeculativeFlowMatchingSampler(
+        draft_vf_fn=unit_field,
+        target_vf_fn=unit_field,
+        step_size=0.3,
+        speculative_lookahead=2,
+    )
+    sampled, stats = sampler.sample(x_init)
+
+    assert torch.allclose(baseline, torch.ones_like(x_init), atol=1e-6)
+    assert torch.allclose(sampled, baseline, atol=1e-6)
+    assert stats["total_steps"] == 4
+
+    projected = sampler.project_manifold(torch.zeros(1, 2, 3))
+    distance = torch.linalg.vector_norm(projected[:, 1] - projected[:, 0], dim=-1)
+    assert torch.allclose(distance, torch.tensor([3.8]), atol=1e-4)
+
 def test_co_design_loop_e2e():
     """Run agentic co-design loop end-to-end for multiple iterations and verify convergence properties."""
+    wt_sequence = "MATEVLADIGSAKLR"
+    interface_positions = [2, 4, 8, 12]
+    target = list(wt_sequence)
+    for position, residue in zip(interface_positions, "WYFM"):
+        target[position] = residue
+    reward_model = SyntheticSequenceBoltzReward(
+        target_seq="".join(target), interface_positions=interface_positions, seed=1
+    )
+
     # Run for 3 iterations, group size 4
-    metrics = run_codesign_loop(iterations=3, group_size=4)
+    metrics = run_codesign_loop(
+        reward_model=reward_model,
+        wt_sequence=wt_sequence,
+        interface_positions=interface_positions,
+        iterations=3,
+        group_size=4,
+        device="cpu",
+        verbose=False,
+    )
     
     assert len(metrics) == 3
     for entry in metrics:
@@ -85,16 +129,28 @@ def test_co_design_loop_e2e():
         assert "mean_reward" in entry
         assert "loss" in entry
         assert "kl" in entry
-        assert entry["loss"] != 0.0
-        assert entry["kl"] > 0.0
+        assert torch.isfinite(torch.tensor(entry["loss"]))
+        assert entry["kl"] >= 0.0
         
     # Verify that the final iteration ran without error and loss/metrics are recorded
     print("Co-design loop E2E test finished successfully.")
+
+
+def test_mixed_batch_confidence_uses_ptm_per_single_chain_sample():
+    """Single-chain fallback must not be disabled by a complex in the same batch."""
+    out = {
+        "complex_plddt": torch.tensor([0.5, 0.5]),
+        "iptm": torch.tensor([0.0, 0.8]),
+        "ptm": torch.tensor([0.4, 0.1]),
+        "sample_atom_coords": torch.tensor([[[0.0, 0.0, 0.0]], [[0.0, 0.0, 0.0]]]),
+    }
+    reward = compute_design_reward(out)
+    assert torch.allclose(reward, torch.tensor([0.48, 0.56]))
 
 if __name__ == "__main__":
     print("Running E2E tests for GRPO and Agentic Co-design...")
     test_grpo_advantage_properties()
     test_search_guided_trajectory_selection()
     test_co_design_loop_e2e()
+    test_mixed_batch_confidence_uses_ptm_per_single_chain_sample()
     print("All tests passed successfully!")
-

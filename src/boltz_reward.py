@@ -27,10 +27,14 @@ def boltz_confidence_score(out: Dict[str, torch.Tensor]) -> torch.Tensor:
     """
     complex_plddt = out["complex_plddt"]
     iptm = out.get("iptm", torch.zeros_like(complex_plddt))
-    if torch.allclose(iptm, torch.zeros_like(iptm)):
-        score_term = out.get("ptm", torch.zeros_like(complex_plddt))
-    else:
-        score_term = iptm
+    ptm = out.get("ptm", torch.zeros_like(complex_plddt))
+    if iptm.shape != complex_plddt.shape or ptm.shape != complex_plddt.shape:
+        raise ValueError("complex_plddt, iptm, and ptm must have matching shapes.")
+
+    # A prediction batch can contain both complexes and single chains.  Choose
+    # the documented ptm fallback per sample rather than switching the whole
+    # batch based on whether *every* iptm value is zero.
+    score_term = torch.where(iptm == 0, ptm, iptm)
     return (4.0 * complex_plddt + score_term) / 5.0
 
 
@@ -41,13 +45,24 @@ def clash_penalty(
 
     coords: (B, M, 3); atom_mask: (B, M) or None. Returns (B,).
     """
+    if coords.ndim != 3 or coords.shape[-1] != 3:
+        raise ValueError("coords must have shape (B, M, 3).")
+    if coords.shape[1] == 0:
+        raise ValueError("coords must contain at least one atom.")
+    if threshold <= 0:
+        raise ValueError("threshold must be positive.")
+
     B, M, _ = coords.shape
     if atom_mask is None:
         atom_mask = coords.new_ones(B, M)
+    elif atom_mask.shape != (B, M):
+        raise ValueError("atom_mask must have shape (B, M) matching coords.")
+    else:
+        atom_mask = atom_mask.to(device=coords.device, dtype=coords.dtype)
     dist = torch.cdist(coords, coords)  # (B, M, M)
     # exclude self + sequence-adjacent neighbors (bonded), and padded atoms
-    eye = torch.eye(M, device=coords.device)
-    adj = torch.diag(torch.ones(M - 1, device=coords.device), 1)
+    eye = torch.eye(M, device=coords.device, dtype=coords.dtype)
+    adj = torch.diag(torch.ones(M - 1, device=coords.device, dtype=coords.dtype), 1)
     adj = adj + adj.T + eye
     pair_valid = atom_mask.unsqueeze(1) * atom_mask.unsqueeze(2) * (1 - adj).unsqueeze(0)
     overlap = torch.clamp(threshold - dist, min=0.0) ** 2 * pair_valid
@@ -95,7 +110,13 @@ class BoltzRewardModel(RewardModel):
         for seq in sequences:
             out = self.predict_fn(seq)
             r = compute_design_reward(out, clash_weight=self.clash_weight)
+            if r.numel() != 1:
+                raise ValueError(
+                    "predict_fn must return exactly one prediction per input sequence."
+                )
             rewards.append(r.reshape(-1)[0])
+        if not rewards:
+            return torch.empty(0)
         return torch.stack(rewards)
 
 

@@ -15,13 +15,11 @@ def test_boltz_wrappers():
     sequence = "MATEVLADIGSAKLR"
     target_pdb = "/tmp/biomolecular_design/TNF-alpha_1TNF.pdb"
     
-    # Verify target exists
+    # The surrogate path does not read the PDB, so do not create a shared fake
+    # fixture here.  Creating one made unrelated tests depend on execution
+    # order and masked a missing real input.
     if not os.path.exists(target_pdb):
         print(f"[Warning] Target PDB '{target_pdb}' not found. Please run test_dms_generation.py first.")
-        # Create a dummy target file for testing
-        os.makedirs(os.path.dirname(target_pdb), exist_ok=True)
-        with open(target_pdb, "w") as f:
-            f.write("DUMMY PDB HEADER\n")
             
     # 3. Predict structures
     print(f"\nRunning structure prediction for sequence: '{sequence}'...")
