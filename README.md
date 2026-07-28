@@ -14,13 +14,48 @@
 
 ## 📊 Performance Benchmarks (1300-Residue Target)
 
-Tested on a standard Apple M-series MacBook, evaluating 3D structure predictions for binder mutants against a large **1300-residue receptor**:
+**What is being measured.** Boltz-Fast evaluates a *surrogate*: a single-pass
+network (conv → cross-attention → coordinate head) that approximates a binder's
+structure and affinity. It is not a reimplementation of Boltz-1's pipeline,
+which additionally performs MSA construction, Pairformer trunk recycling,
+iterative diffusion sampling, and confidence estimation. Latency numbers below
+therefore describe **candidate screening throughput**, not end-to-end structure
+prediction, and the two are not interchangeable.
 
-| Model / Backend Configuration | Avg Latency per Run | Total Time (200 Runs) | Speedup vs. Public Mac CPU | Speedup vs. Public Linux GPU |
-| :--- | :---: | :---: | :---: | :---: |
-| **Public Boltz-1** (Mac M-series CPU) | **900,000 ms** (15 mins) | 180,000.0 s | 1.00x (Baseline) | 0.27x |
-| **Public Boltz-1** (Linux RTX 3090/4090 GPU) | **240,000 ms** (4 mins) | 48,000.0 s | 3.75x | 1.00x |
-| **Boltz-Fast CoreAI** (Mac Neural Engine) | **7.95 ms** | **1.59 s** | **113,214x faster** | **30,190x faster** |
+Measured on an Apple M-series MacBook: 200 binder mutants scored against a
+constant 1300-residue receptor, with the receptor's projected K/V held in the
+ANE state cache so only the binder is re-evaluated per candidate.
+
+| Backend (same surrogate, 1300-residue target) | Avg latency / candidate | 200 candidates |
+| :--- | :---: | :---: |
+| **CoreAI, Apple Neural Engine** (FP8 + KV cache) | **7.95 ms** | **1.59 s** |
+| PyTorch MPS (same model, no KV cache) | run the benchmark | run the benchmark |
+| PyTorch CPU (same model, no KV cache) | run the benchmark | run the benchmark |
+
+Reproduce with `python src/benchmark_boltz_coreai.py`, which measures all three
+backends on the same architecture. That CPU/MPS-vs-ANE comparison is the
+like-for-like result this project can stand behind.
+
+### How this relates to Boltz-1
+
+Full Boltz-1 inference on a target of this size is frequently quoted at
+**minutes** per structure on consumer hardware. Earlier revisions of this README
+divided such a figure by the 7.95 ms above and reported a five-digit speedup.
+That comparison is not valid and has been removed:
+
+* The two systems compute different things (single forward pass vs. full
+  diffusion sampling with MSA and confidence heads).
+* The reference minutes-per-structure figures were never measured here — they
+  were hardcoded constants in the benchmark script, not observations.
+* **The accuracy cost is unquantified.** A surrogate is only useful if its
+  ranking agrees with the reference; latency alone says nothing.
+
+The meaningful claim has the form *"the surrogate reproduces the reference's
+binder ranking with X% top-k recall (Spearman ρ) at 7.95 ms/candidate"*.
+`src/benchmark_surrogate_vs_reference.py` exists to produce exactly that number
+— plug in a real Boltz-2 scorer and the surrogate, and report both halves
+together. Until then, treat the latency figures as throughput characterization
+only, not as evidence of equivalence.
 
 ---
 

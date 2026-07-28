@@ -126,7 +126,8 @@ async def main():
     # -------------------------------------------------------------------------
     # PART 3: CoreAI AOT Compiled Model (Neural Engine / GPU)
     # -------------------------------------------------------------------------
-    aimodel_path = "/Users/akikjana/Documents/BiomolecularDesign/surrogate_model.aimodel"
+    default_aimodel = Path(__file__).resolve().parent.parent / "surrogate_model.aimodel"
+    aimodel_path = os.environ.get("BOLTZ_FAST_AIMODEL", str(default_aimodel))
     print(f"\n[CoreAI] Loading AOT Compiled FP8 + KV-Cached Model from {aimodel_path}...")
     if not os.path.exists(aimodel_path):
         print(f"ERROR: {aimodel_path} does not exist. Please run convert_surrogate_coreai.py first.")
@@ -181,20 +182,30 @@ async def main():
     # PART 4: Summary Comparison
     # -------------------------------------------------------------------------
     print("\n" + "=" * 90)
-    print("BENCHMARK COMPARISON REPORT VS. PUBLIC BOLTZ-1 (1300 RESIDUES)")
+    print("BENCHMARK COMPARISON REPORT: SAME SURROGATE ACROSS BACKENDS (1300 RESIDUES)")
     print("=" * 90)
-    
-    # Standard internet benchmarks for Boltz-1 structure prediction on 1300 residues
-    boltz_public_mac_ms = 15.0 * 60.0 * 1000.0 # 15 minutes in ms
-    boltz_public_gpu_ms = 4.0 * 60.0 * 1000.0  # 4 minutes in ms
-    
-    print(f"| Backend Target (1300 residues) | Total Time ({num_trials} runs) | Avg Latency / Run | Speedup vs Public Mac | Speedup vs Public GPU |")
-    print("| :--- | :---: | :---: | :---: | :---: |")
-    print(f"| Public Boltz-1 (Mac M-series CPU) | {15.0*60.0*num_trials:.1f} s | {boltz_public_mac_ms:.1f} ms | 1.00x (Baseline) | 0.27x |")
-    print(f"| Public Boltz-1 (Linux RTX GPU) | {4.0*60.0*num_trials:.1f} s | {boltz_public_gpu_ms:.1f} ms | {boltz_public_mac_ms / boltz_public_gpu_ms:.2f}x | 1.00x |")
-    print(f"| Boltz-Fast CoreAI Neural Engine | {coreai_duration:.4f} s | {coreai_avg_ms:.2f} ms | **{boltz_public_mac_ms / coreai_avg_ms:.1f}x** | **{boltz_public_gpu_ms / coreai_avg_ms:.1f}x** |")
+
+    # Only like-for-like rows are reported: identical architecture, identical
+    # workload, differing only in backend and KV caching. Earlier revisions also
+    # printed a "speedup vs public Boltz-1" column derived from hardcoded
+    # 15-minute / 4-minute constants. Those were never measured here, and full
+    # Boltz-1 inference computes something different (MSA + trunk recycling +
+    # diffusion sampling + confidence) from this single-pass surrogate, so the
+    # ratio was not a speedup in any defensible sense. It has been removed.
+    print(f"| Backend (1300 residues) | Total Time ({num_trials} runs) | Avg Latency / Run | Speedup vs PyTorch CPU |")
+    print("| :--- | :---: | :---: | :---: |")
+    print(f"| PyTorch CPU | {cpu_duration:.4f} s | {cpu_avg_ms:.2f} ms | 1.00x (baseline) |")
+    if mps_avg_ms is not None:
+        print(f"| PyTorch MPS | {mps_duration:.4f} s | {mps_avg_ms:.2f} ms | {cpu_avg_ms / mps_avg_ms:.2f}x |")
+    else:
+        print("| PyTorch MPS | not available on this host | - | - |")
+    print(f"| CoreAI Neural Engine (FP8 + KV cache) | {coreai_duration:.4f} s | {coreai_avg_ms:.2f} ms | {cpu_avg_ms / coreai_avg_ms:.2f}x |")
     print("=" * 90)
-    
+    print("\nNOTE: latency only. The surrogate's ranking agreement with a full")
+    print("reference model is NOT measured here -- use benchmark_surrogate_vs_reference.py")
+    print("and report accuracy alongside these numbers.")
+    print("=" * 90)
+
     print("\nOptimizations Explained:")
     print("1. **Dynamic KV-Caching:** Rather than recalculating representation matrices of target")
     print("   sequences for every mutant sequence, the target KV coordinates are stored in state")
