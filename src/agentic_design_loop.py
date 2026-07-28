@@ -127,7 +127,14 @@ def run_codesign_loop(
             optimizer.step()
 
         mean_r = rewards.mean().item()
-        history.append({"iteration": it, "mean_reward": mean_r, "loss": loss.item(), "kl": kl.item()})
+        entry = {"iteration": it, "mean_reward": mean_r, "loss": loss.item(), "kl": kl.item()}
+        # Predictor-backed reward adapters can expose the exact scored proposals
+        # (including confidence, clash, affinity, and developability features).
+        # Keeping them with the optimization trace makes later assay-label joins
+        # and target-disjoint retraining reproducible.
+        if hasattr(reward_model, "last_records"):
+            entry["candidate_records"] = list(reward_model.last_records)
+        history.append(entry)
         if verbose:
             print(f"Iter {it:02d} | mean reward {mean_r:.4f} | loss {loss.item():.4f} | KL {kl.item():.4f}")
 
