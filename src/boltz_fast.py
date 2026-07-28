@@ -79,9 +79,15 @@ class BoltzFastEngine(nn.Module):
         # target_features shape: [B, L_target, embed_dim]
         # Generates compressed key-value latent representations
         latent_kv = self.mla_attention.kv_down_proj(target_features) # [B, L_target, latent_dim]
+        # Report the saving actually achieved for this tensor pair. The figure
+        # depends on embed_dim/latent_dim and dtype, so a literal is wrong for
+        # every configuration but one.
+        source_bytes = target_features.element_size() * target_features.nelement()
+        cached_bytes = latent_kv.element_size() * latent_kv.nelement()
+        saving_pct = (1.0 - cached_bytes / source_bytes) * 100.0 if source_bytes else 0.0
         print(f"[Boltz-Fast] MLA Target KV Cache created. Size compressed from "
-              f"{target_features.element_size() * target_features.nelement() / 1024:.2f} KB to "
-              f"{latent_kv.element_size() * latent_kv.nelement() / 1024:.2f} KB (87.5% memory saving)")
+              f"{source_bytes / 1024:.2f} KB to "
+              f"{cached_bytes / 1024:.2f} KB ({saving_pct:.1f}% memory saving)")
         return latent_kv
 
     def forward_fold_cp_attention(

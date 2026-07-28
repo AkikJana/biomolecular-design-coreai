@@ -34,10 +34,16 @@ class AffinitySurrogate(nn.Module):
         self.embed_dim = embed_dim
         self.num_heads = num_heads
         self.head_dim = embed_dim // num_heads
+        # Dedicated slot for anything outside the canonical 20. Folding unknown
+        # residues onto index 0 would silently relabel them alanine, which is a
+        # wrong answer rather than an uninformative one.
+        self._char_to_idx = {c: i for i, c in enumerate(alphabet)}
+        self.unk_index = len(alphabet)
+        num_embeddings = len(alphabet) + 1
         g = torch.Generator().manual_seed(seed)
-        self.embed = nn.Embedding(len(alphabet), embed_dim)
+        self.embed = nn.Embedding(num_embeddings, embed_dim)
         with torch.no_grad():
-            self.embed.weight.copy_(torch.randn(len(alphabet), embed_dim, generator=g))
+            self.embed.weight.copy_(torch.randn(num_embeddings, embed_dim, generator=g))
 
         self.conv1 = nn.Conv1d(embed_dim, embed_dim, kernel_size=3, padding=1)
         self.q_proj = nn.Linear(embed_dim, embed_dim)
@@ -71,8 +77,11 @@ class AffinitySurrogate(nn.Module):
         return pe.unsqueeze(0)  # (1, L, D)
 
     def embed_seq(self, seq: str) -> torch.Tensor:
+        # Case is normalized first, so lowercase input still resolves to its
+        # residue; only genuinely non-canonical codes (X, B, Z, U, ...) fall
+        # through to the UNK slot.
         idx = torch.tensor(
-            [self.alphabet.find(c) if c in self.alphabet else 0 for c in seq],
+            [self._char_to_idx.get(c.upper(), self.unk_index) for c in seq],
             device=self.embed.weight.device,
         )
         emb = self.embed(idx).unsqueeze(0)  # (1, L, D)
