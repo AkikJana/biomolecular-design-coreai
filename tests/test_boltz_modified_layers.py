@@ -1,12 +1,10 @@
-import sys
 import os
 import torch
 import torch.nn as nn
 import unittest
 
-# Ensure the local modified boltz is used
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../boltz/src")))
-
+# Import paths (repo root, src, boltz/src) come from
+# [tool.pytest.ini_options] pythonpath in pyproject.toml.
 import boltz
 print(f"[Test] Using boltz package located at: {boltz.__file__}")
 
@@ -236,9 +234,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
     def test_refiner_training_entrypoint_improves_rmsd(self):
         """The supervised entrypoint trains the refiner and reduces aligned RMSD."""
         import tempfile
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from train_coordinate_refiner import train_refiner
 
         with tempfile.TemporaryDirectory() as d:
@@ -256,9 +251,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
     def test_refiner_checkpoint_load_roundtrip(self):
         """train -> save -> load_coordinate_refiner reproduces the trained model."""
         import tempfile
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from train_coordinate_refiner import train_refiner
         from boltz.model.layers.coordinate_refiner import (
             CoordinateRefiner, load_coordinate_refiner,
@@ -298,9 +290,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
     def test_distance_loss_chunked_matches_dense(self):
         """Chunked distance loss equals the dense off-diagonal reference, is
         chunk-size invariant, and has finite gradients."""
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from train_coordinate_refiner import distance_loss
 
         def dense_ref(pred, true, mask):
@@ -398,9 +387,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         """The distillation entrypoint trains the student to match the teacher's
         guided field and writes a loadable checkpoint."""
         import tempfile
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from train_cfg_student import train_cfg_student
         from boltz.model.layers.cfg_student import load_cfg_student
 
@@ -420,9 +406,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
 
     def test_boltz_reward_matches_real_formula(self):
         """Reward uses Boltz's confidence formula and penalizes clashes."""
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from boltz_reward import (
             boltz_confidence_score, compute_design_reward, BoltzRewardModel,
         )
@@ -457,9 +440,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
 
     def test_grpo_codesign_improves_reward(self):
         """The GRPO co-design loop increases mean Boltz reward over iterations."""
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from agentic_design_loop import run_codesign_loop
         from boltz_reward import SyntheticSequenceBoltzReward
 
@@ -537,9 +517,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
     def test_benchmark_metrics_and_harness(self):
         """Ranking-agreement metrics are correct and the harness reports
         latency/size/agreement for pluggable scorers."""
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from benchmark_surrogate_vs_reference import (
             spearman, kendall_tau, topk_recall, benchmark,
             SyntheticReferenceScorer, NoisySurrogateScorer,
@@ -584,9 +561,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         """Affinity head produces rankable scores + is trainable; Boltz predict_fn
         reads real-format outputs; full benchmark loop runs with both."""
         import json, tempfile
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from surrogate_affinity import AffinitySurrogate, SurrogateAffinityScorer
         from boltz2_predict import read_boltz_outputs, BoltzCliPredictFn, BoltzAffinityScorer
         from benchmark_surrogate_vs_reference import benchmark
@@ -643,9 +617,6 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         """Distillation trainer raises the surrogate's benchmark ranking and writes
         a loadable checkpoint."""
         import tempfile
-        sys.path.insert(
-            0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-        )
         from train_surrogate_affinity import train_surrogate_affinity
         from surrogate_affinity import AffinitySurrogate
 

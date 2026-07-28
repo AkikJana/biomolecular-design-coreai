@@ -1,6 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 import torch
 from g_dpo_alignment import cluster_by_union_mask, select_group_preference_pairs, GDPOLoss
 

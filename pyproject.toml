@@ -1,0 +1,26 @@
+[tool.pytest.ini_options]
+# Only `tests/` holds test cases. `src/` contains library modules and
+# benchmark scripts, which must never be collected.
+testpaths = ["tests"]
+
+# Makes both import styles used by the suite resolve without per-file
+# sys.path manipulation:
+#   `from campaign_ranking import ...`  -> src/
+#   `from src.predict_structure import ...` -> repo root
+#   `from boltz.model...`               -> boltz/src (also provided by `pip install -e ./boltz`)
+pythonpath = [".", "src", "boltz/src"]
+
+norecursedirs = [
+    ".git",
+    ".venv",
+    ".worktrees",
+    "boltz",
+    "scratch",
+    "compiled_surrogate*",
+    "boltz_results*",
+    "*.aimodel",
+]
+
+markers = [
+    "coreai: requires the CoreAI runtime and compiled .aimodelc assets (opt-in via RUN_COREAI_INTEGRATION=1)",
+]

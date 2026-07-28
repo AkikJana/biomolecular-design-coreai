@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
 import torch
 from train_preference_alignment import grpo_loss
 from speculative_flow_matching import (

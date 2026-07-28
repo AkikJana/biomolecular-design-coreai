@@ -1,5 +1,4 @@
 import os
-import sys
 import pytest
 import torch
 import torch.nn as nn
@@ -7,11 +6,8 @@ import numpy as np
 import math
 import time
 
-# Add src and boltz/src to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../boltz/src')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
-# Import modules from src
+# Import paths (repo root, src, boltz/src) come from
+# [tool.pytest.ini_options] pythonpath in pyproject.toml.
 from low_rank_pair_representation import LowRankTensorProduct, LowRankPairUpdater, FullRankPairUpdater
 from cfg_distillation import TeacherVectorField, CFGDistilledVectorField, SinusoidalEmbedding, initialize_student_from_teacher
 from speculative_flow_matching import SpeculativeFlowMatchingSampler, FlowMatchingODE
