@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import subprocess
 import markdown
 import base64
@@ -28,7 +33,7 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
         md_content = f.read()
 
     # Find logo path
-    logo_path = "/Users/akikjana/Documents/BiomolecularDesign/src/bits_logo.png"
+    logo_path = str(REPO_ROOT / "src" / "bits_logo.png")
     if not os.path.exists(logo_path):
         logo_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/bits_logo.png"
     
@@ -482,6 +487,6 @@ graph TD
 if __name__ == "__main__":
     brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     md_file = os.path.join(brain_dir, "mid_semester_report.md")
-    pdf_file = "/Users/akikjana/Documents/BiomolecularDesign/mid_semester_report.pdf"
+    pdf_file = str(REPO_ROOT / "mid_semester_report.pdf")
     
     convert_md_to_pdf(md_file, pdf_file)

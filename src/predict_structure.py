@@ -7,6 +7,15 @@ import coreai.runtime as rt
 from coreai.runtime import NDArray
 from pathlib import Path
 
+# Resolved from this file's location so the package works wherever the repo is
+# checked out. Override per-instance via the aimodel_path argument, or globally
+# via BOLTZ_FAST_DYNAMIC_AIMODEL.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_AIMODEL_PATH = os.environ.get(
+    "BOLTZ_FAST_DYNAMIC_AIMODEL", str(REPO_ROOT / "surrogate_model_dynamic.aimodel")
+)
+
+
 class DynamicStructurePredictor:
     """
     A dynamic structure predictor wrapper designed for deployment inside macOS Apps.
@@ -15,7 +24,7 @@ class DynamicStructurePredictor:
     embeddings, handles CoreAI target KV-Caching state logic automatically, and
     returns predicted 3D coordinates.
     """
-    def __init__(self, aimodel_path: str = "/Users/akikjana/Documents/BiomolecularDesign/surrogate_model_dynamic.aimodel"):
+    def __init__(self, aimodel_path: str = DEFAULT_AIMODEL_PATH):
         self.aimodel_path = aimodel_path
         self.alphabet = "ACDEFGHIKLMNPQRSTVWY"
         self.embed_dim = 128

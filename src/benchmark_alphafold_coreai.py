@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import sys
 import time
 import asyncio
@@ -16,7 +21,7 @@ async def main():
     print("==================================================================================")
     
     # 1. Load the dynamic CoreAI model
-    aimodel_path = "/Users/akikjana/Documents/BiomolecularDesign/surrogate_model_dynamic.aimodel"
+    aimodel_path = str(REPO_ROOT / "surrogate_model_dynamic.aimodel")
     if not os.path.exists(aimodel_path):
         print(f"Error: CoreAI model not found at {aimodel_path}")
         return

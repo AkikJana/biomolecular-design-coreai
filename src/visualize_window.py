@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -81,7 +86,7 @@ def main():
     ax.view_init(elev=25, azim=35)
     
     # Save a static copy
-    output_png = "/Users/akikjana/Documents/BiomolecularDesign/backbone_3d_insulin.png"
+    output_png = str(REPO_ROOT / "backbone_3d_insulin.png")
     plt.tight_layout()
     plt.savefig(output_png, dpi=150, facecolor='#111827')
     print(f"Static copy saved successfully to: {output_png}")

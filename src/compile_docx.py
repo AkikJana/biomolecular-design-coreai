@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import re
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
@@ -218,7 +223,7 @@ def create_docx(md_path: str, docx_path: str):
     p_logo = doc.add_paragraph()
     p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_logo.paragraph_format.space_after = Pt(12)
-    logo_path = "/Users/akikjana/Documents/BiomolecularDesign/src/bits_logo.png"
+    logo_path = str(REPO_ROOT / "src" / "bits_logo.png")
     if os.path.exists(logo_path):
         p_logo.add_run().add_picture(logo_path, width=Inches(1.2))
     else:
@@ -679,6 +684,6 @@ def create_docx(md_path: str, docx_path: str):
 if __name__ == "__main__":
     brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     md_file = os.path.join(brain_dir, "mid_semester_report.md")
-    docx_file = "/Users/akikjana/Documents/BiomolecularDesign/mid_semester_report.docx"
+    docx_file = str(REPO_ROOT / "mid_semester_report.docx")
     
     create_docx(md_file, docx_file)

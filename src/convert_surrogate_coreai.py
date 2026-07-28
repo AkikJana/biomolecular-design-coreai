@@ -116,7 +116,8 @@ def main():
     print("Optimizing Core AI graph representation...")
     coreai_program.optimize()
     
-    output_path = Path("/Users/akikjana/Documents/BiomolecularDesign/surrogate_model.aimodel")
+    repo_root = Path(__file__).resolve().parent.parent
+    output_path = repo_root / "surrogate_model.aimodel"
     if output_path.exists():
         import shutil
         shutil.rmtree(output_path)
@@ -125,7 +126,7 @@ def main():
     print("Asset saved successfully.")
     
     # Compile the asset to produced compiled spécializations (.aimodelc)
-    compiled_path = Path("/Users/akikjana/Documents/BiomolecularDesign/compiled_surrogate")
+    compiled_path = repo_root / "compiled_surrogate"
 
     # Locate coreai-build dynamically. The Metal toolchain cryptex mount path is
     # version-pinned (its UUID changes across OS/toolchain updates), so resolve

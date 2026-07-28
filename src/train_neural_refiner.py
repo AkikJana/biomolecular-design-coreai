@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import sys
 import time
 import torch
@@ -254,7 +259,7 @@ def main():
         ax.set_zlabel("Z (Å)")
         ax.legend()
         
-        output_png = "/Users/akikjana/Documents/BiomolecularDesign/backbone_3d_refinement.png"
+        output_png = str(REPO_ROOT / "backbone_3d_refinement.png")
         plt.savefig(output_png, dpi=150)
         print(f"Refined comparison coordinate plot saved to: {output_png}")
     except Exception as e:

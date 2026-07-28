@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import subprocess
 import markdown
 
@@ -300,6 +305,6 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
 if __name__ == "__main__":
     brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
     md_file = os.path.join(brain_dir, "boltz_fast_technical_report.md")
-    pdf_file = "/Users/akikjana/Documents/BiomolecularDesign/boltz_fast_technical_report.pdf"
+    pdf_file = str(REPO_ROOT / "boltz_fast_technical_report.pdf")
     
     convert_tech_report_to_pdf(md_file, pdf_file)
