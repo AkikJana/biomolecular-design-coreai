@@ -30,7 +30,25 @@ Tested on a standard Apple M-series MacBook, evaluating 3D structure predictions
 * `src/convert_surrogate_coreai.py`: Quantization, PyTorch Export, and CoreAI compilation toolchain.
 * `src/benchmark_boltz_coreai.py`: Comparative latency test comparing CPU, MPS GPU, and CoreAI against public baselines.
 * `src/visualize_window.py`: Interactive 3D plotting utility displaying predicted C-alpha backbones using matplotlib.
-* `tests/test_dynamic_actual_samples.py`: Latency verification on actual protein sequences (Human Insulin, Hemoglobin).
+* `src/benchmark_dynamic_actual_samples.py`: Latency verification on actual protein sequences (Human Insulin, Hemoglobin).
+
+### Target-disjoint prospective ranking
+
+`src/campaign_ranking.py` provides the campaign layer for real binder discovery:
+
+1. Use `TargetedCampaignReward` with a real `predict_fn(target, binder)` to run co-design while recording every proposal's affinity, confidence, clash, and developability features.
+2. Attach experimental scores to the resulting `CandidateRecord` objects using a higher-is-better convention (for example `-log10(Kd)`).
+3. Create a target-disjoint train/calibration/test split, fit `CalibratedEnsembleRanker`, and select a small, diverse experimental batch with uncertainty- and developability-aware acquisition.
+
+The ranker keeps model scores separate from assay labels and rejects target leakage between training and calibration. Synthetic rewards remain suitable only for software tests, never for a prospective performance claim.
+
+`src/prospective_campaign.py` extends this into a publishable campaign protocol: define intended and off-target `TargetContext` states in a `DesignSpec`, verify length/developability/hotspot constraints with an auditable trace, aggregate desired states conservatively and counter-screens pessimistically, then report fixed-budget top-k success, cluster diversity, and throughput. `TargetConditionalConformalRouter` keeps confident, constraint-satisfying candidates on an edge ranker and routes uncertain candidates to Boltz/reference scoring. The included synthetic tests exercise workflow semantics only; they are not biological validation.
+
+### Risk-controlled cross-context design
+
+`src/certified_selectivity.py` is the research-method layer. It uses one joint split-conformal residual for the weakest desired context and strongest counter-screen, producing a conservative lower bound on robust selectivity. A candidate is selected only when that lower bound exceeds a declared margin and its verifier trace passes. `select_with_familywise_risk_control` applies a Bonferroni campaign-level error budget; `CostAwareReferenceAllocator` reserves expensive Boltz/reference calls for valid candidates near the certification boundary where a narrower reference interval can change the decision. The coverage guarantee is marginal and assumes calibration examples are exchangeable with future target-disjoint examples—report that assumption and assay results explicitly.
+
+`src/empirical_study.py` turns assay-labelled `ContextualAssayRecord` objects into a target-disjoint result table: raw predicted-selectivity, verifier-gated, and joint-conformal risk-controlled baselines; coverage/interval-width/selectivity curves; and fixed-budget discovery replay. `build_prospective_assay_manifest` emits only deduplicated, verifier-passing certified candidates for lab execution. Pre-register the split seed, selectivity threshold, cost model, clustering rule, and assay readout before using this report for a publication.
 
 ---
 
@@ -52,7 +70,7 @@ python src/benchmark_boltz_coreai.py
 ### 3. Run Predictions on Actual Protein Sequences
 Evaluate structure coordinates dynamically for variable sequence lengths:
 ```bash
-python tests/test_dynamic_actual_samples.py
+python src/benchmark_dynamic_actual_samples.py
 ```
 
 ### 4. Interactive 3D Visualization

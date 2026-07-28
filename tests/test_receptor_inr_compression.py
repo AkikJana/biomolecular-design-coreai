@@ -1,8 +1,4 @@
-try:
-    import pytest
-except ImportError:
-    pytest = None
-
+import pytest
 import torch
 from src.receptor_inr_compression import (
     ReceptorNeuralField,
@@ -24,6 +20,7 @@ def test_generate_mock_receptor():
     assert torch.all(coords >= -1.0) and torch.all(coords <= 1.0)
 
 
+@pytest.mark.parametrize("mode", ["siren", "pe_mlp", "basic_mlp"])
 def test_receptor_neural_field_forward(mode):
     n_residues = 50
     d_embed = 128
