@@ -84,7 +84,9 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
       }}
     }};
     </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <!-- polyfill.io removed: the domain was sold in 2024 and began serving
+         malicious code before being taken down, so this was a dead request and
+         a supply-chain liability. MathJax 3 needs no polyfill in modern Chrome. -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @page {{
@@ -314,7 +316,12 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
         "--headless",
         "--disable-gpu",
         "--no-sandbox",
-        "--timeout=5000",
+        # MathJax is loaded async from a CDN and typesets after DOMContentLoaded.
+        # Without a virtual time budget Chrome prints immediately, so every
+        # formula in the document came out as a blank gap. This advances the
+        # page's virtual clock until pending work settles before printing.
+        "--virtual-time-budget=30000",
+        "--run-all-compositor-stages-before-draw",
         f"--print-to-pdf={pdf_path}",
         temp_html_path
     ]
