@@ -119,7 +119,7 @@ We sharded a sequence length of $N=1024$ and feature dimension $D=64$ across a v
 
 ### 4.3 Integrated Pipeline Verification
 Running the unified `BoltzFastEngine` demo confirmed full interoperability:
-1.  **Target Caching:** Target receptor features compressed from **500.00 KB** to **125.00 KB** (87.5% memory saving).
+1.  **Target Caching:** Cached $K$/$V$ state reduced from **1000.00 KB** (separate $K$ and $V$, $2 \times N \times D$) to a **125.00 KB** latent ($N \times D_{\text{latent}}$), a **87.5% memory saving**.
 2.  **Sharded Ring Attention & TMU:** Successfully generated local sequence-sharded attention outputs and 2D block TMU products.
 3.  **SimPO Tuning:** Successfully updated the policy model using reference-free loss, yielding a SimPO Loss of **0.9730** in one step.
 
