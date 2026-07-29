@@ -1,10 +1,45 @@
 import base64
 import mimetypes
 import os
+import re
 import subprocess
 from pathlib import Path
 
 import markdown
+
+# Display ($$...$$) first so inline matching never splits one in half.
+_MATH_PATTERN = re.compile(r"\$\$.+?\$\$|\$[^$\n]+?\$", re.DOTALL)
+_MATH_TOKEN = "zzmathspan{}zz"
+
+
+def _protect_math(text: str):
+    r"""Stash math spans behind inert tokens before markdown conversion.
+
+    Python-Markdown treats ``_`` as emphasis, and it does so inside ``$...$``
+    too. Where the underscore follows a non-word character -- ``\hat{x}_{t+1}``
+    -- it opens an emphasis run, so the underscores are eaten and the delimiters
+    replaced with <em>. MathJax then receives ``\hat{x}{t+1}`` and cannot parse
+    it, which is why sections 2.2 and 2.3 rendered as raw source while 2.1
+    (whose underscores follow word characters) survived.
+
+    The tokens are lowercase alphanumeric: no markdown construct touches them.
+    """
+    spans: list[str] = []
+
+    def _stash(match: "re.Match[str]") -> str:
+        spans.append(match.group(0))
+        return _MATH_TOKEN.format(len(spans) - 1)
+
+    return _MATH_PATTERN.sub(_stash, text), spans
+
+
+def _restore_math(html: str, spans: list) -> str:
+    for index, expression in enumerate(spans):
+        token = _MATH_TOKEN.format(index)
+        if token not in html:
+            raise RuntimeError(f"math placeholder {token} lost during conversion")
+        html = html.replace(token, expression)
+    return html
 
 # Resolved from this file's location so the scripts work wherever the
 # repo is checked out.
@@ -63,7 +98,9 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
     # Replace the flow matching diagram if present or add custom style classes
     # Convert markdown body to HTML
     body_content = _inline_assets(body_content, md_path)
+    body_content, math_spans = _protect_math(body_content)
     html_body = markdown.markdown(body_content, extensions=['tables', 'fenced_code'])
+    html_body = _restore_math(html_body, math_spans)
     
     # Custom stylesheet tailored for LaTeX/arXiv typography
     html_content = f"""<!DOCTYPE html>
