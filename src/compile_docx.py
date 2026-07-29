@@ -682,8 +682,7 @@ def create_docx(md_path: str, docx_path: str):
     print(f"[DOCX] Successfully generated DOCX report at: {docx_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
-    md_file = os.path.join(brain_dir, "mid_semester_report.md")
+    md_file = str(REPO_ROOT / "reports" / "mid_semester_report.md")
     docx_file = str(REPO_ROOT / "mid_semester_report.docx")
     
     create_docx(md_file, docx_file)

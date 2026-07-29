@@ -1,4 +1,12 @@
 import os
+from pathlib import Path
+
+# Artifacts land inside the repo (gitignored) rather than a machine-local
+# tool-session directory. Override with BOLTZ_FAST_ARTIFACTS.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+ARTIFACTS_DIR = os.environ.get(
+    "BOLTZ_FAST_ARTIFACTS", str(REPO_ROOT / "artifacts")
+)
 import json
 import torch
 import torch.nn as nn
@@ -185,7 +193,7 @@ def main():
         print(f"SeqLen: {seq_len:4d} | MSE FP32: {res['mse_fp32']:.6f} | Cos FP32: {res['cos_fp32']:.6f} | Avg Bits: {res['avg_bitwidth']:.2f}")
 
     # Write results to json file in correct path
-    output_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
+    output_dir = ARTIFACTS_DIR
     os.makedirs(output_dir, exist_ok=True)
     results_path = os.path.join(output_dir, "summary_quantized.json")
     with open(results_path, "w") as f:

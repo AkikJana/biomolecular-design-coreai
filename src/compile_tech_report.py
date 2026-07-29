@@ -303,8 +303,7 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
     print(f"[PDF] Successfully generated PDF at: {pdf_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
-    md_file = os.path.join(brain_dir, "boltz_fast_technical_report.md")
+    md_file = str(REPO_ROOT / "reports" / "boltz_fast_technical_report.md")
     pdf_file = str(REPO_ROOT / "boltz_fast_technical_report.pdf")
     
     convert_tech_report_to_pdf(md_file, pdf_file)

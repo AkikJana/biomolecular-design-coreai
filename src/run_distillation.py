@@ -1,4 +1,12 @@
 import os
+from pathlib import Path
+
+# Artifacts land inside the repo (gitignored) rather than a machine-local
+# tool-session directory. Override with BOLTZ_FAST_ARTIFACTS.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+ARTIFACTS_DIR = os.environ.get(
+    "BOLTZ_FAST_ARTIFACTS", str(REPO_ROOT / "artifacts")
+)
 import sys
 import time
 import gc
@@ -99,7 +107,7 @@ def run_experiment():
     guidance_range = (0.0, 4.0)
     
     # Create output directory for figures/artifacts
-    output_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/33b9e418-4fdc-4adc-9140-d7f59f76f970"
+    output_dir = ARTIFACTS_DIR
     os.makedirs(output_dir, exist_ok=True)
     
     # 3. Create Datasets and DataLoaders

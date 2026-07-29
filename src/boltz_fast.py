@@ -78,15 +78,21 @@ class BoltzFastEngine(nn.Module):
         # target_features shape: [B, L_target, embed_dim]
         # Generates compressed key-value latent representations
         latent_kv = self.mla_attention.kv_down_proj(target_features) # [B, L_target, latent_dim]
-        # Report the saving actually achieved for this tensor pair. The figure
-        # depends on embed_dim/latent_dim and dtype, so a literal is wrong for
-        # every configuration but one.
-        source_bytes = target_features.element_size() * target_features.nelement()
+        # Baseline is what standard MHA would have to cache for this receptor:
+        # separate K and V tensors, each [B, L_target, embed_dim]. MLA caches a
+        # single [B, L_target, latent_dim] latent instead, so the saving is
+        # 1 - latent_dim / (2 * embed_dim) -- 87.5% at the 32/128 defaults.
+        # Computed rather than hardcoded: it moves with latent_dim and dtype.
+        elem = target_features.element_size()
+        num_tokens = target_features.nelement() // target_features.shape[-1]
+        baseline_kv_bytes = 2 * num_tokens * target_features.shape[-1] * elem
         cached_bytes = latent_kv.element_size() * latent_kv.nelement()
-        saving_pct = (1.0 - cached_bytes / source_bytes) * 100.0 if source_bytes else 0.0
-        print(f"[Boltz-Fast] MLA Target KV Cache created. Size compressed from "
-              f"{source_bytes / 1024:.2f} KB to "
-              f"{cached_bytes / 1024:.2f} KB ({saving_pct:.1f}% memory saving)")
+        saving_pct = (
+            (1.0 - cached_bytes / baseline_kv_bytes) * 100.0 if baseline_kv_bytes else 0.0
+        )
+        print(f"[Boltz-Fast] MLA Target KV Cache created. Cached K/V state reduced from "
+              f"{baseline_kv_bytes / 1024:.2f} KB (separate K + V) to "
+              f"{cached_bytes / 1024:.2f} KB latent ({saving_pct:.1f}% memory saving)")
         return latent_kv
 
     def forward_fold_cp_attention(
