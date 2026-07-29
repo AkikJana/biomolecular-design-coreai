@@ -1,7 +1,6 @@
 import os
 import sys
 import torch
-import torch.nn as nn
 from typing import Dict, Any, Tuple
 
 # Attempt to import real Boltz dependencies
@@ -12,8 +11,11 @@ if os.path.isdir(_LOCAL_BOLTZ_SRC) and _LOCAL_BOLTZ_SRC not in sys.path:
     sys.path.insert(0, _LOCAL_BOLTZ_SRC)
 
 try:
-    from boltz.model.models.boltz1 import Boltz1
-    from boltz.data import parse_fasta
+    # Imported for availability detection only; the names are re-imported at
+    # point of use. Keep the real imports rather than find_spec so that a broken
+    # (as opposed to absent) boltz install also trips HAS_BOLTZ.
+    from boltz.model.models.boltz1 import Boltz1  # noqa: F401
+    from boltz.data import parse_fasta  # noqa: F401
     HAS_BOLTZ = True
 except ImportError:
     HAS_BOLTZ = False

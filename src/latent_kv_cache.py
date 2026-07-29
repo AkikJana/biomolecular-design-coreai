@@ -162,7 +162,7 @@ def run_mla_benchmark():
     # Confirm structural projection functionality
     print(f"  Standard Output Shape:        {out_standard.shape}")
     print(f"  MLA Output Shape:             {out_mla.shape}")
-    print(f"  Execution Check:              Successful (MLA runs smoothly)")
+    print("  Execution Check:              Successful (MLA runs smoothly)")
     print("======================================================================\n")
 
 if __name__ == "__main__":

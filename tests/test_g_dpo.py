@@ -1,5 +1,5 @@
 import torch
-from g_dpo_alignment import cluster_by_union_mask, select_group_preference_pairs, GDPOLoss
+from g_dpo_alignment import cluster_by_union_mask, GDPOLoss
 
 def test_union_mask_clustering():
     print("--- Testing Union Mask Clustering ---")

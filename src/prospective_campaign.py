@@ -19,8 +19,8 @@ definitions on a declared target-disjoint benchmark or prospective campaign.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field, replace
-from typing import Callable, Dict, Iterable, Mapping, Optional, Sequence, Tuple
+from dataclasses import dataclass
+from typing import Callable, Dict, Mapping, Optional, Sequence, Tuple
 
 from campaign_ranking import (
     CalibratedEnsembleRanker,

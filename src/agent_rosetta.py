@@ -1,6 +1,6 @@
 import os
 import asyncio
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 import torch
 
 from google.antigravity import Agent, LocalAgentConfig
@@ -53,7 +53,7 @@ def generate_structure_speculative(sequence: str, target_name: str) -> str:
     pdb_path = f"/tmp/agent_rosetta/complex_{target_name}_{hash(sequence)}.pdb"
     
     with open(pdb_path, "w") as f:
-        f.write(f"HEADER    SIMULATED BINDER-TARGET COMPLEX\n")
+        f.write("HEADER    SIMULATED BINDER-TARGET COMPLEX\n")
         f.write(f"REMARK 999 TARGET: {target_name}\n")
         f.write(f"REMARK 999 BINDER_SEQUENCE: {sequence}\n")
         # Write dummy coordinates representing final flow matching outputs

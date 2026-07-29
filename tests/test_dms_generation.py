@@ -13,7 +13,7 @@ def test_dms_pipeline():
     print(f"\nTarget: {target}")
     try:
         pdb_path = generator.download_target_pdb(target)
-        assert os.path.exists(pdb_path), f"Failed to save PDB file!"
+        assert os.path.exists(pdb_path), "Failed to save PDB file!"
         print(f"Success: Verified local PDB exists at {pdb_path} (Size: {os.path.getsize(pdb_path)} bytes)")
     except Exception as e:
         print(f"Error downloading PDB: {e}")

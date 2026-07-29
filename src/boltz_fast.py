@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
-from typing import List, Tuple, Dict, Any, Callable
+from typing import Tuple, Dict, Any, Callable
 
 # Import modular components from the codebase
 from latent_kv_cache import MLAProteinAttention
@@ -221,7 +220,7 @@ def run_boltz_fast_pipeline_demo():
         
     print(f"\n[Search] Executing Speculative Flow Sampler for binder '{wt_sequence}'...")
     coords, stats = engine.run_speculative_folding(coord_init, mock_draft_vf, mock_target_vf)
-    print(f"  Speculative ODE Integration Complete.")
+    print("  Speculative ODE Integration Complete.")
     print(f"    - Draft Acceptance Rate:    {stats['acceptance_rate']*100:.1f}%")
     print(f"    - Sampler Speedup Factor:   {stats['estimated_speedup_factor']:.2f}x")
     
@@ -233,7 +232,7 @@ def run_boltz_fast_pipeline_demo():
     
     optimizer = torch.optim.Adam(engine.policy_model.parameters(), lr=0.01)
     
-    print(f"\n[Alignment] Performing reference-free SimPO gradient update step...")
+    print("\n[Alignment] Performing reference-free SimPO gradient update step...")
     loss_val = engine.compute_simpo_update(winner, loser, optimizer)
     print(f"  Tuned sequence design policy successfully. SimPO Loss = {loss_val:.4f}")
     

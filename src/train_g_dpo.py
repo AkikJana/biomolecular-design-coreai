@@ -3,14 +3,12 @@ import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from typing import List, Dict, Any
 
 # Resolve local paths
 sys.path.append(os.path.dirname(__file__))
 
 from dms_generation import TargetDMSGenerator
 from g_dpo_alignment import cluster_by_union_mask, GDPOLoss
-from boltz_wrapper import BoltzModelWrapper
 
 # -------------------------------------------------------------
 # 1. DEFINE A TRAINABLE SURROGATE NETWORK FOR DEMONSTRATION

@@ -1,11 +1,8 @@
-import os
 from pathlib import Path
 
 # Resolved from this file's location so the scripts work wherever the
 # repo is checked out.
 REPO_ROOT = Path(__file__).resolve().parent.parent
-import sys
-import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -162,7 +159,7 @@ def main():
         coarse_bond_dists = torch.norm(coarse_diffs, dim=-1)
         mean_coarse_bond_err = torch.mean(torch.abs(coarse_bond_dists - 3.8)).item()
         
-    print(f"Coarse Surrogate Prediction Stats (Before Refinement):")
+    print("Coarse Surrogate Prediction Stats (Before Refinement):")
     print(f"  Minimum non-consecutive atom distance: {min_coarse_dist:.4f} Å (Steric clashes present if < 4.0 Å)")
     print(f"  Mean consecutive bond length error:    {mean_coarse_bond_err:.4f} Å (True is exactly 3.8 Å)")
     print("==========================================================================")
@@ -228,7 +225,7 @@ def main():
         final_bond_dists = torch.norm(final_diffs, dim=-1)
         mean_final_bond_err = torch.mean(torch.abs(final_bond_dists - 3.8)).item()
         
-    print(f"Refined Coordinate Prediction Stats (After Neural Refinement):")
+    print("Refined Coordinate Prediction Stats (After Neural Refinement):")
     print(f"  Minimum non-consecutive atom distance: {min_final_dist:.4f} Å (Steric clashes successfully resolved)")
     print(f"  Mean consecutive bond length error:    {mean_final_bond_err:.4f} Å (Corrected back to ~3.8 Å)")
     

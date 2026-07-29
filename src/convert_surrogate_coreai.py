@@ -1,9 +1,7 @@
-import os
 import subprocess
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import coreai_torch
 from coreai_torch import TorchConverter, get_decomp_table
 import coreai_opt.quantization as q
 from pathlib import Path

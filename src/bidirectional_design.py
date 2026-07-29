@@ -105,7 +105,7 @@ def run_bidirectional_optimization():
         init_coords = model()[0, 0]
         init_dist = torch.norm(init_coords - target_site).item()
     print(f"Initial Distance:      {init_dist:.4f} Å")
-    print(f"Initial Displacement:  0.0000 (structure unrelaxed)")
+    print("Initial Displacement:  0.0000 (structure unrelaxed)")
     
     print("\nRunning joint bidirectional sequence-structure optimization...")
     print("-" * 90)

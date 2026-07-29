@@ -9,7 +9,6 @@ repeatable before a prospective campaign is launched.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from typing import Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 

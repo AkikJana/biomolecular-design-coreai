@@ -10,7 +10,7 @@ import time
 # [tool.pytest.ini_options] pythonpath in pyproject.toml.
 from low_rank_pair_representation import LowRankTensorProduct, LowRankPairUpdater, FullRankPairUpdater
 from cfg_distillation import TeacherVectorField, CFGDistilledVectorField, SinusoidalEmbedding, initialize_student_from_teacher
-from speculative_flow_matching import SpeculativeFlowMatchingSampler, FlowMatchingODE
+from speculative_flow_matching import SpeculativeFlowMatchingSampler
 from train_neural_refiner import ResNetCoordinateRefiner, compute_supervised_loss, generate_mock_ground_truth
 from quantized_attention_weights import DynamicQuantizedLinear
 from bidirectional_design import BidirectionalCoDesigner, JointBiophysicalLoss

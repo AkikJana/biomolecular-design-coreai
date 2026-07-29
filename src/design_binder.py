@@ -1,15 +1,13 @@
 import os
 import sys
 import torch
-import torch.nn as nn
-from typing import List, Dict, Any, Tuple
 
 # Add current directory to python path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from dms_generation import TargetDMSGenerator
 from train_g_dpo import TrainableSurrogateModel, evaluate_simulated_affinity
 from speculative_flow_matching import SpeculativeFlowMatchingSampler
-from boltz_wrapper import BoltzModelWrapper, BoltzDraftModelWrapper
+from boltz_wrapper import BoltzModelWrapper
 
 def print_header(title: str):
     print("\n" + "=" * 70)

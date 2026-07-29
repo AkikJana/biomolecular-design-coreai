@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Tuple
 
 def compute_union_mask(seq_a: str, seq_b: str) -> List[int]:
     """Finds indices where two sequences differ."""

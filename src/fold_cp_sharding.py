@@ -1,7 +1,6 @@
 import torch
-import torch.nn as nn
 import math
-from typing import List, Tuple, Dict, Any
+from typing import Tuple, Dict, Any
 
 class FoldCPManager:
     """Manages 2D grid configuration and simulated inter-GPU ring communication.

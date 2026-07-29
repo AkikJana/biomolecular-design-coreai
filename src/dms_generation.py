@@ -1,6 +1,6 @@
 import os
 import urllib.request
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 
 class TargetDMSGenerator:
     """Generates a localized Deep Mutational Scanning (DMS) sequence library for a target PDB complex."""

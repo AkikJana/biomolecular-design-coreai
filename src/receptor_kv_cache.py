@@ -163,7 +163,7 @@ def run_kv_cache_benchmark():
     print("-" * 50)
     print(f"  Measured Speedup Factor:   {speedup:.2f}x")
     print(f"  Theoretical FLOPs Saved:   {flops_saved_percent:.2f}% (on projection layers)")
-    print(f"  Outputs Equivalence:       Verified (Outputs match)")
+    print("  Outputs Equivalence:       Verified (Outputs match)")
     print("-" * 50)
 
 if __name__ == "__main__":

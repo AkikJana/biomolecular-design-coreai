@@ -15,7 +15,7 @@ Untrained it is meaningless; train it by distilling Boltz-2 affinities
 """
 
 import math
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, Sequence
 
 import torch
 import torch.nn as nn
