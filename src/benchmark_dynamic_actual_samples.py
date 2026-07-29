@@ -2,7 +2,7 @@ import time
 import numpy as np
 import torch
 
-from src.predict_structure import DynamicStructurePredictor
+from predict_structure import DynamicStructurePredictor
 
 def main():
     print("================================================================")

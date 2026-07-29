@@ -3,12 +3,8 @@ import torch.nn as nn
 import numpy as np
 import time
 import os
-import sys
 
-# Add src to path just in case
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from src.momentum_trajectory import (
+from momentum_trajectory import (
     AdaptiveMomentumSpeculativeSolver,
     EulerSolver,
     HeunSolver,

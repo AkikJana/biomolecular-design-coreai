@@ -5,7 +5,7 @@ import math
 import time
 import os
 import json
-from src.block_sparse_attention import DynamicBlockSparseAttention
+from block_sparse_attention import DynamicBlockSparseAttention
 
 class FullAttention(nn.Module):
     """

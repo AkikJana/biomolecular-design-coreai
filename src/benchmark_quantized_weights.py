@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import time
-from src.quantized_attention_weights import DynamicQuantizedLinear
+from quantized_attention_weights import DynamicQuantizedLinear
 
 # Set random seeds for reproducibility
 torch.manual_seed(42)

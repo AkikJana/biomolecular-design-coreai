@@ -1,7 +1,7 @@
 import torch
 import time
 import math
-from src.parallel_picard_solver import MockVectorField, ParallelPicardSolver
+from parallel_picard_solver import MockVectorField, ParallelPicardSolver
 
 def benchmark_parallel_picard():
     # Set seed for reproducibility
