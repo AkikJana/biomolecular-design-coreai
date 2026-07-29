@@ -1,11 +1,33 @@
+import base64
+import mimetypes
 import os
+import subprocess
 from pathlib import Path
+
+import markdown
 
 # Resolved from this file's location so the scripts work wherever the
 # repo is checked out.
 REPO_ROOT = Path(__file__).resolve().parent.parent
-import subprocess
-import markdown
+
+
+def _inline_assets(body_content: str, md_path: str) -> str:
+    """Replace markdown-relative image refs with base64 data URIs.
+
+    The styled HTML is written to a temp directory, so relative refs like
+    ``assets/foo.png`` would resolve against /tmp and render as broken images
+    with no error. Inlining keeps the intermediate HTML self-contained.
+    """
+    base_dir = Path(md_path).resolve().parent
+    for asset in sorted((base_dir / "assets").glob("*")) if (base_dir / "assets").is_dir() else []:
+        ref = f"assets/{asset.name}"
+        if ref not in body_content:
+            continue
+        mime = mimetypes.guess_type(asset.name)[0] or "application/octet-stream"
+        data = base64.b64encode(asset.read_bytes()).decode("ascii")
+        body_content = body_content.replace(ref, f"data:{mime};base64,{data}")
+    return body_content
+
 
 def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
     if not os.path.exists(md_path):
@@ -40,6 +62,7 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
 
     # Replace the flow matching diagram if present or add custom style classes
     # Convert markdown body to HTML
+    body_content = _inline_assets(body_content, md_path)
     html_body = markdown.markdown(body_content, extensions=['tables', 'fenced_code'])
     
     # Custom stylesheet tailored for LaTeX/arXiv typography

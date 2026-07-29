@@ -546,7 +546,13 @@ def create_docx(md_path: str, docx_path: str):
         if img_match:
             caption = img_match.group(1)
             img_path = img_match.group(2)
-            
+            # Markdown image refs are relative to the .md file (reports/), not to
+            # the process CWD. Resolving against CWD made os.path.exists fail and
+            # silently substituted an "[Image missing]" placeholder instead of
+            # raising, so the report built "successfully" with no figures.
+            if not os.path.isabs(img_path):
+                img_path = os.path.join(os.path.dirname(os.path.abspath(md_path)), img_path)
+
             # Embed image in Word
             p_img = doc.add_paragraph()
             p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
