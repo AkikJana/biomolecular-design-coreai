@@ -6,6 +6,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 import subprocess
 import markdown
+
+from report_markdown import MATHJAX_HEAD, protect_math, restore_math
 import base64
 
 def get_base64_image_uri(image_path: str) -> str:
@@ -140,8 +142,13 @@ graph TD
     # Replace Mermaid block with the visual flowchart HTML
     body_content = body_content.replace(mermaid_block, flowchart_html)
 
-    # Convert remaining markdown body to HTML
+    # Convert remaining markdown body to HTML. Math is shielded from markdown's
+    # emphasis parsing first (see report_markdown) and typeset by MathJax in the
+    # template below; without this the report's 40 formulas print as raw LaTeX
+    # source, which is what earlier builds produced.
+    body_content, math_spans = protect_math(body_content)
     html_body = markdown.markdown(body_content, extensions=['tables', 'fenced_code'])
+    html_body = restore_math(html_body, math_spans)
     
     # 3. Apply Premium Academic CSS Stylesheet
     html_content = f"""<!DOCTYPE html>
@@ -149,6 +156,7 @@ graph TD
 <head>
     <meta charset="UTF-8">
     <title>M.Tech Dissertation Progress Report</title>
+    {MATHJAX_HEAD}
     <style>
         @page {{
             size: A4;
@@ -480,6 +488,10 @@ graph TD
         chrome_path,
         "--headless",
         "--disable-gpu",
+        # MathJax typesets asynchronously; without a virtual time budget Chrome
+        # prints before it runs and every formula becomes a blank gap.
+        "--virtual-time-budget=30000",
+        "--run-all-compositor-stages-before-draw",
         f"--print-to-pdf={pdf_path}",
         temp_html_path
     ]
