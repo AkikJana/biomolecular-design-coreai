@@ -51,11 +51,41 @@ That comparison is not valid and has been removed:
   ranking agrees with the reference; latency alone says nothing.
 
 The meaningful claim has the form *"the surrogate reproduces the reference's
-binder ranking with X% top-k recall (Spearman ρ) at 7.95 ms/candidate"*.
-`src/benchmark_surrogate_vs_reference.py` exists to produce exactly that number
-— plug in a real Boltz-2 scorer and the surrogate, and report both halves
-together. Until then, treat the latency figures as throughput characterization
-only, not as evidence of equivalence.
+binder ranking with X% top-k recall (Spearman ρ) at Y ms/candidate"*.
+`src/run_reference_benchmark.py` produces exactly that, folding each
+(target, binder) complex with Boltz and comparing the rankings.
+
+### First measured result
+
+6 single-point mutants of a 15-mer binder against a 51-residue target, folded
+with stock Boltz-1 on CPU in single-sequence mode (`msa: empty`), ranked by
+interface confidence (ipTM):
+
+| | reference (boltz1 ipTM) | surrogate (edge) |
+| :--- | :---: | :---: |
+| latency / candidate | 44,022 ms | **0.379 ms** |
+| model size | 3.6 GB checkpoint | 0.51 MB |
+| Spearman ρ | — | **+0.143** |
+| top-3 recall | — | 66.7% |
+| top-1 recall | — | 0.0% |
+
+Reproduce with `python src/run_reference_benchmark.py --num-binders 6`.
+
+**Read this as a negative result.** The surrogate is ~116,000x faster and ranks
+at close to chance: ρ = +0.143 over N = 6 is not distinguishable from zero, and
+it misses the reference's best binder entirely. That is expected — the
+`AffinitySurrogate` here is untrained, and the benchmark exists precisely to
+stop the latency figure from being quoted on its own. Distill it against
+reference scores (`src/train_surrogate_affinity.py`) and re-run before the
+speed number means anything.
+
+Further caveats on the reference itself: ipTM is interface confidence, not
+affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
+not apply to peptide binders); single-sequence mode without an MSA yields low
+absolute confidence for every candidate (0.061-0.081), so the reference ranking
+is itself weak; and N = 6 is far too small for a stable correlation. Treat the
+table as a demonstration that the measurement pipeline works end to end, not as
+a characterization of the method.
 
 ---
 

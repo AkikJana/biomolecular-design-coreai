@@ -10,7 +10,12 @@ print(f"[Test] Using boltz package located at: {boltz.__file__}")
 
 from boltz.model.layers.attention import AttentionPairBias
 from boltz.model.layers.triangular_mult import TriangleMultiplicationOutgoing, TriangleMultiplicationIncoming
-from boltz.model.layers.outer_product_mean import OuterProductMean
+from boltz.model.layers.outer_product_mean import (
+    OuterProductMean,
+    OuterProductMeanLowRank,
+    OuterProductMeanStock,
+    select_opm_cls,
+)
 
 
 class TestBoltzModifiedLayers(unittest.TestCase):
@@ -104,11 +109,36 @@ class TestBoltzModifiedLayers(unittest.TestCase):
         num = pmask.sum(dim=1).clamp(min=1)
         return sum_U / num
 
+    def test_opm_default_is_stock_and_toggle_selects_lowrank(self):
+        """The bare OuterProductMean symbol must default to the stock layout.
+
+        Only the stock parameter names (norm/proj_a/proj_b/proj_o) match the
+        official Boltz checkpoints. When the low-rank variant was the
+        unconditional implementation, boltz1_conf.ckpt failed to load with
+        missing low_rank_updater.* / unexpected proj_a.* keys, so no pretrained
+        reference could run at all.
+        """
+        self.assertIs(OuterProductMean, OuterProductMeanStock)
+        self.assertIs(select_opm_cls("stock"), OuterProductMeanStock)
+        self.assertIs(select_opm_cls("scontract"), OuterProductMeanLowRank)
+
+        stock_params = set(dict(OuterProductMeanStock(64, 32, 128).named_parameters()))
+        self.assertTrue(any(p.startswith("proj_a") for p in stock_params), stock_params)
+        self.assertFalse(any("low_rank_updater" in p for p in stock_params), stock_params)
+
+        lowrank_params = set(dict(OuterProductMeanLowRank(64, 32, 128).named_parameters()))
+        self.assertTrue(any("low_rank_updater" in p for p in lowrank_params), lowrank_params)
+
     def test_outer_product_mean_s_contraction_equivalence(self):
-        """S-contracted OuterProductMean must match the per-row reference (fwd + grad)."""
+        """S-contracted OuterProductMean must match the per-row reference (fwd + grad).
+
+        Names the low-rank class explicitly: the bare OuterProductMean symbol now
+        resolves to the stock implementation by default, which has no
+        low_rank_updater for _opm_per_row_reference to call.
+        """
         torch.manual_seed(0)
         c_in, c_hidden, c_out = 64, 32, 128
-        opm = OuterProductMean(c_in, c_hidden, c_out)
+        opm = OuterProductMeanLowRank(c_in, c_hidden, c_out)
 
         for B, S, N in [(1, 8, 32), (1, 64, 48), (2, 16, 40)]:
             m = torch.randn(B, S, N, c_in)
