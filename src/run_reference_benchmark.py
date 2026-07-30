@@ -59,9 +59,15 @@ def make_binder_variants(base: str, n: int, seed: int = 0):
     return variants
 
 
-def write_inputs(input_dir: Path, target: str, binders):
-    """One YAML per (target, binder) complex, single-sequence mode (no MSA)."""
+def write_inputs(input_dir: Path, target: str, binders, use_msa: bool = False):
+    """One YAML per (target, binder) complex.
+
+    use_msa=False pins single-sequence mode (`msa: empty`). use_msa=True omits
+    that so `boltz predict --use_msa_server` fetches alignments -- which sends
+    the sequences to the public MMSeqs2 service.
+    """
     input_dir.mkdir(parents=True, exist_ok=True)
+    msa_line = "" if use_msa else "      msa: empty\n"
     names = []
     for i, binder in enumerate(binders):
         name = f"pair_{i:03d}"
@@ -71,17 +77,18 @@ def write_inputs(input_dir: Path, target: str, binders):
             "  - protein:\n"
             "      id: A\n"
             f"      sequence: {target}\n"
-            "      msa: empty\n"
+            f"{msa_line}"
             "  - protein:\n"
             "      id: B\n"
             f"      sequence: {binder}\n"
-            "      msa: empty\n"
+            f"{msa_line}"
         )
         names.append(name)
     return names
 
 
-def run_boltz(input_dir: Path, out_dir: Path, recycling: int, sampling: int, model: str):
+def run_boltz(input_dir: Path, out_dir: Path, recycling: int, sampling: int, model: str,
+              use_msa: bool = False, max_msa_seqs: int = None):
     """Fold every input. Returns (results_dir, wall_clock_seconds)."""
     cmd = [
         sys.executable, "-m", "boltz.main", "predict", str(input_dir),
@@ -93,6 +100,15 @@ def run_boltz(input_dir: Path, out_dir: Path, recycling: int, sampling: int, mod
         "--output_format", "pdb",
         "--override",
     ]
+    if use_msa:
+        cmd.append("--use_msa_server")
+    if max_msa_seqs:
+        # A full alignment (4374 rows for this target) makes the MSA module
+        # intractable on CPU -- a 40-complex run did not finish one batch of 4 in
+        # an hour and drove the machine to ~12 GB of swap. Subsampling keeps the
+        # coevolutionary signal at a workable depth.
+        cmd += ["--subsample_msa", "--num_subsampled_msa", str(max_msa_seqs),
+                "--max_msa_seqs", str(max_msa_seqs)]
     print(f"[boltz] {' '.join(cmd)}", flush=True)
     t0 = time.perf_counter()
     proc = subprocess.run(cmd, capture_output=True, text=True)

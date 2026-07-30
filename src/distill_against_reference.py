@@ -48,7 +48,8 @@ class MultiDirPredictFn:
 
 
 def fold_in_batches(work: Path, target: str, binders, names, batch_size: int,
-                    recycling: int, sampling: int):
+                    recycling: int, sampling: int, use_msa: bool = False,
+                    target_msa: str = None, max_msa_seqs: int = None):
     """Fold candidates in fixed-size batches.
 
     A single `boltz predict` over 48 complexes drove this machine into ~11 GB of
@@ -61,13 +62,28 @@ def fold_in_batches(work: Path, target: str, binders, names, batch_size: int,
         batch_dir = work / f"batch_{start // batch_size:02d}"
         input_dir = batch_dir / "inputs"
         input_dir.mkdir(parents=True, exist_ok=True)
+        # The target is identical for every candidate, so its alignment is
+        # fetched once and reused -- otherwise each pair re-queries the public
+        # MSA server for the same sequence. The binder is a synthetic 15-mer with
+        # no homologs (its fetched MSA contained only itself), so it stays empty.
+        if target_msa:
+            target_line = f"      msa: {target_msa}\n"
+            binder_line = "      msa: empty\n"
+            server = False
+        elif use_msa:
+            target_line = binder_line = ""
+            server = True
+        else:
+            target_line = binder_line = "      msa: empty\n"
+            server = False
         for binder, name in chunk:
             (input_dir / f"{name}.yaml").write_text(
                 "version: 1\nsequences:\n"
-                f"  - protein:\n      id: A\n      sequence: {target}\n      msa: empty\n"
-                f"  - protein:\n      id: B\n      sequence: {binder}\n      msa: empty\n"
+                f"  - protein:\n      id: A\n      sequence: {target}\n{target_line}"
+                f"  - protein:\n      id: B\n      sequence: {binder}\n{binder_line}"
             )
-        results_dir, elapsed = run_boltz(input_dir, batch_dir, recycling, sampling, "boltz1")
+        results_dir, elapsed = run_boltz(input_dir, batch_dir, recycling, sampling, "boltz1",
+                                         use_msa=server, max_msa_seqs=max_msa_seqs)
         total_elapsed += elapsed
         results_dirs.append(results_dir)
         print(f"[boltz] batch {start // batch_size}: {len(chunk)} complexes in "
@@ -104,6 +120,12 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--sampling-steps", type=int, default=10)
     ap.add_argument("--recycling-steps", type=int, default=1)
+    ap.add_argument("--max-msa-seqs", type=int, default=None,
+                    help="subsample the MSA to this depth (full depth is intractable on CPU)")
+    ap.add_argument("--target-msa", default=None,
+                    help="reuse a precomputed target MSA (csv/a3m) instead of re-querying")
+    ap.add_argument("--use-msa", action="store_true",
+                    help="fetch MSAs via the public MMSeqs2 server (sends sequences off-machine)")
     ap.add_argument("--batch-size", type=int, default=6,
                     help="complexes per boltz invocation; bounds peak memory")
     ap.add_argument("--work-dir", default=str(REPO_ROOT / "artifacts" / "distill"))
@@ -124,7 +146,8 @@ def main():
     else:
         results_dirs, elapsed = fold_in_batches(
             work, target, binders, names, args.batch_size,
-            args.recycling_steps, args.sampling_steps,
+            args.recycling_steps, args.sampling_steps, use_msa=args.use_msa,
+            target_msa=args.target_msa, max_msa_seqs=args.max_msa_seqs,
         )
         print(f"[boltz] folded {len(binders)} complexes in {elapsed:.1f}s "
               f"({elapsed / len(binders) * 1000:.0f} ms/candidate)", flush=True)
@@ -143,6 +166,11 @@ def main():
     order = list(range(len(binders)))
     rng.shuffle(order)
     n_test = max(2, int(round(len(binders) * args.test_frac)))
+    if len(binders) - n_test < 2:
+        raise SystemExit(
+            f"split leaves {len(binders) - n_test} training candidates; "
+            f"increase --num-binders or lower --test-frac"
+        )
     test_idx, train_idx = order[:n_test], order[n_test:]
     train_binders = [binders[i] for i in train_idx]
     test_binders = [binders[i] for i in test_idx]
