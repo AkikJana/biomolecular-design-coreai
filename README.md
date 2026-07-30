@@ -75,9 +75,37 @@ Reproduce with `python src/run_reference_benchmark.py --num-binders 6`.
 at close to chance: ρ = +0.143 over N = 6 is not distinguishable from zero, and
 it misses the reference's best binder entirely. That is expected — the
 `AffinitySurrogate` here is untrained, and the benchmark exists precisely to
-stop the latency figure from being quoted on its own. Distill it against
-reference scores (`src/train_surrogate_affinity.py`) and re-run before the
-speed number means anything.
+stop the latency figure from being quoted on its own.
+
+### Distillation attempt (also negative)
+
+30 complexes folded (batched, 25.5 s/candidate), split 20 train / 10 held-out,
+trained with the pairwise rank loss for 400 epochs
+(`python src/distill_against_reference.py --num-binders 30`):
+
+| | train | held-out |
+| :--- | :---: | :---: |
+| Spearman ρ, after training | **+1.000** | **+0.030** |
+| Kendall τ, after training | +1.000 | −0.022 |
+| Spearman ρ, before training | — | −0.103 |
+
+**Distillation did not work.** Training loss reached 0.0000 and train ρ hit
+1.000 — the model memorised the ranking of all 20 training binders exactly — while
+held-out ρ stayed at chance. The move from −0.103 to +0.030 is well inside noise:
+Spearman over N = 10 has a standard error near 0.33.
+
+Two causes, both structural rather than fixable by more epochs:
+
+* **Too little data for the capacity.** 20 training pairs against a model with
+  ~10^5 parameters memorises rather than generalises.
+* **A weak reference signal.** Single-sequence-mode Boltz-1 puts every candidate
+  in a 0.055–0.088 ipTM band (σ = 0.009). Single-point mutants of one binder
+  against one target may not produce a ranking that is mostly signal, so part of
+  what the surrogate is being asked to fit could be reference noise.
+
+Useful next steps are more reference data and a more discriminative reference
+(MSA-backed folding, a more diverse binder library, or several targets), not
+further training on this set.
 
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
