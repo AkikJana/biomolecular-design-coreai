@@ -1,10 +1,15 @@
+import functools
 import os
+import re
+import shutil
+import subprocess
+import tempfile
+import zipfile
 from pathlib import Path
 
 # Resolved from this file's location so the scripts work wherever the
 # repo is checked out.
 REPO_ROOT = Path(__file__).resolve().parent.parent
-import re
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -53,18 +58,89 @@ def clean_inline_formatting(text):
     text = text.replace('&rarr;', '➔')
     return text
 
+_OMML_NAMESPACES = (
+    'xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" '
+    'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+)
+
+
+@functools.lru_cache(maxsize=None)
+def latex_to_omml(latex: str):
+    """Convert a ``$...$`` span to Office MathML via pandoc.
+
+    python-docx cannot build equations, so without this the report's 40 formulas
+    land in the document as literal LaTeX source -- which is what the previously
+    submitted .docx contains. Returns None if pandoc is unavailable or the
+    expression does not compile, so the caller can fall back to plain text
+    rather than losing the content.
+    """
+    if shutil.which("pandoc") is None:
+        return None
+    with tempfile.TemporaryDirectory() as tmp:
+        out = os.path.join(tmp, "math.docx")
+        result = subprocess.run(
+            ["pandoc", "--from=markdown+tex_math_dollars", "--to=docx", "-o", out],
+            input=latex.encode("utf-8"), capture_output=True,
+        )
+        if result.returncode != 0 or not os.path.exists(out):
+            return None
+        document_xml = zipfile.ZipFile(out).read("word/document.xml").decode("utf-8")
+    match = re.search(r"<m:oMath>.*?</m:oMath>", document_xml, re.DOTALL)
+    if not match:
+        return None
+    # Declare the namespaces on the fragment so it parses standalone.
+    return match.group(0).replace("<m:oMath>", f"<m:oMath {_OMML_NAMESPACES}>", 1)
+
+
+def _append_math(paragraph, token: str) -> bool:
+    omml = latex_to_omml(token)
+    if omml is None:
+        return False
+    paragraph._p.append(parse_xml(omml))
+    return True
+
+
+def add_cell_content(paragraph, text, *, bold=False, size=None, color=None):
+    """Fill a table cell, converting any ``$...$`` spans to real equations.
+
+    Table cells do not go through parse_runs, so without this the numeric error
+    columns render as literal LaTeX ("$2.64 \\times 10^{-7}$").
+    """
+    for token in re.split(r'(\$\$.+?\$\$|\$[^$\n]+?\$)', text, flags=re.DOTALL):
+        if not token:
+            continue
+        if token.startswith('$') and token.endswith('$') and len(token) > 2:
+            if _append_math(paragraph, token):
+                continue
+        run = paragraph.add_run(clean_inline_formatting(token))
+        run.bold = bold
+        if size is not None:
+            run.font.size = size
+        if color is not None:
+            run.font.color.rgb = color
+
+
 def parse_runs(paragraph, line_text):
     """Parses text line and adds formatted runs (bold, italic, code) to the paragraph."""
-    # Pattern to find bold, italic, code, or plain text
-    # We support simple markdown formatting: **bold**, *italic*, `code`
-    tokens = re.split(r'(\*\*.*?\*\*|\*.*?\*|`.*?`|&nbsp;|&rarr;)', line_text)
-    
+    # Pattern to find math, bold, italic, code, or plain text. Math is matched
+    # first -- and display ($$) before inline ($) -- so markdown emphasis never
+    # claims an underscore inside a formula.
+    tokens = re.split(
+        r'(\$\$.+?\$\$|\$[^$\n]+?\$|\*\*.*?\*\*|\*.*?\*|`.*?`|&nbsp;|&rarr;)',
+        line_text,
+        flags=re.DOTALL,
+    )
+
     for token in tokens:
         if not token:
             continue
-        
+
         # Check token type
-        if token.startswith('**') and token.endswith('**'):
+        if token.startswith('$') and token.endswith('$') and len(token) > 2:
+            if _append_math(paragraph, token):
+                continue
+            paragraph.add_run(token)  # pandoc unavailable: keep the source text
+        elif token.startswith('**') and token.endswith('**'):
             run = paragraph.add_run(token[2:-2])
             run.bold = True
         elif token.startswith('*') and token.endswith('*'):
@@ -526,17 +602,16 @@ def create_docx(md_path: str, docx_path: str):
                                 set_cell_background(cell, "ebf8ff") # Light blue header
                                 p = cell.paragraphs[0]
                                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                                run = p.add_run(clean_inline_formatting(cell_text))
-                                run.bold = True
-                                run.font.size = Pt(9.5)
-                                run.font.color.rgb = RGBColor(0x2b, 0x6c, 0xb0)
+                                add_cell_content(
+                                    p, cell_text, bold=True, size=Pt(9.5),
+                                    color=RGBColor(0x2b, 0x6c, 0xb0),
+                                )
                             else:
                                 # Alternating row colors
                                 if r_idx % 2 == 0:
                                     set_cell_background(cell, "f7fafc")
                                 p = cell.paragraphs[0]
-                                run = p.add_run(clean_inline_formatting(cell_text))
-                                run.font.size = Pt(9.0)
+                                add_cell_content(p, cell_text, size=Pt(9.0))
                     
                     doc.add_paragraph() # spacer
             # continue parsing current line

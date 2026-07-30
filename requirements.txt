@@ -25,6 +25,12 @@ pandas>=2.1
 # src/compile_docx.py, src/compile_pdf.py, src/compile_tech_report.py
 markdown>=3.5
 python-docx>=1.1
+#
+# Two non-pip tools are also needed by the report builders:
+#   pandoc  -- converts $...$ spans to Office MathML for the .docx, since
+#              python-docx cannot build equations. `brew install pandoc`.
+#              Without it the formulas fall back to literal LaTeX source.
+#   Google Chrome -- headless print-to-pdf for both PDF reports.
 
 # --- Not installable here -----------------------------------------------
 # The Apple CoreAI runtime (`coreai`, `coreai_torch`, `coreai_opt`) used by
