@@ -13,11 +13,12 @@
 | 4 | Neural refinement | ORIGINAL_REQUEST R1/R2 | 5 | 5 | ✓ |
 
 ## Test Architecture
-- Test runner: pytest command executed via `.venv/bin/pytest -v /Users/akikjana/Documents/BiomolecularDesign/tests/test_e2e_suite.py` or `.venv/bin/python /Users/akikjana/Documents/BiomolecularDesign/run_e2e_tests.py`.
+- Test runner: `.venv/bin/python -m pytest` (paths come from `[tool.pytest.ini_options]` in pyproject.toml), or `.venv/bin/python run_e2e_tests.py` for the E2E file alone.
 - Test case format: pytest unit/integration test cases verifying exit codes, RMSD/pLDDT correctness, and performance benchmarks.
 - Directory layout:
   - `src/`: contains core architecture optimizations.
-  - `tests/test_e2e_suite.py`: E2E test cases (49 total).
+  - `tests/test_e2e_suite.py`: E2E test cases (53 defined; 98 across the whole suite).
+  - See `TEST_AUDIT.md` for where these tests verify less than TEST_READY.md claims.
   - `run_e2e_tests.py`: Python test runner script.
 
 ## Real-World Application Scenarios (Tier 4)
