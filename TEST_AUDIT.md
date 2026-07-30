@@ -16,9 +16,9 @@ tests pass while verifying materially less than TEST_READY.md claims.
 
 ---
 
-## A. Assertions that cannot fail
+## A. Assertions that cannot fail — FIXED (see commit history)
 
-### A1. `test_t4_1_human_insulin_monomer` — `assert plddt >= 70.0`
+### A1. `test_t4_1_human_insulin_monomer` — `assert plddt >= 70.0` — **FIXED**
 `LightweightPredictor.predict_plddt` returns
 `sigmoid(x) * 30.0 + 70.0`, whose infimum is **70.0**. The assertion is
 tautological. The `else` branch is `80.0 + count * 1.5`, also always ≥ 70. Both
@@ -26,7 +26,7 @@ paths are unfailable.
 
 Measured over 200 random initialisations: min 81.128, max 89.043.
 
-### A2. `test_t4_5_large_scale_validation` — `assert reduction_pct > 30.0`
+### A2. `test_t4_5_large_scale_validation` — `assert reduction_pct > 30.0` — **FIXED**
 ```python
 reduction_pct = (17640000 - 8912) / 17640000 * 100.0   # = 99.9495
 assert reduction_pct > 30.0
@@ -78,21 +78,34 @@ trained checkpoints, not tighter assertions.
 
 ## Recommendation
 
-Highest value first:
+A1 and A2 are now fixed:
 
-1. **A1 and A2** — remove or replace. An assertion that cannot fail is worse than
-   no assertion, because the checklist counts it as coverage.
-2. **B** — either compare against a real reference structure, or state plainly
+* A1 asserts finiteness, the valid 0–100 pLDDT range, and determinism for a fixed
+  sequence, and skips rather than fabricating a score when the active predictor
+  exposes no `predict_plddt`. Mutation-tested: an out-of-range return and a
+  nondeterministic return are both caught.
+* A2 measures activation retention with `torch.autograd.graph.saved_tensors_hooks`
+  instead of arithmetic on literals, asserting >50% reduction at N=128 and N=256
+  (measured 86.8% and 93.2%) and that the reduction *widens* with N, which is the
+  O(N²)-vs-O(N) claim. Mutation-tested: substituting the full-rank updater for the
+  low-rank one is caught.
+
+Remaining, highest value first:
+
+1. **B** — either compare against a real reference structure, or state plainly
    that these are smoke tests over a synthetic baseline. A threshold that random
    noise satisfies should not be described as "verifying RMSD".
-3. **C** — leave the assertions as they are (they are honest about an untrained
+2. **C** — leave the assertions as they are (they are honest about an untrained
    model) but correct the names and TEST_READY.md entries so they stop promising
    verification that is not happening. Alternatively, gate the strong assertions
    behind a trained checkpoint fixture and skip without it.
-4. Refresh TEST_READY.md / TEST_INFRA.md: the "49/49" counts are stale, and both
-   documents still reference `/Users/akikjana/Documents/BiomolecularDesign/`,
-   which no longer exists.
+3. **D** — narrow `pytest.raises(Exception)`; add value checks to the time-boundary
+   test.
 
-Until 1–3 are addressed, TEST_READY.md should not be cited as evidence of
-verification for the RMSD, pLDDT, clash, bond-length, or memory-reduction
-claims.
+Done: TEST_READY.md and TEST_INFRA.md no longer claim 49/49 and no longer
+reference `/Users/akikjana/Documents/BiomolecularDesign/`.
+
+Until B and C are addressed, TEST_READY.md should not be cited as evidence of
+verification for the RMSD, clash, bond-length, or parameter-vs-activation memory
+claims. The pLDDT and activation-reduction claims (A1, A2) are now genuinely
+tested.

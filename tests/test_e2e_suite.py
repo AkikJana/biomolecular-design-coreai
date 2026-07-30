@@ -788,12 +788,24 @@ def test_t4_1_human_insulin_monomer():
     # RMSD check — relaxed threshold since real/surrogate models may differ from mock helix baseline
     assert rmsd < 50.0
     
-    # Verify pLDDT value — fallback to heuristic if predictor doesn't have predict_plddt
-    if hasattr(predictor, 'predict_plddt'):
-        plddt = predictor.predict_plddt(insulin_seq)
-    else:
-        plddt = 80.0 + (sum(1 for c in insulin_seq if c in "LIVAMF") * 1.5)
-    assert plddt >= 70.0
+    # pLDDT: check the value contract, not a quality threshold.
+    #
+    # This previously asserted `plddt >= 70.0`, which cannot fail:
+    # LightweightPredictor.predict_plddt returns sigmoid(x) * 30.0 + 70.0, whose
+    # infimum is exactly 70.0. The old else-branch was worse -- it fabricated a
+    # score from a hydrophobic-residue count and asserted on that invented
+    # number. With an untrained surrogate no quality threshold is meaningful, so
+    # assert what is genuinely checkable and can fail: a finite score inside the
+    # valid pLDDT range, and determinism for a fixed input. Both are real
+    # constraints on the CoreAI predictor that get_predictor may return.
+    if not hasattr(predictor, "predict_plddt"):
+        pytest.skip(f"{type(predictor).__name__} exposes no predict_plddt")
+    plddt = predictor.predict_plddt(insulin_seq)
+    assert math.isfinite(plddt), f"pLDDT is not finite: {plddt}"
+    assert 0.0 <= plddt <= 100.0, f"pLDDT outside valid range: {plddt}"
+    assert predictor.predict_plddt(insulin_seq) == pytest.approx(plddt), (
+        "pLDDT is not deterministic for a fixed sequence"
+    )
 
 def test_t4_2_hemoglobin_subunit_alpha():
     """Evaluate Hemoglobin subunit alpha (142 residues) and verify RMSD and latency."""
@@ -882,15 +894,59 @@ def test_t4_5_large_scale_validation():
     assert coords.shape == (1, 525, 3)
     assert latency < 1.5
     
-    # 2. Check memory projection reduction:
-    # Full rank OPM requires storing B * N * N * d_mid elements
-    # Low rank OPM stores X, Y and W factors: B * N * d + B * N * d + D_pair * d
-    # For N=525, d_mid=64, d=8, D_pair=64:
-    # Full rank: 525 * 525 * 64 = 17,640,000 floats
-    # Low rank: 2 * 525 * 8 + 64 * 8 = 8,400 + 512 = 8,912 floats
-    # The activation storage reduction is > 99%!
-    reduction_pct = (17640000 - 8912) / 17640000 * 100.0
-    assert reduction_pct > 30.0
+    # 2. Activation memory reduction, measured rather than asserted.
+    #
+    # This previously computed
+    #     reduction_pct = (17640000 - 8912) / 17640000 * 100.0
+    # from two literals written in the test and asserted it exceeded 30. No
+    # tensor or module took part, so the assertion could not fail and counted as
+    # coverage for a claim it never checked.
+    #
+    # saved_tensors_hooks counts what each updater actually retains for backward,
+    # which is the quantity the low-rank factorization targets: full-rank
+    # materializes an O(N^2 * d_mid) intermediate, low-rank keeps only the
+    # O(N * rank) factors.
+    def saved_element_count(build_output):
+        total = 0
+
+        def pack(tensor):
+            nonlocal total
+            total += tensor.numel()
+            return tensor
+
+        with torch.autograd.graph.saved_tensors_hooks(pack, lambda tensor: tensor):
+            output = build_output()
+        return total, output
+
+    d_seq = d_pair = 64
+    rank = 8
+    reductions = {}
+    for n_tokens in (128, 256):
+        seq = torch.randn(1, n_tokens, d_seq, requires_grad=True)
+        low_rank = LowRankPairUpdater(d_seq, d_pair, rank=rank)
+        full_rank = FullRankPairUpdater(d_seq, d_pair, d_mid=rank)
+
+        low_saved, low_out = saved_element_count(lambda: low_rank(seq))
+        full_saved, full_out = saved_element_count(lambda: full_rank(seq))
+
+        # Same result shape, so the comparison is like-for-like.
+        assert low_out.shape == full_out.shape == (1, n_tokens, n_tokens, d_pair)
+        assert full_saved > 0
+        reductions[n_tokens] = 100.0 * (1.0 - low_saved / full_saved)
+
+    # Substantial at both sizes...
+    for n_tokens, reduction_pct in reductions.items():
+        assert reduction_pct > 50.0, (
+            f"N={n_tokens}: low-rank retained only {reduction_pct:.2f}% less "
+            f"activation memory than full-rank"
+        )
+    # ...and widening with N, which is the asymptotic claim (O(N^2) vs O(N)).
+    # This is what would break if the low-rank path started materializing the
+    # quadratic intermediate.
+    assert reductions[256] > reductions[128], (
+        f"reduction did not grow with sequence length: "
+        f"N=128 {reductions[128]:.2f}% vs N=256 {reductions[256]:.2f}%"
+    )
 
 def test_t1_f7_adaptive_lookahead_speculative():
     """Verify adaptive lookahead window resizing based on draft acceptance rate."""
