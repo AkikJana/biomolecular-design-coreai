@@ -94,7 +94,9 @@ def main():
     quant_config = q.QuantizerConfig(global_config=module_config)
     
     quantizer = q.Quantizer(model, quant_config)
-    prepared_model = quantizer.prepare((binder_seq, target_k, target_v))
+    # prepare() mutates the quantizer (inserting observers); finalize() depends
+    # on having been prepared. The return value is unused, but the call is not.
+    quantizer.prepare((binder_seq, target_k, target_v))
     quantized_model = quantizer.finalize()
     print("Model quantized successfully.")
     

@@ -181,7 +181,9 @@ def run_boltz_fast_pipeline_demo():
     
     # 2. Context Preparation: Target Receptor MLA Caching
     target_receptor = torch.randn(1, 1000, 128) # Large 1000-residue receptor
-    latent_kv = engine.prepare_target_cache(target_receptor)
+    # Called for the KV-cache size report it prints; the latent itself is not
+    # consumed by this demo.
+    engine.prepare_target_cache(target_receptor)
     
     # 3. Context Preparation: Fold-CP Sharded Pair Representation Attention
     N = 512

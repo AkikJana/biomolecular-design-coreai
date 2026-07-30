@@ -35,12 +35,6 @@ extend-exclude = ["boltz", ".venv", ".worktrees"]
 # imports, f-strings with no placeholders) rather than style opinions, so the
 # gate stays actionable and CI failures always mean something is wrong.
 select = ["F"]
-# F841 (assigned-but-unused local) is currently reported 19 times. Ruff only
-# fixes it under --unsafe-fixes because the assignment may wrap a call whose
-# side effects matter; several of these are in tests, where deleting the call
-# would silently weaken the assertion it feeds. Left out of the gate rather
-# than swept blindly -- each needs a judgement call. Re-enable once triaged.
-ignore = ["F841"]
 
 [tool.ruff.lint.per-file-ignores]
 # Intra-src modules are imported flat (src/ is on the path), which reads as a

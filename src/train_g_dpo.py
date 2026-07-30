@@ -83,7 +83,9 @@ def run_training_pipeline():
     base_sequence = "MATEVLADIGSAKLR"
     
     dms_gen = TargetDMSGenerator(output_dir="/tmp/biomolecular_design")
-    pdb_path = dms_gen.download_target_pdb(target)
+    # Fetches and caches the target PDB on disk; the returned path is not needed
+    # here, but the download is.
+    dms_gen.download_target_pdb(target)
     
     # Generate single-residue scan library
     dms_library = dms_gen.generate_dms_library(

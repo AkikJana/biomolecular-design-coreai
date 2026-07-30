@@ -40,10 +40,6 @@ def main():
     fig = plt.figure(figsize=(12, 10), facecolor='#111827') # Dark premium background
     ax = fig.add_subplot(111, projection='3d', facecolor='#111827')
     
-    # Color coordinates sequentially along the chain (N-terminus to C-terminus)
-    # Using a beautiful plasma gradient (purple -> orange -> yellow)
-    colors = plt.cm.plasma(np.linspace(0, 1, L))
-    
     # Plot the backbone trace line
     ax.plot(xs, ys, zs, color='#3b82f6', linewidth=4, alpha=0.7, label="C-alpha Backbone", zorder=1)
     

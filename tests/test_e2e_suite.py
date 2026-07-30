@@ -204,12 +204,17 @@ def test_t1_f2_gradient_consistency():
     assert test_passed
 
 def test_t1_f2_memory_scaling():
-    """Verify memory optimization of low-rank representation updates compared to full-rank."""
+    """Verify memory optimization of low-rank representation updates compared to full-rank.
+
+    Scope note: this compares *parameter* counts, not activation memory, despite
+    the name. Activation footprint is what the low-rank updater actually targets
+    (avoiding O(N^2 * D_pair) intermediates), but measuring peak allocation is
+    not portable across the CPU/MPS backends this suite runs on. That measurement
+    lives in src/benchmark_low_rank_pair.py, which produced benchmark_results.csv
+    (122.31 MB full-rank vs 0.12 MB low-rank at N=1000).
+    """
     d_seq, d_pair, rank = 64, 64, 8
-    B, N = 1, 100
-    
-    s = torch.randn(B, N, d_seq)
-    
+
     low_rank_module = LowRankPairUpdater(d_seq, d_pair, rank=rank)
     full_rank_module = FullRankPairUpdater(d_seq, d_pair, d_mid=rank)
     
@@ -361,9 +366,19 @@ def test_t1_f4_clash_index_improvement():
     rf2 = refined[0].unsqueeze(0)
     refined_dists = torch.norm(rf1 - rf2, dim=-1)
     min_dist_after = refined_dists[mask].min().item()
-    
-    # The refiner output shouldn't collapse the structures if weights are non-zero
+
+    # NOTE: this does not assert clash *improvement*, despite the test name. The
+    # refiner here is randomly initialised, so requiring min_dist_after >
+    # min_dist_before would be asserting untrained-network luck. What is
+    # checkable is that refinement preserves shape and does not collapse
+    # non-consecutive residues onto each other. Tightening this to a real
+    # improvement check needs a trained refiner checkpoint.
     assert refined.shape == coords.shape
+    assert min_dist_before > 0.0
+    assert min_dist_after > 0.0, (
+        f"refiner collapsed non-consecutive residues: "
+        f"min distance {min_dist_before:.4f} -> {min_dist_after:.4f} A"
+    )
 
 def test_t1_f4_bond_length_error_correction():
     """Verify refiner correction on bond lengths deviation."""
@@ -439,12 +454,13 @@ def test_t2_f1_autocast_enabled_vs_disabled():
 
 def test_t2_f1_device_fallback():
     """Verify fallback device defaults to CPU when invalid device is given."""
-    try:
-        invalid_device = torch.device("invalid_device_name")
-    except Exception:
-        # Fallback logic check
-        target_device = torch.device("cpu")
-        assert target_device.type == "cpu"
+    # This was a bare try/except with its assertions inside the except branch, so
+    # if torch ever stopped raising, the test would pass having checked nothing.
+    # Make the expectation explicit, and assert on the suite's real device
+    # selector rather than the tautology torch.device("cpu").type == "cpu".
+    with pytest.raises(RuntimeError):
+        torch.device("invalid_device_name")
+    assert get_test_device().type in {"cpu", "cuda", "mps"}
 
 def test_t2_f1_zero_rank_scalar_tensors():
     """Verify handling of 0D scalar tensors for inputs like time/scale."""
@@ -672,7 +688,6 @@ def test_t3_f1_f3_speculative_sampler_mps():
     
     # Custom wrappers to feed arguments
     c = torch.randn(1, 4, 4, device=device, dtype=torch.float32)
-    s_val = torch.tensor([1.5], device=device, dtype=torch.float32)
     
     def draft_vf(x, t, **kwargs):
         # Student forward: needs s
@@ -832,12 +847,16 @@ def test_t4_3_tnf_alpha_complex():
     mask = torch.abs(torch.arange(157).unsqueeze(1) - torch.arange(157).unsqueeze(0)) > 1
     non_consec_dists = dists[mask]
     clashes = torch.sum(non_consec_dists < 2.0).item()
-    
+
     # Check structure quality: log clashes for diagnostics
     # CoreAI surrogate models are not trained for physical validity,
     # so we only verify the computation runs without error
     total_pairs = non_consec_dists.numel()
     assert total_pairs > 0  # Verify distance matrix was computed
+    # The comment above promises diagnostics, so actually emit them rather than
+    # computing the count and discarding it.
+    print(f"[diagnostic] steric clashes (<2.0 A, non-consecutive): "
+          f"{clashes}/{total_pairs} pairs")
 
 def test_t4_4_vegfa_monomer():
     """Evaluate VEGFA monomer structure (110 residues) predicting coordinates and verify exit code (success)."""
@@ -925,8 +944,9 @@ def test_t1_f9_bidirectional_codesign():
     
     optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
     
-    # Run 3 steps of optimization
-    initial_sequence = model.get_sequence()
+    # Run 3 steps of optimization. Sequence participation is covered by the
+    # sequence_logits.grad assertion below, so the pre-optimization sequence is
+    # not captured; asserting the decoded string changed would be flaky.
     initial_loss, _ = loss_fn.compute_loss(model(), model.coord_displacements)
     
     for _ in range(3):

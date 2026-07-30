@@ -35,8 +35,6 @@ def test_union_mask_clustering():
 def test_g_dpo_loss():
     print("\n--- Testing g-DPO PyTorch Loss ---")
     # Simulate a group of 5 mutant sequences
-    group_size = 5
-    
     # Mock scores (higher is better binding affinity)
     scores = torch.tensor([1.2, 3.5, 0.8, 2.1, 1.9])
     
