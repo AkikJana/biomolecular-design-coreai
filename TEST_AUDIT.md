@@ -37,7 +37,7 @@ test verifies "activation memory reduction compared to baseline"; it measures
 nothing. Same defect class as the hardcoded 87.5% and 113,214x figures already
 corrected elsewhere in the repo.
 
-## B. Thresholds with no discriminative power
+## B. Thresholds with no discriminative power — FIXED
 
 Both compare the surrogate against `generate_mock_ground_truth` — a synthetic
 helix, not an experimental structure — with bounds loose enough that random
@@ -48,9 +48,17 @@ coordinates also pass.
 | `test_t4_1_human_insulin_monomer` | `rmsd < 50.0` | 22.16 | 25.21–25.63 | **yes** |
 | `test_t4_2_hemoglobin_subunit_alpha` | `rmsd < 120.0` | 65.62 | 69.26 | **yes** |
 
-Neither test can distinguish model output from `torch.randn`.
+Neither test could distinguish model output from `torch.randn`.
 
-## C. Claim vs. behavior mismatches
+**Fixed.** Both now assert *backbone continuity* — the coefficient of variation
+of consecutive CA-CA distances — which does separate signal from noise. Measured
+over 40 random initialisations: predictor stays ≤0.19 (insulin 0.076,
+hemoglobin 0.187) while `torch.randn` never drops below 0.33. Threshold 0.25.
+RMSD is retained as a printed diagnostic, not an assertion, because an absolute
+bound against a synthetic 3.8 Å helix is not meaningful. Mutation-tested: a
+predictor returning pure noise is now caught in both tests.
+
+## C. Claim vs. behavior mismatches — 4 of 6 FIXED
 
 | test | TEST_READY.md claim | what it asserts |
 |---|---|---|
@@ -61,7 +69,30 @@ Neither test can distinguish model output from `torch.randn`.
 | `test_t1_f4_clash_index_improvement` | "Verify clash index improvement" | Non-collapse only. |
 | `test_t1_f4_refiner_loading_inference` | "Verify refiner weight loading and inference" | In-memory `state_dict` round-trip; no disk save/load. (Disk round-trip *is* covered by `test_refiner_checkpoint_load_roundtrip` in `test_boltz_modified_layers.py`.) |
 
-**Root cause for most of C:** these tests instantiate randomly-initialised
+**Fixed (4):**
+
+* `test_t1_f3_student_forward_efficiency` — now counts module invocations with
+  forward hooks and asserts CFG needs **2** teacher passes where the distilled
+  student needs **1**. Structural, so no training required. Mutation-tested in
+  isolated processes (a shared-class patch leaks across in-process reloads).
+* `test_t1_f2_memory_scaling` — now measures activation retention via
+  `saved_tensors_hooks` rather than parameter counts. Mutation-tested: swapping
+  the low-rank updater for full-rank is caught.
+* `test_t1_f4_refiner_loading_inference` — now includes a real `torch.save` /
+  `torch.load` disk round-trip, and first asserts two fresh models *disagree*, so
+  a no-op `load_state_dict` cannot pass. Mutation-tested.
+* `test_t2_f4_extreme_clashing_coordinates` — now asserts the initially
+  coincident residues are pairwise separated, which is what the name claims.
+  They separate even untrained because each residue carries a distinct sequence
+  embedding (min separation 0.0023 over 60 inits). Mutation-tested: a refiner
+  collapsing every residue to one point is caught.
+
+**Still scoped rather than fixed (2)** — these need trained checkpoints;
+`test_t1_f4_clash_index_improvement` and `test_t1_f4_bond_length_error_correction`
+now carry explicit scope notes and print the relevant quantity as a diagnostic
+instead of implying it is asserted.
+
+**Root cause for the remaining two:** these tests instantiate randomly-initialised
 modules (`ResNetCoordinateRefiner`, `CFGDistilledVectorField`). Asserting that an
 untrained network improves bond lengths or reduces clashes would be asserting
 luck, so the assertions were relaxed to shape checks while the names and
@@ -75,6 +106,27 @@ trained checkpoints, not tighter assertions.
   `AttributeError`). Narrowing to the expected type would strengthen it.
 - `test_t2_f3_time_boundaries` claims to verify behavior at t=0.0 and t=1.0 but
   asserts only output shapes — no value or finiteness check.
+
+## E. Found while fixing B
+
+### E1. The fallback predictor emits non-physical geometry
+`LightweightPredictor` builds coordinates as a helix over
+`t = linspace(0, 4π, L)` with radius 2, giving a mean consecutive CA-CA spacing
+of **~0.56 Å** for a 51-residue sequence. The physical CA-CA distance is ~3.8 Å,
+and `generate_mock_ground_truth` is constructed at exactly 3.8 Å.
+
+Consequences:
+
+* Tier 4 RMSD is dominated by this factor-of-seven scale mismatch rather than by
+  fold accuracy, which is why the predictor scored only ~12% better than random
+  coordinates before the B fix.
+* The Tier 4 tests are named as real-world structural validation (insulin,
+  hemoglobin, TNF-α, VEGFA) but by default exercise this stub, not a trained
+  model. The real predictor is used only when `RUN_COREAI_INTEGRATION=1`.
+
+Not fixed here: changing the stub's scale would alter every Tier 4 baseline at
+once, and the right call may instead be to rename these tests. Flagged for a
+decision.
 
 ## Recommendation
 
@@ -92,20 +144,20 @@ A1 and A2 are now fixed:
 
 Remaining, highest value first:
 
-1. **B** — either compare against a real reference structure, or state plainly
-   that these are smoke tests over a synthetic baseline. A threshold that random
-   noise satisfies should not be described as "verifying RMSD".
-2. **C** — leave the assertions as they are (they are honest about an untrained
-   model) but correct the names and TEST_READY.md entries so they stop promising
-   verification that is not happening. Alternatively, gate the strong assertions
-   behind a trained checkpoint fixture and skip without it.
-3. **D** — narrow `pytest.raises(Exception)`; add value checks to the time-boundary
-   test.
+1. **C, remaining two** — gate clash-improvement and bond-length-correction
+   behind a trained refiner checkpoint fixture, skipping without it. Only then do
+   those two checklist entries become true.
+2. **D** — narrow `pytest.raises(Exception)`; add value checks to the
+   time-boundary test.
+3. **E1** — the fallback `LightweightPredictor` emits ~0.56 Å CA-CA spacing where
+   the physical value is 3.8 Å (and the mock baseline is built at exactly 3.8 Å).
+   The Tier 4 "real-world scenario" tests therefore exercise a toy helix
+   generator at the wrong physical scale. Worth either fixing the stub's scale or
+   renaming those tests so they are not read as structural validation.
 
 Done: TEST_READY.md and TEST_INFRA.md no longer claim 49/49 and no longer
 reference `/Users/akikjana/Documents/BiomolecularDesign/`.
 
-Until B and C are addressed, TEST_READY.md should not be cited as evidence of
-verification for the RMSD, clash, bond-length, or parameter-vs-activation memory
-claims. The pLDDT and activation-reduction claims (A1, A2) are now genuinely
-tested.
+A1, A2, B, and four of six C items are now genuinely tested and
+mutation-verified. TEST_READY.md still should not be cited for the clash-index
+and bond-length-correction entries, which remain scoped rather than verified.
