@@ -233,6 +233,50 @@ these peptides.
 
 Reproduce: `python src/multi_target_benchmark.py --binders-per-target 60`
 
+### PDB binders: ipTM has sensitivity but not specificity
+
+`src/pdb_binder_benchmark.py` replaces synthetic peptides with **11
+experimentally determined peptide–domain complexes** from the PDB (MDM2/p53,
+SH3/proline-rich, PDZ/C-terminal, and others; sequences fetched live from RCSB,
+never transcribed). Receptor MSAs fetched per receptor (1,516 homologs for MDM2).
+Three classes, folded identically:
+
+* **cognate** (11) — receptor + its own peptide
+* **decoy** (33) — receptor + a real peptide from a *different* complex: a
+  genuine binder, wrong partner
+* **scrambled** (22) — receptor + its own peptide, order destroyed
+
+**The screening test is within-receptor** — rank one receptor's candidates
+against each other. That is chance:
+
+```
+cognate ranked #1 for 2/11 receptors   (chance = 1.8)
+mean rank 3.27 of 6                    (chance = 3.50)
+Wilcoxon vs chance:  p = 0.746
+```
+
+For two receptors (1D4T, 1I8H) the true binder ranked **last of six**. Pooled
+across receptors the direction is right but weak and not significant: cognate
+0.1915 vs decoy 0.1684, AUC 0.614, p = 0.13.
+
+**ipTM does discriminate at a coarser level.** Real complexes score far above the
+synthetic peptides of the earlier runs — mean 0.1915 vs 0.0905, AUC 0.881,
+p = 1e-5 — though that comparison changes both receptor and peptide, so it is not
+cleanly attributable to binder quality.
+
+**Conclusion for this project.** ipTM at these settings has *sensitivity*
+(real complexes look different from arbitrary peptides) but not *specificity*
+(it cannot tell which peptide belongs to which receptor). Screening needs
+specificity. That closes the question the benchmark thread opened: the reference
+is not usable for binder ranking, so a surrogate distilled from it cannot be
+either — and no amount of surrogate engineering changes that.
+
+Caveats: Boltz-1 rather than Boltz-2, 10 sampling steps, 1 recycling, MSA
+subsampled to depth 32, and n = 11 receptors. A stronger configuration may do
+better; this measures what this pipeline provides.
+
+Reproduce: `python src/pdb_binder_benchmark.py`
+
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
 not apply to peptide binders); single-sequence mode without an MSA yields low
