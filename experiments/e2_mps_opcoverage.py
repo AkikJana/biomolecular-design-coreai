@@ -574,7 +574,7 @@ def write_artifacts(
 
     # ---- Markdown report ----
     lines: list[str] = []
-    lines.append(f"# E2 - MPS op-coverage / fallback report\n")
+    lines.append("# E2 - MPS op-coverage / fallback report\n")
     lines.append(f"- run_id: `{stem}`")
     lines.append(f"- timestamp: {manifest['timestamp_utc']}")
     lines.append(f"- device: **{manifest['device']}** | dtype: **{manifest['dtype']}**")
