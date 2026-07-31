@@ -117,25 +117,44 @@ Repeated with the target's alignment subsampled to 32 sequences
 | **held-out ρ after training** | **+0.030** | **+0.308** |
 | train ρ after training | +1.000 | +1.000 |
 
-**Do not read +0.308 as success.** For n = 13, that is t = 1.07, **p = 0.31** —
-entirely consistent with chance. The single-sequence figure was p = 0.93. The
-direction of travel is encouraging and the held-out value was stable across
-training (0.324 → 0.319 → 0.341 → 0.330 → 0.308, so it is not a lucky epoch), but
-nothing here is statistically established.
+**+0.308 over n = 13 was noise.** It has since been refuted by a properly
+powered run — see below. It is left in the table as a record of why small
+held-out sets should not be reported as encouraging.
 
-Two observations that matter more than the headline number:
+### Powered rerun: distillation does not work (n = 85 held-out)
 
-* **Train ρ is still 1.000.** The model continues to fit all 27 training pairs
-  exactly. Capacity still exceeds the data.
-* **MSA barely changed the reference spread** (σ 0.0087 → 0.0088). The hoped-for
-  mechanism — a better-resolved target sharpening interface confidence — is not
-  visible in the ipTM distribution, so the held-out gain may come from a
-  better-ordered ranking within the same narrow band, or from noise.
+258 candidates — a near-exhaustive single-point mutant scan of the 15-mer, 258 of
+286 possible — folded MSA-backed at depth 32 (2.0 h, 28.0 s/candidate), split
+173 train / 85 held-out:
 
-To settle it, the held-out set needs to be large enough to detect a correlation
-of this size: roughly n ≥ 85 for ρ = 0.3 at p < 0.05, i.e. a few hundred folded
-candidates. At 42 s/candidate on CPU that is several hours, and it wants a GPU.
-More diverse binders and several targets would help more than more epochs.
+| held-out n | ρ | 95% CI | |
+| :--- | :---: | :---: | :--- |
+| 10 (single-sequence) | +0.030 | [−0.611, +0.647] | underpowered |
+| 13 (MSA-32) | +0.308 | [−0.293, +0.734] | underpowered |
+| **85 (MSA-32)** | **−0.034** | **[−0.245, +0.180]** | **powered** |
+
+This run could detect \|ρ\| ≥ 0.216 at p < 0.05. It found **−0.034**, and its
+confidence interval **excludes the +0.308** from the n = 13 run. Training moved
+held-out ρ from −0.043 to −0.034 — nothing. The surrogate does not learn to
+reproduce Boltz's ranking on binders it has not seen.
+
+**Train ρ is still +1.000 with 173 training pairs.** Eight times more data did
+not stop the model fitting the training set exactly. This is not a sample-size
+problem that more folding will fix; the model memorises whatever it is given.
+
+Two things to change before trying again:
+
+* **The reference may be mostly noise.** ipTM here spans 0.052–0.103 (σ = 0.011).
+  For context, the SPARK fertilization complex — a real, experimentally validated
+  assembly — scores ipTM 0.51–0.57. Values near 0.05 mean *no confident interface
+  is predicted at all*, so the ranking being distilled may encode little real
+  binding signal. Single-point mutants of one synthetic 15-mer against one target
+  is likely the wrong task; real binders against several targets would give
+  something to learn.
+* **The model is the wrong shape for the data.** A ~10⁵-parameter network on
+  hundreds of examples memorises. A regularised linear model over engineered
+  binder features would be far harder to overfit and would provide the baseline
+  the neural surrogate currently has nothing to beat.
 
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
