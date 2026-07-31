@@ -186,6 +186,53 @@ Three things follow:
 
 Reproduce: `python src/ridge_baseline.py --repeats 30`
 
+### Multi-target control: the reference does not measure binding
+
+`src/multi_target_benchmark.py` widens the task to three structurally distinct
+targets (haemoglobin α fragment, ubiquitin, protein G B1) × 60 binders each —
+wild-type, single mutants, multi-point mutants, and **scrambles**: sequences with
+the *identical amino-acid composition* and the order destroyed.
+
+The scramble is the control that matters. If ipTM tracked binding, destroying
+sequence order should lower it consistently.
+
+| target | designed | scrambled | Cohen's d | p (Mann-Whitney) |
+| :--- | :---: | :---: | :---: | :---: |
+| hba | 0.0738 | 0.0736 | +0.02 | 1.000 |
+| ubq | 0.1164 | 0.1015 | +0.62 | 0.039 |
+| gb1 | 0.0823 | 0.0937 | **−0.53** | 0.116 |
+
+Mean effect across targets **d = +0.035 (t = 0.10, p = 0.93)**, and the signs
+disagree — for GB1, scrambling the binder *raised* predicted interface
+confidence. **ipTM here is largely insensitive to binder sequence order**, which
+is precisely the property binding specificity would require.
+
+Meanwhile the ranking *is* learnable, and far better than on the single-mutant
+scan:
+
+| target | ridge (repeated splits) | shuffled-label null | z |
+| :--- | :---: | :---: | :---: |
+| hba | −0.119 | −0.088 | −0.42 |
+| ubq | +0.203 | −0.079 | **+5.24** |
+| gb1 | +0.230 | −0.036 | **+3.83** |
+
+**Taken together: the benchmark is learnable but not meaningful.** A surrogate
+can be trained to reproduce this ipTM ranking (z > 3 for two of three targets),
+but ipTM is not responding to what makes a binder a binder. Simple composition
+features correlate only weakly and inconsistently (|ρ| ≤ 0.29, signs vary by
+target), so it is not one property either — it is target-specific structure that
+does not survive the order control.
+
+The blocking problem is the **reference**, not the surrogate. Distilling harder
+against this signal reproduces an artefact. Progress needs binders with measured
+affinity — experimental data, or at minimum known peptide–protein complexes with
+true positives and negatives — not more compute. For scale, every ipTM here
+(0.055–0.212) sits far below the 0.51–0.57 of the experimentally validated SPARK
+fertilization complex; Boltz is reporting no confident interface for any of
+these peptides.
+
+Reproduce: `python src/multi_target_benchmark.py --binders-per-target 60`
+
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
 not apply to peptide binders); single-sequence mode without an MSA yields low
