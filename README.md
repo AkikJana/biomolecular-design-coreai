@@ -103,9 +103,39 @@ Two causes, both structural rather than fixable by more epochs:
   against one target may not produce a ranking that is mostly signal, so part of
   what the surrogate is being asked to fit could be reference noise.
 
-Useful next steps are more reference data and a more discriminative reference
-(MSA-backed folding, a more diverse binder library, or several targets), not
-further training on this set.
+### MSA-backed rerun (suggestive, still not significant)
+
+Repeated with the target's alignment subsampled to 32 sequences
+(`--target-msa ... --max-msa-seqs 32`), 40 candidates, 27 train / 13 held-out:
+
+| | single-sequence | MSA depth 32 |
+| :--- | :---: | :---: |
+| candidates (train / held-out) | 30 (20 / 10) | 40 (27 / 13) |
+| fold cost | 25.5 s/candidate | 42.3 s/candidate |
+| reference ipTM spread (σ) | 0.055–0.088 (0.0087) | 0.054–0.092 (0.0088) |
+| held-out ρ **before** training | −0.103 | −0.027 |
+| **held-out ρ after training** | **+0.030** | **+0.308** |
+| train ρ after training | +1.000 | +1.000 |
+
+**Do not read +0.308 as success.** For n = 13, that is t = 1.07, **p = 0.31** —
+entirely consistent with chance. The single-sequence figure was p = 0.93. The
+direction of travel is encouraging and the held-out value was stable across
+training (0.324 → 0.319 → 0.341 → 0.330 → 0.308, so it is not a lucky epoch), but
+nothing here is statistically established.
+
+Two observations that matter more than the headline number:
+
+* **Train ρ is still 1.000.** The model continues to fit all 27 training pairs
+  exactly. Capacity still exceeds the data.
+* **MSA barely changed the reference spread** (σ 0.0087 → 0.0088). The hoped-for
+  mechanism — a better-resolved target sharpening interface confidence — is not
+  visible in the ipTM distribution, so the held-out gain may come from a
+  better-ordered ranking within the same narrow band, or from noise.
+
+To settle it, the held-out set needs to be large enough to detect a correlation
+of this size: roughly n ≥ 85 for ρ = 0.3 at p < 0.05, i.e. a few hundred folded
+candidates. At 42 s/candidate on CPU that is several hours, and it wants a GPU.
+More diverse binders and several targets would help more than more epochs.
 
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
