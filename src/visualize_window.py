@@ -1,8 +1,12 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 # Add src to python path if needed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -35,10 +39,6 @@ def main():
     print("Setting up the 3D plot window...")
     fig = plt.figure(figsize=(12, 10), facecolor='#111827') # Dark premium background
     ax = fig.add_subplot(111, projection='3d', facecolor='#111827')
-    
-    # Color coordinates sequentially along the chain (N-terminus to C-terminus)
-    # Using a beautiful plasma gradient (purple -> orange -> yellow)
-    colors = plt.cm.plasma(np.linspace(0, 1, L))
     
     # Plot the backbone trace line
     ax.plot(xs, ys, zs, color='#3b82f6', linewidth=4, alpha=0.7, label="C-alpha Backbone", zorder=1)
@@ -81,7 +81,7 @@ def main():
     ax.view_init(elev=25, azim=35)
     
     # Save a static copy
-    output_png = "/Users/akikjana/Documents/BiomolecularDesign/backbone_3d_insulin.png"
+    output_png = str(REPO_ROOT / "backbone_3d_insulin.png")
     plt.tight_layout()
     plt.savefig(output_png, dpi=150, facecolor='#111827')
     print(f"Static copy saved successfully to: {output_png}")

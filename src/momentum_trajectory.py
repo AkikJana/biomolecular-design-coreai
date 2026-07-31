@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import math
 
 class AdaptiveMomentumSpeculativeSolver:
     def __init__(self, vector_field, tol=1e-3, beta=0.9, k_max=5, var_threshold=0.05, 

@@ -1,7 +1,6 @@
 import torch
-import torch.nn as nn
 import math
-from typing import List, Tuple, Dict, Any
+from typing import Tuple, Dict, Any
 
 class FoldCPManager:
     """Manages 2D grid configuration and simulated inter-GPU ring communication.
@@ -194,9 +193,6 @@ def ring_triangular_multiplication(
     
     assert a_shard.shape[0] == P_row and a_shard.shape[1] == P_col, "Shard shapes must match 2D grid"
     
-    R_shard, C_shard, C_dim = a_shard.shape[2], a_shard.shape[3], a_shard.shape[4]
-    device = a_shard.device
-    
     # Result accumulator: [P_row, P_col, R_shard, C_shard, C_dim]
     c_out = torch.zeros_like(a_shard)
     
@@ -204,9 +200,6 @@ def ring_triangular_multiplication(
     # For general rectangular grids, we perform a virtual ring-shift of length P_col/P_row.
     # Here we assume a square grid P_row x P_row for simplicity. If P_row != P_col,
     # we simulate the Ring Communication appropriately.
-    
-    current_a = a_shard.clone()
-    current_b = b_shard.clone()
     
     # Simulate SUMMA-style parallel block matrix multiplication:
     # Ranks along row loop over column blocks.

@@ -3,14 +3,12 @@ import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from typing import List, Dict, Any
 
 # Resolve local paths
 sys.path.append(os.path.dirname(__file__))
 
 from dms_generation import TargetDMSGenerator
 from g_dpo_alignment import cluster_by_union_mask, GDPOLoss
-from boltz_wrapper import BoltzModelWrapper
 
 # -------------------------------------------------------------
 # 1. DEFINE A TRAINABLE SURROGATE NETWORK FOR DEMONSTRATION
@@ -85,7 +83,9 @@ def run_training_pipeline():
     base_sequence = "MATEVLADIGSAKLR"
     
     dms_gen = TargetDMSGenerator(output_dir="/tmp/biomolecular_design")
-    pdb_path = dms_gen.download_target_pdb(target)
+    # Fetches and caches the target PDB on disk; the returned path is not needed
+    # here, but the download is.
+    dms_gen.download_target_pdb(target)
     
     # Generate single-residue scan library
     dms_library = dms_gen.generate_dms_library(

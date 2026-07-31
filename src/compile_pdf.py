@@ -1,6 +1,13 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import subprocess
 import markdown
+
+from report_markdown import MATHJAX_HEAD, protect_math, restore_math
 import base64
 
 def get_base64_image_uri(image_path: str) -> str:
@@ -27,11 +34,10 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     with open(md_path, 'r', encoding='utf-8') as f:
         md_content = f.read()
 
-    # Find logo path
-    logo_path = "/Users/akikjana/Documents/BiomolecularDesign/src/bits_logo.png"
-    if not os.path.exists(logo_path):
-        logo_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4cdb7261-e55b-4efc-9ffa-c6509d76c9c2/bits_logo.png"
-    
+    # The logo is vendored in-repo, so the previous fallback to a machine-local
+    # tool-session directory is gone -- it would only ever have resolved on the
+    # original author's machine.
+    logo_path = str(REPO_ROOT / "src" / "bits_logo.png")
     logo_uri = get_base64_image_uri(logo_path)
 
     # 1. Structural Enhancement: Replace the markdown metadata header with a formal Cover Page
@@ -43,19 +49,26 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     else:
         body_content = md_content
 
-    # Base64 encode other figures in the document
-    backbone_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92/backbone_3d_plot.png"
-    structure_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92/protein_structure_rendering_1781545391670.jpg"
-    insulin_path = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92/backbone_3d_insulin.png"
+    # Base64 encode other figures in the document. Vendored under reports/assets
+    # so the report builds from a fresh clone.
+    assets = REPO_ROOT / "reports" / "assets"
+    backbone_path = str(assets / "backbone_3d_plot.png")
+    structure_path = str(assets / "protein_structure_rendering_1781545391670.jpg")
+    insulin_path = str(assets / "backbone_3d_insulin.png")
     
     backbone_uri = get_base64_image_uri(backbone_path)
     structure_uri = get_base64_image_uri(structure_path)
     insulin_uri = get_base64_image_uri(insulin_path)
     
-    # Replace absolute file paths with base64 URIs in the body content
-    body_content = body_content.replace(backbone_path, backbone_uri)
-    body_content = body_content.replace(structure_path, structure_uri)
-    body_content = body_content.replace(insulin_path, insulin_uri)
+    # Inline the figures as data URIs. The keys are the *markdown-relative*
+    # refs as they appear in reports/*.md ("assets/foo.png"), not the resolved
+    # filesystem paths -- substituting the latter would silently no-op and the
+    # rendered HTML would carry unresolvable relative links.
+    body_content = body_content.replace("assets/backbone_3d_plot.png", backbone_uri)
+    body_content = body_content.replace(
+        "assets/protein_structure_rendering_1781545391670.jpg", structure_uri
+    )
+    body_content = body_content.replace("assets/backbone_3d_insulin.png", insulin_uri)
 
     cover_page_html = f"""
     <div class="cover-page">
@@ -129,8 +142,13 @@ graph TD
     # Replace Mermaid block with the visual flowchart HTML
     body_content = body_content.replace(mermaid_block, flowchart_html)
 
-    # Convert remaining markdown body to HTML
+    # Convert remaining markdown body to HTML. Math is shielded from markdown's
+    # emphasis parsing first (see report_markdown) and typeset by MathJax in the
+    # template below; without this the report's 40 formulas print as raw LaTeX
+    # source, which is what earlier builds produced.
+    body_content, math_spans = protect_math(body_content)
     html_body = markdown.markdown(body_content, extensions=['tables', 'fenced_code'])
+    html_body = restore_math(html_body, math_spans)
     
     # 3. Apply Premium Academic CSS Stylesheet
     html_content = f"""<!DOCTYPE html>
@@ -138,6 +156,7 @@ graph TD
 <head>
     <meta charset="UTF-8">
     <title>M.Tech Dissertation Progress Report</title>
+    {MATHJAX_HEAD}
     <style>
         @page {{
             size: A4;
@@ -469,6 +488,10 @@ graph TD
         chrome_path,
         "--headless",
         "--disable-gpu",
+        # MathJax typesets asynchronously; without a virtual time budget Chrome
+        # prints before it runs and every formula becomes a blank gap.
+        "--virtual-time-budget=30000",
+        "--run-all-compositor-stages-before-draw",
         f"--print-to-pdf={pdf_path}",
         temp_html_path
     ]
@@ -480,8 +503,7 @@ graph TD
     print(f"[PDF] Successfully generated PDF at: {pdf_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
-    md_file = os.path.join(brain_dir, "mid_semester_report.md")
-    pdf_file = "/Users/akikjana/Documents/BiomolecularDesign/mid_semester_report.pdf"
+    md_file = str(REPO_ROOT / "reports" / "mid_semester_report.md")
+    pdf_file = str(REPO_ROOT / "mid_semester_report.pdf")
     
     convert_md_to_pdf(md_file, pdf_file)

@@ -250,8 +250,7 @@ class CacheAlignedAttention(nn.Module):
         phi(Q) @ (phi(K)^T @ V) / (phi(Q) @ phi(K)^T)
         """
         B, S_q, H, D = q.shape
-        S_k = k.shape[1]
-        
+
         # Transpose to (B, H, S, D)
         q = q.transpose(1, 2)
         k = k.transpose(1, 2)

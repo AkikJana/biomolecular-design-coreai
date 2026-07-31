@@ -1,8 +1,5 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 import torch
-from g_dpo_alignment import cluster_by_union_mask, select_group_preference_pairs, GDPOLoss
+from g_dpo_alignment import cluster_by_union_mask, GDPOLoss
 
 def test_union_mask_clustering():
     print("--- Testing Union Mask Clustering ---")
@@ -38,8 +35,6 @@ def test_union_mask_clustering():
 def test_g_dpo_loss():
     print("\n--- Testing g-DPO PyTorch Loss ---")
     # Simulate a group of 5 mutant sequences
-    group_size = 5
-    
     # Mock scores (higher is better binding affinity)
     scores = torch.tensor([1.2, 3.5, 0.8, 2.1, 1.9])
     
@@ -74,6 +69,21 @@ def test_g_dpo_loss():
     print("Success: g-DPO Loss module works perfectly with backward gradient passes!")
 
 
+def test_g_dpo_tied_scores_preserve_policy_gradient_graph():
+    """Tied rewards are a no-op update, but must not detach the policy graph."""
+    policy_logps = torch.tensor([-2.0, -2.0], requires_grad=True)
+    ref_logps = torch.tensor([-2.0, -2.0])
+    scores = torch.tensor([1.0, 1.0])
+
+    loss, metrics = GDPOLoss()(policy_logps, ref_logps, scores)
+    loss.backward()
+
+    assert metrics["num_pairs"] == 0
+    assert policy_logps.grad is not None
+    assert torch.equal(policy_logps.grad, torch.zeros_like(policy_logps))
+
+
 if __name__ == "__main__":
     test_union_mask_clustering()
     test_g_dpo_loss()
+    test_g_dpo_tied_scores_preserve_policy_gradient_graph()

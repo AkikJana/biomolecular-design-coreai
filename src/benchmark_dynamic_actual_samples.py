@@ -1,13 +1,8 @@
-import os
 import time
 import numpy as np
 import torch
-import sys
 
-# Add src to python path if needed
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from src.predict_structure import DynamicStructurePredictor
+from predict_structure import DynamicStructurePredictor
 
 def main():
     print("================================================================")

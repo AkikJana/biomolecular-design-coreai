@@ -1,6 +1,35 @@
+import base64
+import mimetypes
 import os
 import subprocess
+from pathlib import Path
+
 import markdown
+
+from report_markdown import protect_math, restore_math
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _inline_assets(body_content: str, md_path: str) -> str:
+    """Replace markdown-relative image refs with base64 data URIs.
+
+    The styled HTML is written to a temp directory, so relative refs like
+    ``assets/foo.png`` would resolve against /tmp and render as broken images
+    with no error. Inlining keeps the intermediate HTML self-contained.
+    """
+    base_dir = Path(md_path).resolve().parent
+    for asset in sorted((base_dir / "assets").glob("*")) if (base_dir / "assets").is_dir() else []:
+        ref = f"assets/{asset.name}"
+        if ref not in body_content:
+            continue
+        mime = mimetypes.guess_type(asset.name)[0] or "application/octet-stream"
+        data = base64.b64encode(asset.read_bytes()).decode("ascii")
+        body_content = body_content.replace(ref, f"data:{mime};base64,{data}")
+    return body_content
+
 
 def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
     if not os.path.exists(md_path):
@@ -35,7 +64,10 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
 
     # Replace the flow matching diagram if present or add custom style classes
     # Convert markdown body to HTML
+    body_content = _inline_assets(body_content, md_path)
+    body_content, math_spans = protect_math(body_content)
     html_body = markdown.markdown(body_content, extensions=['tables', 'fenced_code'])
+    html_body = restore_math(html_body, math_spans)
     
     # Custom stylesheet tailored for LaTeX/arXiv typography
     html_content = f"""<!DOCTYPE html>
@@ -56,7 +88,9 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
       }}
     }};
     </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <!-- polyfill.io removed: the domain was sold in 2024 and began serving
+         malicious code before being taken down, so this was a dead request and
+         a supply-chain liability. MathJax 3 needs no polyfill in modern Chrome. -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @page {{
@@ -286,7 +320,12 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
         "--headless",
         "--disable-gpu",
         "--no-sandbox",
-        "--timeout=5000",
+        # MathJax is loaded async from a CDN and typesets after DOMContentLoaded.
+        # Without a virtual time budget Chrome prints immediately, so every
+        # formula in the document came out as a blank gap. This advances the
+        # page's virtual clock until pending work settles before printing.
+        "--virtual-time-budget=30000",
+        "--run-all-compositor-stages-before-draw",
         f"--print-to-pdf={pdf_path}",
         temp_html_path
     ]
@@ -298,8 +337,7 @@ def convert_tech_report_to_pdf(md_path: str, pdf_path: str):
     print(f"[PDF] Successfully generated PDF at: {pdf_path}")
 
 if __name__ == "__main__":
-    brain_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/4f6026cb-893e-48e8-91fe-c87b3988df92"
-    md_file = os.path.join(brain_dir, "boltz_fast_technical_report.md")
-    pdf_file = "/Users/akikjana/Documents/BiomolecularDesign/boltz_fast_technical_report.pdf"
+    md_file = str(REPO_ROOT / "reports" / "boltz_fast_technical_report.md")
+    pdf_file = str(REPO_ROOT / "boltz_fast_technical_report.pdf")
     
     convert_tech_report_to_pdf(md_file, pdf_file)

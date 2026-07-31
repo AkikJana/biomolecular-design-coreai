@@ -1,11 +1,10 @@
-import math
 import torch
 import torch.nn as nn
 
 class LowRankTensorProduct(torch.autograd.Function):
     @staticmethod
     def forward(ctx, X, Y, W):
-        """
+        r"""
         Computes the low-rank tensor product update:
         U_{b, i, j, c} = \sum_{r=1}^d X_{b, i, r} Y_{b, j, r} W_{c, r}
         
@@ -70,7 +69,7 @@ class LowRankTensorProduct(torch.autograd.Function):
 
 
 class LowRankPairUpdater(nn.Module):
-    """
+    r"""
     LowRankPairUpdater implements a memory-efficient low-rank tensor factorization update
     for sequence-to-pair representation updates, avoiding O(N^2 * D_pair) activation storage.
     

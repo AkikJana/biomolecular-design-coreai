@@ -27,6 +27,21 @@ from boltz_reward import RewardModel, SyntheticSequenceBoltzReward
 
 def sample_sequences(policy, tokenizer, base_seq, group_size, interface_pos):
     """Sample mutated sequences from the policy at the interface positions."""
+    if group_size < 1:
+        raise ValueError("group_size must be at least 1.")
+    if not base_seq:
+        raise ValueError("base_seq must not be empty.")
+
+    valid_residues = set(tokenizer.vocab[4:])
+    invalid_residues = set(base_seq) - valid_residues
+    if invalid_residues:
+        invalid = ", ".join(sorted(invalid_residues))
+        raise ValueError(f"base_seq contains unsupported residue(s): {invalid}.")
+    if len(set(interface_pos)) != len(interface_pos):
+        raise ValueError("interface_pos must not contain duplicate positions.")
+    if any(not isinstance(pos, int) or pos < 0 or pos >= len(base_seq) for pos in interface_pos):
+        raise ValueError("interface_pos contains an index outside base_seq.")
+
     policy.eval()
     device = next(policy.parameters()).device
     sequences = []
@@ -58,6 +73,19 @@ def run_codesign_loop(
     device: str = None,
     verbose: bool = True,
 ):
+    if iterations < 1:
+        raise ValueError("iterations must be at least 1.")
+    if group_size < 2:
+        raise ValueError("group_size must be at least 2 for a GRPO update.")
+    if inner_steps < 1:
+        raise ValueError("inner_steps must be at least 1.")
+    if lr <= 0:
+        raise ValueError("lr must be positive.")
+    if grpo_beta < 0:
+        raise ValueError("grpo_beta must be non-negative.")
+    if not 0 <= grpo_clip_eps:
+        raise ValueError("grpo_clip_eps must be non-negative.")
+
     dev = torch.device(
         device
         or ("mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu"))
@@ -72,7 +100,14 @@ def run_codesign_loop(
         seqs = sample_sequences(policy, tokenizer, wt_sequence, group_size, interface_positions)
 
         # 2. Real Boltz reward pathway: confidence + clash geometry.
-        rewards = reward_model.score(seqs).to(dev)
+        rewards = reward_model.score(seqs)
+        if not isinstance(rewards, torch.Tensor):
+            raise TypeError("reward_model.score must return a torch.Tensor.")
+        if rewards.ndim != 1 or rewards.numel() != group_size:
+            raise ValueError("reward_model.score must return one reward per sampled sequence.")
+        if not torch.isfinite(rewards).all():
+            raise ValueError("reward_model.score returned a non-finite reward.")
+        rewards = rewards.to(device=dev, dtype=torch.float32)
 
         # 3. GRPO update from group-standardized rewards.
         policy.train()
@@ -92,7 +127,14 @@ def run_codesign_loop(
             optimizer.step()
 
         mean_r = rewards.mean().item()
-        history.append({"iteration": it, "mean_reward": mean_r, "loss": loss.item(), "kl": kl.item()})
+        entry = {"iteration": it, "mean_reward": mean_r, "loss": loss.item(), "kl": kl.item()}
+        # Predictor-backed reward adapters can expose the exact scored proposals
+        # (including confidence, clash, affinity, and developability features).
+        # Keeping them with the optimization trace makes later assay-label joins
+        # and target-disjoint retraining reproducible.
+        if hasattr(reward_model, "last_records"):
+            entry["candidate_records"] = list(reward_model.last_records)
+        history.append(entry)
         if verbose:
             print(f"Iter {it:02d} | mean reward {mean_r:.4f} | loss {loss.item():.4f} | KL {kl.item():.4f}")
 

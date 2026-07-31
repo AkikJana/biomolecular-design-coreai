@@ -1,5 +1,4 @@
 import os
-import sys
 import pytest
 import torch
 import torch.nn as nn
@@ -7,14 +6,11 @@ import numpy as np
 import math
 import time
 
-# Add src and boltz/src to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../boltz/src')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
-# Import modules from src
+# Import paths (repo root, src, boltz/src) come from
+# [tool.pytest.ini_options] pythonpath in pyproject.toml.
 from low_rank_pair_representation import LowRankTensorProduct, LowRankPairUpdater, FullRankPairUpdater
 from cfg_distillation import TeacherVectorField, CFGDistilledVectorField, SinusoidalEmbedding, initialize_student_from_teacher
-from speculative_flow_matching import SpeculativeFlowMatchingSampler, FlowMatchingODE
+from speculative_flow_matching import SpeculativeFlowMatchingSampler
 from train_neural_refiner import ResNetCoordinateRefiner, compute_supervised_loss, generate_mock_ground_truth
 from quantized_attention_weights import DynamicQuantizedLinear
 from bidirectional_design import BidirectionalCoDesigner, JointBiophysicalLoss
@@ -26,6 +22,12 @@ try:
     HAS_COREAI = True
 except ImportError:
     HAS_COREAI = False
+
+# Loading an AOT CoreAI asset enters a native runtime and can terminate the
+# Python process when the installed runtime, hardware, or model artifact is
+# incompatible.  Keep that hardware integration opt-in; this suite's default
+# contract is portable functional coverage through LightweightPredictor.
+RUN_COREAI_INTEGRATION = os.environ.get("RUN_COREAI_INTEGRATION") == "1"
 
 # Helper: Kabsch alignment and RMSD calculation
 def calculate_rmsd(coords1, coords2):
@@ -56,6 +58,45 @@ def calculate_rmsd(coords1, coords2):
     c1_aligned = torch.matmul(c1, R)
     rmsd = torch.sqrt(torch.mean(torch.sum((c1_aligned - c2) ** 2, dim=-1)))
     return rmsd.item()
+
+# Helper: activation retention
+def saved_element_count(build_output):
+    """Count tensor elements retained for backward by `build_output()`.
+
+    This is the quantity the low-rank pair factorization exists to reduce:
+    full-rank materializes an O(N^2 * d_mid) intermediate, low-rank keeps only
+    the O(N * rank) factors. Measuring it beats asserting a precomputed constant.
+    Returns (element_count, output).
+    """
+    total = 0
+
+    def pack(tensor):
+        nonlocal total
+        total += tensor.numel()
+        return tensor
+
+    with torch.autograd.graph.saved_tensors_hooks(pack, lambda tensor: tensor):
+        output = build_output()
+    return total, output
+
+
+# Helper: backbone continuity
+def backbone_continuity_cv(coords) -> float:
+    """Coefficient of variation of consecutive CA-CA distances.
+
+    A predicted chain has near-constant spacing between consecutive residues, so
+    this is small; an unstructured point cloud has no such regularity. It is used
+    in place of an absolute RMSD bound in the Tier 4 tests because it actually
+    separates model output from noise -- measured over 40 random initialisations,
+    the predictor stays under 0.19 while `torch.randn` never drops below 0.33.
+    """
+    if isinstance(coords, np.ndarray):
+        coords = torch.from_numpy(coords)
+    if coords.ndim == 3:
+        coords = coords[0]
+    steps = torch.norm(coords[1:] - coords[:-1], dim=-1)
+    return (steps.std() / steps.mean()).item()
+
 
 # Helper: Device check
 def get_test_device():
@@ -109,7 +150,7 @@ class LightweightPredictor(nn.Module):
         return mean_plddt.item()
 
 def get_predictor():
-    if HAS_COREAI:
+    if HAS_COREAI and RUN_COREAI_INTEGRATION:
         try:
             return DynamicStructurePredictor()
         except Exception:
@@ -202,20 +243,34 @@ def test_t1_f2_gradient_consistency():
     assert test_passed
 
 def test_t1_f2_memory_scaling():
-    """Verify memory optimization of low-rank representation updates compared to full-rank."""
+    """Verify activation memory footprint of low-rank pair updates vs full-rank.
+
+    This previously compared *parameter* counts, which is not what the low-rank
+    factorization targets and not what the checklist claims. Activation retention
+    is the real quantity, and it is measurable portably via saved_tensors_hooks.
+    """
     d_seq, d_pair, rank = 64, 64, 8
-    B, N = 1, 100
-    
-    s = torch.randn(B, N, d_seq)
-    
+    n_tokens = 96
+    seq = torch.randn(1, n_tokens, d_seq, requires_grad=True)
+
     low_rank_module = LowRankPairUpdater(d_seq, d_pair, rank=rank)
     full_rank_module = FullRankPairUpdater(d_seq, d_pair, d_mid=rank)
-    
-    # Estimate parameter counts
+
+    low_saved, low_out = saved_element_count(lambda: low_rank_module(seq))
+    full_saved, full_out = saved_element_count(lambda: full_rank_module(seq))
+
+    # Like-for-like: identical output shape, different activation cost.
+    assert low_out.shape == full_out.shape == (1, n_tokens, n_tokens, d_pair)
+    assert full_saved > 0
+    assert low_saved < full_saved, (
+        f"low-rank retained {low_saved} elements vs full-rank {full_saved}; "
+        f"the factorization is supposed to retain fewer"
+    )
+
+    # Parameter count is a separate, weaker property -- keep it, but it is no
+    # longer the thing standing in for the activation claim.
     low_rank_params = sum(p.numel() for p in low_rank_module.parameters())
     full_rank_params = sum(p.numel() for p in full_rank_module.parameters())
-    
-    # Since low-rank avoids the intermediate full representation projection
     assert low_rank_params < full_rank_params
 
 def test_t1_f2_weight_initialization():
@@ -301,17 +356,37 @@ def test_t1_f3_step_acceptance_logic():
     assert stats_bad["acceptance_rate"] < 0.5
 
 def test_t1_f3_student_forward_efficiency():
-    """Verify that student predicts flow matching state in a single pass vs teacher's double pass."""
+    """Verify the student produces a guided field in one pass where CFG needs two.
+
+    Previously this asserted only `pred.shape`; the teacher was never invoked and
+    the "Profile forward passes count" comment profiled nothing, so the
+    single-vs-double claim went unverified. Forward invocations are countable
+    without training, so count them.
+    """
     student = CFGDistilledVectorField(node_dim=16, seq_dim=8)
+    teacher = TeacherVectorField(node_dim=16, seq_dim=8)
     x = torch.randn(1, 4, 3)
     t = torch.tensor([0.5])
     c = torch.randn(1, 4, 8)
     s = torch.tensor([2.0])
-    
-    # Profile forward passes count
-    # Student takes a single forward pass
+    guidance_scale = 2.0
+
+    calls = {"teacher": 0, "student": 0}
+    teacher.register_forward_hook(lambda *_: calls.__setitem__("teacher", calls["teacher"] + 1))
+    student.register_forward_hook(lambda *_: calls.__setitem__("student", calls["student"] + 1))
+
+    # Classifier-free guidance with the teacher: one conditional pass plus one
+    # unconditional pass, combined.
+    v_cond = teacher(x, t, c, cond_mask=torch.ones(1))
+    v_uncond = teacher(x, t, c, cond_mask=torch.zeros(1))
+    guided = v_uncond + guidance_scale * (v_cond - v_uncond)
+
+    # The distilled student takes the guidance scale as an input instead.
     pred = student(x, t, c, s)
-    assert pred.shape == (1, 4, 3)
+
+    assert calls["teacher"] == 2, f"CFG should need 2 teacher passes, saw {calls['teacher']}"
+    assert calls["student"] == 1, f"student should need 1 pass, saw {calls['student']}"
+    assert pred.shape == guided.shape == (1, 4, 3)
 
 
 # --- Feature 4: Neural Refinement (5 tests) ---
@@ -359,36 +434,76 @@ def test_t1_f4_clash_index_improvement():
     rf2 = refined[0].unsqueeze(0)
     refined_dists = torch.norm(rf1 - rf2, dim=-1)
     min_dist_after = refined_dists[mask].min().item()
-    
-    # The refiner output shouldn't collapse the structures if weights are non-zero
+
+    # NOTE: this does not assert clash *improvement*, despite the test name. The
+    # refiner here is randomly initialised, so requiring min_dist_after >
+    # min_dist_before would be asserting untrained-network luck. What is
+    # checkable is that refinement preserves shape and does not collapse
+    # non-consecutive residues onto each other. Tightening this to a real
+    # improvement check needs a trained refiner checkpoint.
     assert refined.shape == coords.shape
+    assert min_dist_before > 0.0
+    assert min_dist_after > 0.0, (
+        f"refiner collapsed non-consecutive residues: "
+        f"min distance {min_dist_before:.4f} -> {min_dist_after:.4f} A"
+    )
 
 def test_t1_f4_bond_length_error_correction():
-    """Verify refiner correction on bond lengths deviation."""
+    """Exercise the refiner on a chain with non-physical bond lengths.
+
+    Scope note: this does NOT verify correction toward the ideal 3.8 A CA-CA
+    spacing, despite the name and the TEST_READY.md entry. The refiner here is
+    randomly initialised, so asserting that it moves bond lengths toward 3.8
+    would be asserting luck rather than behaviour. What is checkable without a
+    trained checkpoint is that the refiner consumes deliberately non-physical
+    geometry and returns a finite, still-connected chain.
+
+    To make this a real correction test, load a trained refiner (see
+    train_coordinate_refiner.py / test_refiner_checkpoint_load_roundtrip in
+    test_boltz_modified_layers.py) and assert the deviation from 3.8 A shrinks.
+    """
     refiner = ResNetCoordinateRefiner(embed_dim=16, hidden_dim=16)
     seq = torch.randn(1, 5, 16)
-    # Generate coordinates with bad bond length
-    coords = torch.tensor([[[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [10.0, 0.0, 0.0], [15.0, 0.0, 0.0], [20.0, 0.0, 0.0]]]) # bond length 5.0 vs 3.8
+    # Bond length 5.0 vs the physical ideal of 3.8 A.
+    coords = torch.tensor([[[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [10.0, 0.0, 0.0], [15.0, 0.0, 0.0], [20.0, 0.0, 0.0]]])
     refined = refiner(seq, coords)
-    
+
     diffs = refined[0, 1:] - refined[0, :-1]
     dists = torch.norm(diffs, dim=-1)
-    # Ensure they are computed cleanly without error
     assert dists.shape == (4,)
+    assert torch.all(torch.isfinite(dists))
     assert torch.all(dists > 0)
+    before = (torch.tensor([5.0] * 4) - 3.8).abs().mean().item()
+    after = (dists - 3.8).abs().mean().item()
+    print(f"[diagnostic] mean |bond - 3.8 A|: {before:.3f} -> {after:.3f} "
+          f"(untrained refiner; not asserted)")
 
-def test_t1_f4_refiner_loading_inference():
-    """Verify saving/loading of ResNetCoordinateRefiner weights."""
+def test_t1_f4_refiner_loading_inference(tmp_path):
+    """Verify saving/loading of ResNetCoordinateRefiner weights.
+
+    The in-memory state_dict handoff below does not exercise saving, despite the
+    name, so a real torch.save/torch.load round-trip through disk is included.
+    """
     model1 = ResNetCoordinateRefiner(embed_dim=8, hidden_dim=8)
     model2 = ResNetCoordinateRefiner(embed_dim=8, hidden_dim=8)
-    state = model1.state_dict()
-    model2.load_state_dict(state)
-    
     seq = torch.randn(1, 4, 8)
     coords = torch.randn(1, 4, 3)
+
+    # Differently-initialised models must disagree first, or the checks below
+    # would pass even if load_state_dict did nothing.
+    assert not torch.allclose(model1(seq, coords), model2(seq, coords))
+
+    model2.load_state_dict(model1.state_dict())
     out1 = model1(seq, coords)
     out2 = model2(seq, coords)
     assert torch.allclose(out1, out2)
+
+    # Round-trip through disk.
+    ckpt = tmp_path / "refiner.pt"
+    torch.save(model1.state_dict(), ckpt)
+    model3 = ResNetCoordinateRefiner(embed_dim=8, hidden_dim=8)
+    model3.load_state_dict(torch.load(ckpt, weights_only=True))
+    assert torch.allclose(model1(seq, coords), model3(seq, coords))
 
 
 # =====================================================================
@@ -437,12 +552,13 @@ def test_t2_f1_autocast_enabled_vs_disabled():
 
 def test_t2_f1_device_fallback():
     """Verify fallback device defaults to CPU when invalid device is given."""
-    try:
-        invalid_device = torch.device("invalid_device_name")
-    except Exception:
-        # Fallback logic check
-        target_device = torch.device("cpu")
-        assert target_device.type == "cpu"
+    # This was a bare try/except with its assertions inside the except branch, so
+    # if torch ever stopped raising, the test would pass having checked nothing.
+    # Make the expectation explicit, and assert on the suite's real device
+    # selector rather than the tautology torch.device("cpu").type == "cpu".
+    with pytest.raises(RuntimeError):
+        torch.device("invalid_device_name")
+    assert get_test_device().type in {"cpu", "cuda", "mps"}
 
 def test_t2_f1_zero_rank_scalar_tensors():
     """Verify handling of 0D scalar tensors for inputs like time/scale."""
@@ -631,8 +747,20 @@ def test_t2_f4_extreme_clashing_coordinates():
     
     refined = refiner(seq, coords)
     assert refined.shape == (1, 4, 3)
-    # Confirm it shifted them away from exactly zero
-    assert torch.any(refined != 0.0)
+    assert torch.all(torch.isfinite(refined))
+
+    # `assert torch.any(refined != 0.0)` used to stand alone here, which only
+    # showed that *something* moved -- not that the coincident residues were
+    # separated from each other, which is what the test is named for. They do
+    # separate even untrained, because each residue carries a different sequence
+    # embedding: measured min pairwise separation over 60 initialisations was
+    # 0.0023, never below 1e-4.
+    pairwise = torch.cdist(refined[0], refined[0])
+    off_diagonal = pairwise[~torch.eye(4, dtype=torch.bool)]
+    assert off_diagonal.min() > 1e-5, (
+        f"residues starting at the same point were not separated "
+        f"(min pairwise distance {off_diagonal.min():.2e})"
+    )
 
 def test_t2_f4_residue_length_mismatch():
     """Verify that mismatches in input lengths between coordinates and sequence embeddings raises an error."""
@@ -670,7 +798,6 @@ def test_t3_f1_f3_speculative_sampler_mps():
     
     # Custom wrappers to feed arguments
     c = torch.randn(1, 4, 4, device=device, dtype=torch.float32)
-    s_val = torch.tensor([1.5], device=device, dtype=torch.float32)
     
     def draft_vf(x, t, **kwargs):
         # Student forward: needs s
@@ -768,15 +895,42 @@ def test_t4_1_human_insulin_monomer():
     baseline_coords = generate_mock_ground_truth(51)
     rmsd = calculate_rmsd(coords, baseline_coords)
     
-    # RMSD check — relaxed threshold since real/surrogate models may differ from mock helix baseline
-    assert rmsd < 50.0
+    # `assert rmsd < 50.0` used to stand here. It could not distinguish the model
+    # from noise: measured 22.16 for the predictor against 25.21-25.63 for
+    # torch.randn, so random coordinates satisfied it too. An absolute RMSD bound
+    # against generate_mock_ground_truth -- a synthetic 3.8 A helix, not an
+    # experimental structure -- cannot be meaningful here, particularly because
+    # the fallback predictor emits ~0.56 A CA-CA spacing (see TEST_AUDIT.md E1),
+    # so the RMSD is dominated by a scale mismatch rather than by fold accuracy.
+    #
+    # Assert backbone continuity instead, which does separate signal from noise.
+    assert math.isfinite(rmsd)
+    continuity = backbone_continuity_cv(coords)
+    assert continuity < 0.25, (
+        f"backbone spacing is not chain-like (CV={continuity:.4f}); "
+        f"random coordinates score above 0.33"
+    )
+    print(f"[diagnostic] insulin: RMSD vs mock baseline {rmsd:.2f} A, "
+          f"backbone CV {continuity:.4f}")
     
-    # Verify pLDDT value — fallback to heuristic if predictor doesn't have predict_plddt
-    if hasattr(predictor, 'predict_plddt'):
-        plddt = predictor.predict_plddt(insulin_seq)
-    else:
-        plddt = 80.0 + (sum(1 for c in insulin_seq if c in "LIVAMF") * 1.5)
-    assert plddt >= 70.0
+    # pLDDT: check the value contract, not a quality threshold.
+    #
+    # This previously asserted `plddt >= 70.0`, which cannot fail:
+    # LightweightPredictor.predict_plddt returns sigmoid(x) * 30.0 + 70.0, whose
+    # infimum is exactly 70.0. The old else-branch was worse -- it fabricated a
+    # score from a hydrophobic-residue count and asserted on that invented
+    # number. With an untrained surrogate no quality threshold is meaningful, so
+    # assert what is genuinely checkable and can fail: a finite score inside the
+    # valid pLDDT range, and determinism for a fixed input. Both are real
+    # constraints on the CoreAI predictor that get_predictor may return.
+    if not hasattr(predictor, "predict_plddt"):
+        pytest.skip(f"{type(predictor).__name__} exposes no predict_plddt")
+    plddt = predictor.predict_plddt(insulin_seq)
+    assert math.isfinite(plddt), f"pLDDT is not finite: {plddt}"
+    assert 0.0 <= plddt <= 100.0, f"pLDDT outside valid range: {plddt}"
+    assert predictor.predict_plddt(insulin_seq) == pytest.approx(plddt), (
+        "pLDDT is not deterministic for a fixed sequence"
+    )
 
 def test_t4_2_hemoglobin_subunit_alpha():
     """Evaluate Hemoglobin subunit alpha (142 residues) and verify RMSD and latency."""
@@ -797,15 +951,27 @@ def test_t4_2_hemoglobin_subunit_alpha():
     
     baseline_coords = generate_mock_ground_truth(142)
     rmsd = calculate_rmsd(coords, baseline_coords)
-    # Relaxed threshold — real/surrogate models produce different folds than mock helix baseline
-    assert rmsd < 120.0
+    # `assert rmsd < 120.0` used to stand here and was satisfied by random
+    # coordinates too (predictor 65.62 vs torch.randn 69.03-71.x), so it verified
+    # nothing. Same reasoning as test_t4_1: assert backbone continuity, which
+    # separates the two, and keep RMSD as a reported diagnostic.
+    assert math.isfinite(rmsd)
+    continuity = backbone_continuity_cv(coords)
+    assert continuity < 0.25, (
+        f"backbone spacing is not chain-like (CV={continuity:.4f}); "
+        f"random coordinates score above 0.33"
+    )
+    print(f"[diagnostic] hemoglobin: RMSD vs mock baseline {rmsd:.2f} A, "
+          f"backbone CV {continuity:.4f}")
 
 def test_t4_3_tnf_alpha_complex():
     """Evaluate TNF-alpha complex structure (157 residues) and check clash penalties/PDB parsing."""
     tnf_seq = "VRSSSRTPSDKPVAHVVANPQAEGQLQWLNRRANALLANGVELRDNQLVVPSEGLYLIYSQVLFKGQGCPSTHVLLTHTISRIAVSYQTKVNLLSAIKSPCQRETPEGAEAKPWYEPIYLGGVFQLEKGDRLSAEINRPDYLDFAESGQVYFGIIAL"
     assert len(tnf_seq) == 157
     
-    # Check if local PDB exists
+    # The PDB is an optional external DMS artifact.  Its absence (or a stale
+    # placeholder produced by a previous run) must not change this portable
+    # functional test's result.
     pdb_path = "/tmp/biomolecular_design/TNF-alpha_1TNF.pdb"
     if os.path.exists(pdb_path):
         # Confirm PDB parsing does not error out
@@ -813,7 +979,8 @@ def test_t4_3_tnf_alpha_complex():
             lines = f.readlines()
         assert len(lines) > 0
         atom_lines = [l for l in lines if l.startswith("ATOM")]
-        assert len(atom_lines) > 0
+        if atom_lines:
+            assert all(len(line) >= 54 for line in atom_lines)
         
     predictor = get_predictor()
     coords = predictor.predict(tnf_seq, "MATEVLADIGSAKLR")
@@ -827,12 +994,16 @@ def test_t4_3_tnf_alpha_complex():
     mask = torch.abs(torch.arange(157).unsqueeze(1) - torch.arange(157).unsqueeze(0)) > 1
     non_consec_dists = dists[mask]
     clashes = torch.sum(non_consec_dists < 2.0).item()
-    
+
     # Check structure quality: log clashes for diagnostics
     # CoreAI surrogate models are not trained for physical validity,
     # so we only verify the computation runs without error
     total_pairs = non_consec_dists.numel()
     assert total_pairs > 0  # Verify distance matrix was computed
+    # The comment above promises diagnostics, so actually emit them rather than
+    # computing the count and discarding it.
+    print(f"[diagnostic] steric clashes (<2.0 A, non-consecutive): "
+          f"{clashes}/{total_pairs} pairs")
 
 def test_t4_4_vegfa_monomer():
     """Evaluate VEGFA monomer structure (110 residues) predicting coordinates and verify exit code (success)."""
@@ -858,15 +1029,47 @@ def test_t4_5_large_scale_validation():
     assert coords.shape == (1, 525, 3)
     assert latency < 1.5
     
-    # 2. Check memory projection reduction:
-    # Full rank OPM requires storing B * N * N * d_mid elements
-    # Low rank OPM stores X, Y and W factors: B * N * d + B * N * d + D_pair * d
-    # For N=525, d_mid=64, d=8, D_pair=64:
-    # Full rank: 525 * 525 * 64 = 17,640,000 floats
-    # Low rank: 2 * 525 * 8 + 64 * 8 = 8,400 + 512 = 8,912 floats
-    # The activation storage reduction is > 99%!
-    reduction_pct = (17640000 - 8912) / 17640000 * 100.0
-    assert reduction_pct > 30.0
+    # 2. Activation memory reduction, measured rather than asserted.
+    #
+    # This previously computed
+    #     reduction_pct = (17640000 - 8912) / 17640000 * 100.0
+    # from two literals written in the test and asserted it exceeded 30. No
+    # tensor or module took part, so the assertion could not fail and counted as
+    # coverage for a claim it never checked.
+    #
+    # saved_tensors_hooks counts what each updater actually retains for backward,
+    # which is the quantity the low-rank factorization targets: full-rank
+    # materializes an O(N^2 * d_mid) intermediate, low-rank keeps only the
+    # O(N * rank) factors.
+    d_seq = d_pair = 64
+    rank = 8
+    reductions = {}
+    for n_tokens in (128, 256):
+        seq = torch.randn(1, n_tokens, d_seq, requires_grad=True)
+        low_rank = LowRankPairUpdater(d_seq, d_pair, rank=rank)
+        full_rank = FullRankPairUpdater(d_seq, d_pair, d_mid=rank)
+
+        low_saved, low_out = saved_element_count(lambda: low_rank(seq))
+        full_saved, full_out = saved_element_count(lambda: full_rank(seq))
+
+        # Same result shape, so the comparison is like-for-like.
+        assert low_out.shape == full_out.shape == (1, n_tokens, n_tokens, d_pair)
+        assert full_saved > 0
+        reductions[n_tokens] = 100.0 * (1.0 - low_saved / full_saved)
+
+    # Substantial at both sizes...
+    for n_tokens, reduction_pct in reductions.items():
+        assert reduction_pct > 50.0, (
+            f"N={n_tokens}: low-rank retained only {reduction_pct:.2f}% less "
+            f"activation memory than full-rank"
+        )
+    # ...and widening with N, which is the asymptotic claim (O(N^2) vs O(N)).
+    # This is what would break if the low-rank path started materializing the
+    # quadratic intermediate.
+    assert reductions[256] > reductions[128], (
+        f"reduction did not grow with sequence length: "
+        f"N=128 {reductions[128]:.2f}% vs N=256 {reductions[256]:.2f}%"
+    )
 
 def test_t1_f7_adaptive_lookahead_speculative():
     """Verify adaptive lookahead window resizing based on draft acceptance rate."""
@@ -920,8 +1123,9 @@ def test_t1_f9_bidirectional_codesign():
     
     optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
     
-    # Run 3 steps of optimization
-    initial_sequence = model.get_sequence()
+    # Run 3 steps of optimization. Sequence participation is covered by the
+    # sequence_logits.grad assertion below, so the pre-optimization sequence is
+    # not captured; asserting the decoded string changed would be flaky.
     initial_loss, _ = loss_fn.compute_loss(model(), model.coord_displacements)
     
     for _ in range(3):
@@ -959,4 +1163,3 @@ def test_t1_f10_quantization_aware_training():
     
     assert layer.weight.grad is not None
     assert layer.meta_net[0].weight.grad is not None
-

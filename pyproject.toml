@@ -1,0 +1,42 @@
+[tool.pytest.ini_options]
+# Only `tests/` holds test cases. `src/` contains library modules and
+# benchmark scripts, which must never be collected.
+testpaths = ["tests"]
+
+# Makes both import styles used by the suite resolve without per-file
+# sys.path manipulation:
+#   `from campaign_ranking import ...`  -> src/
+#   `from src.predict_structure import ...` -> repo root
+#   `from boltz.model...`               -> boltz/src (also provided by `pip install -e ./boltz`)
+pythonpath = [".", "src", "boltz/src"]
+
+norecursedirs = [
+    ".git",
+    ".venv",
+    ".worktrees",
+    "boltz",
+    "scratch",
+    "compiled_surrogate*",
+    "boltz_results*",
+    "*.aimodel",
+]
+
+markers = [
+    "coreai: requires the CoreAI runtime and compiled .aimodelc assets (opt-in via RUN_COREAI_INTEGRATION=1)",
+]
+
+[tool.ruff]
+target-version = "py312"
+# The vendored upstream checkout carries its own ruff config and rule set.
+extend-exclude = ["boltz", ".venv", ".worktrees"]
+
+[tool.ruff.lint]
+# Deliberately narrow: F catches genuine defects (undefined names, unused
+# imports, f-strings with no placeholders) rather than style opinions, so the
+# gate stays actionable and CI failures always mean something is wrong.
+select = ["F"]
+
+[tool.ruff.lint.per-file-ignores]
+# Intra-src modules are imported flat (src/ is on the path), which reads as a
+# redefinition to ruff in the few scripts that also expose module-level names.
+"src/benchmark_*.py" = ["F401"]

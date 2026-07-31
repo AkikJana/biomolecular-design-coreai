@@ -14,7 +14,10 @@ def main():
     
     print("\n======================================================================")
     if exit_code == 0:
-        print("          SUCCESS: All 49 test cases in the E2E suite passed!         ")
+        # Don't restate a case count here -- it drifted (this said 49 while the
+        # suite had grown well past it). pytest's own summary above is the
+        # authoritative count.
+        print("          SUCCESS: the E2E suite passed. See the pytest summary above.")
     else:
         print(f"          FAILURE: Pytest execution exited with code {exit_code}        ")
     print("======================================================================")

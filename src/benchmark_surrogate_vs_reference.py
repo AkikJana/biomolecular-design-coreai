@@ -118,9 +118,19 @@ def benchmark(
     ks: Sequence[int] = (1, 5, 10),
     reps: int = 3,
     verbose: bool = True,
+    reference_latency_ms: Optional[float] = None,
 ) -> dict:
-    ref_scores, ref_ms = _time_scorer(reference, pairs, reps)
+    """Compare a surrogate against a reference scorer.
+
+    reference_latency_ms: true cost per candidate for the reference, when the
+    scorer does not pay it on every call. A Boltz reference reads pre-computed
+    predictions from disk, so timing `score()` measures JSON parsing and would
+    report a speedup two or three orders of magnitude too large. Pass the wall
+    clock of the actual inference run instead.
+    """
+    ref_scores, ref_measured_ms = _time_scorer(reference, pairs, reps)
     surr_scores, surr_ms = _time_scorer(surrogate, pairs, reps)
+    ref_ms = ref_measured_ms if reference_latency_ms is None else reference_latency_ms
 
     metrics = {
         "n_candidates": len(pairs),
@@ -134,7 +144,11 @@ def benchmark(
             reference.name: reference.model_size_bytes(),
             surrogate.name: surrogate.model_size_bytes(),
         },
+        "reference_latency_is_measured_inference": reference_latency_ms is not None,
     }
+    if reference_latency_ms is not None:
+        # Keep the cache-read timing visible so the substitution is auditable.
+        metrics["reference_cache_read_ms_per_candidate"] = ref_measured_ms
 
     if verbose:
         _print_report(reference, surrogate, metrics, ks)
@@ -158,8 +172,12 @@ def _print_report(reference, surrogate, m, ks):
               f"(best-in-top{k}: {'yes' if m['top1_in_topk'][k] else 'no'})")
     print("-" * 64)
     rms = m["latency_ms_per_candidate"]
-    print(f"  latency/candidate : {reference.name} {rms[reference.name]:.3f} ms | "
+    provenance = "measured inference" if m.get("reference_latency_is_measured_inference") else "in-process"
+    print(f"  latency/candidate : {reference.name} {rms[reference.name]:.3f} ms ({provenance}) | "
           f"{surrogate.name} {rms[surrogate.name]:.3f} ms  ({m['speedup']:.0f}x)")
+    if "reference_cache_read_ms_per_candidate" in m:
+        print(f"  (reading the reference's cached predictions costs "
+              f"{m['reference_cache_read_ms_per_candidate']:.3f} ms/candidate -- not the model cost)")
     sz = m["model_size_bytes"]
     print(f"  model size        : {reference.name} {_fmt_mb(sz[reference.name])} | "
           f"{surrogate.name} {_fmt_mb(sz[surrogate.name])}")

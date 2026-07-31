@@ -5,13 +5,23 @@ You can run the tests using either command below:
 
 ```bash
 # Option 1: Run directly via pytest
-.venv/bin/pytest -v /Users/akikjana/Documents/BiomolecularDesign/tests/test_e2e_suite.py
+.venv/bin/pytest -v tests/test_e2e_suite.py
 
 # Option 2: Run via the custom test runner script
-.venv/bin/python /Users/akikjana/Documents/BiomolecularDesign/run_e2e_tests.py
+.venv/bin/python run_e2e_tests.py
 ```
 
-## E2E Test Suite Checklist (49/49 Tests)
+## E2E Test Suite Checklist
+
+> **Read TEST_AUDIT.md before citing this checklist as evidence of verification.**
+> A 2026-07-30 audit found that several entries below promise more than the
+> corresponding test asserts: two assertions cannot fail, two RMSD thresholds
+> are also satisfied by random coordinates, and six tests check shapes where the
+> entry claims a quality property. The entries are marked [x] because the tests
+> exist and pass, not because the stated property is verified.
+
+This file lists 49 tests; `tests/test_e2e_suite.py` now defines 53 (features
+7-10 are undocumented here), and the full suite is 98.
 
 ### Tier 1: Feature Specific Functional Tests (20 Tests)
 #### Feature 1: Apple Silicon MPS Native Execution (F1)

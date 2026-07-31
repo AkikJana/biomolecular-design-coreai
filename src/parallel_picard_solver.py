@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import time
 from typing import Callable, Tuple
 
 class MockVectorField(nn.Module):

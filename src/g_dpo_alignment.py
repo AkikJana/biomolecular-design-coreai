@@ -1,10 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Tuple
 
 def compute_union_mask(seq_a: str, seq_b: str) -> List[int]:
     """Finds indices where two sequences differ."""
+    if len(seq_a) != len(seq_b):
+        raise ValueError("Sequences must be aligned and have the same length.")
     return [i for i, (char_a, char_b) in enumerate(zip(seq_a, seq_b)) if char_a != char_b]
 
 
@@ -21,6 +23,8 @@ def cluster_by_union_mask(sequences: List[str], max_positions_in_union: int = 5)
     Returns:
         A list of groups, where each group is a list of sequence indices.
     """
+    if max_positions_in_union < 0:
+        raise ValueError("max_positions_in_union must be non-negative.")
     if not sequences:
         return []
         
@@ -109,6 +113,10 @@ class GDPOLoss(nn.Module):
     
     def __init__(self, beta: float = 0.1, label_smoothing: float = 0.0):
         super().__init__()
+        if beta <= 0:
+            raise ValueError("beta must be positive.")
+        if not 0.0 <= label_smoothing <= 1.0:
+            raise ValueError("label_smoothing must be between 0 and 1.")
         self.beta = beta
         self.label_smoothing = label_smoothing
 
@@ -131,16 +139,27 @@ class GDPOLoss(nn.Module):
             loss: Scaled loss tensor.
             metrics: Diagnostic metrics (accuracies, margins).
         """
+        if policy_logps.ndim != 1 or ref_logps.ndim != 1 or scores.ndim != 1:
+            raise ValueError("policy_logps, ref_logps, and scores must be 1D tensors.")
+        if not (policy_logps.shape == ref_logps.shape == scores.shape):
+            raise ValueError("policy_logps, ref_logps, and scores must have matching shapes.")
+
         # 1. Select preference pairs within the group
         pairs = select_group_preference_pairs(scores, pairing_strategy)
         
         if not pairs:
-            # Fallback for groups with no distinct preferences
-            return torch.tensor(0.0, device=policy_logps.device, requires_grad=True), {"accuracy": 0.0, "margin": 0.0}
+            # Preserve the policy graph: a detached zero leaf would make an
+            # optimizer silently skip the active policy for tied groups.
+            return policy_logps.sum() * 0.0, {
+                "loss": 0.0,
+                "accuracy": 0.0,
+                "margin": 0.0,
+                "num_pairs": 0,
+            }
             
         # Extract indices of winners and losers
-        winners = [w for w, l in pairs]
-        losers = [l for w, l in pairs]
+        winners = torch.tensor([w for w, _ in pairs], device=policy_logps.device)
+        losers = torch.tensor([l for _, l in pairs], device=policy_logps.device)
         
         # 2. Gather log likelihoods for pairs
         policy_logps_w = policy_logps[winners]

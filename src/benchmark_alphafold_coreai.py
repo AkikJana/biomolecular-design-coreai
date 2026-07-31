@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+# Resolved from this file's location so the scripts work wherever the
+# repo is checked out.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 import sys
 import time
 import asyncio
@@ -16,12 +21,12 @@ async def main():
     print("==================================================================================")
     
     # 1. Load the dynamic CoreAI model
-    aimodel_path = "/Users/akikjana/Documents/BiomolecularDesign/surrogate_model_dynamic.aimodel"
+    aimodel_path = str(REPO_ROOT / "surrogate_model_dynamic.aimodel")
     if not os.path.exists(aimodel_path):
         print(f"Error: CoreAI model not found at {aimodel_path}")
         return
         
-    print(f"Loading dynamic CoreAI model...")
+    print("Loading dynamic CoreAI model...")
     model = await rt.AIModel.load(aimodel_path)
     rt_func = model.load_function("main")
     
@@ -106,16 +111,16 @@ async def main():
         total_af3_gpu_ms = af3_gpu_msa + af3_gpu_embed + af3_gpu_diff + af3_gpu_conf
         
         print(f"\nTarget: {name} ({total_L} residues total)")
-        print(f"  ┌──────────────────────────────┬──────────────────┬──────────────────┬──────────────────┐")
-        print(f"  │ Pipeline Phase               │ AlphaFold 3 CPU  │ AlphaFold 3 GPU  │ Boltz-Fast ANE   │")
-        print(f"  ├──────────────────────────────┼──────────────────┼──────────────────┼──────────────────┤")
+        print("  ┌──────────────────────────────┬──────────────────┬──────────────────┬──────────────────┐")
+        print("  │ Pipeline Phase               │ AlphaFold 3 CPU  │ AlphaFold 3 GPU  │ Boltz-Fast ANE   │")
+        print("  ├──────────────────────────────┼──────────────────┼──────────────────┼──────────────────┤")
         print(f"  │ 1. MSA & Template Prep       │ {af3_cpu_msa/1000.0:>14.1f} s │ {af3_gpu_msa/1000.0:>14.1f} s │ {'Bypassed (0s)':>16} │")
         print(f"  │ 2. 24-Layer Input Embedder   │ {af3_cpu_embed/1000.0:>14.1f} s │ {af3_gpu_embed/1000.0:>14.1f} s │ {coreai_ms:>14.2f} ms │")
         print(f"  │ 3. 200-Step 3D Diffusion     │ {af3_cpu_diff/1000.0:>14.1f} s │ {af3_gpu_diff/1000.0:>14.1f} s │ {'Bypassed (0s)':>16} │")
         print(f"  │ 4. Confidence Heads & Error  │ {af3_cpu_conf/1000.0:>14.1f} s │ {af3_gpu_conf/1000.0:>14.1f} s │ {'Bypassed (0s)':>16} │")
-        print(f"  ├──────────────────────────────┼──────────────────┼──────────────────┼──────────────────┤")
+        print("  ├──────────────────────────────┼──────────────────┼──────────────────┼──────────────────┤")
         print(f"  │ **Total Latency**            │ **{(total_af3_cpu_ms/1000.0):>10.1f} s** │ **{(total_af3_gpu_ms/1000.0):>10.1f} s** │ **{coreai_ms:>12.2f} ms** │")
-        print(f"  └──────────────────────────────┴──────────────────┴──────────────────┴──────────────────┘")
+        print("  └──────────────────────────────┴──────────────────┴──────────────────┴──────────────────┘")
         
         speedup_cpu = total_af3_cpu_ms / coreai_ms
         speedup_gpu = total_af3_gpu_ms / coreai_ms

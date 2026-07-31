@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
-from typing import List, Tuple, Dict, Any, Callable
+from typing import Tuple, Dict, Any, Callable
 
 # Import modular components from the codebase
 from latent_kv_cache import MLAProteinAttention
@@ -79,9 +78,21 @@ class BoltzFastEngine(nn.Module):
         # target_features shape: [B, L_target, embed_dim]
         # Generates compressed key-value latent representations
         latent_kv = self.mla_attention.kv_down_proj(target_features) # [B, L_target, latent_dim]
-        print(f"[Boltz-Fast] MLA Target KV Cache created. Size compressed from "
-              f"{target_features.element_size() * target_features.nelement() / 1024:.2f} KB to "
-              f"{latent_kv.element_size() * latent_kv.nelement() / 1024:.2f} KB (87.5% memory saving)")
+        # Baseline is what standard MHA would have to cache for this receptor:
+        # separate K and V tensors, each [B, L_target, embed_dim]. MLA caches a
+        # single [B, L_target, latent_dim] latent instead, so the saving is
+        # 1 - latent_dim / (2 * embed_dim) -- 87.5% at the 32/128 defaults.
+        # Computed rather than hardcoded: it moves with latent_dim and dtype.
+        elem = target_features.element_size()
+        num_tokens = target_features.nelement() // target_features.shape[-1]
+        baseline_kv_bytes = 2 * num_tokens * target_features.shape[-1] * elem
+        cached_bytes = latent_kv.element_size() * latent_kv.nelement()
+        saving_pct = (
+            (1.0 - cached_bytes / baseline_kv_bytes) * 100.0 if baseline_kv_bytes else 0.0
+        )
+        print(f"[Boltz-Fast] MLA Target KV Cache created. Cached K/V state reduced from "
+              f"{baseline_kv_bytes / 1024:.2f} KB (separate K + V) to "
+              f"{cached_bytes / 1024:.2f} KB latent ({saving_pct:.1f}% memory saving)")
         return latent_kv
 
     def forward_fold_cp_attention(
@@ -170,7 +181,9 @@ def run_boltz_fast_pipeline_demo():
     
     # 2. Context Preparation: Target Receptor MLA Caching
     target_receptor = torch.randn(1, 1000, 128) # Large 1000-residue receptor
-    latent_kv = engine.prepare_target_cache(target_receptor)
+    # Called for the KV-cache size report it prints; the latent itself is not
+    # consumed by this demo.
+    engine.prepare_target_cache(target_receptor)
     
     # 3. Context Preparation: Fold-CP Sharded Pair Representation Attention
     N = 512
@@ -215,7 +228,7 @@ def run_boltz_fast_pipeline_demo():
         
     print(f"\n[Search] Executing Speculative Flow Sampler for binder '{wt_sequence}'...")
     coords, stats = engine.run_speculative_folding(coord_init, mock_draft_vf, mock_target_vf)
-    print(f"  Speculative ODE Integration Complete.")
+    print("  Speculative ODE Integration Complete.")
     print(f"    - Draft Acceptance Rate:    {stats['acceptance_rate']*100:.1f}%")
     print(f"    - Sampler Speedup Factor:   {stats['estimated_speedup_factor']:.2f}x")
     
@@ -227,7 +240,7 @@ def run_boltz_fast_pipeline_demo():
     
     optimizer = torch.optim.Adam(engine.policy_model.parameters(), lr=0.01)
     
-    print(f"\n[Alignment] Performing reference-free SimPO gradient update step...")
+    print("\n[Alignment] Performing reference-free SimPO gradient update step...")
     loss_val = engine.compute_simpo_update(winner, loser, optimizer)
     print(f"  Tuned sequence design policy successfully. SimPO Loss = {loss_val:.4f}")
     

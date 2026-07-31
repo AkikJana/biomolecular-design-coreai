@@ -53,7 +53,16 @@ Desktop.ini
 *.aimodel
 *.aimodelc
 *.png
+
+# ...but the vendored report sources and their figures must be tracked, or the
+# compile_* scripts cannot run from a fresh clone.
+!reports/assets/*.png
+!reports/assets/*.jpg
+!src/bits_logo.png
+!src/bits_logo.svg
+
 /tmp/
+/artifacts/
 biomolecular_design/
 /compiled_surrogate*/
 /boltz_results*/

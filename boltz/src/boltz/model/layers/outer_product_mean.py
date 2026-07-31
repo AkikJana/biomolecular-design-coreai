@@ -1,7 +1,137 @@
+"""Outer-product-mean layer with a runtime-selectable implementation.
+
+This module exposes a single public name, :class:`OuterProductMean`, whose
+concrete implementation is chosen at import time by the ``BOLTZMAC_OPM``
+environment variable:
+
+``BOLTZMAC_OPM=stock`` (DEFAULT)
+    Upstream, full-rank Boltz-2 ``OuterProductMean`` (``norm``/``proj_a``/
+    ``proj_b``/``proj_o``). This is the variant whose parameter layout matches
+    the stock MIT-licensed Boltz checkpoints, so it is the default and the only
+    path that can load those weights unchanged.
+
+``BOLTZMAC_OPM=scontract``
+    Memory-efficient, low-rank / S-contracted variant
+    (:class:`OuterProductMeanLowRank`, backed by
+    :class:`~boltz.model.layers.low_rank_pair_representation.LowRankPairUpdater`).
+    This path contracts over the MSA depth ``S`` analytically and keeps peak
+    memory independent of MSA depth, but its parameters (``proj_x``/``proj_y``/
+    ``W``) do **not** match stock checkpoints, so it is opt-in only.
+
+Both implementations are always importable by name
+(:class:`OuterProductMeanStock`, :class:`OuterProductMeanLowRank`); the toggle
+only decides which one the bare ``OuterProductMean`` symbol points to. Selection
+happens once, when this module is first imported, so set ``BOLTZMAC_OPM`` before
+importing :mod:`boltz`.
+"""
+
+import os
+from typing import Optional
+
 import torch
 from torch import Tensor, nn
 
+import boltz.model.layers.initialize as init
 from boltz.model.layers.low_rank_pair_representation import LowRankPairUpdater
+
+
+class OuterProductMeanStock(nn.Module):
+    """Upstream full-rank outer product mean layer.
+
+    Parameter layout (``norm``/``proj_a``/``proj_b``/``proj_o``) matches the
+    stock MIT-licensed Boltz checkpoints, so this module loads those weights
+    unchanged. Selected by ``BOLTZMAC_OPM=stock`` (the default).
+    """
+
+    def __init__(self, c_in: int, c_hidden: int, c_out: int) -> None:
+        """Initialize the outer product mean layer.
+
+        Parameters
+        ----------
+        c_in : int
+            The input dimension.
+        c_hidden : int
+            The hidden dimension.
+        c_out : int
+            The output dimension.
+
+        """
+        super().__init__()
+        self.c_hidden = c_hidden
+        self.norm = nn.LayerNorm(c_in)
+        self.proj_a = nn.Linear(c_in, c_hidden, bias=False)
+        self.proj_b = nn.Linear(c_in, c_hidden, bias=False)
+        self.proj_o = nn.Linear(c_hidden * c_hidden, c_out)
+        init.final_init_(self.proj_o.weight)
+        init.final_init_(self.proj_o.bias)
+
+    def forward(self, m: Tensor, mask: Tensor, chunk_size: int = None) -> Tensor:
+        """Forward pass.
+
+        Parameters
+        ----------
+        m : torch.Tensor
+            The sequence tensor (B, S, N, c_in).
+        mask : torch.Tensor
+            The mask tensor (B, S, N).
+
+        Returns
+        -------
+        torch.Tensor
+            The output tensor (B, N, N, c_out).
+
+        """
+        # Expand mask
+        mask = mask.unsqueeze(-1).to(m)
+
+        # Compute projections
+        m = self.norm(m)
+        a = self.proj_a(m) * mask
+        b = self.proj_b(m) * mask
+
+        # Compute outer product mean
+        if chunk_size is not None and not self.training:
+            # Compute pairwise mask
+            for i in range(0, mask.shape[1], 64):
+                if i == 0:
+                    num_mask = (
+                        mask[:, i : i + 64, None, :] * mask[:, i : i + 64, :, None]
+                    ).sum(1)
+                else:
+                    num_mask += (
+                        mask[:, i : i + 64, None, :] * mask[:, i : i + 64, :, None]
+                    ).sum(1)
+            num_mask = num_mask.clamp(min=1)
+
+            # Compute squentially in chunks
+            for i in range(0, self.c_hidden, chunk_size):
+                a_chunk = a[:, :, :, i : i + chunk_size]
+                sliced_weight_proj_o = self.proj_o.weight[
+                    :, i * self.c_hidden : (i + chunk_size) * self.c_hidden
+                ]
+
+                z = torch.einsum("bsic,bsjd->bijcd", a_chunk, b)
+                z = z.reshape(*z.shape[:3], -1)
+                z = z / num_mask
+
+                # Project to output
+                if i == 0:
+                    z_out = z.to(m) @ sliced_weight_proj_o.T
+                else:
+                    z_out = z_out + z.to(m) @ sliced_weight_proj_o.T
+
+            z_out = z_out + self.proj_o.bias  # add bias
+            return z_out
+        else:
+            mask = mask[:, :, None, :] * mask[:, :, :, None]
+            num_mask = mask.sum(1).clamp(min=1)
+            z = torch.einsum("bsic,bsjd->bijcd", a.float(), b.float())
+            z = z.reshape(*z.shape[:3], -1)
+            z = z / num_mask
+
+            # Project to output
+            z = self.proj_o(z.to(m))
+            return z
 
 
 class _OuterProductMeanFunction(torch.autograd.Function):
@@ -54,8 +184,13 @@ class _OuterProductMeanFunction(torch.autograd.Function):
         return grad_Xm, grad_Ym, grad_W, None
 
 
-class OuterProductMean(nn.Module):
-    """Outer product mean layer, implemented using LowRankPairUpdater."""
+class OuterProductMeanLowRank(nn.Module):
+    """Outer product mean layer, implemented using LowRankPairUpdater.
+
+    Memory-efficient, low-rank / S-contracted variant. Its parameters
+    (``proj_x``/``proj_y``/``W`` via :class:`LowRankPairUpdater`) do not match
+    stock checkpoints, so it is opt-in via ``BOLTZMAC_OPM=scontract``.
+    """
 
     def __init__(self, c_in: int, c_hidden: int, c_out: int) -> None:
         """Initialize the outer product mean layer.
@@ -129,3 +264,39 @@ class OuterProductMean(nn.Module):
 
         return z_out
 
+
+# --- Implementation toggle -------------------------------------------------
+#
+# ``BOLTZMAC_OPM`` selects which implementation the public ``OuterProductMean``
+# name resolves to. Default is ``stock`` so that stock Boltz weights load
+# without modification; ``scontract`` opts into the low-rank variant.
+OPM_ENV_VAR = "BOLTZMAC_OPM"
+OPM_STOCK = "stock"
+OPM_SCONTRACT = "scontract"
+
+_OPM_IMPLEMENTATIONS = {
+    OPM_STOCK: OuterProductMeanStock,
+    OPM_SCONTRACT: OuterProductMeanLowRank,
+}
+
+
+def resolve_opm_mode() -> str:
+    """Return the selected OPM mode from ``BOLTZMAC_OPM`` (default ``stock``)."""
+    mode = os.environ.get(OPM_ENV_VAR, OPM_STOCK).strip().lower()
+    if mode not in _OPM_IMPLEMENTATIONS:
+        valid = ", ".join(sorted(_OPM_IMPLEMENTATIONS))
+        raise ValueError(
+            f"Invalid {OPM_ENV_VAR}={mode!r}; expected one of: {valid}."
+        )
+    return mode
+
+
+def select_opm_cls(mode: Optional[str] = None) -> type:
+    """Return the OPM class for ``mode`` (or the env-selected mode if None)."""
+    if mode is None:
+        mode = resolve_opm_mode()
+    return _OPM_IMPLEMENTATIONS[mode]
+
+
+# Resolved once at import time. Set BOLTZMAC_OPM before importing boltz.
+OuterProductMean = select_opm_cls()

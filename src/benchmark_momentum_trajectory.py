@@ -3,12 +3,16 @@ import torch.nn as nn
 import numpy as np
 import time
 import os
-import sys
+from pathlib import Path
 
-# Add src to path just in case
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Artifacts land inside the repo (gitignored) rather than a machine-local
+# tool-session directory. Override with BOLTZ_FAST_ARTIFACTS.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+ARTIFACTS_DIR = os.environ.get(
+    "BOLTZ_FAST_ARTIFACTS", str(REPO_ROOT / "artifacts")
+)
 
-from src.momentum_trajectory import (
+from momentum_trajectory import (
     AdaptiveMomentumSpeculativeSolver,
     EulerSolver,
     HeunSolver,
@@ -190,7 +194,7 @@ def run_benchmark():
             plot_spec_trajs.append((name, traj_spec))
             
     # Generate the Markdown report
-    artifact_dir = "/Users/akikjana/.gemini/antigravity-cli/brain/0ff8d4eb-6f1c-43dd-a6ea-6e1c63f8debf"
+    artifact_dir = ARTIFACTS_DIR
     os.makedirs(artifact_dir, exist_ok=True)
     
     report_path = os.path.join(artifact_dir, "benchmark_results.md")
