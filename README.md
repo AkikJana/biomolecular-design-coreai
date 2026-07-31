@@ -142,19 +142,49 @@ reproduce Boltz's ranking on binders it has not seen.
 not stop the model fitting the training set exactly. This is not a sample-size
 problem that more folding will fix; the model memorises whatever it is given.
 
-Two things to change before trying again:
+### Ridge baseline: the signal exists, the neural model missed it
 
-* **The reference may be mostly noise.** ipTM here spans 0.052–0.103 (σ = 0.011).
-  For context, the SPARK fertilization complex — a real, experimentally validated
-  assembly — scores ipTM 0.51–0.57. Values near 0.05 mean *no confident interface
-  is predicted at all*, so the ranking being distilled may encode little real
-  binding signal. Single-point mutants of one synthetic 15-mer against one target
-  is likely the wrong task; real binders against several targets would give
-  something to learn.
-* **The model is the wrong shape for the data.** A ~10⁵-parameter network on
-  hundreds of examples memorises. A regularised linear model over engineered
-  binder features would be far harder to overfit and would provide the baseline
-  the neural surrogate currently has nothing to beat.
+`src/ridge_baseline.py` fits a regularised linear model over engineered binder
+features on the same 258 folded references — no new folding required. It settles
+which of the two explanations above is right.
+
+| model | features | train ρ | held-out ρ (single split) |
+| :--- | :---: | :---: | :---: |
+| ridge, additive main effects | 59 | +0.446 | **+0.180** |
+| ridge, position × residue one-hot | 300 | +0.967 | +0.095 |
+| neural surrogate | ~10⁵ | +1.000 | −0.034 |
+
+A single split is not trustworthy here — across six seeds the additive model
+ranged +0.041 to +0.223. The protocol that holds up is repeated splits against
+the *same procedure run on shuffled labels*:
+
+```
+real labels     30 splits: mean ρ +0.103 (sd 0.099), 27/30 positive
+shuffled labels 30 splits: mean ρ +0.018 (sd 0.093)
+difference +0.085, z = 3.44
+```
+
+**There is weak but real signal, and the neural surrogate failed to find it.**
+Ridge generalises (train ρ 0.446, not 1.000) where the network memorised. This
+supersedes the earlier suggestion that the reference was mostly noise — it is
+noisy, but not empty.
+
+Three things follow:
+
+* **Feature design decides the outcome.** Additive main effects (+0.103 mean)
+  beat a position × residue one-hot (+0.095 on one split, train ρ 0.967 — it
+  memorises), because on a single-mutant scan every held-out mutant carries a
+  (position, residue) pair unseen in training. Only main effects transfer.
+* **The effect is small.** ρ ≈ 0.10 explains ~1% of rank variance — a real
+  signal, not a usable ranker. The reference itself is weak: ipTM spans
+  0.052–0.103, whereas the experimentally validated SPARK fertilization complex
+  scores 0.51–0.57. Values near 0.05 mean no confident interface is predicted at
+  all.
+* **Single-split numbers on this task are noise.** sd ≈ 0.10 across splits, so
+  any one seed over- or under-states by ±0.1. This is why +0.308 at n = 13 looked
+  encouraging and why +0.180 at seed 0 should not be quoted alone either.
+
+Reproduce: `python src/ridge_baseline.py --repeats 30`
 
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
