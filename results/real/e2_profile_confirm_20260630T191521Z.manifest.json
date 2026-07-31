@@ -1,0 +1,3745 @@
+{
+  "run_id": "e2_profile_confirm_20260630T191521Z",
+  "experiment": "E2-confirm - profiler-backed confirmation pass",
+  "parent_experiment": "E2 - MPS op-coverage / device-fallback (e2_mps_opcoverage.py)",
+  "timestamp_utc": "2026-06-30T19:15:22.733207+00:00",
+  "device": "mps",
+  "dtype": "fp16",
+  "seed": 0,
+  "code_sha": "7915a23c69d2673bef5e05c477d41dcac0e70340",
+  "boltz_commit": "7915a23c69d2673bef5e05c477d41dcac0e70340",
+  "hardware": "arm",
+  "os": "Darwin 25.6.0 (macOS-26.6-arm64-arm-64bit-Mach-O)",
+  "python": "3.13.5",
+  "torch_version": "2.9.1",
+  "mps_available": true,
+  "input_kind": "SYNTHETIC feats (n_tokens=24, n_atoms=64, n_msa=8) - real model + real weights, synthetic input (identical methodology to E2)",
+  "pytorch_enable_mps_fallback": "1",
+  "opm_mode": "stock",
+  "command": "python e2_profile_confirm.py --out-dir results/real",
+  "config": {
+    "recycling_steps": 0,
+    "sampling_steps": 2,
+    "n_tokens": 24,
+    "n_atoms": 64,
+    "n_msa": 8
+  },
+  "warmup_iterations": 1,
+  "timed_iterations": 4,
+  "weights_file": "/Users/akikjana/.boltz/boltz1_conf.ckpt",
+  "weights_version": "Boltz-1 (boltz1_conf.ckpt)",
+  "weights_sha256": "fea245d912c570ec117b2277c2719f312a6fc109c07b6f6ef741690ee775c2f5",
+  "ran_on_device": "yes",
+  "warmup_wall_clock_by_stage_s": {
+    "input_featurization": 0.8176056660013273,
+    "trunk_msa_module": 0.7310287919826806,
+    "trunk_pairformer": 3.665751291962806,
+    "distogram": 0.007904959027655423,
+    "diffusion_sampler": 2.0596651249798015,
+    "confidence_head": 4.591195625020191
+  },
+  "op_coverage": {
+    "input_featurization": {
+      "aten::_local_scalar_dense": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 114,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 32,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::any": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::arange": {
+        "calls": 1,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bitwise_and": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::cat": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clamp": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 7,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::eq": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 42,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 24,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 12,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::ne": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 20,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::reciprocal": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::relu": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::scatter_": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::select": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 12,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::silu": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::slice": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::split": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sum": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 49,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 41,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::where": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::zeros": {
+        "calls": 4,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::zeros_like": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "  attention_pair_bias": {
+      "aten::_softmax": {
+        "calls": 162,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 2868,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 234,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 324,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 360,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 396,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div": {
+        "calls": 162,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 162,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 942,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 324,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 228,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 1932,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rsub": {
+        "calls": 162,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 162,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::squeeze": {
+        "calls": 18,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 1296,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 2160,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "uncategorized": {
+      "aten::_to_copy": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "trunk_msa_module": {
+      "aten::_softmax": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 166,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 36,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 38,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add_": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 16,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::cat": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clamp": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 28,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::copy_": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div": {
+        "calls": 24,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div_": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 32,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::ge": {
+        "calls": 20,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 78,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 77,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 24,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::new_zeros": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 60,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rand": {
+        "calls": 20,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rsub": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::silu": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::slice": {
+        "calls": 56,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sum": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 16,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 62,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 76,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "  triangle_multiplication": {
+      "aten::_to_copy": {
+        "calls": 2289,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 208,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 832,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 624,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 416,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 1040,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 416,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::split": {
+        "calls": 208,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 624,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 832,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "  triangle_attention": {
+      "aten::_softmax": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 1352,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 624,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add_": {
+        "calls": 208,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 208,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 416,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::copy_": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div_": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 832,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 624,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 208,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::new_zeros": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 208,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::slice": {
+        "calls": 416,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 728,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 312,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 1144,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "trunk_pairformer": {
+      "aten::_softmax": {
+        "calls": 48,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 1152,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 288,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 336,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add_": {
+        "calls": 96,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 96,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 192,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::copy_": {
+        "calls": 48,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div": {
+        "calls": 192,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div_": {
+        "calls": 48,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 384,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::ge": {
+        "calls": 192,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 576,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 576,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 144,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::new_zeros": {
+        "calls": 48,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 96,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rand": {
+        "calls": 192,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 48,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::silu": {
+        "calls": 96,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::slice": {
+        "calls": 576,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub": {
+        "calls": 48,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 192,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 144,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 528,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "distogram": {
+      "aten::_to_copy": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "diffusion_sampler": {
+      "aten::_linalg_det": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_local_scalar_dense": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 1545,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::abs": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 299,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::any": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::arange": {
+        "calls": 4,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bitwise_and": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 25,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::cat": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clamp": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 27,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::constant_pad_nd": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::copy_": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::cos": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::detach": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div": {
+        "calls": 17,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::eq": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 25,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::eye": {
+        "calls": 2,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::full": {
+        "calls": 4,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::gt": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::index": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::index_put_": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::le": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linalg_svd": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "cpu_fallback",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 600,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::log": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::lt": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mean": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 476,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 267,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::ne": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::neg": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 97,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::pow": {
+        "calls": 7,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::randn": {
+        "calls": 7,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::reciprocal": {
+        "calls": 7,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::relu": {
+        "calls": 7,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::repeat": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rsub": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::scalar_tensor": {
+        "calls": 2,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::scatter_": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::select": {
+        "calls": 8,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 244,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::silu": {
+        "calls": 68,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::slice": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::split": {
+        "calls": 64,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sqrt": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::stack": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub": {
+        "calls": 16,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub_": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sum": {
+        "calls": 15,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unbind": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 98,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 152,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::where": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::zeros": {
+        "calls": 5,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::zeros_like": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    },
+    "confidence_head": {
+      "aten::_cdist_forward": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_local_scalar_dense": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_softmax": {
+        "calls": 61,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_to_copy": {
+        "calls": 1476,
+        "input_devices": [
+          "cpu",
+          "mps"
+        ],
+        "output_devices": [
+          "cpu",
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unique2": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::_unsafe_view": {
+        "calls": 327,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::abs": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add": {
+        "calls": 426,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::add_": {
+        "calls": 104,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::any": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::arange": {
+        "calls": 7,
+        "input_devices": [],
+        "output_devices": [
+          "cpu",
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bitwise_and": {
+        "calls": 5,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::bmm": {
+        "calls": 119,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::cat": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clamp": {
+        "calls": 9,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::clone": {
+        "calls": 242,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::copy_": {
+        "calls": 53,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::detach": {
+        "calls": 10,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div": {
+        "calls": 229,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::div_": {
+        "calls": 52,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::embedding": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::eq": {
+        "calls": 11,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::expand": {
+        "calls": 435,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::eye": {
+        "calls": 1,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::ge": {
+        "calls": 212,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::gt": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::index": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::linear": {
+        "calls": 708,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::lt": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::max": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::mul": {
+        "calls": 728,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::native_layer_norm": {
+        "calls": 185,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::ne": {
+        "calls": 7,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::new_zeros": {
+        "calls": 52,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::norm": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::permute": {
+        "calls": 176,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::pow": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rand": {
+        "calls": 212,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::reciprocal": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::relu": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::rsub": {
+        "calls": 6,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::scalar_tensor": {
+        "calls": 1,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::scatter_": {
+        "calls": 4,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::select": {
+        "calls": 12,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sigmoid": {
+        "calls": 68,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::silu": {
+        "calls": 107,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::slice": {
+        "calls": 634,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::split": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::squeeze": {
+        "calls": 1,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sub": {
+        "calls": 61,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::sum": {
+        "calls": 34,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::transpose": {
+        "calls": 211,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unbind": {
+        "calls": 2,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": null,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::unsqueeze": {
+        "calls": 322,
+        "input_devices": [
+          "cpu",
+          "mps"
+        ],
+        "output_devices": [
+          "cpu",
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::view": {
+        "calls": 670,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": true,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::where": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::zeros": {
+        "calls": 5,
+        "input_devices": [],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      },
+      "aten::zeros_like": {
+        "calls": 3,
+        "input_devices": [
+          "mps"
+        ],
+        "output_devices": [
+          "mps"
+        ],
+        "has_mps_kernel": false,
+        "verdict": "mps",
+        "errored": false,
+        "error": ""
+      }
+    }
+  },
+  "fallback_ops": [
+    "aten::linalg_svd"
+  ],
+  "warmup_iterations_breakdown": {
+    "profiled_pass": 1,
+    "extra_plain_passes": 0
+  },
+  "steady_state_wall_clock_by_stage_s": {
+    "input_featurization": {
+      "mean_s": 0.10614333349803928,
+      "std_s": 0.039875508288914785,
+      "n": 4,
+      "samples_s": [
+        0.0853701249579899,
+        0.09085412503918633,
+        0.1657355419592932,
+        0.08261354203568771
+      ]
+    },
+    "trunk_msa_module": {
+      "mean_s": 0.18509323950274847,
+      "std_s": 0.037974084421187264,
+      "n": 4,
+      "samples_s": [
+        0.17029037501197308,
+        0.16576075000921264,
+        0.24185104196658358,
+        0.1624707910232246
+      ]
+    },
+    "trunk_pairformer": {
+      "mean_s": 0.4286928122601239,
+      "std_s": 0.00882091096459893,
+      "n": 4,
+      "samples_s": [
+        0.4412381250294857,
+        0.4276928330073133,
+        0.4249687080155127,
+        0.42087158298818395
+      ]
+    },
+    "distogram": {
+      "mean_s": 0.005983395778457634,
+      "std_s": 0.0019342205527708093,
+      "n": 4,
+      "samples_s": [
+        0.008878750028088689,
+        0.005185042042285204,
+        0.004982208018191159,
+        0.004887583025265485
+      ]
+    },
+    "diffusion_sampler": {
+      "mean_s": 0.6319053750048624,
+      "std_s": 0.13299050008733282,
+      "n": 4,
+      "samples_s": [
+        0.7267561249900609,
+        0.7627060830127448,
+        0.5464167920290492,
+        0.4917424999875948
+      ]
+    },
+    "confidence_head": {
+      "mean_s": 0.730322551986319,
+      "std_s": 0.029817709049251774,
+      "n": 4,
+      "samples_s": [
+        0.7474617909756489,
+        0.7567185829975642,
+        0.7276484169997275,
+        0.6894614169723354
+      ]
+    }
+  },
+  "profiler_cross_check": {
+    "verdict": "CONFIRMED: sole unsupported-MPS fallback is aten::linalg_svd.",
+    "fallback_ops": [
+      "aten::linalg_svd"
+    ],
+    "timed_iteration_fallback_warnings": [
+      [],
+      [],
+      [],
+      []
+    ],
+    "residency_check_iterations": 3,
+    "linalg_svd_cpu_residency_confirmed_each_iteration": true,
+    "scalar_sync_ops_excluded_from_fallback_classification": [
+      "aten::_local_scalar_dense",
+      "aten::item"
+    ],
+    "tracer_op_count": 73,
+    "profiler_op_count": 126,
+    "ops_seen_by_profiler_only": [
+      "aten::__and__",
+      "aten::_index_put_impl_",
+      "aten::_linalg_check_errors",
+      "aten::_linalg_svd",
+      "aten::_reshape_alias",
+      "aten::_to_cpu",
+      "aten::as_strided",
+      "aten::as_strided_",
+      "aten::cdist",
+      "aten::chunk",
+      "aten::clip",
+      "aten::contiguous",
+      "aten::det",
+      "aten::detach_",
+      "aten::diagonal",
+      "aten::einsum",
+      "aten::empty",
+      "aten::empty_like",
+      "aten::empty_strided",
+      "aten::expand_as",
+      "aten::fill_",
+      "aten::flatten",
+      "aten::fmod_",
+      "aten::frobenius_norm",
+      "aten::index_select",
+      "aten::is_nonzero",
+      "aten::is_same_size",
+      "aten::item",
+      "aten::layer_norm",
+      "aten::linalg_det",
+      "aten::linalg_lu_factor_ex",
+      "aten::mH",
+      "aten::mT",
+      "aten::matmul",
+      "aten::mul_",
+      "aten::narrow",
+      "aten::new_empty",
+      "aten::normal_",
+      "aten::one_hot",
+      "aten::pad",
+      "aten::prod",
+      "aten::repeat_interleave",
+      "aten::reshape",
+      "aten::resize_",
+      "aten::resolve_conj",
+      "aten::resolve_neg",
+      "aten::result_type",
+      "aten::softmax",
+      "aten::to",
+      "aten::transpose_",
+      "aten::uniform_",
+      "aten::view_as",
+      "aten::zero_"
+    ],
+    "ops_seen_by_tracer_only": [],
+    "self_cpu_time_top_ops": [
+      {
+        "op": "aten::mul",
+        "calls": 3041,
+        "self_cpu_us_total": 2338637.7,
+        "self_cpu_us_avg": 769.04
+      },
+      {
+        "op": "aten::copy_",
+        "calls": 14548,
+        "self_cpu_us_total": 1903281.7,
+        "self_cpu_us_avg": 130.83
+      },
+      {
+        "op": "aten::slice",
+        "calls": 2243,
+        "self_cpu_us_total": 1257131.3,
+        "self_cpu_us_avg": 560.47
+      },
+      {
+        "op": "aten::add",
+        "calls": 1458,
+        "self_cpu_us_total": 1131193.6,
+        "self_cpu_us_avg": 775.85
+      },
+      {
+        "op": "aten::transpose",
+        "calls": 1159,
+        "self_cpu_us_total": 873329.8,
+        "self_cpu_us_avg": 753.52
+      },
+      {
+        "op": "aten::div",
+        "calls": 625,
+        "self_cpu_us_total": 490796.6,
+        "self_cpu_us_avg": 785.27
+      },
+      {
+        "op": "aten::ge",
+        "calls": 424,
+        "self_cpu_us_total": 379031.0,
+        "self_cpu_us_avg": 893.94
+      },
+      {
+        "op": "aten::add_",
+        "calls": 420,
+        "self_cpu_us_total": 315334.4,
+        "self_cpu_us_avg": 750.8
+      },
+      {
+        "op": "aten::linear",
+        "calls": 8810,
+        "self_cpu_us_total": 300862.9,
+        "self_cpu_us_avg": 34.15
+      },
+      {
+        "op": "aten::sub",
+        "calls": 416,
+        "self_cpu_us_total": 253477.6,
+        "self_cpu_us_avg": 609.32
+      },
+      {
+        "op": "aten::bmm",
+        "calls": 1046,
+        "self_cpu_us_total": 219032.7,
+        "self_cpu_us_avg": 209.4
+      },
+      {
+        "op": "aten::split",
+        "calls": 278,
+        "self_cpu_us_total": 216960.9,
+        "self_cpu_us_avg": 780.43
+      },
+      {
+        "op": "aten::_to_copy",
+        "calls": 12627,
+        "self_cpu_us_total": 193289.0,
+        "self_cpu_us_avg": 15.31
+      },
+      {
+        "op": "aten::div_",
+        "calls": 208,
+        "self_cpu_us_total": 157532.1,
+        "self_cpu_us_avg": 757.37
+      },
+      {
+        "op": "aten::rsub",
+        "calls": 178,
+        "self_cpu_us_total": 132699.5,
+        "self_cpu_us_avg": 745.5
+      }
+    ],
+    "svd_self_cpu_rows": [
+      {
+        "op": "aten::linalg_svd",
+        "calls": 2,
+        "self_cpu_us_total": 2462.7,
+        "self_cpu_us_avg": 1231.34
+      },
+      {
+        "op": "aten::_linalg_svd",
+        "calls": 2,
+        "self_cpu_us_total": 6477.9,
+        "self_cpu_us_avg": 3238.97
+      }
+    ],
+    "scalar_sync_self_cpu_rows": [
+      {
+        "op": "aten::item",
+        "calls": 469,
+        "self_cpu_us_total": 931.6,
+        "self_cpu_us_avg": 1.99
+      },
+      {
+        "op": "aten::_local_scalar_dense",
+        "calls": 469,
+        "self_cpu_us_total": 21404.2,
+        "self_cpu_us_avg": 45.64
+      }
+    ],
+    "ops_with_higher_avg_self_cpu_than_svd": [
+      "aten::_cdist_forward",
+      "aten::_unique2",
+      "aten::constant_pad_nd",
+      "aten::eq",
+      "aten::gt",
+      "aten::index_select",
+      "aten::le",
+      "aten::lt",
+      "aten::max",
+      "aten::ne",
+      "aten::norm",
+      "aten::prod",
+      "aten::repeat",
+      "aten::scatter_"
+    ]
+  },
+  "notes": [
+    "WEIGHTS CAVEAT (same as E2): the loaded checkpoint is **Boltz-1**, not Boltz-2. Profiling real Boltz-2 needs Boltz-2 weights.",
+    "INPUT CAVEAT (same as E2): synthetic feats are used because op-coverage and timing-shape are architecture driven; default sizes here match E2's --fast config for run-to-run numerical stability across the timed iterations (the default-sized config is known per E2 to occasionally hit synthetic-coordinate SVD non-convergence on CPU).",
+    "torch.profiler has no ProfilerActivity.MPS in this torch build (2.9.1); device_type reports DeviceType.CPU for every op regardless of actual execution device, and self-CPU time is dominated by MPS dispatch/sync overhead. The profiler is therefore used here for op-presence corroboration and explicit scalar-sync separation, NOT for timing-based device classification - see 'Why self-CPU time is not used to classify fallbacks' in the report.",
+    "PyTorch's MPS-unsupported fallback warning is a process-global warn-once (empirically verified: it fires on an op's first invocation in the process and never again, regardless of Python warnings-filter state) - re-harvesting it per iteration cannot confirm the fallback recurs on every iteration. TorchDispatchMode's own device tracking is also no use here: the fallback is transparent at the dispatch boundary it intercepts (aten::linalg_svd's inputs/outputs are still tagged mps there; the host round-trip happens inside the kernel via internal sub-calls like aten::_to_cpu that never reach the tracer). Recurrence was instead confirmed via torch.profiler re-observing aten::_to_cpu on 3 dedicated passes: confirmed_every_iteration=True.",
+    "profiler cross-check verdict: CONFIRMED: sole unsupported-MPS fallback is aten::linalg_svd."
+  ]
+}
