@@ -277,6 +277,46 @@ better; this measures what this pipeline provides.
 
 Reproduce: `python src/pdb_binder_benchmark.py`
 
+### The low-rank OPM cannot be projected from stock weights
+
+The low-rank OuterProductMean saves ~93% of activation memory but its parameters
+do not match stock Boltz checkpoints, so it requires training from scratch. The
+obvious escape is to *project* pretrained weights into the low-rank form.
+`src/opm_cp_projection.py` tests whether that works.
+
+Stock computes `out[i,j,e] = mᵢᵀ (Aᵀ Oₑ B) mⱼ`; the low-rank form computes
+`mᵢᵀ (Pxᵀ diag(Wₑ) Py) mⱼ`. Matching them requires writing every `Oₑ` from a
+**shared** set of rank-1 terms — a CP decomposition of `O ∈ R^(128×32×32)` at
+rank R. Given one, `Px = UᵀA` and `Py = VᵀB` reproduce the layer exactly.
+
+Measured on `boltz1_conf.ckpt` (c_in 64, c_hidden 32, c_out 128):
+
+| rank | CP error | output error | params |
+| :--- | :---: | :---: | :---: |
+| 8 | 0.927 | 0.879 | 2,048 |
+| 16 | 0.883 | 0.823 | 4,096 |
+| **32** (the rank actually used) | **0.831** | **0.773** | 8,192 |
+| 64 | 0.758 | 0.708 | 16,384 |
+| 128 | 0.641 | 0.605 | 32,768 |
+
+vs 131,072 params for stock. **It does not work.** At the native rank the
+projection discards ~83% of the tensor and the layer output is ~77% wrong.
+
+Two controls confirm this is a property of the weights, not of the solver: an
+exactly-rank-32 tensor decomposes with error **0.00000**, and a random dense
+tensor gives **0.947** — so the trained tensor (0.831) is only marginally more
+compressible than noise.
+
+**Consequence.** The low-rank OPM is a genuinely lower-capacity layer, not a
+reparameterisation of the stock one. Its memory win is unavailable on pretrained
+models by projection at any practical rank; obtaining it requires training from
+scratch, or distilling the low-rank factors against stock OPM outputs on real
+data (training, not projection). No lDDT measurement was run, because ~77%
+output error per layer compounding across the MSA stack makes the outcome
+determined.
+
+Reproduce: `python src/opm_cp_projection.py --ranks 8,16,32,64,128`
+
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
 not apply to peptide binders); single-sequence mode without an MSA yields low
