@@ -1,0 +1,29 @@
+{
+  "template": true,
+  "template_note": "PLACEHOLDER TEMPLATE ONLY - replace every example value when creating a real frozen benchmark manifest.",
+  "code_sha": "PLACEHOLDER_REPO_COMMIT_SHA",
+  "boltz_commit": "PLACEHOLDER_BOLTZ_COMMIT_SHA",
+  "weights_sha256": "PLACEHOLDER_WEIGHTS_SHA256",
+  "seed": 12345,
+  "hardware": {
+    "accelerator": "PLACEHOLDER_GPU_OR_CPU",
+    "accelerator_count": 1,
+    "cpu": "PLACEHOLDER_CPU",
+    "memory_gb": "PLACEHOLDER_MEMORY_GB"
+  },
+  "os": {
+    "name": "PLACEHOLDER_OS_NAME",
+    "version": "PLACEHOLDER_OS_VERSION",
+    "kernel": "PLACEHOLDER_KERNEL_VERSION"
+  },
+  "command": "PLACEHOLDER_COMMAND_USED_TO_GENERATE_OR_EVALUATE",
+  "metric_version": "PLACEHOLDER_METRIC_VERSION",
+  "inputs": [
+    {
+      "complex_id": "PLACEHOLDER_COMPLEX_ID",
+      "input_file": "PLACEHOLDER_RELATIVE_INPUT_FILE",
+      "label_file": "PLACEHOLDER_RELATIVE_LABEL_FILE_OR_NULL"
+    }
+  ],
+  "created_utc": "PLACEHOLDER_YYYY-MM-DDTHH:MM:SSZ"
+}
