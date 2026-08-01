@@ -339,10 +339,12 @@ PTM-dependent**, including 1I8H from the original panel, whose peptide needs
 phosphothreonine and therefore never bound as folded.
 
 **The specificity test passes.** Against decoys the cognate reaches mean rank
-**2.00 vs chance 2.50** (#1 for 8/22, p = 0.034 two-sided), bootstrap 95% CI
-**[1.59, 2.41]** excluding chance. Alone, that reverses the n = 11 result.
+**2.00 vs chance 2.50** (#1 for 8/22, p = 0.034 two-sided). Alone, that reverses
+the n = 11 result. **A later replicate study shows that p-value is not
+reproducible — see the caveat below, which was measured after this run and
+changes how these numbers should be read.**
 
-**The scramble control refutes the binding reading.**
+**The scramble control constrains the binding reading.**
 
 | class | n | mean ipTM |
 | :--- | :---: | :---: |
@@ -353,11 +355,14 @@ phosphothreonine and therefore never bound as folded.
 A scramble keeps composition and length exactly and destroys only order — and
 order is what makes a binder a binder.
 
-* Cognates **do not** beat their own scrambles: 11/22, mean +0.0128, p = 0.416.
-* Scrambles **outscore decoys**: AUC 0.368, p = 0.019.
+* Cognates do not measurably beat their own scrambles: **+0.0128, 95% CI
+  [−0.019, +0.044]**, n = 44. That is a *bound*, not a zero: any order effect is
+  at most 63% of the composition effect, and plausibly nil.
+* Scrambles **outscore decoys**: AUC 0.632, p = 0.0096 (44 vs 66).
 
-So what separates cognate from decoy is exactly what a cognate shares with its
-own scramble — composition. Order contributes nothing measurable.
+So what separates cognate from decoy is largely what a cognate shares with its
+own scramble — composition. Order contributes less than composition, and no
+order effect could be detected at this precision.
 
 **Not a length artifact**, which was tested rather than assumed: ipTM falls with
 peptide length (Spearman −0.408, p = 1.2e-6), but regressing per-pair
@@ -365,17 +370,40 @@ cognate-minus-decoy score difference on length difference leaves intercept
 **+0.0752, p = 0.0001**. The advantage survives length adjustment. It is
 compositional, not positional.
 
-**Conclusion.** The powered run settles the question, and the answer is still
-negative — now with a mechanism. This converges with the ridge-regression result
-above from an independent direction: additive composition beat the distilled
-neural surrogate (+0.103 vs −0.034). Reporting only the decoys-only row
-(p = 0.034) would have produced a positive headline this experiment's own
-control contradicts.
+### Caveat that reframes the run: single folds are not reproducible
+
+Every fold above was unseeded — Boltz's `--seed` defaults to `None`, and the
+benchmark's own `--seed` controls only pair construction. A follow-up replicate
+study (24 complexes x 4 identical re-runs, 96 folds) measured what that costs:
+
+```
+pooled within-complex SD  0.0628      median range  0.1271
+cognate - decoy   +0.0698  = 1.11 x SD   comparable to noise
+cognate - scramble +0.0128 = 0.20 x SD   below noise
+```
+
+**Per-receptor rankings do not reproduce.** Cognate rank among its own decoys,
+across four identical runs: 1YCR `[1,2,1,1]`, 9F6S `[2,1,1,1]`,
+8KDX `[3,3,4,2]`, 6YOO `[1,4,4,3]`. Four of four flip; 6YOO spans best to worst.
+
+**The aggregate effect survives, the significance verdict does not.**
+Re-simulating the whole benchmark under the measured noise (4,000 replications)
+gives mean rank 2.03, 95% range **[1.77, 2.27]** — always below chance — but
+**p < 0.05 in only 49% of re-runs** (median p = 0.054). The preference is real
+and probably stronger than 2.00 suggests, since measurement error attenuates
+rank effects toward chance. What a single run cannot support is the precision of
+its own verdict.
+
+Stabilising per-receptor ranks needs ~9–16 replicate folds per complex
+(SE 0.021–0.016 against competitor gaps of ~0.05) — 1,200–2,100 folds for the
+panel, a GPU-scale job. Beyond this project, it means **ranking binders on a
+single AlphaFold/Boltz run does not reproduce its own ranking** at reduced
+sampling settings.
+
+Full write-up: [`results/real/seed_variance_20260802.report.md`](results/real/seed_variance_20260802.report.md)
 
 Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22`
-
-Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2`
-then `python src/compare_boltz1_boltz2.py`
+then `python src/seed_variance_study.py --replicates 4`
 
 ### The low-rank OPM is not reachable on pretrained weights
 

@@ -21,11 +21,16 @@ measurement against pretrained checkpoints and experimentally determined
 structures. **This phase produced two substantive negative results**, reported in
 full in Section 6: the low-rank pair representation cannot be recovered from
 pretrained weights at any rank that saves memory, and interface confidence
-(ipTM) responds to peptide **composition** rather than to binding, ranking a
-scrambled sequence as highly as the real binder it was made from. The second
+(ipTM) responds largely to peptide **composition**, ranking a scrambled sequence
+as highly as the real binder it was made from, with any sequence-order effect
+bounded below the composition effect. The second
 finding was established by a power-sized 22-receptor run (132 complexes) whose
-headline comparison is statistically significant and whose own scramble control
-shows that significance does not mean binding recognition. Both results are
+headline comparison is statistically significant, whose own scramble control
+shows that significance does not mean binding recognition, and whose
+reproducibility was then measured directly: a 96-fold replicate study
+(Section 6.5) shows that single unseeded folds do not reproduce their own
+per-receptor rankings, so the aggregate direction is trustworthy while any
+individual verdict is not. Both results are
 reported because they redirect the remaining work, and both rest on controls,
 held-out splits, and power analysis rather than on single favourable runs.
 
@@ -73,8 +78,9 @@ mock tensors.
 &nbsp;&nbsp;&nbsp;&nbsp;6.2 Interface Confidence as a Binder-Ranking Reference ....................................................... 16
 &nbsp;&nbsp;&nbsp;&nbsp;6.3 Boltz-2 Comparison and a Benchmark Correction ............................................................ 17
 &nbsp;&nbsp;&nbsp;&nbsp;6.4 Powered Run: ipTM Tracks Composition, Not Binding ..................................................... 18
-### 7. FUTURE PLAN ............................................................................................................................. 18
-### 8. ABBREVIATIONS ......................................................................................................................... 19
+&nbsp;&nbsp;&nbsp;&nbsp;6.5 Measurement Reproducibility: Single Folds Do Not Reproduce ....................................... 19
+### 7. FUTURE PLAN ............................................................................................................................. 20
+### 8. ABBREVIATIONS ......................................................................................................................... 21
 
 &nbsp;
 ### List of Figures
@@ -476,11 +482,12 @@ order — and order is what makes a binder a binder.
 | scrambled | 44 | 0.4888 |
 | decoy | 66 | 0.4317 |
 
-Cognates do not beat their own scrambles (higher for 11 of 22 receptors, mean
-difference +0.0128, p = 0.416), and **scrambles outscore decoys** (AUC 0.368,
-p = 0.019). The variable separating cognate from decoy is therefore the one a
-cognate shares exactly with its own scramble — composition — while the variable
-that would indicate binding contributes nothing measurable.
+Cognates do not measurably beat their own scrambles (mean difference +0.0128,
+95% CI [−0.019, +0.044], n = 44), and **scrambles outscore decoys** (AUC 0.632,
+p = 0.0096). The variable separating cognate from decoy is therefore largely the
+one a cognate shares exactly with its own scramble — composition. The null on
+order is a *bound* rather than a zero: any order effect is at most 63% of the
+composition effect and is plausibly nil.
 
 The effect is not a length artifact, which was tested directly: ipTM falls with
 peptide length (Spearman −0.408, p = 1.2e-6), but regressing the per-pair
@@ -499,6 +506,46 @@ available in this pipeline is compositional throughout.
 Reporting only the decoys-only comparison would have produced a positive
 headline that the experiment's own control contradicts.
 
+### 6.5 Measurement Reproducibility: Single Folds Do Not Reproduce
+
+Every fold in Sections 6.2–6.4 was unseeded. Boltz's `--seed` defaults to
+`None`, and the benchmark's own `--seed` governs only pair construction, not the
+diffusion sampler — so each reported ipTM is a single draw from a distribution
+whose width had not been measured, while the load-bearing comparison rested on a
+difference of +0.0128. A replicate study (4 receptors spanning every observed
+outcome, all 6 complexes each, **4 identical re-runs = 96 folds**, at the same
+settings) measured it.
+
+```
+pooled within-complex SD : 0.0628      median range : 0.1271
+  cognate - decoy    +0.0698  = 1.11 x SD   comparable to noise
+  cognate - scramble +0.0128  = 0.20 x SD   below noise
+```
+
+**Per-receptor rankings are not reproducible.** Cognate rank among its own three
+decoys across four identical runs: 1YCR [1,2,1,1], 9F6S [2,1,1,1],
+8KDX [3,3,4,2], 6YOO [1,4,4,3]. Four of four flip, and 6YOO spans the whole
+range — best to worst on identical input.
+
+**The aggregate effect survives; the significance verdict does not.** A
+parametric bootstrap re-simulating the full 132-fold benchmark under the measured
+noise (4,000 replications) gives a mean cognate rank of 2.03 with 95% range
+**[1.77, 2.27]** — always below the chance value of 2.50 — but **p < 0.05 in only
+49% of re-runs** (median p = 0.054, range [0.004, 0.374]). The preference is real
+and is probably *stronger* than 2.00 indicates, because measurement error
+attenuates rank effects toward chance. What a single run cannot support is the
+precision of its own verdict, and Section 6.4's p = 0.034 should be read that way.
+
+**Consequence for method.** Supporting per-receptor claims requires roughly 9–16
+replicate folds per complex (SE 0.021–0.016 against competitor gaps near 0.05),
+i.e. 1,200–2,100 folds for the panel. That is a GPU-scale workload, which makes
+the deferred CUDA phase a prerequisite for the next round rather than a
+throughput improvement.
+
+The observation generalises beyond this project: ranking candidate binders from a
+*single* AlphaFold or Boltz run is common practice, and at reduced sampling
+settings a single run does not reproduce its own ranking.
+
 <div class="page-break"></div>
 
 # 7. FUTURE PLAN
@@ -512,7 +559,9 @@ headline that the experiment's own control contradicts.
 | 5 | Reference & Surrogate Validation | 23 Jun 2026 – 31 Jul 2026 | Measure ipTM as a ranking reference against PDB complexes; distil and evaluate the surrogate; establish the low-rank OPM reachability result | **COMPLETED** |
 | 6 | Production GPU Scaling | 01 Aug 2026 – 20 Aug 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
 | 7 | Powered Specificity Run | 01 Aug 2026 – 02 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark (Section 6.4) | **COMPLETED** |
-| 8 | Final Thesis | 02 Aug 2026 – 28 Aug 2026 | Consolidate results and write the dissertation | **IN PROGRESS** |
+| 8 | Measurement Reproducibility | 02 Aug 2026 – 02 Aug 2026 | Quantify ipTM run-to-run variance (Section 6.5) | **COMPLETED** |
+| 9 | Replicate-Averaged Rerun (GPU) | 03 Aug 2026 – 20 Aug 2026 | 9-16 replicate folds per complex; requires CUDA deployment | **PENDING** |
+| 10 | Final Thesis | 03 Aug 2026 – 28 Aug 2026 | Consolidate results and write the dissertation | **IN PROGRESS** |
 
 **Change of plan, and why.** The original phase 5 (CUDA/NCCL scaling) was
 deferred in favour of validating the scoring reference, because the binder
