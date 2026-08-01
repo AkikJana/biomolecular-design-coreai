@@ -1,0 +1,176 @@
+{
+  "run_id": "pdb_binder_boltz2_20260801T161936Z",
+  "experiment": "pdb_binder_boltz1_vs_boltz2",
+  "timestamp_utc": "20260801T161936Z",
+  "code_sha": "111efe8c7f608212e06b92dba54f86508d05a2a9",
+  "boltz_commit": "111efe8c7f608212e06b92dba54f86508d05a2a9",
+  "device": "cpu",
+  "seed": 0,
+  "sampling_steps": 10,
+  "recycling_steps": 1,
+  "msa_depth": 32,
+  "hardware": "arm64",
+  "os": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "python": "3.13.5",
+  "weights": {
+    "boltz1_conf.ckpt": {
+      "sha256": null,
+      "note": "3595352714 bytes, not hashed (3.6GB)"
+    },
+    "boltz2_conf.ckpt": {
+      "bytes": 2286561469
+    }
+  },
+  "command": "python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2",
+  "n_complexes": 66,
+  "n_receptors": 11,
+  "failures": 0,
+  "msa_provenance": "boltz1 run's cached per-receptor MSAs copied verbatim; checkpoint is the only variable",
+  "results": {
+    "boltz1": {
+      "class_means": {
+        "cognate": 0.19153561984950845,
+        "decoy": 0.16843834474231256,
+        "scrambled": 0.17581169747493483
+      },
+      "class_n": {
+        "cognate": 11,
+        "decoy": 33,
+        "scrambled": 22
+      },
+      "decoys_only": {
+        "mean_rank": 2.3636363636363638,
+        "chance": 2.5,
+        "cognate_first": 3,
+        "n_receptors": 11,
+        "wilcoxon_p_one_sided": 0.39501953125,
+        "wilcoxon_p_two_sided": 0.7900390625,
+        "per_receptor": {
+          "1BE9": 1,
+          "1CKA": 2,
+          "1D4T": 4,
+          "1ELW": 1,
+          "1I8H": 4,
+          "1NLO": 2,
+          "1SEM": 3,
+          "1TP5": 3,
+          "1YCR": 1,
+          "2FNT": 2,
+          "2GBQ": 3
+        }
+      },
+      "decoy_plus_scrambled": {
+        "mean_rank": 3.272727272727273,
+        "chance": 3.5,
+        "cognate_first": 2,
+        "n_receptors": 11,
+        "wilcoxon_p_one_sided": 0.373046875,
+        "wilcoxon_p_two_sided": 0.74609375,
+        "per_receptor": {
+          "1BE9": 1,
+          "1CKA": 2,
+          "1D4T": 6,
+          "1ELW": 2,
+          "1I8H": 6,
+          "1NLO": 2,
+          "1SEM": 5,
+          "1TP5": 4,
+          "1YCR": 1,
+          "2FNT": 4,
+          "2GBQ": 3
+        }
+      },
+      "decoy_vs_scrambled": {
+        "auc": 0.44352617079889806,
+        "p_two_sided": 0.4865551951173679
+      },
+      "pooled_cognate_vs_decoy": {
+        "auc": 0.6143250688705234,
+        "p_one_sided": 0.13322865068243595,
+        "note": "confounded by receptor identity; reported because the benchmark script prints it"
+      }
+    },
+    "boltz2": {
+      "class_means": {
+        "cognate": 0.5354989577423442,
+        "decoy": 0.45555230433290655,
+        "scrambled": 0.46624967184933747
+      },
+      "class_n": {
+        "cognate": 11,
+        "decoy": 33,
+        "scrambled": 22
+      },
+      "decoys_only": {
+        "mean_rank": 1.9090909090909092,
+        "chance": 2.5,
+        "cognate_first": 5,
+        "n_receptors": 11,
+        "wilcoxon_p_one_sided": 0.06201171875,
+        "wilcoxon_p_two_sided": 0.1240234375,
+        "per_receptor": {
+          "1BE9": 1,
+          "1CKA": 1,
+          "1D4T": 3,
+          "1ELW": 1,
+          "1I8H": 2,
+          "1NLO": 4,
+          "1SEM": 1,
+          "1TP5": 1,
+          "1YCR": 2,
+          "2FNT": 3,
+          "2GBQ": 2
+        }
+      },
+      "decoy_plus_scrambled": {
+        "mean_rank": 2.5454545454545454,
+        "chance": 3.5,
+        "cognate_first": 3,
+        "n_receptors": 11,
+        "wilcoxon_p_one_sided": 0.046875,
+        "wilcoxon_p_two_sided": 0.09375,
+        "per_receptor": {
+          "1BE9": 2,
+          "1CKA": 1,
+          "1D4T": 5,
+          "1ELW": 1,
+          "1I8H": 2,
+          "1NLO": 5,
+          "1SEM": 1,
+          "1TP5": 2,
+          "1YCR": 2,
+          "2FNT": 5,
+          "2GBQ": 2
+        }
+      },
+      "decoy_vs_scrambled": {
+        "auc": 0.5013774104683195,
+        "p_two_sided": 0.9931461748008722
+      },
+      "pooled_cognate_vs_decoy": {
+        "auc": 0.6887052341597796,
+        "p_one_sided": 0.03265997274280968,
+        "note": "confounded by receptor identity; reported because the benchmark script prints it"
+      },
+      "mean_rank_bootstrap_ci95": [
+        1.3636363636363635,
+        2.5454545454545454
+      ]
+    },
+    "paired_improvement": {
+      "mean_rank_delta": 0.45454545454545453,
+      "ci95": [
+        -0.36363636363636365,
+        1.1818181818181819
+      ],
+      "wilcoxon_p_two_sided": 0.37109375
+    },
+    "power_80pct_receptors_needed": {
+      "boltz2_vs_chance": 21,
+      "dz_vs_chance": 0.5657523818560182,
+      "boltz2_vs_boltz1": 74,
+      "dz_paired": 0.33215443190968597
+    }
+  },
+  "notes": "Two-sided is the reporting convention (matches the Boltz-1 number already in README). Only the one-sided decoy+scrambled cell clears 0.05."
+}
