@@ -277,12 +277,30 @@ better; this measures what this pipeline provides.
 
 Reproduce: `python src/pdb_binder_benchmark.py`
 
-### The low-rank OPM cannot be projected from stock weights
+### The low-rank OPM is not reachable on pretrained weights
 
-The low-rank OuterProductMean saves ~93% of activation memory but its parameters
-do not match stock Boltz checkpoints, so it requires training from scratch. The
-obvious escape is to *project* pretrained weights into the low-rank form.
-`src/opm_cp_projection.py` tests whether that works.
+The low-rank OuterProductMean saves ~97% of the activation memory the stock layer
+materialises, but its parameters do not match stock Boltz checkpoints, so using it
+means training from scratch. Three experiments, each stricter than the last, ask
+whether the saving can be had on pretrained weights instead. The short answer is
+no — and the reason is capacity, established only by the third.
+
+| experiment | what it measures | held-out error @ rank 32 |
+| :--- | :--- | :---: |
+| CP projection of weights | tensor approximation, random inputs | 0.77 |
+| fit on one target's activations | function approximation, one protein | 0.43 |
+| **corpus distillation (33 folds)** | **function approximation, at capacity** | **0.378** |
+
+Each step was a genuine improvement, and the first two conclusions were stated
+too strongly on the evidence available at the time. The third settles it.
+
+#### 1. Weight-space CP projection — 0.77
+
+`src/opm_cp_projection.py`. Stock computes `out[i,j,e] = mᵢᵀ (Aᵀ Oₑ B) mⱼ`; the
+low-rank form computes `mᵢᵀ (Pxᵀ diag(Wₑ) Py) mⱼ`. Matching them requires writing
+every `Oₑ` from a **shared** set of rank-1 terms — a CP decomposition of
+`O ∈ R^(128×32×32)`. Given one, `Px = UᵀA` and `Py = VᵀB` reproduce the layer
+exactly.
 
 Stock computes `out[i,j,e] = mᵢᵀ (Aᵀ Oₑ B) mⱼ`; the low-rank form computes
 `mᵢᵀ (Pxᵀ diag(Wₑ) Py) mⱼ`. Matching them requires writing every `Oₑ` from a
@@ -307,15 +325,64 @@ exactly-rank-32 tensor decomposes with error **0.00000**, and a random dense
 tensor gives **0.947** — so the trained tensor (0.831) is only marginally more
 compressible than noise.
 
-**Consequence.** The low-rank OPM is a genuinely lower-capacity layer, not a
-reparameterisation of the stock one. Its memory win is unavailable on pretrained
-models by projection at any practical rank; obtaining it requires training from
-scratch, or distilling the low-rank factors against stock OPM outputs on real
-data (training, not projection). No lDDT measurement was run, because ~77%
-output error per layer compounding across the MSA stack makes the outcome
-determined.
-
 Reproduce: `python src/opm_cp_projection.py --ranks 8,16,32,64,128`
+
+This measures the **weight tensor**, on `torch.randn` inputs. That is the worst
+case and does not by itself establish that the *function* is hard to approximate
+— a distinction the next experiment exists to test.
+
+#### 2. Fitting on real activations — 0.43
+
+`src/opm_capture_activations.py` monkeypatches the stock layer and drives the real
+Boltz CLI in-process, recording genuine `(m_norm, mask)` and stock outputs;
+`src/opm_fit_on_activations.py` then fits Px/Py/W/bias directly against them.
+Capture fidelity is verified by recomputing the stock output from stored weights
+(rel err ~6e-7). Fitted on MDM2 (1YCR), evaluated on a PDZ domain.
+
+| rank | activations vs stock | layer_0 held-out | layer_1 held-out |
+| :--- | :---: | :---: | :---: |
+| 16 | 1.6% | 0.478 | 0.732 |
+| **32** | 3.1% | **0.426** | 0.676 |
+| 64 | 6.3% | 0.363 | 0.589 |
+| 128 | 12.5% | 0.284 | 0.477 |
+
+On-distribution matters: 0.77 → 0.43 at the native rank. But this fitted 8k
+parameters to a single protein, and train (0.35) sat well below held-out (0.43) —
+so the factors were partly target-specific and the ceiling was unclear.
+
+#### 3. Corpus distillation — 0.378, and at capacity
+
+`src/opm_corpus_capture.py` + `src/opm_corpus_distill.py`. 264 activations from
+66 folds spanning 11 receptors, split into disjoint 33-fold halves.
+
+| | rank 32 | rank 64 | rank 128 |
+| :--- | :---: | :---: | :---: |
+| layer_0 train / held-out | 0.375 / **0.378** | 0.309 / 0.312 | 0.228 / 0.231 |
+| layer_1 train / held-out | 0.576 / **0.585** | 0.485 / 0.494 | 0.372 / 0.380 |
+| activations vs stock | 3.1% | 6.2% | 12.5% |
+
+**The train/held-out gap collapsed** from 0.08 to 0.003. The corpus solved
+generalisation — the factors are shared across proteins, not memorised. But train
+and held-out now coincide, which is the signature of a model *at capacity*. More
+folding data will not lower this floor.
+
+**Rank cannot buy the fidelity back.** Fitting `err = a·rankᵇ` on the held-out
+points gives `1.32·rank^−0.356` (layer_0) and `1.75·rank^−0.312` (layer_1). To
+reach 10% error needs rank ≈ 1,414 and ≈ 9,750 respectively — against
+`c_hidden² = 1024`, the width stock actually materialises. **The low-rank form
+costs more activation memory than stock before it becomes accurate enough**;
+layer_1 crosses over before even 20%. (That extrapolation runs about an order of
+magnitude past the fitted points and is indicative; layer_1's 20% crossover sits
+close to measured range.)
+
+**Consequence.** The usable regime is 23–38% per-layer error at 3–13% of stock
+activations — a large saving at an error that compounds across the MSA stack, not
+a drop-in replacement. No lDDT measurement was run at any stage, because error of
+that size per layer makes the structural outcome determined. Obtaining this memory
+win requires training the whole model from scratch around the low-rank layer.
+
+Reproduce: `python src/opm_corpus_capture.py --inputs <yamls> --max-per-layer 66`
+then `python src/opm_corpus_distill.py --ranks 32,64,128`
 
 Further caveats on the reference itself: ipTM is interface confidence, not
 affinity (Boltz-2's affinity head targets protein-*ligand* binding, so it does
