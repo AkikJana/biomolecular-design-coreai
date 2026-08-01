@@ -8,15 +8,27 @@
 
 This dissertation addresses the high computational cost, GPU latency, and memory footprint of generating large-scale, all-atom biomolecular binders. We introduce **Boltz-Fast**, a unified framework that fuses LLM efficiency optimizations with deep structural modeling to bypass memory and compute bottlenecks in protein structure prediction. 
 
-All **six development milestones (M1–M6)** have been successfully implemented, integrated, and verified:
-1. **M1 — E2E Test Suite**: Initialized a comprehensive 4-tier validation suite (53 tests) covering functional, boundary, integration, and biological constraints.
+All **six development milestones (M1–M6)** have been implemented, integrated, and verified:
+1. **M1 — E2E Test Suite**: Initialized a 4-tier validation suite covering functional, boundary, integration, and biological constraints; since expanded to **99 tests** running under `pytest` in continuous integration.
 2. **M2 — Apple Silicon MPS Compatibility**: Resolved CUDA dependencies by implementing device-agnostic execution and dynamic memory autocasting for Apple M-series chips.
-3. **M3 — Low-Rank Pair Representation**: Replaced memory-heavy outer product mean updates with a custom autograd low-rank tensor product, achieving up to a **1502x VRAM reduction (99.93% saving)**.
-4. **M4 — CFG Distillation**: Integrated a single-pass student model to bypass expensive double-pass Classifier-Free Guidance (CFG) evaluations, achieving a **3.85x speedup**.
+3. **M3 — Low-Rank Pair Representation**: Replaced memory-heavy outer product mean updates with a custom autograd low-rank tensor product, reducing stored activations by up to **1502x** in a synthetic microbenchmark. The accompanying reconstruction error is large (Table 3), and the subsequent measurement phase established that this saving is **not reachable on pretrained Boltz weights** (Section 6.1).
+4. **M4 — CFG Distillation**: Integrated a single-pass student model to bypass expensive double-pass Classifier-Free Guidance (CFG) evaluations, achieving a **3.85x speedup** on the grid sweep of Table 2.
 5. **M5 — Neural Coordinate Refinement**: Wired a ResNet-based post-diffusion coordinator to resolve biophysical violations (bond lengths, clashes) with zero standard regression.
-6. **M6 — E2E Verification**: Successfully executed the entire 53-test suite on local hardware with 100% pass rate.
+6. **M6 — E2E Verification**: Executed the full suite on local hardware with a 100% pass rate.
 
-The results confirm that the Boltz-Fast engine provides a fast, memory-stable, and hardware-accelerated pipeline suitable for edge-based de novo drug discovery.
+A second phase moved the project from component microbenchmarks to end-to-end
+measurement against pretrained checkpoints and experimentally determined
+structures. **This phase produced two substantive negative results**, reported in
+full in Section 6: the low-rank pair representation cannot be recovered from
+pretrained weights at any rank that saves memory, and interface confidence
+(ipTM) does not rank peptide binders well enough to serve as a screening
+reference. Both are reported because they redirect the remaining work, and both
+are supported by controls, held-out splits, and power analysis rather than by
+single favourable runs.
+
+The engineering results stand: the pipeline is device-agnostic, memory-stable on
+Apple Silicon, and now measured end to end against real structures rather than
+mock tensors.
 
 <div class="signature-block">
     <div class="sig-col">
@@ -53,8 +65,12 @@ The results confirm that the Boltz-Fast engine provides a fast, memory-stable, a
 ### 3. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS ................................................... 10
 ### 4. DESIGN CONSIDERATIONS ..................................................................................................... 12
 ### 5. VERIFICATION & TESTING (M1 & M6) ................................................................................... 13
-### 6. FUTURE PLAN ............................................................................................................................. 14
-### 7. ABBREVIATIONS ......................................................................................................................... 15
+### 6. MEASURED RESULTS AGAINST PRETRAINED WEIGHTS ................................................. 15
+&nbsp;&nbsp;&nbsp;&nbsp;6.1 Low-Rank Pair Representation on Pretrained Weights ...................................................... 15
+&nbsp;&nbsp;&nbsp;&nbsp;6.2 Interface Confidence as a Binder-Ranking Reference ....................................................... 16
+&nbsp;&nbsp;&nbsp;&nbsp;6.3 Boltz-2 Comparison and a Benchmark Correction ............................................................ 17
+### 7. FUTURE PLAN ............................................................................................................................. 18
+### 8. ABBREVIATIONS ......................................................................................................................... 19
 
 &nbsp;
 ### List of Figures
@@ -114,6 +130,12 @@ Triangular updates $Z_{ij} = \sum_k (A_{ik} \cdot B_{kj})$ are split over a $P_r
 Outer Product Mean (OPM) layers project sequence matrices to $N \times N \times D_{\text{pair}}$ spaces, creating an $O(N^2 \cdot D_{\text{pair}})$ memory bottleneck. We implement a low-rank decomposition using `LowRankPairUpdater`:
 $$U_{b,i,j,c} = \sum_r X_{b,i,r} Y_{b,j,r} W_{c,r}$$
 where sequence projections $X$ and $Y$ have a low rank $r \ll D_{\text{pair}}$. A custom autograd backward pass computes gradients on-the-fly, bypassing quadratic activation storage and preventing Metal Out-Of-Memory (OOM) errors.
+
+The implementation is numerically verified against the reference OPM and
+mutation-tested. Its parameters do not correspond to those of a released
+checkpoint, so it is selected at runtime by the `BOLTZMAC_OPM` environment
+variable, defaulting to the stock implementation. Section 6.1 reports the
+measured limits of substituting it into a pretrained model.
 
 ### e) Classifier-Free Guidance (CFG) Distillation [M4]
 Standard CFG requires evaluating the score network twice per denoising step (conditional and unconditional). We implement a distilled student network `CFGDistilledVectorField` that directly accepts a guidance scale $s$:
@@ -202,6 +224,16 @@ The sequence policies derived from preference alignment are passed to the accele
 | 1000 | 122.31 MB | 0.12 MB | **1002x** | 29.3 / 147.1 ms | 63.5 / 138.6 ms | 92.98% |
 | 1500 | 275.02 MB | 0.18 MB | **1502x** | 112.1 / 307.1 ms | 144.3 / 253.6 ms | 89.61% |
 
+**Reading Table 3 correctly.** The final column is not a rounding error: at
+rank 16 the low-rank path reproduces roughly a tenth of the full-rank output.
+The memory column and the error column describe the same configuration, so the
+saving factor is only meaningful for a network *trained* with the low-rank layer
+in place, where the layer defines the function rather than approximating an
+existing one. Randomly initialised operands make the two paths trivially
+separable, which is why this table is reported as a scaling measurement and not
+as a drop-in substitution result. Section 6.1 measures what happens when the
+substitution is attempted against pretrained weights.
+
 ### Dynamic Quantized Attention & Block-Sparsity
 *   **Weight-Only Quantization**: Fixed INT8 quantization retains a **99.997% Cosine Similarity** (MSE: $2.2 \times 10^{-5}$). FIXED INT4 achieves a **99.647% Similarity**. Mixed-precision calibration compresses weights to **5.85 bits** average without loss of accuracy.
 *   **Gated Block-Sparse Attention**: Straight-Through Estimator (STE) training drives sparsity from 62.9% active blocks (Epoch 1) to **12.5% active blocks** (Epoch 50). The test reconstruction MSE is **0.000639** against dense attention, showing high fidelity.
@@ -261,6 +293,30 @@ The E2E test suite executes synchronously via `run_e2e_tests.py`:
 ======================================================================
 ```
 
+### 5.1 Subsequent Hardening of the Suite
+
+The suite has since grown to **99 tests**, and two defects in the testing
+infrastructure itself were found and corrected.
+
+**Continuous integration was not running the tests.** The CI workflow invoked
+`unittest discover -s tests`, which collected **zero** tests from a `pytest`-style
+suite and therefore reported success unconditionally. CI now runs
+`python -m pytest -q` together with a `ruff` lint gate, and test discovery is
+configured centrally in `pyproject.toml` rather than by `sys.path` manipulation
+inside twelve individual test files.
+
+**An audit of the assertions themselves** (`TEST_AUDIT.md`) found tests that
+could not fail: assertions comparing a value to itself, RMSD thresholds loose
+enough to be satisfied by random noise, and six tests that checked only output
+tensor shape while asserting nothing about output values. These were tightened.
+The same audit found that the lightweight surrogate predictor emits C-alpha
+traces with ~0.56 Å adjacent spacing against a physical value of 3.80 Å,
+recorded as a known limitation of the surrogate rather than silently corrected.
+
+The corrections matter for the interpretation of M6: a 100% pass rate against a
+suite that was partly unfailable is weaker evidence than the same rate against
+the audited suite, and the latter is what the current 99 tests provide.
+
 #### Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison
 ![Post-Diffusion Neural Coordinate Refinement Comparison](assets/backbone_3d_refinement.png)
 
@@ -268,7 +324,142 @@ The coordinate refiner successfully resolved simulated clashes (Figure 5, right)
 
 <div class="page-break"></div>
 
-# 6. FUTURE PLAN
+# 6. MEASURED RESULTS AGAINST PRETRAINED WEIGHTS
+
+Sections 3 and 5 report component behaviour against mock tensors. This section
+reports what the components do against pretrained Boltz checkpoints and
+experimentally determined structures. Two questions were pursued to a
+conclusion, and both answers are negative.
+
+### 6.1 The Low-Rank Pair Representation Is Not Reachable on Pretrained Weights
+
+The low-rank OuterProductMean (OPM) is the project's strongest technical asset:
+it is numerically verified against the reference implementation and
+mutation-tested. Its parameters (`low_rank_updater.W`, `proj_x`, `proj_y`) do
+not correspond to those of a stock checkpoint (`proj_a`, `proj_b`, `proj_o`), so
+it had only ever been usable by training from scratch. Whether the ~97%
+activation saving could be obtained on released weights was tested in three
+experiments, each stricter than the last.
+
+| Experiment | What it measures | Held-out error @ rank 32 |
+| :--- | :--- | :---: |
+| CP projection of weights | tensor approximation, random inputs | 0.77 |
+| Fit on one target's activations | function approximation, one protein | 0.43 |
+| **Corpus distillation, 33 folds** | **function approximation, at capacity** | **0.378** |
+
+Each step was a genuine improvement, and the first two were initially stated
+more strongly than the evidence supported: the CP result measured the weight
+tensor under `torch.randn` inputs, and the single-target fit measured the
+function on one protein only.
+
+**What settles the question is that train and held-out error coincide**
+(0.375 / 0.378 at rank 32, against a 0.08 gap for the single-target fit). The
+factors genuinely are shared across receptors rather than memorised, so
+generalisation is solved — but coincident train and held-out error is the
+signature of a model at capacity, and more folding data will not lower the
+floor.
+
+**Rank cannot recover the fidelity.** Fitting `err = a·rank^b` to held-out
+points gives `1.32·rank^−0.356` and `1.75·rank^−0.312` for the two layers.
+Reaching 10% error requires rank ≈ 1,414 and ≈ 9,750 respectively, against
+`c_hidden² = 1024` — the width the stock implementation actually materialises.
+**The low-rank form therefore costs more activation memory than stock before it
+becomes accurate enough to substitute.** The usable regime is 23–38% per-layer
+error at 3–13% of stock activations: a large saving at an error that compounds
+across the MSA stack.
+
+Controls confirm the negative is a property of the weights rather than of the
+solver: an exactly-rank-32 tensor decomposes to 0.00000 error, a random dense
+tensor to 0.947, and the trained tensor to 0.831 — only marginally more
+compressible than noise.
+
+**Consequence for M3.** The 1502x figure in Table 3 stands as a scaling
+measurement for a network trained around the low-rank layer. Obtaining it on
+pretrained weights would require retraining the full model — a frontier-scale
+run outside the scope of this dissertation. The `BOLTZMAC_OPM` environment
+toggle keeps both implementations selectable so the layer remains available for
+that work.
+
+### 6.2 Interface Confidence Does Not Rank Peptide Binders
+
+The binder design objective requires a scoring signal to rank candidates.
+Boltz's interface confidence (ipTM) was evaluated as that reference against
+**11 experimentally determined peptide–domain complexes** from the PDB
+(MDM2/p53, SH3/proline-rich, PDZ/C-terminal and others; sequences fetched
+programmatically from RCSB, never transcribed). Three classes were folded
+identically: **cognate** (receptor with its own peptide), **decoy** (receptor
+with a genuine peptide from a different complex — the strongest negative, since
+screening is exactly this discrimination), and **scrambled** (own peptide,
+order destroyed).
+
+ipTM has **sensitivity**: real complexes score far above the synthetic peptides
+used in earlier runs (0.1915 vs 0.0905, AUC 0.881, p = 1e-5). It does not have
+**specificity**. Ranking each receptor's own candidates against one another —
+which is what screening does — is at chance:
+
+```
+cognate ranked #1 for 2/11 receptors    (chance = 1.8)
+mean rank 3.27 of 6                     (chance = 3.50)
+Wilcoxon vs chance:  p = 0.746
+```
+
+A surrogate distilled from a reference that cannot rank binders cannot rank them
+either, and this was confirmed directly: on n = 85 held-out complexes the
+distilled surrogate achieved Spearman ρ = −0.034, while a **ridge regression on
+additive amino-acid composition scored +0.103** (z = 3.44 against the neural
+model). An earlier ρ = +0.308 at n = 13 did not survive the larger sample and is
+recorded here as a sampling artefact rather than as a result.
+
+### 6.3 Boltz-2 Comparison and a Correction to the Benchmark
+
+The natural objection is that Section 6.2 indicts Boltz-1 rather than ipTM. The
+identical 66 pairs were therefore re-folded under Boltz-2 with identical seeds
+and byte-identical cached alignments, leaving the checkpoint as the only
+variable. Every score rises by roughly 2.8x, and the classes rise together:
+
+| | cognate | decoy | scrambled |
+| :--- | :---: | :---: | :---: |
+| Boltz-1 | 0.1915 | 0.1684 | 0.1758 |
+| Boltz-2 | 0.5355 | 0.4556 | 0.4662 |
+
+Boltz-2 improves the screening metric in every direction — cognate first for
+3/11 receptors, mean rank 2.55 of 6 — but does not establish specificity at
+n = 11 (Wilcoxon p = 0.094 two-sided; bootstrap 95% CI on the mean rank
+[1.36, 2.55] contains chance). The paired improvement over Boltz-1 is +0.45
+ranks with 95% CI [−0.36, +1.18], which contains zero.
+
+A pooled cognate-versus-decoy test appears to pass (AUC 0.689, p = 0.033) and is
+**not** relied upon: it is confounded by receptor identity, and it is
+inconsistent with the observation that **decoys and scrambles are
+indistinguishable under Boltz-2 (AUC 0.501, p = 0.993)**. A signal that cannot
+separate a genuine binder from a sequence-order scramble is not recognising
+binders.
+
+**A labelling defect was found and corrected.** RCSB's FASTA endpoint returns
+*canonical* sequence, so phosphoserine reads as S, phosphotyrosine as Y and
+acetyl-lysine as K. For complexes whose interaction *is* the modification — an
+SH2 domain reading phosphotyrosine, a bromodomain reading acetyl-lysine — the
+folded "cognate" pair is not binding-competent, making it a mislabelled
+positive. An audit against `entity_poly.pdbx_seq_one_letter_code`, which
+preserves modified residues, found **7 of 25 candidate receptors PTM-dependent,
+including 1I8H from the original panel** — precisely the receptor whose true
+binder ranked last of six under Boltz-1. Ranking a non-binder last is correct
+behaviour, not a failure of the metric.
+
+Re-analysis without 1I8H does not change any conclusion (Boltz-1 p 0.790 →
+0.463; Boltz-2 p 0.094 → 0.131, both still non-significant), so this corrects
+the method rather than the result.
+
+**A powered run is in progress.** The n = 11 result is underpowered rather than
+decisive: 80% power on the specificity test requires **21 receptors**
+(dz = 0.57), and 74 would be needed to separate Boltz-2 from Boltz-1
+(dz = 0.33). A PTM-clean, tag-free, peptide-deduplicated panel of **22
+receptors (132 complexes)** was assembled programmatically and is currently
+folding; its outcome will be reported in the final dissertation.
+
+<div class="page-break"></div>
+
+# 7. FUTURE PLAN
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -276,10 +467,20 @@ The coordinate refiner successfully resolved simulated clashes (Figure 5, right)
 | 2 | Local Design & Implementation | 05 Feb 2026 – 20 Mar 2026 | Develop MLA, Fold-CP, SpecSampler, and g-DPO | **COMPLETED** |
 | 3 | Pre-trained Weight Verification | 21 Mar 2026 – 10 Jun 2026 | Run local predictions with Boltz-1 parameters | **COMPLETED** |
 | 4 | Edge Optimization & Integration | 11 Jun 2026 – 22 Jun 2026 | Integrate Low-Rank, CFG student, and Neural Refiner; resolve MPS dependencies | **COMPLETED** |
-| 5 | Production GPU Scaling | 23 Jun 2026 – 20 Jul 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
-| 6 | Binder Design Screens & Thesis | 21 Jul 2026 – 28 Aug 2026 | Screen human TNF-alpha and write final thesis | **PENDING** |
+| 5 | Reference & Surrogate Validation | 23 Jun 2026 – 31 Jul 2026 | Measure ipTM as a ranking reference against PDB complexes; distil and evaluate the surrogate; establish the low-rank OPM reachability result | **COMPLETED** |
+| 6 | Production GPU Scaling | 01 Aug 2026 – 20 Aug 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
+| 7 | Powered Specificity Run & Thesis | 01 Aug 2026 – 28 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark; write final thesis | **IN PROGRESS** |
 
-# 7. ABBREVIATIONS
+**Change of plan, and why.** The original phase 5 (CUDA/NCCL scaling) was
+deferred in favour of validating the scoring reference, because the binder
+screen planned for phase 6 depends on it: a screen ranked by a signal that does
+not discriminate binders would produce candidates with no meaning regardless of
+how fast it ran. That validation (Section 6.2) showed the dependency does not
+hold, which is why the remaining plan prioritises the powered specificity run
+over the TNF-alpha screen. Scaling work remains valuable for throughput but no
+longer sits on the critical path to a defensible result.
+
+# 8. ABBREVIATIONS
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -299,3 +500,11 @@ The coordinate refiner successfully resolved simulated clashes (Figure 5, right)
 | TM-score | Template Modeling Score |
 | RMSD | Root Mean Square Deviation |
 | OOM | Out Of Memory |
+| ipTM | Interface Predicted TM-score |
+| MSA | Multiple Sequence Alignment |
+| CP | CANDECOMP/PARAFAC tensor decomposition |
+| ALS | Alternating Least Squares |
+| PTM | Post-Translational Modification |
+| AUC | Area Under the ROC Curve |
+| CI | Confidence Interval |
+| RCSB | Research Collaboratory for Structural Bioinformatics |
