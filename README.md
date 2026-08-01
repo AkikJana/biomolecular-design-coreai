@@ -326,12 +326,53 @@ by a meaningful amount, but does not establish specificity at n = 11, and the
 model-to-model difference is not distinguishable from noise. The Boltz-1
 conclusion stands, now with the model caveat tested rather than assumed.
 
-**This is a power problem, and the required n is known.** For 80% power:
-**21 receptors** to establish Boltz-2's specificity against chance (dz = 0.57),
-**74 receptors** to establish Boltz-2 > Boltz-1 (dz = 0.33). The first is
-reachable — roughly double the current panel, ~6 h of CPU folding. That is the
-one experiment that would convert this from suggestive to settled, and it is the
-honest next step rather than reporting p = 0.047.
+**This was a power problem, and the powered run has now been done.** See below.
+
+### The powered run: ipTM tracks composition, not binding
+
+80% power needed 21 receptors (dz = 0.57). A PTM-clean, tag-free,
+peptide-deduplicated panel of **22 receptors / 132 complexes** was folded under
+Boltz-2. Two of those filters exist because earlier passes got them wrong —
+three histone H3 tails and a duplicated PI3K phosphopeptide would have made
+other receptors' "decoys" genuine binders, and **7 of 25 candidates were
+PTM-dependent**, including 1I8H from the original panel, whose peptide needs
+phosphothreonine and therefore never bound as folded.
+
+**The specificity test passes.** Against decoys the cognate reaches mean rank
+**2.00 vs chance 2.50** (#1 for 8/22, p = 0.034 two-sided), bootstrap 95% CI
+**[1.59, 2.41]** excluding chance. Alone, that reverses the n = 11 result.
+
+**The scramble control refutes the binding reading.**
+
+| class | n | mean ipTM |
+| :--- | :---: | :---: |
+| cognate | 22 | 0.5015 |
+| **scrambled** | 44 | **0.4888** |
+| decoy | 66 | 0.4317 |
+
+A scramble keeps composition and length exactly and destroys only order — and
+order is what makes a binder a binder.
+
+* Cognates **do not** beat their own scrambles: 11/22, mean +0.0128, p = 0.416.
+* Scrambles **outscore decoys**: AUC 0.368, p = 0.019.
+
+So what separates cognate from decoy is exactly what a cognate shares with its
+own scramble — composition. Order contributes nothing measurable.
+
+**Not a length artifact**, which was tested rather than assumed: ipTM falls with
+peptide length (Spearman −0.408, p = 1.2e-6), but regressing per-pair
+cognate-minus-decoy score difference on length difference leaves intercept
+**+0.0752, p = 0.0001**. The advantage survives length adjustment. It is
+compositional, not positional.
+
+**Conclusion.** The powered run settles the question, and the answer is still
+negative — now with a mechanism. This converges with the ridge-regression result
+above from an independent direction: additive composition beat the distilled
+neural surrogate (+0.103 vs −0.034). Reporting only the decoys-only row
+(p = 0.034) would have produced a positive headline this experiment's own
+control contradicts.
+
+Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22`
 
 Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2`
 then `python src/compare_boltz1_boltz2.py`

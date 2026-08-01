@@ -21,10 +21,13 @@ measurement against pretrained checkpoints and experimentally determined
 structures. **This phase produced two substantive negative results**, reported in
 full in Section 6: the low-rank pair representation cannot be recovered from
 pretrained weights at any rank that saves memory, and interface confidence
-(ipTM) does not rank peptide binders well enough to serve as a screening
-reference. Both are reported because they redirect the remaining work, and both
-are supported by controls, held-out splits, and power analysis rather than by
-single favourable runs.
+(ipTM) responds to peptide **composition** rather than to binding, ranking a
+scrambled sequence as highly as the real binder it was made from. The second
+finding was established by a power-sized 22-receptor run (132 complexes) whose
+headline comparison is statistically significant and whose own scramble control
+shows that significance does not mean binding recognition. Both results are
+reported because they redirect the remaining work, and both rest on controls,
+held-out splits, and power analysis rather than on single favourable runs.
 
 The engineering results stand: the pipeline is device-agnostic, memory-stable on
 Apple Silicon, and now measured end to end against real structures rather than
@@ -69,6 +72,7 @@ mock tensors.
 &nbsp;&nbsp;&nbsp;&nbsp;6.1 Low-Rank Pair Representation on Pretrained Weights ...................................................... 15
 &nbsp;&nbsp;&nbsp;&nbsp;6.2 Interface Confidence as a Binder-Ranking Reference ....................................................... 16
 &nbsp;&nbsp;&nbsp;&nbsp;6.3 Boltz-2 Comparison and a Benchmark Correction ............................................................ 17
+&nbsp;&nbsp;&nbsp;&nbsp;6.4 Powered Run: ipTM Tracks Composition, Not Binding ..................................................... 18
 ### 7. FUTURE PLAN ............................................................................................................................. 18
 ### 8. ABBREVIATIONS ......................................................................................................................... 19
 
@@ -450,12 +454,50 @@ Re-analysis without 1I8H does not change any conclusion (Boltz-1 p 0.790 →
 0.463; Boltz-2 p 0.094 → 0.131, both still non-significant), so this corrects
 the method rather than the result.
 
-**A powered run is in progress.** The n = 11 result is underpowered rather than
-decisive: 80% power on the specificity test requires **21 receptors**
-(dz = 0.57), and 74 would be needed to separate Boltz-2 from Boltz-1
-(dz = 0.33). A PTM-clean, tag-free, peptide-deduplicated panel of **22
-receptors (132 complexes)** was assembled programmatically and is currently
-folding; its outcome will be reported in the final dissertation.
+### 6.4 Powered Run: ipTM Tracks Composition, Not Binding
+
+The n = 11 result was underpowered rather than decisive, so a PTM-clean,
+tag-free, peptide-deduplicated panel of **22 receptors (132 complexes)** was
+assembled programmatically and folded under Boltz-2 — 80% power on the
+specificity test requires 21 receptors at dz = 0.57.
+
+**The specificity test passes.** Against decoys, the cognate reaches mean rank
+**2.00 against a chance value of 2.50** (first for 8 of 22 receptors,
+p = 0.034 two-sided), with a bootstrap 95% CI of **[1.59, 2.41]** that excludes
+chance. Taken alone this reverses the n = 11 conclusion.
+
+**The scramble control refutes the binding interpretation.** A scramble
+preserves amino-acid composition and length exactly and destroys only sequence
+order — and order is what makes a binder a binder.
+
+| class | n | mean ipTM |
+| :--- | :---: | :---: |
+| cognate | 22 | 0.5015 |
+| scrambled | 44 | 0.4888 |
+| decoy | 66 | 0.4317 |
+
+Cognates do not beat their own scrambles (higher for 11 of 22 receptors, mean
+difference +0.0128, p = 0.416), and **scrambles outscore decoys** (AUC 0.368,
+p = 0.019). The variable separating cognate from decoy is therefore the one a
+cognate shares exactly with its own scramble — composition — while the variable
+that would indicate binding contributes nothing measurable.
+
+The effect is not a length artifact, which was tested directly: ipTM falls with
+peptide length (Spearman −0.408, p = 1.2e-6), but regressing the per-pair
+cognate-minus-decoy score difference on the corresponding length difference
+leaves an intercept of **+0.0752 (p = 0.0001)**. The advantage survives length
+adjustment; it is compositional rather than positional.
+
+**Conclusion.** The powered run resolves the question and the answer remains
+negative, now with a mechanism: ipTM responds to peptide composition and is
+indifferent to sequence order. A screening reference must prefer a binder to its
+own scramble, and this one does not. The finding converges with Section 6.2 from
+an independent direction — a ridge regression on additive composition predicted
+ipTM better than the distilled neural surrogate — indicating that the signal
+available in this pipeline is compositional throughout.
+
+Reporting only the decoys-only comparison would have produced a positive
+headline that the experiment's own control contradicts.
 
 <div class="page-break"></div>
 
@@ -469,7 +511,8 @@ folding; its outcome will be reported in the final dissertation.
 | 4 | Edge Optimization & Integration | 11 Jun 2026 – 22 Jun 2026 | Integrate Low-Rank, CFG student, and Neural Refiner; resolve MPS dependencies | **COMPLETED** |
 | 5 | Reference & Surrogate Validation | 23 Jun 2026 – 31 Jul 2026 | Measure ipTM as a ranking reference against PDB complexes; distil and evaluate the surrogate; establish the low-rank OPM reachability result | **COMPLETED** |
 | 6 | Production GPU Scaling | 01 Aug 2026 – 20 Aug 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
-| 7 | Powered Specificity Run & Thesis | 01 Aug 2026 – 28 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark; write final thesis | **IN PROGRESS** |
+| 7 | Powered Specificity Run | 01 Aug 2026 – 02 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark (Section 6.4) | **COMPLETED** |
+| 8 | Final Thesis | 02 Aug 2026 – 28 Aug 2026 | Consolidate results and write the dissertation | **IN PROGRESS** |
 
 **Change of plan, and why.** The original phase 5 (CUDA/NCCL scaling) was
 deferred in favour of validating the scoring reference, because the binder

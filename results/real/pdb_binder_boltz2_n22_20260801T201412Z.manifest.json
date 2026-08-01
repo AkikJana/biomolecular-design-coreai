@@ -1,0 +1,130 @@
+{
+  "run_id": "pdb_binder_boltz2_n22_20260801T201412Z",
+  "experiment": "pdb_binder_specificity_powered",
+  "timestamp_utc": "20260801T201412Z",
+  "code_sha": "dfd978f16aa103a8243f21e617cfbc7eafef2f1e",
+  "device": "cpu",
+  "seed": 0,
+  "sampling_steps": 10,
+  "recycling_steps": 1,
+  "msa_depth": 32,
+  "model": "boltz2",
+  "n_complexes": 132,
+  "n_receptors": 22,
+  "failures": 0,
+  "hardware": "arm64",
+  "os": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "python": "3.13.5",
+  "command": "python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22",
+  "panel_provenance": "PTM-clean, tag-free, peptide-deduplicated; see src/discover_pdb_binders.py and src/audit_panel_ptms.py",
+  "power_basis": "sized from the n=11 result: 21 receptors for 80% power at dz=0.57",
+  "results": {
+    "class_stats": {
+      "cognate": {
+        "n": 22,
+        "mean": 0.5015305727720261,
+        "sd": 0.1349211304158585
+      },
+      "decoy": {
+        "n": 66,
+        "mean": 0.4317308869777304,
+        "sd": 0.12195366499348272
+      },
+      "scrambled": {
+        "n": 44,
+        "mean": 0.4887602139603008,
+        "sd": 0.11323705438499149
+      }
+    },
+    "decoys_only": {
+      "n_receptors": 22,
+      "cognate_first": 8,
+      "mean_rank": 2.0,
+      "chance": 2.5,
+      "wilcoxon_p_one_sided": 0.01683278470160551,
+      "wilcoxon_p_two_sided": 0.03366556940321102,
+      "bootstrap_ci95": [
+        1.5909090909090908,
+        2.409090909090909
+      ],
+      "per_receptor": {
+        "1BE9": 2,
+        "1CKA": 2,
+        "1D4T": 2,
+        "1ELW": 1,
+        "1NLO": 2,
+        "1OAI": 1,
+        "1SEM": 1,
+        "1TP5": 1,
+        "1YCR": 1,
+        "2FNT": 1,
+        "2GBQ": 1,
+        "3DS4": 4,
+        "4LN2": 3,
+        "4O36": 2,
+        "4Z8J": 1,
+        "6YOO": 4,
+        "7OKL": 2,
+        "7S7J": 2,
+        "8HLO": 2,
+        "8KDX": 3,
+        "9F6S": 2,
+        "9GRF": 4
+      }
+    },
+    "decoy_plus_scrambled": {
+      "n_receptors": 22,
+      "cognate_first": 5,
+      "mean_rank": 2.8636363636363638,
+      "chance": 3.5,
+      "wilcoxon_p_one_sided": 0.05683979845901729,
+      "wilcoxon_p_two_sided": 0.11367959691803459,
+      "bootstrap_ci95": [
+        2.1818181818181817,
+        3.590909090909091
+      ],
+      "per_receptor": {
+        "1BE9": 2,
+        "1CKA": 3,
+        "1D4T": 4,
+        "1ELW": 1,
+        "1NLO": 2,
+        "1OAI": 1,
+        "1SEM": 2,
+        "1TP5": 1,
+        "1YCR": 1,
+        "2FNT": 2,
+        "2GBQ": 2,
+        "3DS4": 6,
+        "4LN2": 5,
+        "4O36": 2,
+        "4Z8J": 1,
+        "6YOO": 6,
+        "7OKL": 3,
+        "7S7J": 3,
+        "8HLO": 3,
+        "8KDX": 5,
+        "9F6S": 2,
+        "9GRF": 6
+      }
+    },
+    "decoy_vs_scrambled": {
+      "auc_decoy_over_scrambled": 0.3677685950413223,
+      "p": 0.019289210315011265,
+      "note": "scrambles outscore decoys"
+    },
+    "cognate_vs_own_scrambles": {
+      "n_pairs": 44,
+      "mean_diff": 0.01277035881172527,
+      "ttest_p": 0.4159570675622161,
+      "note": "composition and length identical by construction; this is the order-sensitivity control"
+    },
+    "length_effect": {
+      "spearman_score_vs_length": -0.4077444955621579,
+      "p": 1.2181535875525411e-06,
+      "length_adjusted_cognate_advantage": 0.07523896139047906,
+      "p_intercept": 7.85034394801444e-05,
+      "note": "cognate>decoy survives length adjustment; it is not a length artifact"
+    }
+  }
+}
