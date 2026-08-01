@@ -41,22 +41,40 @@ from run_reference_benchmark import REPO_ROOT, run_boltz
 # on CPU. Screened from RCSB for exactly two polymer chains, peptide <= 25 aa and
 # receptor <= 140 aa.
 #
-# The first 11 are the original hand-screened panel. The remaining 14 were added
-# by src/discover_pdb_binders.py to reach the 21 receptors a power analysis on
-# the Boltz-2 result showed were needed for 80% power (dz = 0.57); at n = 11 the
-# specificity test could not resolve the effect either way.
+# 22 receptors, sized by a power analysis on the Boltz-2 n=11 result: 80% power
+# on the specificity test needs 21 (dz = 0.57). At n = 11 the test could not
+# resolve the effect either way, so the honest response was more receptors
+# rather than a different statistic.
 #
-# Additions are filtered on peptide identity, not just receptor identity. Decoys
-# are built by giving a receptor another entry's peptide, so two receptors with
-# homologous peptides produce "decoys" that genuinely bind -- a mislabelled
-# negative. That screen rejected three histone H3 tail entries and a duplicate
-# PI3K phosphopeptide. Purification tags are rejected too (4W8H offered
-# "HHHHHH" as its peptide). Shared *folds* are kept on purpose: telling apart
-# peptides binding similar domains is the task.
+# Selected by src/discover_pdb_binders.py, which applies this file's own screen
+# programmatically. Three filters exist because earlier passes got them wrong:
+#
+#   peptide near-identity  decoys are built by giving a receptor another
+#                          entry's peptide, so homologous peptides across
+#                          receptors make "decoys" that genuinely bind.
+#                          Rejected three histone H3 tails and a duplicated
+#                          PI3K phosphopeptide.
+#   tag / linker           4W8H offered "HHHHHH" -- a His-tag crystallised in
+#                          a groove is not a binder.
+#   PTM dependence         RCSB FASTA is canonical, so phosphoserine reads as S
+#                          and acetyl-lysine as K. An SH2 domain binds pTyr and
+#                          a bromodomain reads acetyl-lysine; folding the
+#                          canonical peptide gives a cognate that cannot bind.
+#
+# The PTM screen removed 1I8H from the original panel -- Pin1 WW reads
+# pSer/pThr-Pro, and 1I8H is exactly the receptor whose "true binder ranked
+# last of six" under Boltz-1. Ranking a non-binder last is correct behaviour.
+# See src/audit_panel_ptms.py.
+#
+# 3JQL and 4Z2O passed every automated filter and were dropped by hand: PLA2
+# with an amyloid-beta hexapeptide is an incidental co-crystal, and
+# hoefavidin's "hoef-peptide" is a self-fragment. Neither is a binding pair.
+#
+# Shared *folds* are kept on purpose -- discriminating peptides that bind
+# similar domains is the task.
 PDB_IDS = ["1YCR", "1CKA", "1BE9", "1SEM", "1ELW", "2GBQ", "1D4T", "1TP5",
-           "1I8H", "2FNT", "1NLO",
-           "5EMB", "5GJI", "3QL9", "1OAI", "4LN2", "9F6S", "8KDX", "6YOO",
-           "7CIO", "3DS4", "9GRF", "5NNE", "7M10", "7S7J"]
+           "2FNT", "1NLO", "1OAI", "4LN2", "9F6S", "8KDX", "6YOO", "3DS4",
+           "9GRF", "7S7J", "4Z8J", "8HLO", "7OKL", "4O36"]
 
 
 def fetch_complex(pdb_id: str, cache_dir: Path):

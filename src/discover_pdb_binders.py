@@ -14,6 +14,8 @@ Screen:
   * after fetching FASTA: peptide 6-25 aa, receptor 40-140 aa
   * receptor not >=90% identical to one already accepted or in the panel
   * peptide not >=60% identical to one already accepted or in the panel
+  * peptide carries no binding-critical post-translational modification
+  * peptide is not a purification tag or linker
 
 **The peptide filter is the one that matters.** Decoys are built by handing a
 receptor a peptide from a different entry, so if two receptors bind homologous
@@ -22,6 +24,14 @@ pass deduplicating only receptors accepted 5GJI and 5AUL (identical peptide
 SDYMNMTP) and three separate histone H3 tail peptides (ARTKQTARKSTGGKA /
 ARTKQTARKST / ARTKQTAAKA), any pair of which would have poisoned the decoy
 class for the others.
+
+**The PTM filter is the one that was missed first.** RCSB FASTA returns
+canonical sequence, so phosphoserine reads as S and acetyl-lysine as K. An SH2
+domain binds phosphotyrosine and a bromodomain reads acetyl-lysine; folding the
+canonical peptide gives a cognate pair that does not bind. Seven of a first
+25-receptor panel were PTM-dependent, including 1I8H from the *original* eleven
+-- which is the receptor whose "true binder ranked last of six" in the Boltz-1
+write-up. Ranking a non-binder last is correct behaviour, not a failure.
 
 Deliberately NOT deduplicated by fold or family: SH3 and PDZ domains recur in
 the panel on purpose, because a screening reference has to tell apart peptides
@@ -42,8 +52,12 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SEARCH_URL = "https://search.rcsb.org/rcsbsearch/v2/query"
 
+# The PTM-clean subset of the panel. 1I8H is excluded: its peptide needs
+# phosphothreonine (Pin1 WW reads pSer/pThr-Pro), so the canonical sequence
+# the benchmark folds is not a binder at all.
 EXISTING = ["1YCR", "1CKA", "1BE9", "1SEM", "1ELW", "2GBQ", "1D4T", "1TP5",
-            "1I8H", "2FNT", "1NLO"]
+            "2FNT", "1NLO", "1OAI", "4LN2", "9F6S", "8KDX", "6YOO", "3DS4",
+            "9GRF", "7S7J"]
 
 # Receptors may share a fold; peptides may not share a sequence. The peptide
 # threshold is deliberately strict -- substring containment (a histone tail
@@ -122,6 +136,21 @@ def search(rows=600):
     return [r["identifier"] for r in data.get("result_set", [])]
 
 
+def peptide_ptms(pdb_id):
+    """Critical modified residues in the shortest polymer entity, or None.
+
+    RCSB's FASTA gives canonical sequence -- phosphoserine reads as S,
+    acetyl-lysine as K. A domain that recognises the modification does not bind
+    the canonical peptide, so folding it makes the cognate pair a non-binder.
+    entity_poly.pdbx_seq_one_letter_code keeps the modifications in parens.
+    """
+    from audit_panel_ptms import CRITICAL, audit
+    a = audit(pdb_id, REPO_ROOT / "artifacts" / "ptm_audit")
+    if not a or len(a["entities"]) < 2:
+        return None
+    return [m for m in a["entities"][0]["mods"] if m in CRITICAL]
+
+
 def fetch_chains(pdb_id):
     """[(length, sequence, name)] sorted short-first, or None if unusable."""
     url = f"https://www.rcsb.org/fasta/entry/{pdb_id}"
@@ -160,13 +189,19 @@ def main():
     # sides. Peptides matter most: a near-duplicate peptide turns another
     # receptor's decoy into a real binder.
     seen_receptors, seen_peptides = [], []
-    seqdir = REPO_ROOT / "artifacts" / "pdb_binders" / "sequences"
+    seqdirs = [REPO_ROOT / "artifacts" / d / "sequences"
+               for d in ("pdb_binders", "pdb_binders_b2_n25", "pdb_binders_b2")]
     for pid in EXISTING:
-        f = seqdir / f"{pid}.json"
-        if f.exists():
-            d = json.loads(f.read_text())
-            seen_receptors.append(d["receptor"])
-            seen_peptides.append(d["peptide"])
+        for sd in seqdirs:
+            f = sd / f"{pid}.json"
+            if f.exists():
+                d = json.loads(f.read_text())
+                seen_receptors.append(d["receptor"])
+                seen_peptides.append(d["peptide"])
+                break
+        else:
+            print(f"  ! no cached sequence for {pid}; it cannot be deduplicated "
+                  f"against", file=sys.stderr)
     print(f"  {len(seen_receptors)} existing receptors / "
           f"{len(seen_peptides)} peptides loaded")
 
@@ -202,6 +237,11 @@ def main():
         if similar_to_any(pseq, seen_peptides, PEPTIDE_MAX_ID):
             print(f"  - {pid} rejected: peptide {pseq} too close to one already "
                   f"accepted (would make it a decoy that actually binds)")
+            continue
+        ptms = peptide_ptms(pid)
+        if ptms:
+            print(f"  - {pid} rejected: peptide needs {','.join(dict.fromkeys(ptms))}; "
+                  f"canonical sequence is not binding-competent")
             continue
         seen_receptors.append(rseq)
         seen_peptides.append(pseq)
