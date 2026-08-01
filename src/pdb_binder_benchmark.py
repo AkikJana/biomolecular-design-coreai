@@ -104,7 +104,8 @@ def write_yaml(path: Path, receptor: str, peptide: str, receptor_msa):
     )
 
 
-def fetch_receptor_msa(work: Path, rid: str, receptor: str, peptide: str):
+def fetch_receptor_msa(work: Path, rid: str, receptor: str, peptide: str,
+                       model: str = "boltz1"):
     cache = work / "msa_cache" / f"{rid}.csv"
     if cache.exists():
         return str(cache)
@@ -120,7 +121,7 @@ def fetch_receptor_msa(work: Path, rid: str, receptor: str, peptide: str):
         f"  - protein:\n      id: B\n      sequence: {peptide}\n      msa: empty\n"
     )
     try:
-        results, _ = run_boltz(probe, probe.parent, 0, 5, "boltz1",
+        results, _ = run_boltz(probe, probe.parent, 0, 5, model,
                                use_msa=True, max_msa_seqs=32)
     except RuntimeError as exc:
         print(f"  [msa] {rid}: fetch failed ({str(exc)[:60]}); single-sequence")
@@ -144,6 +145,10 @@ def main():
     ap.add_argument("--rank-key", default="iptm")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--no-msa", action="store_true")
+    ap.add_argument("--model", default="boltz1", choices=["boltz1", "boltz2"],
+                    help="Boltz-2 is a different model with its own weights; "
+                         "results are not comparable across this flag unless "
+                         "everything else is held fixed")
     ap.add_argument("--work-dir", default=str(REPO_ROOT / "artifacts" / "pdb_binders"))
     ap.add_argument("--skip-predict", action="store_true")
     args = ap.parse_args()
@@ -183,7 +188,7 @@ def main():
                 write_yaml(idir / f"{p['name']}.yaml", p["receptor"], p["peptide"],
                            msas.get(p["receptor_id"]))
             res, el = run_boltz(idir, bdir, args.recycling_steps, args.sampling_steps,
-                                "boltz1", max_msa_seqs=32)
+                                args.model, max_msa_seqs=32)
             dirs.append(res)
             print(f"  batch {start // args.batch_size}: {len(chunk)} in {el:.0f}s", flush=True)
     else:
