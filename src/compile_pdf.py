@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 # Resolved from this file's location so the scripts work wherever the
@@ -49,26 +50,36 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     else:
         body_content = md_content
 
-    # Base64 encode other figures in the document. Vendored under reports/assets
+    # Base64 encode every figure in the document. Vendored under reports/assets
     # so the report builds from a fresh clone.
-    assets = REPO_ROOT / "reports" / "assets"
-    backbone_path = str(assets / "backbone_3d_plot.png")
-    structure_path = str(assets / "protein_structure_rendering_1781545391670.jpg")
-    insulin_path = str(assets / "backbone_3d_insulin.png")
-    
-    backbone_uri = get_base64_image_uri(backbone_path)
-    structure_uri = get_base64_image_uri(structure_path)
-    insulin_uri = get_base64_image_uri(insulin_path)
-    
-    # Inline the figures as data URIs. The keys are the *markdown-relative*
-    # refs as they appear in reports/*.md ("assets/foo.png"), not the resolved
-    # filesystem paths -- substituting the latter would silently no-op and the
-    # rendered HTML would carry unresolvable relative links.
-    body_content = body_content.replace("assets/backbone_3d_plot.png", backbone_uri)
-    body_content = body_content.replace(
-        "assets/protein_structure_rendering_1781545391670.jpg", structure_uri
-    )
-    body_content = body_content.replace("assets/backbone_3d_insulin.png", insulin_uri)
+    #
+    # Driven by what the markdown actually references rather than a hardcoded
+    # list: the previous three-entry list silently omitted Figure 5
+    # (backbone_3d_refinement.png), whose ref survived into the HTML as a
+    # relative path that headless Chrome -- rendering from /tmp -- could not
+    # resolve, so the figure was simply missing from the PDF. Any figure added
+    # to the markdown from now on is inlined automatically.
+    #
+    # The keys are the *markdown-relative* refs as they appear in reports/*.md
+    # ("assets/foo.png"), not resolved filesystem paths -- substituting the
+    # latter would no-op and leave unresolvable links behind.
+    refs = sorted(set(re.findall(r"\]\((assets/[^)\s]+)\)", body_content)))
+    if not refs:
+        print("[PDF] Warning: no figure references found in the markdown")
+    for ref in refs:
+        uri = get_base64_image_uri(str(REPO_ROOT / "reports" / ref))
+        if not uri:
+            print(f"[PDF] Warning: {ref} referenced by the report but missing; "
+                  f"the figure will not render")
+            continue
+        body_content = body_content.replace(ref, uri)
+        print(f"[PDF] inlined {ref}")
+
+    leftover = re.findall(r"\]\((assets/[^)\s]+)\)", body_content)
+    if leftover:
+        raise RuntimeError(
+            f"figures left as unresolved relative refs and would render blank: "
+            f"{leftover}")
 
     cover_page_html = f"""
     <div class="cover-page">

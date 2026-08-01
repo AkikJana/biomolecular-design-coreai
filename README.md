@@ -271,11 +271,111 @@ specificity. That closes the question the benchmark thread opened: the reference
 is not usable for binder ranking, so a surrogate distilled from it cannot be
 either — and no amount of surrogate engineering changes that.
 
-Caveats: Boltz-1 rather than Boltz-2, 10 sampling steps, 1 recycling, MSA
-subsampled to depth 32, and n = 11 receptors. A stronger configuration may do
-better; this measures what this pipeline provides.
+Caveats: 10 sampling steps, 1 recycling, MSA subsampled to depth 32, and
+n = 11 receptors. A stronger configuration may do better; this measures what
+this pipeline provides. The "Boltz-1 rather than Boltz-2" caveat is now tested
+directly — see below.
 
 Reproduce: `python src/pdb_binder_benchmark.py`
+
+### Boltz-2 on the same benchmark: better, not enough
+
+The obvious objection to the result above is that it indicts Boltz-1, not ipTM.
+`--model boltz2` folds the identical 66 pairs with identical seeds and
+byte-identical cached MSAs, so the checkpoint is the only variable (~3 min per
+complex on CPU, 66 folds, 0 failures).
+
+**Every score shifts up by roughly 2.8x, and the classes shift together:**
+
+| | cognate (11) | decoy (33) | scrambled (22) |
+| :--- | :---: | :---: | :---: |
+| Boltz-1 | 0.1915 | 0.1684 | 0.1758 |
+| Boltz-2 | 0.5355 | 0.4556 | 0.4662 |
+
+Within-receptor rank of the cognate — the screening test — improves in every
+direction: **#1 for 3/11 receptors, up from 2/11; mean rank 2.55 of 6, up from
+3.27** (chance 3.50). But significance depends entirely on analysis choices that
+were not pre-specified:
+
+| model | competitors | mean rank | chance | 1-sided | 2-sided |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| Boltz-1 | decoys only | 2.36 | 2.50 | 0.395 | 0.790 |
+| Boltz-1 | decoy + scrambled | 3.27 | 3.50 | 0.373 | 0.746 |
+| Boltz-2 | decoys only | 1.91 | 2.50 | 0.062 | 0.124 |
+| Boltz-2 | decoy + scrambled | 2.55 | 3.50 | **0.047** | 0.094 |
+
+**One of four cells clears 0.05, and it is the least conservative combination.**
+The table above uses the two-sided convention, under which Boltz-2 does not reach
+significance. Bootstrap agrees: Boltz-2's mean cognate rank is 1.91 with 95% CI
+[1.36, 2.55] — the interval contains chance. The paired improvement over Boltz-1
+is +0.45 ranks, 95% CI [−0.36, +1.18] — contains zero.
+
+**A pooled test appears to pass and should not be believed.** The benchmark
+script's own output reports cognate > decoy at AUC 0.689, p = 0.033. That test is
+confounded by receptor identity (receptors differ several-fold in baseline ipTM,
+so part of what it measures is *which receptor this is*), and it is internally
+incoherent with the rest of the data: **decoys and scrambles are
+indistinguishable under Boltz-2 — AUC 0.501, p = 0.993.** Real peptides that bind
+some other receptor score exactly like sequence-order garbage. If ipTM cannot
+separate a genuine binder from a scramble, its edge over decoys is not
+binder recognition. The p = 0.033 comes from the decoy set being larger (33 vs
+22), not from a distinction that exists.
+
+**Conclusion.** Boltz-2 moves the specificity result in the right direction and
+by a meaningful amount, but does not establish specificity at n = 11, and the
+model-to-model difference is not distinguishable from noise. The Boltz-1
+conclusion stands, now with the model caveat tested rather than assumed.
+
+**This was a power problem, and the powered run has now been done.** See below.
+
+### The powered run: ipTM tracks composition, not binding
+
+80% power needed 21 receptors (dz = 0.57). A PTM-clean, tag-free,
+peptide-deduplicated panel of **22 receptors / 132 complexes** was folded under
+Boltz-2. Two of those filters exist because earlier passes got them wrong —
+three histone H3 tails and a duplicated PI3K phosphopeptide would have made
+other receptors' "decoys" genuine binders, and **7 of 25 candidates were
+PTM-dependent**, including 1I8H from the original panel, whose peptide needs
+phosphothreonine and therefore never bound as folded.
+
+**The specificity test passes.** Against decoys the cognate reaches mean rank
+**2.00 vs chance 2.50** (#1 for 8/22, p = 0.034 two-sided), bootstrap 95% CI
+**[1.59, 2.41]** excluding chance. Alone, that reverses the n = 11 result.
+
+**The scramble control refutes the binding reading.**
+
+| class | n | mean ipTM |
+| :--- | :---: | :---: |
+| cognate | 22 | 0.5015 |
+| **scrambled** | 44 | **0.4888** |
+| decoy | 66 | 0.4317 |
+
+A scramble keeps composition and length exactly and destroys only order — and
+order is what makes a binder a binder.
+
+* Cognates **do not** beat their own scrambles: 11/22, mean +0.0128, p = 0.416.
+* Scrambles **outscore decoys**: AUC 0.368, p = 0.019.
+
+So what separates cognate from decoy is exactly what a cognate shares with its
+own scramble — composition. Order contributes nothing measurable.
+
+**Not a length artifact**, which was tested rather than assumed: ipTM falls with
+peptide length (Spearman −0.408, p = 1.2e-6), but regressing per-pair
+cognate-minus-decoy score difference on length difference leaves intercept
+**+0.0752, p = 0.0001**. The advantage survives length adjustment. It is
+compositional, not positional.
+
+**Conclusion.** The powered run settles the question, and the answer is still
+negative — now with a mechanism. This converges with the ridge-regression result
+above from an independent direction: additive composition beat the distilled
+neural surrogate (+0.103 vs −0.034). Reporting only the decoys-only row
+(p = 0.034) would have produced a positive headline this experiment's own
+control contradicts.
+
+Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22`
+
+Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2`
+then `python src/compare_boltz1_boltz2.py`
 
 ### The low-rank OPM is not reachable on pretrained weights
 

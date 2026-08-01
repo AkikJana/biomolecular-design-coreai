@@ -40,8 +40,41 @@ from run_reference_benchmark import REPO_ROOT, run_boltz
 # Peptide-domain complexes with a short peptide and a domain small enough to fold
 # on CPU. Screened from RCSB for exactly two polymer chains, peptide <= 25 aa and
 # receptor <= 140 aa.
+#
+# 22 receptors, sized by a power analysis on the Boltz-2 n=11 result: 80% power
+# on the specificity test needs 21 (dz = 0.57). At n = 11 the test could not
+# resolve the effect either way, so the honest response was more receptors
+# rather than a different statistic.
+#
+# Selected by src/discover_pdb_binders.py, which applies this file's own screen
+# programmatically. Three filters exist because earlier passes got them wrong:
+#
+#   peptide near-identity  decoys are built by giving a receptor another
+#                          entry's peptide, so homologous peptides across
+#                          receptors make "decoys" that genuinely bind.
+#                          Rejected three histone H3 tails and a duplicated
+#                          PI3K phosphopeptide.
+#   tag / linker           4W8H offered "HHHHHH" -- a His-tag crystallised in
+#                          a groove is not a binder.
+#   PTM dependence         RCSB FASTA is canonical, so phosphoserine reads as S
+#                          and acetyl-lysine as K. An SH2 domain binds pTyr and
+#                          a bromodomain reads acetyl-lysine; folding the
+#                          canonical peptide gives a cognate that cannot bind.
+#
+# The PTM screen removed 1I8H from the original panel -- Pin1 WW reads
+# pSer/pThr-Pro, and 1I8H is exactly the receptor whose "true binder ranked
+# last of six" under Boltz-1. Ranking a non-binder last is correct behaviour.
+# See src/audit_panel_ptms.py.
+#
+# 3JQL and 4Z2O passed every automated filter and were dropped by hand: PLA2
+# with an amyloid-beta hexapeptide is an incidental co-crystal, and
+# hoefavidin's "hoef-peptide" is a self-fragment. Neither is a binding pair.
+#
+# Shared *folds* are kept on purpose -- discriminating peptides that bind
+# similar domains is the task.
 PDB_IDS = ["1YCR", "1CKA", "1BE9", "1SEM", "1ELW", "2GBQ", "1D4T", "1TP5",
-           "1I8H", "2FNT", "1NLO"]
+           "2FNT", "1NLO", "1OAI", "4LN2", "9F6S", "8KDX", "6YOO", "3DS4",
+           "9GRF", "7S7J", "4Z8J", "8HLO", "7OKL", "4O36"]
 
 
 def fetch_complex(pdb_id: str, cache_dir: Path):
@@ -104,7 +137,8 @@ def write_yaml(path: Path, receptor: str, peptide: str, receptor_msa):
     )
 
 
-def fetch_receptor_msa(work: Path, rid: str, receptor: str, peptide: str):
+def fetch_receptor_msa(work: Path, rid: str, receptor: str, peptide: str,
+                       model: str = "boltz1"):
     cache = work / "msa_cache" / f"{rid}.csv"
     if cache.exists():
         return str(cache)
@@ -120,7 +154,7 @@ def fetch_receptor_msa(work: Path, rid: str, receptor: str, peptide: str):
         f"  - protein:\n      id: B\n      sequence: {peptide}\n      msa: empty\n"
     )
     try:
-        results, _ = run_boltz(probe, probe.parent, 0, 5, "boltz1",
+        results, _ = run_boltz(probe, probe.parent, 0, 5, model,
                                use_msa=True, max_msa_seqs=32)
     except RuntimeError as exc:
         print(f"  [msa] {rid}: fetch failed ({str(exc)[:60]}); single-sequence")
@@ -144,6 +178,10 @@ def main():
     ap.add_argument("--rank-key", default="iptm")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--no-msa", action="store_true")
+    ap.add_argument("--model", default="boltz1", choices=["boltz1", "boltz2"],
+                    help="Boltz-2 is a different model with its own weights; "
+                         "results are not comparable across this flag unless "
+                         "everything else is held fixed")
     ap.add_argument("--work-dir", default=str(REPO_ROOT / "artifacts" / "pdb_binders"))
     ap.add_argument("--skip-predict", action="store_true")
     args = ap.parse_args()
@@ -169,8 +207,12 @@ def main():
     msas = {}
     if not args.skip_predict and not args.no_msa:
         for rid in complexes:
+            # Alignments come from the MMSeqs2 server keyed on sequence, so the
+            # model here does not affect the MSA -- but it does decide which
+            # checkpoint gets loaded to run the probe. Use the run's own model
+            # rather than pulling a second 3.6 GB checkpoint into memory.
             msas[rid] = fetch_receptor_msa(work, rid, complexes[rid]["receptor"],
-                                           complexes[rid]["peptide"])
+                                           complexes[rid]["peptide"], args.model)
 
     dirs = []
     if not args.skip_predict:
@@ -183,7 +225,7 @@ def main():
                 write_yaml(idir / f"{p['name']}.yaml", p["receptor"], p["peptide"],
                            msas.get(p["receptor_id"]))
             res, el = run_boltz(idir, bdir, args.recycling_steps, args.sampling_steps,
-                                "boltz1", max_msa_seqs=32)
+                                args.model, max_msa_seqs=32)
             dirs.append(res)
             print(f"  batch {start // args.batch_size}: {len(chunk)} in {el:.0f}s", flush=True)
     else:
