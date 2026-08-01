@@ -40,8 +40,23 @@ from run_reference_benchmark import REPO_ROOT, run_boltz
 # Peptide-domain complexes with a short peptide and a domain small enough to fold
 # on CPU. Screened from RCSB for exactly two polymer chains, peptide <= 25 aa and
 # receptor <= 140 aa.
+#
+# The first 11 are the original hand-screened panel. The remaining 14 were added
+# by src/discover_pdb_binders.py to reach the 21 receptors a power analysis on
+# the Boltz-2 result showed were needed for 80% power (dz = 0.57); at n = 11 the
+# specificity test could not resolve the effect either way.
+#
+# Additions are filtered on peptide identity, not just receptor identity. Decoys
+# are built by giving a receptor another entry's peptide, so two receptors with
+# homologous peptides produce "decoys" that genuinely bind -- a mislabelled
+# negative. That screen rejected three histone H3 tail entries and a duplicate
+# PI3K phosphopeptide. Purification tags are rejected too (4W8H offered
+# "HHHHHH" as its peptide). Shared *folds* are kept on purpose: telling apart
+# peptides binding similar domains is the task.
 PDB_IDS = ["1YCR", "1CKA", "1BE9", "1SEM", "1ELW", "2GBQ", "1D4T", "1TP5",
-           "1I8H", "2FNT", "1NLO"]
+           "1I8H", "2FNT", "1NLO",
+           "5EMB", "5GJI", "3QL9", "1OAI", "4LN2", "9F6S", "8KDX", "6YOO",
+           "7CIO", "3DS4", "9GRF", "5NNE", "7M10", "7S7J"]
 
 
 def fetch_complex(pdb_id: str, cache_dir: Path):
