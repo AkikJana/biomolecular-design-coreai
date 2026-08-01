@@ -207,8 +207,12 @@ def main():
     msas = {}
     if not args.skip_predict and not args.no_msa:
         for rid in complexes:
+            # Alignments come from the MMSeqs2 server keyed on sequence, so the
+            # model here does not affect the MSA -- but it does decide which
+            # checkpoint gets loaded to run the probe. Use the run's own model
+            # rather than pulling a second 3.6 GB checkpoint into memory.
             msas[rid] = fetch_receptor_msa(work, rid, complexes[rid]["receptor"],
-                                           complexes[rid]["peptide"])
+                                           complexes[rid]["peptide"], args.model)
 
     dirs = []
     if not args.skip_predict:
