@@ -4,106 +4,318 @@
 
 ---
 
-# ABSTRACT
+# A REPORT
 
-This dissertation addresses the high computational cost, GPU latency, and memory footprint of generating large-scale, all-atom biomolecular binders. We introduce **Boltz-Fast**, a unified framework that fuses LLM efficiency optimizations with deep structural modeling to bypass memory and compute bottlenecks in protein structure prediction. 
+## ON
 
-All **six development milestones (M1–M6)** have been implemented, integrated, and verified:
-1. **M1 — E2E Test Suite**: Initialized a 4-tier validation suite covering functional, boundary, integration, and biological constraints; since expanded to **99 tests** running under `pytest` in continuous integration.
-2. **M2 — Apple Silicon MPS Compatibility**: Resolved CUDA dependencies by implementing device-agnostic execution and dynamic memory autocasting for Apple M-series chips.
-3. **M3 — Low-Rank Pair Representation**: Replaced memory-heavy outer product mean updates with a custom autograd low-rank tensor product, reducing stored activations by up to **1502x** in a synthetic microbenchmark. The accompanying reconstruction error is large (Table 3), and the subsequent measurement phase established that this saving is **not reachable on pretrained Boltz weights** (Section 6.1).
-4. **M4 — CFG Distillation**: Integrated a single-pass student model to bypass expensive double-pass Classifier-Free Guidance (CFG) evaluations, achieving a **3.85x speedup** on the grid sweep of Table 2.
-5. **M5 — Neural Coordinate Refinement**: Wired a ResNet-based post-diffusion coordinator to resolve biophysical violations (bond lengths, clashes) with zero standard regression.
-6. **M6 — E2E Verification**: Executed the full suite on local hardware with a 100% pass rate.
+## EFFICIENCY-OPTIMIZED GENERATIVE PARADIGMS FOR LARGE-SCALE BIOMOLECULAR DESIGN
 
-A second phase moved the project from component microbenchmarks to end-to-end
-measurement against pretrained checkpoints and experimentally determined
-structures. **This phase produced two substantive negative results**, reported in
-full in Section 6: the low-rank pair representation cannot be recovered from
-pretrained weights at any rank that saves memory, and interface confidence
-(ipTM) responds largely to peptide **composition**, ranking a scrambled sequence
-as highly as the real binder it was made from, with any sequence-order effect
-bounded below the composition effect. The second
-finding was established by a power-sized 22-receptor run (132 complexes) whose
-headline comparison is statistically significant, whose own scramble control
-shows that significance does not mean binding recognition, and whose
-reproducibility was then measured directly: a 96-fold replicate study
-(Section 6.5) shows that single unseeded folds do not reproduce their own
-per-receptor rankings, so the aggregate direction is trustworthy while any
-individual verdict is not. Both results are
-reported because they redirect the remaining work, and both rest on controls,
-held-out splits, and power analysis rather than on single favourable runs.
+&nbsp;
 
-The engineering results stand: the pipeline is device-agnostic, memory-stable on
-Apple Silicon, and now measured end to end against real structures rather than
-mock tensors.
+### BY
+
+| Name of the Student | ID. No. | Discipline |
+| :--- | :--- | :--- |
+| Akik Jana | 2024AB05287 | M.Tech. Artificial Intelligence and Machine Learning |
+
+&nbsp;
+
+**Prepared in partial fulfilment of the**
+**WILP Dissertation Course (BITS ZG628T)**
+
+### AT
+
+**Mu Sigma, Bangalore**
+
+**BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE, PILANI**
+
+**August 2026**
+
+<div class="page-break"></div>
+
+# CERTIFICATE
+
+This is to certify that the Dissertation entitled **"Efficiency-Optimized
+Generative Paradigms for Large-Scale Biomolecular Design"** and submitted by
+**Akik Jana**, ID No. **2024AB05287**, in partial fulfilment of the requirements
+of the course **BITS ZG628T Dissertation**, embodies the work done by him under
+my supervision.
+
+&nbsp;
+
+&nbsp;
+
+<div class="signature-block">
+    <div class="sig-col">
+        <div class="sig-line"></div>
+        <div class="sig-title">Signature of the Supervisor</div>
+        <div class="sig-field"><b>Name:</b> Dr. Arnab Bandyopadhyay</div>
+        <div class="sig-field"><b>Designation:</b> RnD Division, Dr. Reddy's Laboratories</div>
+        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Place:</b> Hyderabad</div>
+    </div>
+    <div class="sig-col">
+        <div class="sig-line"></div>
+        <div class="sig-title">Signature of the Student</div>
+        <div class="sig-field"><b>Name:</b> Akik Jana</div>
+        <div class="sig-field"><b>ID No.:</b> 2024AB05287</div>
+        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Place:</b> Bangalore</div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+# ACKNOWLEDGEMENTS
+
+I am grateful to the management of **Mu Sigma, Bangalore**, for supporting this
+dissertation and for providing the environment in which it was carried out.
+
+I thank my supervisor, **Dr. Arnab Bandyopadhyay**, RnD Division, Dr. Reddy's
+Laboratories, Hyderabad, for his guidance throughout this work, and in
+particular for his insistence that a negative result carefully established is
+worth more than a positive result loosely argued. That principle shaped the
+second half of this dissertation.
+
+I thank the **faculty mentor** and the **WILP Division, BITS Pilani**, for the
+structure and review that kept the work on schedule.
+
+Finally, I acknowledge the maintainers of the open-source **Boltz** project,
+whose released model and permissive licence made an independent evaluation of
+this kind possible at all.
+
+<div class="page-break"></div>
+
+# ABSTRACT SHEET
+
+### BIRLA INSTITUTE OF TECHNOLOGY AND SCIENCE, PILANI (RAJASTHAN)
+### WILP Division
+
+| | |
+| :--- | :--- |
+| **Organization** | Mu Sigma |
+| **Location** | Bangalore, India |
+| **Duration** | 05 January 2026 – 02 August 2026 (approximately 30 weeks) |
+| **Date of Start** | 05 January 2026 |
+| **Date of Submission** | 02 August 2026 |
+| **Title of the Project** | Efficiency-Optimized Generative Paradigms for Large-Scale Biomolecular Design |
+| **ID No. / Name of the Student** | 2024AB05287 / Akik Jana |
+| **Name and Designation of the Supervisor** | Dr. Arnab Bandyopadhyay, RnD Division, Dr. Reddy's Laboratories, Hyderabad |
+| **Name of the Faculty Mentor** | As assigned by the WILP Division |
+| **Key Words** | Protein structure prediction; binder design; inference efficiency; low-rank factorization; tensor decomposition; knowledge distillation; interface confidence; benchmark reproducibility; Apple Silicon; edge inference |
+| **Project Areas** | Machine Learning; Computational Structural Biology; Efficient Deep Learning Inference |
+
+**Abstract:**
+
+This dissertation investigates whether inference-efficiency techniques drawn
+from large language models can make all-atom biomolecular structure prediction
+and binder screening practical on edge hardware. A framework, Boltz-Fast, was
+implemented on the open Boltz model: latent key-value caching, sequence
+parallelism, a low-rank pair representation, classifier-free-guidance
+distillation, and a neural coordinate refiner, all executing device-agnostically
+on Apple Silicon. Component microbenchmarks showed large savings. The work then
+tested those components against pretrained checkpoints and experimentally
+determined structures rather than synthetic tensors, and two central claims did
+not survive. The low-rank pair representation cannot be recovered from released
+weights at any rank that saves memory. Interface confidence responds largely to
+peptide composition rather than to binding, and a single unseeded fold does not
+reproduce its own ranking. Each negative result is supported by controls,
+held-out splits, power analysis and replication. The engineering contributions
+stand; the accompanying accuracy claims are bounded and stated.
+
+&nbsp;
 
 <div class="signature-block">
     <div class="sig-col">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Student</div>
         <div class="sig-field"><b>Name:</b> Akik Jana</div>
-        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
-        <div class="sig-field"><b>Place:</b> Bangalore</div>
+        <div class="sig-field"><b>Date:</b> _______________</div>
     </div>
     <div class="sig-col">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Supervisor</div>
         <div class="sig-field"><b>Name:</b> Dr. Arnab Bandyopadhyay</div>
-        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
-        <div class="sig-field"><b>Place:</b> Hyderabad</div>
+        <div class="sig-field"><b>Date:</b> _______________</div>
     </div>
 </div>
 
 <div class="page-break"></div>
 
-# Contents
 
-### 1. MODULES IN BOLTZ-FAST ..................................................................................................... 5
-&nbsp;&nbsp;&nbsp;&nbsp;a) Multi-Head Latent Attention (MLA) Cache ............................................................................... 5  
-&nbsp;&nbsp;&nbsp;&nbsp;b) Fold-CP Sequence Parallelism ............................................................................................. 5  
-&nbsp;&nbsp;&nbsp;&nbsp;c) 2D Ring Triangular Multiplication Unit (TMU) ........................................................................ 6  
-&nbsp;&nbsp;&nbsp;&nbsp;d) Low-Rank Pair Representation (OPM Replacement) [M3] ..................................................... 6  
-&nbsp;&nbsp;&nbsp;&nbsp;e) Classifier-Free Guidance (CFG) Distillation [M4] ..................................................................... 6  
-&nbsp;&nbsp;&nbsp;&nbsp;f) Neural Coordinate Refinement [M5] ..................................................................................... 7  
-&nbsp;&nbsp;&nbsp;&nbsp;g) Speculative Flow Matching Sampler ....................................................................................... 7  
-&nbsp;&nbsp;&nbsp;&nbsp;h) Reference-Free SimPO Loss Tuning .................................nbsp;&nbsp;&nbsp; 8  
-&nbsp;&nbsp;&nbsp;&nbsp;i) g-DPO Linear Preference Alignment .................................nbsp;&nbsp;&nbsp; 8  
-### 2. FUNCTIONAL BLOCK DIAGRAM & METHODOLOGY ........................................................... 9
-### 3. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS ................................................... 10
-### 4. DESIGN CONSIDERATIONS ..................................................................................................... 12
-### 5. VERIFICATION & TESTING (M1 & M6) ................................................................................... 13
-### 6. MEASURED RESULTS AGAINST PRETRAINED WEIGHTS ................................................. 15
-&nbsp;&nbsp;&nbsp;&nbsp;6.1 Low-Rank Pair Representation on Pretrained Weights ...................................................... 15
-&nbsp;&nbsp;&nbsp;&nbsp;6.2 Interface Confidence as a Binder-Ranking Reference ....................................................... 16
-&nbsp;&nbsp;&nbsp;&nbsp;6.3 Boltz-2 Comparison and a Benchmark Correction ............................................................ 17
-&nbsp;&nbsp;&nbsp;&nbsp;6.4 Powered Run: ipTM Tracks Composition, Not Binding ..................................................... 18
-&nbsp;&nbsp;&nbsp;&nbsp;6.5 Measurement Reproducibility: Single Folds Do Not Reproduce ....................................... 19
-### 7. FUTURE PLAN ............................................................................................................................. 20
-### 8. ABBREVIATIONS ......................................................................................................................... 21
+# TABLE OF CONTENTS
+
+CERTIFICATE ................................................................. ii  
+ACKNOWLEDGEMENTS ........................................................... iii  
+ABSTRACT SHEET .............................................................. iv  
+1. INTRODUCTION .............................................................. 1  
+&nbsp;&nbsp;&nbsp;&nbsp;1.1 Background ............................................................... 1  
+&nbsp;&nbsp;&nbsp;&nbsp;1.2 Problem Statement ........................................................ 1  
+&nbsp;&nbsp;&nbsp;&nbsp;1.3 Objectives ............................................................... 1  
+&nbsp;&nbsp;&nbsp;&nbsp;1.4 Literature Survey ........................................................ 2  
+&nbsp;&nbsp;&nbsp;&nbsp;1.5 Scope and Limitations .................................................... 2  
+&nbsp;&nbsp;&nbsp;&nbsp;1.6 Organisation of the Report ............................................... 3  
+2. MODULES IN BOLTZ-FAST ..................................................... 4  
+3. FUNCTIONAL BLOCK DIAGRAM & METHODOLOGY .................................... 7  
+4. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS ............................... 8  
+5. DESIGN CONSIDERATIONS .................................................... 13  
+6. VERIFICATION & TESTING (M1 & M6) ......................................... 14  
+&nbsp;&nbsp;&nbsp;&nbsp;6.1 Subsequent Hardening of the Suite ....................................... 14  
+7. MEASURED RESULTS VS PRETRAINED WEIGHTS ................................... 16  
+&nbsp;&nbsp;&nbsp;&nbsp;7.1 Low-Rank Pair Representation on Pretrained Weights ...................... 16  
+&nbsp;&nbsp;&nbsp;&nbsp;7.2 Interface Confidence Does Not Rank Peptide Binders ...................... 17  
+&nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 17  
+&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding ....................... 18  
+&nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 21  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 21  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 22  
+9. FUTURE PLAN .............................................................. 24  
+10. REFERENCES .............................................................. 27  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 29  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 31  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 33  
 
 &nbsp;
-### List of Figures
-Figure 1: Core Modules in Boltz-Fast .................................................................................................... 5  
-Figure 2: C-alpha Backbone 3D Coordinate Plot ................................................................................... 11  
-Figure 3: Ray-Traced Protein Ribbon Model Rendering ........................................................................ 11  
-Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................................................................ 11  
-Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison .................................................... 13  
+
+## LIST OF FIGURES
+
+Figure 1: Core Modules in Boltz-Fast ......................................... 4  
+Figure 2: C-alpha Backbone 3D Coordinate Plot ............................... 10  
+Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 11  
+Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 12  
+Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 15  
 
 &nbsp;
-### List of Tables
-Table 1: Computational Complexity & Scaling Comparison .................................................................. 10  
-Table 2: Speculative Flow Matching Grid Sweep Data ........................................................................... 10  
-Table 3: Low-Rank Pair Representation Performance Scaling ............................................................. 10  
-Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon ......................................................... 11  
+
+## LIST OF TABLES
+
+Table 1: Computational Complexity & Scaling Comparison ....................... 8  
+Table 2: Speculative Flow Matching Grid Sweep Data ........................... 8  
+Table 3: Low-Rank Pair Representation Performance Scaling (Rank r=16, D_pair=128) ... 9  
+Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon .................. 10  
 
 <div class="page-break"></div>
 
-# 1. MODULES IN BOLTZ-FAST
+# 1. INTRODUCTION
+
+## 1.1 Background
+
+All-atom biomolecular structure prediction moved from a research problem to an
+engineering one with AlphaFold [1], and extended to complexes with
+AlphaFold-Multimer [2] and to general biomolecular interactions with AlphaFold 3
+[3]. The open Boltz models [4], [5] reproduce much of that capability under a
+permissive licence, which makes independent evaluation and modification
+possible.
+
+The cost, however, remains high. A single complex prediction involves a deep
+trunk executed under several recycling iterations, triangular attention that is
+quadratic in sequence length, and a diffusion sampler run for on the order of
+200 steps. On a workstation without a datacentre GPU this is a minutes-to-hours
+operation. Binder screening compounds the problem: a campaign ranks hundreds or
+thousands of candidate sequences against one target, so the per-candidate cost
+determines whether the method is usable at all.
+
+## 1.2 Problem Statement
+
+The problem addressed by this dissertation is whether the inference-efficiency
+techniques developed for large language models can be transferred to
+biomolecular structure prediction so that structure-based binder screening
+becomes practical on edge hardware — specifically Apple Silicon — and, equally
+importantly, whether the resulting system still measures what it claims to
+measure.
+
+## 1.3 Objectives
+
+1. Port the Boltz inference path to Apple Silicon (Metal Performance Shaders)
+   with device-agnostic execution.
+2. Reduce activation memory in the pair representation and the target-side
+   key-value cache.
+3. Reduce sampler cost through classifier-free-guidance distillation and
+   speculative integration.
+4. Build a distilled surrogate capable of ranking candidate binders on-device.
+5. **Validate each of the above against pretrained checkpoints and
+   experimentally determined structures, rather than against synthetic tensors.**
+
+Objective 5 is the one that distinguishes this work. It was added after the
+component-level results proved far stronger than the end-to-end behaviour they
+implied.
+
+## 1.4 Literature Survey
+
+**Structure prediction.** AlphaFold [1] established the evolutionary-coupling
+plus structure-module architecture that later systems refine. AlphaFold-Multimer
+[2] extended it to complexes and introduced the interface predicted TM-score
+(ipTM), a confidence measure derived from the TM-score formalism [18]. AlphaFold
+3 [3] generalised to nucleic acids and ligands using a diffusion decoder. Boltz-1
+[4] is an open reimplementation of that class of model, and Boltz-2 [5] adds an
+affinity head aimed at protein–ligand binding. Multiple sequence alignments,
+which dominate input preparation cost, are generated in practice by MMseqs2-based
+pipelines [17] as popularised by ColabFold [16].
+
+**Binder design.** Generative approaches such as RFdiffusion [21] and
+sequence-design methods such as ProteinMPNN [22] produce candidate binders in
+volume. The bottleneck then becomes *ranking*: deciding which candidates merit
+experimental follow-up. In practice this ranking is frequently performed with
+folding-model confidence, most often ipTM. Section 7 of this report examines
+that practice directly.
+
+**Efficiency techniques.** Low-rank factorisation of weight matrices, introduced
+for adaptation as LoRA [6], underlies the low-rank pair representation used
+here; the tensor-decomposition machinery for projecting an existing dense
+operator onto a low-rank form is the CANDECOMP/PARAFAC family surveyed by Kolda
+and Bader [14]. Latent key-value caching follows the multi-head latent attention
+of DeepSeek-V2 [10]. Sequence-parallel attention with exact numerics follows the
+ring-attention construction [11]. On the sampler side, classifier-free guidance
+[8] costs two network evaluations per step, which distillation [19] can collapse
+to one; speculative decoding [7] and consistency models [9] attack the number of
+steps itself. Preference alignment for sequence policies follows DPO [13] and its
+reference-free variant SimPO [12].
+
+**Gap addressed.** The efficiency literature reports savings on the operator or
+the microbenchmark. What is comparatively rarely reported is whether a
+substituted operator remains faithful *on pretrained weights*, and whether the
+downstream scoring signal is stable enough to support the decisions it is used
+for. This dissertation measures both, using the PDB [15] as the source of
+experimentally determined positives — including the MDM2–p53 complex [20] among
+others.
+
+## 1.5 Scope and Limitations
+
+The scope is inference, not training: no frontier-scale training run was
+performed, and the low-rank layer is therefore evaluated as a substitution onto
+released weights rather than as a component of a model trained around it.
+
+Three limitations are stated at the outset because they bound every number in
+this report:
+
+1. **Reduced inference settings.** Folding throughout uses 10 sampling steps
+   (Boltz default 200), 1 recycling iteration (default 3) and MSA depth 32
+   (default 8192). These were forced by CPU-only execution on a laptop. The
+   settings confound is stated, not resolved.
+2. **Panel size.** The binder benchmark uses 22 receptors. This was sized by a
+   power analysis, but it remains small relative to the generality of the claim.
+3. **Measurement noise.** Folds are unseeded, and Section 7.5 quantifies what
+   that costs. Per-complex results are not reproducible at these settings.
+
+## 1.6 Organisation of the Report
+
+Section 2 describes the modules implemented. Section 3 gives the pipeline and
+methodology. Section 4 reports component-level specifications and benchmarks.
+Section 5 covers design considerations arising from the Apple Silicon port.
+Section 6 covers verification and testing, including two defects found in the
+test infrastructure itself. Section 7 reports the end-to-end measurements
+against pretrained weights, which contains the substantive findings of this
+work. Section 8 draws conclusions and recommendations, and Section 9 sets out
+the remaining plan.
+
+<div class="page-break"></div>
+
+
+# 2. MODULES IN BOLTZ-FAST
 
 The Boltz-Fast engine accelerates structures generation and reduces hardware footprint by implementing targeted algorithmic optimizations. The core architecture is shown in Figure 1 below.
 
-#### Figure 1: Core Modules in Boltz-Fast
 <div class="flowchart-container">
     <div class="flowchart-box primary">
         <h3>1. Memory & Parallelism</h3>
@@ -120,6 +332,8 @@ The Boltz-Fast engine accelerates structures generation and reduces hardware foo
         <p>Reference-free SimPO loss tuning saves 50% VRAM; g-DPO best-vs-all clustering scales linearly O(M).</p>
     </div>
 </div>
+
+#### Figure 1: Core Modules in Boltz-Fast
 
 ### a) Multi-Head Latent Attention (MLA) Cache
 Target receptor representations are static during binder screening. Instead of caching raw keys and values of shape `[L_target, D]`, we down-project them into a compressed latent space:
@@ -144,7 +358,7 @@ where sequence projections $X$ and $Y$ have a low rank $r \ll D_{\text{pair}}$. 
 The implementation is numerically verified against the reference OPM and
 mutation-tested. Its parameters do not correspond to those of a released
 checkpoint, so it is selected at runtime by the `BOLTZMAC_OPM` environment
-variable, defaulting to the stock implementation. Section 6.1 reports the
+variable, defaulting to the stock implementation. Section 7.1 reports the
 measured limits of substituting it into a pretrained model.
 
 ### e) Classifier-Free Guidance (CFG) Distillation [M4]
@@ -172,7 +386,7 @@ Compares candidate sequences using a `"best_vs_all"` strategy inside Union Mask 
 
 <div class="page-break"></div>
 
-# 2. FUNCTIONAL BLOCK DIAGRAM & METHODOLOGY
+# 3. FUNCTIONAL BLOCK DIAGRAM & METHODOLOGY
 
 The system integrates context preparation, memory-efficient representation, speculative sampling, and post-diffusion coordinate refinement into a unified pipeline:
 
@@ -207,7 +421,7 @@ The sequence policies derived from preference alignment are passed to the accele
 
 <div class="page-break"></div>
 
-# 3. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS
+# 4. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS
 
 ### Table 1: Computational Complexity & Scaling Comparison
 | Component | Standard Baseline | Implemented Optimization | Time Complexity | Memory / VRAM Scaling |
@@ -241,7 +455,7 @@ saving factor is only meaningful for a network *trained* with the low-rank layer
 in place, where the layer defines the function rather than approximating an
 existing one. Randomly initialised operands make the two paths trivially
 separable, which is why this table is reported as a scaling measurement and not
-as a drop-in substitution result. Section 6.1 measures what happens when the
+as a drop-in substitution result. Section 7.1 measures what happens when the
 substitution is attempted against pretrained weights.
 
 ### Dynamic Quantized Attention & Block-Sparsity
@@ -260,18 +474,21 @@ Surrogate models exported to Apple CoreAI runtimes execute dynamically on the ma
 | **Insulin Monomer** | 50 | Large Target (Receptor) | 1300 | 31.29 ms | `(1, 50, 3)` | **No** |
 | **Hemoglobin Frag** | 90 | Large Target (Receptor) | 1300 | 36.58 ms | `(1, 90, 3)` | **No** |
 
-#### Figure 2: C-alpha Backbone 3D Coordinate Plot
 ![C-alpha Backbone 3D Coordinate Plot](assets/backbone_3d_plot.png)
 
-#### Figure 3: Ray-Traced Protein Ribbon Model Rendering
+#### Figure 2: C-alpha Backbone 3D Coordinate Plot
+
 ![Ray-Traced Protein Ribbon Rendering](assets/protein_structure_rendering_1781545391670.jpg)
 
-#### Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization
+#### Figure 3: Ray-Traced Protein Ribbon Model Rendering
+
 ![ANE-Accelerated 3D Insulin Backbone Visualization](assets/backbone_3d_insulin.png)
+
+#### Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization
 
 <div class="page-break"></div>
 
-# 4. DESIGN CONSIDERATIONS
+# 5. DESIGN CONSIDERATIONS
 
 *   **Apple Silicon MPS Acceleration**: pathed 16 CUDA dependencies. Developed utility functions in `boltz/src/boltz/model/modules/utils.py` for device resolution:
     *   `autocast_device_type(device)`: returns `"cpu"` or `"cuda"`. Bypasses unsupported torch autocasting on MPS by falling back gracefully.
@@ -281,7 +498,7 @@ Surrogate models exported to Apple CoreAI runtimes execute dynamically on the ma
 
 <div class="page-break"></div>
 
-# 5. VERIFICATION & TESTING (M1 & M6)
+# 6. VERIFICATION & TESTING (M1 & M6)
 
 A key focus of the integration phase was implementing a robust testing framework to ensure correctness and prevent regressions.
 
@@ -303,7 +520,7 @@ The E2E test suite executes synchronously via `run_e2e_tests.py`:
 ======================================================================
 ```
 
-### 5.1 Subsequent Hardening of the Suite
+### 6.1 Subsequent Hardening of the Suite
 
 The suite has since grown to **99 tests**, and two defects in the testing
 infrastructure itself were found and corrected.
@@ -327,21 +544,22 @@ The corrections matter for the interpretation of M6: a 100% pass rate against a
 suite that was partly unfailable is weaker evidence than the same rate against
 the audited suite, and the latter is what the current 99 tests provide.
 
-#### Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison
 ![Post-Diffusion Neural Coordinate Refinement Comparison](assets/backbone_3d_refinement.png)
+
+#### Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison
 
 The coordinate refiner successfully resolved simulated clashes (Figure 5, right) and adjusted C-alpha bond lengths to $\le 1.0$ Å deviation from the target value.
 
 <div class="page-break"></div>
 
-# 6. MEASURED RESULTS AGAINST PRETRAINED WEIGHTS
+# 7. MEASURED RESULTS AGAINST PRETRAINED WEIGHTS
 
 Sections 3 and 5 report component behaviour against mock tensors. This section
 reports what the components do against pretrained Boltz checkpoints and
 experimentally determined structures. Two questions were pursued to a
 conclusion, and both answers are negative.
 
-### 6.1 The Low-Rank Pair Representation Is Not Reachable on Pretrained Weights
+### 7.1 The Low-Rank Pair Representation Is Not Reachable on Pretrained Weights
 
 The low-rank OuterProductMean (OPM) is the project's strongest technical asset:
 it is numerically verified against the reference implementation and
@@ -390,7 +608,7 @@ run outside the scope of this dissertation. The `BOLTZMAC_OPM` environment
 toggle keeps both implementations selectable so the layer remains available for
 that work.
 
-### 6.2 Interface Confidence Does Not Rank Peptide Binders
+### 7.2 Interface Confidence Does Not Rank Peptide Binders
 
 The binder design objective requires a scoring signal to rank candidates.
 Boltz's interface confidence (ipTM) was evaluated as that reference against
@@ -420,9 +638,9 @@ additive amino-acid composition scored +0.103** (z = 3.44 against the neural
 model). An earlier ρ = +0.308 at n = 13 did not survive the larger sample and is
 recorded here as a sampling artefact rather than as a result.
 
-### 6.3 Boltz-2 Comparison and a Correction to the Benchmark
+### 7.3 Boltz-2 Comparison and a Correction to the Benchmark
 
-The natural objection is that Section 6.2 indicts Boltz-1 rather than ipTM. The
+The natural objection is that Section 7.2 indicts Boltz-1 rather than ipTM. The
 identical 66 pairs were therefore re-folded under Boltz-2 with identical seeds
 and byte-identical cached alignments, leaving the checkpoint as the only
 variable. Every score rises by roughly 2.8x, and the classes rise together:
@@ -460,7 +678,7 @@ Re-analysis without 1I8H does not change any conclusion (Boltz-1 p 0.790 →
 0.463; Boltz-2 p 0.094 → 0.131, both still non-significant), so this corrects
 the method rather than the result.
 
-### 6.4 Powered Run: ipTM Tracks Composition, Not Binding
+### 7.4 Powered Run: ipTM Tracks Composition, Not Binding
 
 The n = 11 result was underpowered rather than decisive, so a PTM-clean,
 tag-free, peptide-deduplicated panel of **22 receptors (132 complexes)** was
@@ -498,7 +716,7 @@ adjustment; it is compositional rather than positional.
 **Conclusion.** The powered run resolves the question and the answer remains
 negative, now with a mechanism: ipTM responds to peptide composition and is
 indifferent to sequence order. A screening reference must prefer a binder to its
-own scramble, and this one does not. The finding converges with Section 6.2 from
+own scramble, and this one does not. The finding converges with Section 7.2 from
 an independent direction — a ridge regression on additive composition predicted
 ipTM better than the distilled neural surrogate — indicating that the signal
 available in this pipeline is compositional throughout.
@@ -506,9 +724,9 @@ available in this pipeline is compositional throughout.
 Reporting only the decoys-only comparison would have produced a positive
 headline that the experiment's own control contradicts.
 
-### 6.5 Measurement Reproducibility: Single Folds Do Not Reproduce
+### 7.5 Measurement Reproducibility: Single Folds Do Not Reproduce
 
-Every fold in Sections 6.2–6.4 was unseeded. Boltz's `--seed` defaults to
+Every fold in Sections 7.2–7.4 was unseeded. Boltz's `--seed` defaults to
 `None`, and the benchmark's own `--seed` governs only pair construction, not the
 diffusion sampler — so each reported ipTM is a single draw from a distribution
 whose width had not been measured, while the load-bearing comparison rested on a
@@ -534,7 +752,7 @@ noise (4,000 replications) gives a mean cognate rank of 2.03 with 95% range
 49% of re-runs** (median p = 0.054, range [0.004, 0.374]). The preference is real
 and is probably *stronger* than 2.00 indicates, because measurement error
 attenuates rank effects toward chance. What a single run cannot support is the
-precision of its own verdict, and Section 6.4's p = 0.034 should be read that way.
+precision of its own verdict, and Section 7.4's p = 0.034 should be read that way.
 
 **Consequence for method.** Supporting per-receptor claims requires roughly 9–16
 replicate folds per complex (SE 0.021–0.016 against competitor gaps near 0.05),
@@ -548,7 +766,88 @@ settings a single run does not reproduce its own ranking.
 
 <div class="page-break"></div>
 
-# 7. FUTURE PLAN
+
+# 8. CONCLUSIONS AND RECOMMENDATIONS
+
+## 8.1 Conclusions
+
+**On the engineering objectives.** Objectives 1 to 4 of Section 1.3 were met.
+The Boltz inference path executes device-agnostically on Apple Silicon, with 16
+CUDA dependencies removed and autocast and cache eviction dispatched by device.
+Target-side latent key-value caching reduces cached state from `2 × N × D` to
+`N × D_latent`, an 87.5% reduction at the operating point used here. The
+low-rank pair representation, the classifier-free-guidance student and the
+neural coordinate refiner are integrated and verified numerically against their
+dense references. A 99-test suite runs under continuous integration.
+
+**On the validation objective.** Objective 5 produced results that qualify two
+of the four engineering claims, and both qualifications are properties of the
+problem rather than of the implementation.
+
+First, **the low-rank pair representation is not reachable on pretrained
+weights** (Section 7.1). Three progressively stricter experiments converge on a
+held-out error of 0.378 at rank 32, where training and held-out error coincide —
+the signature of a model at capacity rather than one starved of data. The fitted
+scaling law places 10% error at rank ≈1,414, against the `c_hidden² = 1024`
+width that the stock implementation actually materialises. The low-rank form
+therefore costs more activation memory than the operator it replaces before it
+becomes accurate enough to substitute for it. The 1502× figure in Table 3
+remains valid as a scaling measurement for a network *trained* around the layer;
+it is not a drop-in saving.
+
+Second, **interface confidence does not rank peptide binders reliably**
+(Sections 7.2 to 7.5). On a PTM-clean panel of 22 receptors and 132 complexes,
+scrambled peptides score indistinguishably from cognates and significantly above
+genuine binders of other receptors (AUC 0.632, p = 0.0096). Since a scramble
+preserves composition and length and destroys only order, the discriminating
+variable is composition. Any order effect is bounded at 63% of the composition
+effect. A ridge regression on additive amino-acid composition independently
+outperformed the distilled neural surrogate (+0.103 against −0.034, z = 3.44),
+reaching the same conclusion from an unrelated direction.
+
+Third, and generalising beyond this project, **a single unseeded fold does not
+reproduce its own ranking** (Section 7.5). Pooled within-complex ipTM standard
+deviation is 0.0628. Across four identical re-runs, all four receptors tested
+changed the rank of their cognate, one moving from best to worst. Re-simulating
+the benchmark under that noise leaves the aggregate effect intact but reduces
+the headline significance verdict to a coin flip: p < 0.05 in 49% of re-runs.
+Ranking candidate binders from a single folding run is common practice, and at
+reduced sampling settings it is not reproducible.
+
+**Overall.** The efficiency techniques transfer as engineering. The accuracy
+claims that would have made them useful for screening do not survive
+measurement. Reporting this is the substantive contribution: each negative
+result is established with controls, held-out splits, power analysis and
+replication, and each redirects effort away from a direction that would not have
+worked.
+
+## 8.2 Recommendations
+
+1. **Report replicate-averaged confidence, never a single fold.** On this
+   evidence, 9 to 16 replicate folds per complex are required before a
+   per-receptor ranking is meaningful. Practitioners ranking binders on a single
+   AlphaFold or Boltz run should treat those rankings as provisional.
+2. **Always include a scramble control.** Composition and length alone reproduce
+   most of the apparent discrimination between a cognate and a decoy. Without a
+   composition-matched control, a benchmark cannot distinguish binder
+   recognition from composition sensitivity.
+3. **Screen benchmark panels for post-translational modifications.** Seven of 25
+   candidate complexes were PTM-dependent; folding the canonical sequence makes
+   those "positives" non-binding, which silently penalises the metric under test.
+4. **Do not treat operator-level memory savings as drop-in.** A substituted
+   operator should be validated against pretrained weights on real activations
+   before its microbenchmark saving is claimed.
+5. **Deploy on GPU before extending the biological claims.** The replicate
+   folding required by recommendation 1 is a 1,200–2,100 fold workload for this
+   panel, which is not a CPU-scale task.
+
+<div class="page-break"></div>
+
+
+<div class="page-break"></div>
+
+
+# 9. FUTURE PLAN
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -558,8 +857,8 @@ settings a single run does not reproduce its own ranking.
 | 4 | Edge Optimization & Integration | 11 Jun 2026 – 22 Jun 2026 | Integrate Low-Rank, CFG student, and Neural Refiner; resolve MPS dependencies | **COMPLETED** |
 | 5 | Reference & Surrogate Validation | 23 Jun 2026 – 31 Jul 2026 | Measure ipTM as a ranking reference against PDB complexes; distil and evaluate the surrogate; establish the low-rank OPM reachability result | **COMPLETED** |
 | 6 | Production GPU Scaling | 01 Aug 2026 – 20 Aug 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
-| 7 | Powered Specificity Run | 01 Aug 2026 – 02 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark (Section 6.4) | **COMPLETED** |
-| 8 | Measurement Reproducibility | 02 Aug 2026 – 02 Aug 2026 | Quantify ipTM run-to-run variance (Section 6.5) | **COMPLETED** |
+| 7 | Powered Specificity Run | 01 Aug 2026 – 02 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark (Section 7.4) | **COMPLETED** |
+| 8 | Measurement Reproducibility | 02 Aug 2026 – 02 Aug 2026 | Quantify ipTM run-to-run variance (Section 7.5) | **COMPLETED** |
 | 9 | Replicate-Averaged Rerun (GPU) | 03 Aug 2026 – 20 Aug 2026 | 9-16 replicate folds per complex; requires CUDA deployment | **PENDING** |
 | 10 | Final Thesis | 03 Aug 2026 – 28 Aug 2026 | Consolidate results and write the dissertation | **IN PROGRESS** |
 
@@ -567,12 +866,43 @@ settings a single run does not reproduce its own ranking.
 deferred in favour of validating the scoring reference, because the binder
 screen planned for phase 6 depends on it: a screen ranked by a signal that does
 not discriminate binders would produce candidates with no meaning regardless of
-how fast it ran. That validation (Section 6.2) showed the dependency does not
+how fast it ran. That validation (Section 7.2) showed the dependency does not
 hold, which is why the remaining plan prioritises the powered specificity run
 over the TNF-alpha screen. Scaling work remains valuable for throughput but no
 longer sits on the critical path to a defensible result.
 
-# 8. ABBREVIATIONS
+
+<div class="page-break"></div>
+
+# 10. REFERENCES
+
+1. Jumper, J., Evans, R., Pritzel, A. et al., "Highly Accurate Protein Structure Prediction with AlphaFold," *Nature*, Vol. 596, 2021, pp. 583–589.
+2. Evans, R., O'Neill, M., Pritzel, A. et al., "Protein Complex Prediction with AlphaFold-Multimer," *bioRxiv*, 2022.
+3. Abramson, J., Adler, J., Dunger, J. et al., "Accurate Structure Prediction of Biomolecular Interactions with AlphaFold 3," *Nature*, Vol. 630, 2024, pp. 493–500.
+4. Wohlwend, J., Corso, G., Passaro, S. et al., "Boltz-1: Democratizing Biomolecular Interaction Modeling," *bioRxiv*, 2024.
+5. Passaro, S., Corso, G., Wohlwend, J. et al., "Boltz-2: Towards Accurate and Efficient Binding Affinity Prediction," Technical Report, MIT, 2025.
+6. Hu, E. J., Shen, Y., Wallis, P. et al., "LoRA: Low-Rank Adaptation of Large Language Models," *International Conference on Learning Representations (ICLR)*, 2022.
+7. Leviathan, Y., Kalman, M., Matias, Y., "Fast Inference from Transformers via Speculative Decoding," *International Conference on Machine Learning (ICML)*, 2023.
+8. Ho, J., Salimans, T., "Classifier-Free Diffusion Guidance," *NeurIPS Workshop on Deep Generative Models and Downstream Applications*, 2021.
+9. Song, Y., Dhariwal, P., Chen, M., Sutskever, I., "Consistency Models," *International Conference on Machine Learning (ICML)*, 2023.
+10. DeepSeek-AI, "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model," *arXiv preprint*, 2024.
+11. Liu, H., Zaharia, M., Abbeel, P., "Ring Attention with Blockwise Transformers for Near-Infinite Context," *arXiv preprint*, 2023.
+12. Meng, Y., Xia, M., Chen, D., "SimPO: Simple Preference Optimization with a Reference-Free Reward," *Advances in Neural Information Processing Systems (NeurIPS)*, 2024.
+13. Rafailov, R., Sharma, A., Mitchell, E. et al., "Direct Preference Optimization: Your Language Model is Secretly a Reward Model," *Advances in Neural Information Processing Systems (NeurIPS)*, 2023.
+14. Kolda, T. G., Bader, B. W., "Tensor Decompositions and Applications," *SIAM Review*, Vol. 51, No. 3, 2009, pp. 455–500.
+15. Berman, H. M., Westbrook, J., Feng, Z. et al., "The Protein Data Bank," *Nucleic Acids Research*, Vol. 28, No. 1, 2000, pp. 235–242.
+16. Mirdita, M., Schütze, K., Moriwaki, Y. et al., "ColabFold: Making Protein Folding Accessible to All," *Nature Methods*, Vol. 19, 2022, pp. 679–682.
+17. Steinegger, M., Söding, J., "MMseqs2 Enables Sensitive Protein Sequence Searching for the Analysis of Massive Data Sets," *Nature Biotechnology*, Vol. 35, 2017, pp. 1026–1028.
+18. Zhang, Y., Skolnick, J., "Scoring Function for Automated Assessment of Protein Structure Template Quality," *Proteins: Structure, Function, and Bioinformatics*, Vol. 57, No. 4, 2004, pp. 702–710.
+19. Hinton, G., Vinyals, O., Dean, J., "Distilling the Knowledge in a Neural Network," *arXiv preprint*, 2015.
+20. Kussie, P. H., Gorina, S., Marechal, V. et al., "Structure of the MDM2 Oncoprotein Bound to the p53 Tumor Suppressor Transactivation Domain," *Science*, Vol. 274, No. 5289, 1996, pp. 948–953.
+21. Watson, J. L., Juergens, D., Bennett, N. R. et al., "De Novo Design of Protein Structure and Function with RFdiffusion," *Nature*, Vol. 620, 2023, pp. 1089–1100.
+22. Dauparas, J., Anishchenko, I., Bennett, N. et al., "Robust Deep Learning-Based Protein Sequence Design Using ProteinMPNN," *Science*, Vol. 378, No. 6615, 2022, pp. 49–56.
+
+<div class="page-break"></div>
+
+
+# APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -600,3 +930,84 @@ longer sits on the critical path to a defensible result.
 | AUC | Area Under the ROC Curve |
 | CI | Confidence Interval |
 | RCSB | Research Collaboratory for Structural Bioinformatics |
+
+
+<div class="page-break"></div>
+
+# APPENDIX B — REPRODUCTION OF THE REPORTED RESULTS
+
+Every measurement in Section 7 is reproducible from the accompanying
+repository. Each experiment writes a provenance manifest under `results/real/`
+recording the code revision, seed, device, inference settings, exact command and
+input checksums. Source code is not reproduced in this report; the commands
+below identify the entry points.
+
+| Result | Section | Command |
+| :--- | :---: | :--- |
+| Low-rank OPM, weight-space projection | 7.1 | `python src/opm_cp_projection.py` |
+| Low-rank OPM, activation capture | 7.1 | `python src/opm_corpus_capture.py --max-per-layer 66` |
+| Low-rank OPM, corpus distillation | 7.1 | `python src/opm_corpus_distill.py --ranks 32,64,128` |
+| PDB binder benchmark (Boltz-1) | 7.2 | `python src/pdb_binder_benchmark.py` |
+| Boltz-1 vs Boltz-2 comparison | 7.3 | `python src/compare_boltz1_boltz2.py` |
+| PTM audit of the panel | 7.3 | `python src/audit_panel_ptms.py` |
+| Panel construction screen | 7.4 | `python src/discover_pdb_binders.py --want 14` |
+| Powered 22-receptor run | 7.4 | `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22` |
+| Run-to-run variance study | 7.5 | `python src/seed_variance_study.py --replicates 4` |
+| Verification suite | 6 | `python -m pytest -q` |
+
+**Inference settings used throughout Section 7**, stated here so that no figure
+in this report is read as a production-setting result:
+
+| Setting | Value used | Boltz default |
+| :--- | :---: | :---: |
+| Sampling steps | 10 | 200 |
+| Recycling steps | 1 | 3 |
+| MSA depth | 32 | 8192 |
+| Accelerator | CPU | GPU |
+| Diffusion seed | unseeded | unseeded |
+
+
+<div class="page-break"></div>
+
+# CHECKLIST OF ITEMS FOR THE FINAL DISSERTATION / PROJECT / PROJECT WORK REPORT
+
+<table style="width:100%; border-collapse:collapse; font-size:8.6pt; line-height:1.25;">
+  <thead>
+    <tr style="background:#0B2B52; color:#fff;">
+      <th style="width:5%; padding:3px;">#</th>
+      <th style="text-align:left; padding:3px;">Item</th>
+      <th style="width:16%; padding:3px;">Yes / No</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style="text-align:center">1</td><td>Final report neatly formatted with all elements required for a technical report</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">2</td><td>Cover page in proper format as given in Annexure A</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">3</td><td>Title page (inner cover page) in proper format</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">4</td><td>(a) Certificate from the Supervisor in proper format &nbsp; (b) Signed by the Supervisor</td><td style="text-align:center">(a) Yes<br>(b) To be signed</td></tr>
+    <tr><td style="text-align:center">5</td><td>Abstract within one page &nbsp; / &nbsp; Technical keywords specified</td><td style="text-align:center">Yes / Yes</td></tr>
+    <tr><td style="text-align:center">6</td><td>Title appropriate, descriptive and precise; no uncommon abbreviations or acronyms</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">7</td><td>List of abbreviations / acronyms included</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">8</td><td>Report contains a summary of the literature survey</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">9</td><td>Contents include page numbers; pages numbered properly (Ch. 1 on page 1); figures numbered with captions at the bottom; tables numbered with titles at the top; captions proper; appendices numbered with appropriate titles</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">10</td><td>Conclusion based on discussion of the work</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">11</td><td>References given at the end; cited properly inside the text; all references cited in the body</td><td style="text-align:center">Yes</td></tr>
+    <tr><td style="text-align:center">12</td><td>Format and content per the guidelines; not a printout of a presentation or a user manual; source code not included</td><td style="text-align:center">Yes</td></tr>
+  </tbody>
+</table>
+
+<p style="font-size:9.5pt; margin-top:10px;"><b>Declaration by Student:</b>
+I certify that I have properly verified all the items in this checklist and
+ensure that the report is in proper format as specified in the course handout.</p>
+
+<div class="signature-block">
+    <div class="sig-col">
+        <div class="sig-field"><b>Place:</b> Bangalore</div>
+        <div class="sig-field"><b>Date:</b> _______________</div>
+    </div>
+    <div class="sig-col">
+        <div class="sig-line"></div>
+        <div class="sig-title">Signature of the Student</div>
+        <div class="sig-field"><b>Name:</b> Akik Jana</div>
+        <div class="sig-field"><b>ID No.:</b> 2024AB05287</div>
+    </div>
+</div>

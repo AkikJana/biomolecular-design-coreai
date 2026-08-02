@@ -171,12 +171,12 @@ graph TD
     <style>
         @page {{
             size: A4;
-            margin: 2.5cm;
-            @bottom-right {{
-                content: counter(page);
-                font-family: "Times New Roman", Times, serif;
-                font-size: 10pt;
-            }}
+            /* Bottom margin leaves room for the numbers stamped by
+               number_report_pages.py. The @bottom-right counter that used to
+               live here numbered continuously from the cover, which the WILP
+               guidelines do not allow -- front matter must be roman and
+               Chapter 1 must start at page 1. */
+            margin: 2.5cm 2.5cm 3cm 2.5cm;
         }}
         body {{
             font-family: "Times New Roman", Times, serif;
@@ -504,6 +504,11 @@ graph TD
         "--virtual-time-budget=30000",
         "--run-all-compositor-stages-before-draw",
         f"--print-to-pdf={pdf_path}",
+        # Chrome's own header/footer prints a date, the tab title and a
+        # continuous page number. The report needs roman front matter and
+        # arabic numbering restarting at Chapter 1, so numbering is stamped
+        # afterwards by number_pages() instead.
+        "--no-pdf-header-footer",
         temp_html_path
     ]
     
