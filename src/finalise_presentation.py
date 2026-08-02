@@ -1,0 +1,235 @@
+"""Turn the mid-semester deck into the final dissertation deck.
+
+Second pass, after update_presentation.py. It does three things:
+
+  1. re-labels the cover and every slide footer for the final report
+  2. inserts a "Results at a Glance" statistics slide
+  3. inserts the four measured figures, each directly after the slide that
+     states the finding in words
+
+Figures come from make_presentation_figures.py, which draws them from the
+results artifacts -- so a chart in the deck cannot drift away from the number in
+the report.
+
+Usage:
+    python src/make_presentation_figures.py
+    python src/finalise_presentation.py
+"""
+
+import argparse
+from pathlib import Path
+
+from pptx import Presentation
+from pptx.dml.color import RGBColor
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import PP_ALIGN
+from pptx.util import Inches, Pt
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+ASSETS = REPO_ROOT / "reports" / "assets"
+
+NAVY = RGBColor(0x0B, 0x2B, 0x52)
+BLUE = RGBColor(0x1E, 0x6F, 0xB8)
+TEAL = RGBColor(0x0E, 0x8F, 0x9A)
+GREEN = RGBColor(0x2E, 0x7D, 0x32)
+RED = RGBColor(0xC6, 0x28, 0x28)
+WARN_BG = RGBColor(0xFD, 0xF3, 0xE0)
+WARN_FG = RGBColor(0x8A, 0x52, 0x00)
+WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+FOOTER_GREY = RGBColor(0x55, 0x55, 0x55)
+
+OLD_FOOTER = "Boltz-Fast · Mid-Semester Review · Akik Jana (2024AB05287)"
+NEW_FOOTER = "Boltz-Fast · Final Dissertation Report · Akik Jana (2024AB05287)"
+
+
+def set_lines(shape, lines, size=16, color=NAVY, bold=False, align=None):
+    tf = shape.text_frame
+    tf.word_wrap = True
+    tf.clear()
+    for i, line in enumerate(lines):
+        para = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        if align is not None:
+            para.alignment = align
+        run = para.add_run()
+        run.text = line
+        run.font.size = Pt(size)
+        run.font.bold = bold
+        run.font.color.rgb = color
+        para.space_after = Pt(6)
+
+
+def add_chrome(slide, title):
+    bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0,
+                                 Inches(13.33), Inches(1.00))
+    bar.fill.solid(); bar.fill.fore_color.rgb = NAVY; bar.line.fill.background()
+    rule = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, Inches(1.00),
+                                  Inches(13.33), Inches(0.06))
+    rule.fill.solid(); rule.fill.fore_color.rgb = BLUE; rule.line.fill.background()
+    tb = slide.shapes.add_textbox(Inches(0.55), Inches(0.12),
+                                  Inches(12.20), Inches(0.85))
+    set_lines(tb, [title], size=26, color=WHITE, bold=True)
+    ft = slide.shapes.add_textbox(Inches(0.55), Inches(7.08),
+                                  Inches(9.00), Inches(0.30))
+    set_lines(ft, [NEW_FOOTER], size=9, color=FOOTER_GREY)
+    pn = slide.shapes.add_textbox(Inches(12.23), Inches(7.08),
+                                  Inches(0.70), Inches(0.30))
+    set_lines(pn, ["0"], size=10, color=FOOTER_GREY)
+
+
+def blank_slide(prs):
+    layout = next((lo for lo in prs.slide_layouts if lo.name == "Blank"),
+                  prs.slide_layouts[-1])
+    return prs.slides.add_slide(layout)
+
+
+def move_slide(prs, from_idx, to_idx):
+    lst = prs.slides._sldIdLst
+    ids = list(lst)
+    lst.remove(ids[from_idx])
+    lst.insert(to_idx, ids[from_idx])
+
+
+def figure_slide(prs, title, image, caption):
+    """A full-bleed chart with one line of interpretation under it."""
+    s = blank_slide(prs)
+    add_chrome(s, title)
+    path = ASSETS / image
+    if not path.exists():
+        raise SystemExit(f"missing figure {path}; run make_presentation_figures.py")
+    # 7.4x4.0in figures -> scale to 9.6in wide, centred
+    s.shapes.add_picture(str(path), Inches(1.85), Inches(1.32), width=Inches(9.6))
+    box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.60),
+                             Inches(6.05), Inches(12.20), Inches(0.85))
+    box.fill.solid(); box.fill.fore_color.rgb = WARN_BG; box.line.fill.background()
+    set_lines(box, [caption], size=12.5, color=WARN_FG)
+    return s
+
+
+def stat_card(slide, left, top, width, big, caption, fill):
+    card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(left),
+                                  Inches(top), Inches(width), Inches(1.55))
+    card.fill.solid(); card.fill.fore_color.rgb = fill; card.line.fill.background()
+    tf = card.text_frame; tf.word_wrap = True; tf.clear()
+    p0 = tf.paragraphs[0]; p0.alignment = PP_ALIGN.CENTER
+    r0 = p0.add_run(); r0.text = big
+    r0.font.size = Pt(21); r0.font.bold = True; r0.font.color.rgb = WHITE
+    p1 = tf.add_paragraph(); p1.alignment = PP_ALIGN.CENTER
+    r1 = p1.add_run(); r1.text = caption
+    r1.font.size = Pt(10); r1.font.color.rgb = WHITE
+
+
+def slide_at_a_glance(prs):
+    s = blank_slide(prs)
+    add_chrome(s, "Results at a Glance")
+    row1 = [("99 / 100%", "tests passing\nunder pytest in CI", GREEN),
+            ("87.5%", "MLA KV-cache\nreduction (measured)", BLUE),
+            ("1502×", "activation saving\n(trained low-rank only)", BLUE),
+            ("264", "activations captured\nfor OPM distillation", TEAL)]
+    row2 = [("0.378", "OPM held-out error\nat rank 32 (at capacity)", RED),
+            ("22 / 132", "receptors / complexes\nPTM-clean panel", TEAL),
+            ("0.0628", "ipTM run-to-run SD\n(24 × 4 replicates)", RED),
+            ("49%", "of re-runs reproduce\nthe headline p < 0.05", RED)]
+    for i, (big, cap, col) in enumerate(row1):
+        stat_card(s, 0.60 + i * 3.10, 1.35, 2.90, big, cap, col)
+    for i, (big, cap, col) in enumerate(row2):
+        stat_card(s, 0.60 + i * 3.10, 3.10, 2.90, big, cap, col)
+
+    tb = s.shapes.add_textbox(Inches(0.60), Inches(4.90), Inches(12.20), Inches(1.10))
+    set_lines(tb, [
+        "Top row — engineering delivered.  Bottom row — measurement outcomes, "
+        "which are what redirected the project:",
+        "the low-rank OPM is unreachable on pretrained weights, and ipTM does not "
+        "rank binders reproducibly enough to screen with.",
+    ], size=14)
+    box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.60),
+                             Inches(6.05), Inches(12.20), Inches(0.85))
+    box.fill.solid(); box.fill.fore_color.rgb = WARN_BG; box.line.fill.background()
+    set_lines(box, [
+        "⚠  Settings throughout are far below Boltz defaults — 10 sampling steps "
+        "vs 200, 1 recycling vs 3, MSA depth 32 vs 8192. The settings confound is "
+        "stated, not resolved.",
+    ], size=12.5, color=WARN_FG)
+    return s
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--in", dest="src",
+                    default=str(REPO_ROOT / "mid_semester_presentation.pptx"))
+    ap.add_argument("--out", dest="dst",
+                    default=str(REPO_ROOT / "final_dissertation_presentation.pptx"))
+    args = ap.parse_args()
+
+    prs = Presentation(args.src)
+    if len(prs.slides) != 16:
+        raise SystemExit(f"expected the 16-slide deck from update_presentation.py, "
+                         f"got {len(prs.slides)}")
+
+    # -- cover ---------------------------------------------------------------
+    cover = prs.slides[0]
+    for sh in cover.shapes:
+        if sh.has_text_frame and "Mid-Semester Review" in sh.text_frame.text:
+            set_lines(sh, ["BITS ZG628T Dissertation — Final Report"],
+                      size=16, color=RGBColor(0xCF, 0xE0, 0xF0))
+            for extra, sz, bold, col in (
+                    ("Akik Jana  (2024AB05287)", 15, True, WHITE),
+                    ("Supervisor: Dr. Arnab Bandyopadhyay · Dr. Reddy's Laboratories",
+                     12.5, False, RGBColor(0xCF, 0xE0, 0xF0)),
+                    ("M.Tech. (AI & ML) · BITS Pilani · August 2026",
+                     12.5, False, RGBColor(0xCF, 0xE0, 0xF0))):
+                para = sh.text_frame.add_paragraph()
+                run = para.add_run(); run.text = extra
+                run.font.size = Pt(sz); run.font.bold = bold
+                run.font.color.rgb = col
+                para.space_after = Pt(6)
+
+    # -- footers -------------------------------------------------------------
+    for slide in prs.slides:
+        for sh in slide.shapes:
+            if sh.has_text_frame and OLD_FOOTER in sh.text_frame.text:
+                set_lines(sh, [NEW_FOOTER], size=9, color=FOOTER_GREY)
+
+    # -- new slides, appended then moved into place --------------------------
+    slide_at_a_glance(prs)                                              # -> 11
+    figure_slide(prs, "Low-Rank OPM — Rank vs Fidelity", "fig_opm_rank.png",
+                 "Fitted on held-out points from the 33-fold corpus. Reaching 10% "
+                 "error needs rank ≈1,414 (layer_0) and ≈9,750 (layer_1) — both "
+                 "beyond the width stock actually materialises.")        # -> 13
+    figure_slide(prs, "ipTM by Class — the Scramble Control",
+                 "fig_iptm_classes.png",
+                 "Scrambles sit level with cognates and above decoys. Composition "
+                 "is shared with the scramble; order is not — so the separation "
+                 "from decoys is compositional.")                        # -> 15
+    figure_slide(prs, "Rank Stability Across Identical Re-Runs",
+                 "fig_rank_stability.png",
+                 "Four receptors, four identical re-runs each. Every one changes "
+                 "rank; 6YOO moves from best to worst. Per-receptor rankings are "
+                 "not a property of the receptor.")                      # -> 17
+    figure_slide(prs, "Would the Headline Survive a Re-Run?",
+                 "fig_pvalue_repro.png",
+                 "Parametric bootstrap over the measured noise, 4,000 replications. "
+                 "The effect direction is robust; the significance verdict is a "
+                 "coin flip.")                                           # -> 18
+
+    n = len(prs.slides)
+    # appended in order: glance, opm, iptm, rank, pval  (indices n-5 .. n-1)
+    for src_idx, dst_idx in ((n - 5, 11),    # glance  -> after Key Insight
+                             (n - 4, 13),    # opm fig -> after OPM text
+                             (n - 3, 15),    # iptm fig-> after ipTM text
+                             (n - 2, 17),    # rank fig-> after repro text
+                             (n - 1, 18)):   # pval fig
+        move_slide(prs, src_idx, dst_idx)
+
+    # -- renumber ------------------------------------------------------------
+    for i, slide in enumerate(prs.slides, start=1):
+        for sh in slide.shapes:
+            if (sh.has_text_frame and sh.left and sh.left > Inches(12)
+                    and sh.top and sh.top > Inches(7)):
+                set_lines(sh, [str(i - 1)], size=10, color=FOOTER_GREY)
+
+    prs.save(args.dst)
+    print(f"wrote {args.dst}  ({len(prs.slides)} slides)")
+
+
+if __name__ == "__main__":
+    main()
