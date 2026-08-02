@@ -197,9 +197,48 @@ def fig_pvalue_repro():
     return "fig_pvalue_repro.png"
 
 
+def fig_metric_comparison():
+    """Why interface pLDDT works where ipTM does not."""
+    d = _need(REPO_ROOT / "artifacts" / "rescore_metrics.json")["per_complex"]
+    fig, axes = plt.subplots(1, 2, figsize=(7.4, 3.9))
+    panels = [("iptm", "ipTM", "cognate = scramble\np = 0.42", axes[0]),
+              ("iface_plddt", "interface pLDDT",
+               "cognate > scramble\np < 0.0001", axes[1])]
+    groups = [("cognate", TEAL), ("scrambled", RED), ("decoy", GREEN)]
+
+    for key, title, verdict, ax in panels:
+        data = [np.array([r[key] for r in d if r["label"] == g]) for g, _ in groups]
+        bp = ax.boxplot(data, widths=0.55, patch_artist=True, showfliers=False,
+                        medianprops=dict(color="white", lw=1.6))
+        for patch, (_, c) in zip(bp["boxes"], groups):
+            patch.set_facecolor(c); patch.set_alpha(0.85); patch.set_edgecolor("none")
+        ax.set_xticks([1, 2, 3])
+        ax.set_xticklabels(["cognate", "SCRAM", "decoy"], fontsize=9)
+        ax.set_title(title, fontsize=12)
+        ax.grid(axis="y", alpha=0.25, lw=0.5)
+        # bracket between cognate and its scramble -- the decisive comparison
+        top = max(np.percentile(data[0], 95), np.percentile(data[1], 95))
+        span = (max(np.max(data[0]), np.max(data[1]))
+                - min(np.min(data[0]), np.min(data[1])))
+        y = top + span * 0.10
+        ax.plot([1, 1, 2, 2], [y, y + span * 0.04, y + span * 0.04, y],
+                color=NAVY, lw=1.2)
+        ax.text(1.5, y + span * 0.07, verdict, ha="center", va="bottom",
+                fontsize=8.5, color=NAVY, fontweight="bold")
+        ax.set_ylim(min(np.min(data[0]), np.min(data[1]), np.min(data[2]))
+                    - span * 0.05, y + span * 0.30)
+    axes[0].set_ylabel("score")
+    fig.suptitle("Only interface pLDDT separates a binder from its own scramble",
+                 fontsize=12.5, fontweight="bold", y=0.99)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(OUT / "fig_metric_comparison.png"); plt.close(fig)
+    return "fig_metric_comparison.png"
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    for fn in (fig_opm_rank, fig_iptm_classes, fig_rank_stability, fig_pvalue_repro):
+    for fn in (fig_opm_rank, fig_iptm_classes, fig_rank_stability,
+               fig_pvalue_repro, fig_metric_comparison):
         print(f"  wrote {OUT / fn()}")
 
 

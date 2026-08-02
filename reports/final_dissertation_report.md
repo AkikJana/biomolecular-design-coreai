@@ -121,9 +121,11 @@ determined structures rather than synthetic tensors, and two central claims did
 not survive. The low-rank pair representation cannot be recovered from released
 weights at any rank that saves memory. Interface confidence responds largely to
 peptide composition rather than to binding, and a single unseeded fold does not
-reproduce its own ranking. Each negative result is supported by controls,
-held-out splits, power analysis and replication. The engineering contributions
-stand; the accompanying accuracy claims are bounded and stated.
+reproduce its own ranking. Each negative result is supported by controls, held-out splits, power analysis
+and replication. Re-scoring the same structures then recovered a positive
+result: interface pLDDT separates a binder from its own scramble where ipTM
+cannot, at 8.6 times the effect-to-noise ratio, yielding a concrete
+recommendation for how such candidates should be ranked.
 
 &nbsp;
 
@@ -172,14 +174,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 17  
 &nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding ....................... 18  
 &nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 21  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 21  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 22  
-9. FUTURE PLAN .............................................................. 24  
-10. REFERENCES .............................................................. 27  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 29  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 31  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 33  
+&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Ranks Binders Where ipTM Does Not ....................... 21  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 23  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 23  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 24  
+9. FUTURE PLAN .............................................................. 26  
+10. REFERENCES .............................................................. 29  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 31  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 33  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 35  
 
 &nbsp;
 
@@ -190,6 +193,7 @@ Figure 2: C-alpha Backbone 3D Coordinate Plot ............................... 10
 Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 11  
 Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 12  
 Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 15  
+Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 22  
 
 &nbsp;
 
@@ -772,6 +776,70 @@ settings a single run does not reproduce its own ranking.
 <div class="page-break"></div>
 
 
+### 7.6 Interface pLDDT Ranks Binders Where ipTM Does Not
+
+Sections 7.2 to 7.5 indict **ipTM**, not the predicted structures — 132 of which
+remained on disk. Re-scoring them with other interface measures required no
+further folding, and changes the practical conclusion of this dissertation.
+
+Six measures were computed from the same complexes and put through the identical
+tests. Contacts use a 8 Å CB–CB criterion (CA for glycine); pDockQ follows
+Bryant et al.; buried area is Shrake–Rupley.
+
+| Metric | cognate | scrambled | decoy | cognate vs own scramble | mean rank | chance |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ipTM | 0.502 | 0.489 | 0.432 | p = 0.416 | 2.00 | 2.50 |
+| pDockQ | 0.474 | 0.466 | 0.404 | p = 0.797 | 2.14 | 2.50 |
+| **Interface pLDDT** | **49.60** | **46.31** | **45.93** | **p < 0.0001** | **1.91** | 2.50 |
+| Inter-chain contacts | 32.9 | 38.5 | 34.0 | p = 0.054 | 2.55 | 2.50 |
+| Contact density | 3.24 | 3.69 | 3.62 | p = 0.122 | 2.55 | 2.50 |
+| Buried surface area | 1800 | 1861 | 1632 | p = 0.454 | 2.27 | 2.50 |
+
+The decisive column is the comparison against a cognate's **own** scramble,
+which fixes composition and length and destroys only order. **Only interface
+pLDDT passes it.**
+
+The behaviour of pDockQ is instructive rather than incidental. It multiplies
+interface pLDDT by a contact term, and the contact term runs the wrong way in
+this regime: scrambled peptides make *more* inter-chain contacts than cognates
+(38.5 against 32.9). Combining the two cancels the signal that interface pLDDT
+carries on its own.
+
+**The result survives the reproducibility test that demoted ipTM.** The 96
+replicate folds of Section 7.5 were re-scored the same way to obtain a
+run-to-run standard deviation for each new measure:
+
+| Metric | effect on the scramble control | run-to-run SD | effect / noise |
+| :--- | ---: | ---: | ---: |
+| ipTM | +0.0128 | 0.0628 | 0.20x |
+| pDockQ | +0.008 | 0.1498 | 0.05x |
+| **Interface pLDDT** | **+3.30** | **1.917** | **1.72x** |
+
+Interface pLDDT therefore carries roughly **8.6 times** the effect-to-noise ratio
+of ipTM on the test that matters. Simulating the full benchmark under the
+measured noise gives a cognate-minus-scramble effect of **+3.30 pLDDT, 95% CI
+[+2.13, +4.47]** that reproduces at p < 0.05 in **100%** of re-runs, and a
+within-receptor rank of 1.91 (95% CI [1.64, 2.14]) reproducing in **84%** —
+against 49% for ipTM.
+
+![Only interface pLDDT separates a binder from its own scramble](assets/fig_metric_comparison.png)
+
+#### Figure 6: ipTM and Interface pLDDT on the Scramble Control
+
+**What is and is not established.** Order sensitivity is established: interface
+pLDDT distinguishes a peptide from its own scramble at full reproducibility, and
+clears a Bonferroni correction for the six measures tested (α = 0.0083).
+Receptor specificity is suggestive but not established: the within-receptor rank
+test gives p = 0.027, which does not clear that threshold, although it
+reproduces in 84% of simulated re-runs. More receptors would settle it.
+
+Interface pLDDT is read from the same confidence head as ipTM, so this is a
+better *readout* of one model rather than an independent second opinion. The
+practical implication is unchanged: the information required to rank these
+binders is present in the prediction, and ipTM discards it.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -819,30 +887,40 @@ the headline significance verdict to a coin flip: p < 0.05 in 49% of re-runs.
 Ranking candidate binders from a single folding run is common practice, and at
 reduced sampling settings it is not reproducible.
 
-**Overall.** The efficiency techniques transfer as engineering. The accuracy
-claims that would have made them useful for screening do not survive
-measurement. Reporting this is the substantive contribution: each negative
+Fourth, and positively, **the information ipTM discards is recoverable**
+(Section 7.6). Re-scoring the same structures shows interface pLDDT
+distinguishes a cognate from its own scramble (p < 0.0001, reproducing in 100%
+of simulated re-runs) at 8.6 times ipTM's effect-to-noise ratio. The failure is
+specific to ipTM as a readout, not general to the prediction.
+
+**Overall.** The efficiency techniques transfer as engineering. The ipTM-based
+accuracy claims do not survive measurement — but the structures do carry a
+usable signal once read correctly. Reporting this is the substantive contribution: each negative
 result is established with controls, held-out splits, power analysis and
 replication, and each redirects effort away from a direction that would not have
 worked.
 
 ## 8.2 Recommendations
 
-1. **Report replicate-averaged confidence, never a single fold.** On this
+1. **Rank on interface pLDDT, not ipTM — and not on pDockQ for short
+   peptides.** This is the one recommendation here that improves a result rather
+   than qualifying it. pDockQ actively cancels the signal in this regime,
+   because its contact term favours scrambled peptides.
+2. **Report replicate-averaged confidence, never a single fold.** On this
    evidence, 9 to 16 replicate folds per complex are required before a
    per-receptor ranking is meaningful. Practitioners ranking binders on a single
    AlphaFold or Boltz run should treat those rankings as provisional.
-2. **Always include a scramble control.** Composition and length alone reproduce
+3. **Always include a scramble control.** Composition and length alone reproduce
    most of the apparent discrimination between a cognate and a decoy. Without a
    composition-matched control, a benchmark cannot distinguish binder
    recognition from composition sensitivity.
-3. **Screen benchmark panels for post-translational modifications.** Seven of 25
+4. **Screen benchmark panels for post-translational modifications.** Seven of 25
    candidate complexes were PTM-dependent; folding the canonical sequence makes
    those "positives" non-binding, which silently penalises the metric under test.
-4. **Do not treat operator-level memory savings as drop-in.** A substituted
+5. **Do not treat operator-level memory savings as drop-in.** A substituted
    operator should be validated against pretrained weights on real activations
    before its microbenchmark saving is claimed.
-5. **Deploy on GPU before extending the biological claims.** The replicate
+6. **Deploy on GPU before extending the biological claims.** The replicate
    folding required by recommendation 1 is a 1,200–2,100 fold workload for this
    panel, which is not a CPU-scale task.
 

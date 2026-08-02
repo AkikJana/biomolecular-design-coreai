@@ -105,6 +105,26 @@ def figure_slide(prs, title, image, caption):
     return s
 
 
+def add_callout(slide, top, text, fill=NAVY, size=17, height=1.05):
+    box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.60),
+                                 Inches(top), Inches(12.20), Inches(height))
+    box.fill.solid(); box.fill.fore_color.rgb = fill; box.line.fill.background()
+    set_lines(box, [text], size=size, color=WHITE, bold=True)
+    return box
+
+
+def add_note(slide, top, text):
+    box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.60),
+                                 Inches(top), Inches(12.20), Inches(0.95))
+    box.fill.solid(); box.fill.fore_color.rgb = WARN_BG; box.line.fill.background()
+    set_lines(box, [text], size=12.5, color=WARN_FG)
+
+
+def find_or_add_body(slide, top):
+    return slide.shapes.add_textbox(Inches(0.60), Inches(top),
+                                    Inches(12.20), Inches(3.20))
+
+
 def stat_card(slide, left, top, width, big, caption, fill):
     card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(left),
                                   Inches(top), Inches(width), Inches(1.55))
@@ -124,7 +144,7 @@ def slide_at_a_glance(prs):
     row1 = [("99 / 100%", "tests passing\nunder pytest in CI", GREEN),
             ("87.5%", "MLA KV-cache\nreduction (measured)", BLUE),
             ("1502×", "activation saving\n(trained low-rank only)", BLUE),
-            ("264", "activations captured\nfor OPM distillation", TEAL)]
+            ("8.6×", "interface pLDDT vs ipTM\neffect-to-noise", GREEN)]
     row2 = [("0.378", "OPM held-out error\nat rank 32 (at capacity)", RED),
             ("22 / 132", "receptors / complexes\nPTM-clean panel", TEAL),
             ("0.0628", "ipTM run-to-run SD\n(24 × 4 replicates)", RED),
@@ -139,7 +159,7 @@ def slide_at_a_glance(prs):
         "Top row — engineering delivered.  Bottom row — measurement outcomes, "
         "which are what redirected the project:",
         "the low-rank OPM is unreachable on pretrained weights, and ipTM does not "
-        "rank binders reproducibly enough to screen with.",
+        "rank binders reproducibly — but interface pLDDT does (slides 19–20).",
     ], size=14)
     box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.60),
                              Inches(6.05), Inches(12.20), Inches(0.85))
@@ -149,6 +169,32 @@ def slide_at_a_glance(prs):
         "vs 200, 1 recycling vs 3, MSA depth 32 vs 8192. The settings confound is "
         "stated, not resolved.",
     ], size=12.5, color=WARN_FG)
+    return s
+
+
+def slide_rescore(prs):
+    s = blank_slide(prs)
+    add_chrome(s, "Measured — What ipTM Discards Is Recoverable")
+    add_callout(s, 1.35, "The negative was about ipTM, not about the structures. "
+                         "132 folds were still on disk — re-scoring them cost no "
+                         "compute at all.", height=0.95)
+    set_lines(find_or_add_body(s, 2.45), [
+        "Six interface measures, same complexes, same tests. Only one beats a "
+        "cognate's OWN scramble — the test that fixes composition and destroys "
+        "only order:",
+        "•  ipTM  p = 0.42        •  pDockQ  p = 0.80        •  contacts / density "
+        "/ buried SASA  p = 0.05–0.45",
+        "•  INTERFACE pLDDT  p < 0.0001    rank 1.91 of 4 (chance 2.50)",
+        "",
+        "It also survives the reproducibility test that demoted ipTM: effect "
+        "+3.30 against run-to-run SD 1.92 = 1.72× noise, where ipTM managed "
+        "0.20× — an 8.6× better ratio. Reproduces at p < 0.05 in 100% of re-runs.",
+    ], size=14.5)
+    add_note(s, 5.95,
+             "⚠  pDockQ multiplies interface pLDDT by a contact term — and contacts "
+             "run the WRONG way here (scrambles make more: 38.5 vs 32.9), cancelling "
+             "the signal. Order-sensitivity is established; receptor-specificity "
+             "(p = 0.027) is not yet.")
     return s
 
 
@@ -244,14 +290,22 @@ def main():
                  "Parametric bootstrap over the measured noise, 4,000 replications. "
                  "The effect direction is robust; the significance verdict is a "
                  "coin flip.")                                           # -> 18
+    slide_rescore(prs)                                                   # -> 19
+    figure_slide(prs, "ipTM vs Interface pLDDT — the Scramble Control",
+                 "fig_metric_comparison.png",
+                 "Same structures, two readouts. ipTM cannot separate a cognate "
+                 "from its own scramble; interface pLDDT can. The information is "
+                 "in the prediction — ipTM discards it.")                # -> 20
 
     n = len(prs.slides)
-    # appended in order: glance, opm, iptm, rank, pval  (indices n-5 .. n-1)
-    for src_idx, dst_idx in ((n - 5, 11),    # glance  -> after Key Insight
-                             (n - 4, 13),    # opm fig -> after OPM text
-                             (n - 3, 15),    # iptm fig-> after ipTM text
-                             (n - 2, 17),    # rank fig-> after repro text
-                             (n - 1, 18)):   # pval fig
+    # appended in order: glance, opm, iptm, rank, pval, rescore, rescore-fig
+    for src_idx, dst_idx in ((n - 7, 11),    # glance   -> after Key Insight
+                             (n - 6, 13),    # opm fig  -> after OPM text
+                             (n - 5, 15),    # iptm fig -> after ipTM text
+                             (n - 4, 17),    # rank fig -> after repro text
+                             (n - 3, 18),    # pval fig
+                             (n - 2, 19),    # rescore text
+                             (n - 1, 20)):   # rescore figure
         move_slide(prs, src_idx, dst_idx)
 
     # -- renumber ------------------------------------------------------------
