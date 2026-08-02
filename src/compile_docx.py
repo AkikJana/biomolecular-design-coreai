@@ -763,7 +763,7 @@ def create_docx(md_path: str, docx_path: str):
     print(f"[DOCX] Successfully generated DOCX report at: {docx_path}")
 
 if __name__ == "__main__":
-    md_file = str(REPO_ROOT / "reports" / "mid_semester_report.md")
-    docx_file = str(REPO_ROOT / "mid_semester_report.docx")
+    md_file = str(REPO_ROOT / "reports" / "final_dissertation_report.md")
+    docx_file = str(REPO_ROOT / "final_dissertation_report.docx")
     
     create_docx(md_file, docx_file)

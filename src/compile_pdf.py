@@ -482,7 +482,7 @@ graph TD
 """
     
     # Save the styled HTML to a temporary file
-    temp_html_path = "/tmp/mid_semester_report.html"
+    temp_html_path = "/tmp/final_dissertation_report.html"
     with open(temp_html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
         
@@ -514,7 +514,7 @@ graph TD
     print(f"[PDF] Successfully generated PDF at: {pdf_path}")
 
 if __name__ == "__main__":
-    md_file = str(REPO_ROOT / "reports" / "mid_semester_report.md")
-    pdf_file = str(REPO_ROOT / "mid_semester_report.pdf")
+    md_file = str(REPO_ROOT / "reports" / "final_dissertation_report.md")
+    pdf_file = str(REPO_ROOT / "final_dissertation_report.pdf")
     
     convert_md_to_pdf(md_file, pdf_file)
