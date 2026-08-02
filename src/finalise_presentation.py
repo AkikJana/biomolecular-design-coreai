@@ -189,6 +189,40 @@ def main():
             if sh.has_text_frame and OLD_FOOTER in sh.text_frame.text:
                 set_lines(sh, [NEW_FOOTER], size=9, color=FOOTER_GREY)
 
+    # -- reconcile slides written before the measurement phase ---------------
+    #
+    # Slides 2, 9, 10 and 11 predate Sections 7.1-7.5 and assert things the
+    # later slides contradict: an untested screening objective, an affinity
+    # surrogate described as "not yet trained" when it was trained and failed,
+    # and a "next step" that measurement has since displaced. Cross-references
+    # are also stale -- they were written when the deck was 16 slides, and
+    # inserting five shifted every target.
+    text_fixes = {
+        "(see slide 11)": "(see slide 12)",
+        "(slides 12–13)": "(slides 14–18)",
+        "(slides 11–13)": "(slides 11–18)",
+        "Accelerating the full Boltz-2 model is the next objective.":
+            "Track A was then tested end-to-end: the ipTM reference does not "
+            "rank binders, so the screening objective is not reachable through "
+            "it (slides 14–18).",
+        "Affinity surrogate head":
+            "Affinity surrogate head (since distilled — negative, slide 14)",
+        "Therefore the high-value next step is sampler distillation on the "
+        "full model — not more weight tricks.":
+            "Sampler distillation remains the route to minutes → seconds. "
+            "Measurement has since put replicate-averaged folding on GPU ahead "
+            "of it in priority (slide 18).",
+    }
+    for slide in prs.slides:
+        for sh in slide.shapes:
+            if not sh.has_text_frame:
+                continue
+            for para in sh.text_frame.paragraphs:
+                for run in para.runs:
+                    for a, b in text_fixes.items():
+                        if a in run.text:
+                            run.text = run.text.replace(a, b)
+
     # -- new slides, appended then moved into place --------------------------
     slide_at_a_glance(prs)                                              # -> 11
     figure_slide(prs, "Low-Rank OPM — Rank vs Fidelity", "fig_opm_rank.png",
