@@ -218,7 +218,7 @@ def create_docx(md_path: str, docx_path: str):
     p_sub = doc.add_paragraph()
     p_sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_sub.paragraph_format.space_after = Pt(24)
-    run_sub = p_sub.add_run("BITS ZG628T: Dissertation")
+    run_sub = p_sub.add_run("BITS ZG628T: Dissertation — Final Report")
     run_sub.font.name = 'Times New Roman'
     run_sub.font.size = Pt(12)
     run_sub.bold = True
@@ -325,7 +325,7 @@ def create_docx(md_path: str, docx_path: str):
     
     p_date = doc.add_paragraph()
     p_date.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_date = p_date.add_run("June 2026")
+    run_date = p_date.add_run("August 2026")
     run_date.font.name = 'Times New Roman'
     run_date.font.size = Pt(11)
     

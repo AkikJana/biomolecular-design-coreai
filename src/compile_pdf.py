@@ -84,7 +84,7 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     cover_page_html = f"""
     <div class="cover-page">
         <div class="cover-title">EFFICIENCY-OPTIMIZED GENERATIVE PARADIGMS FOR LARGE-SCALE BIOMOLECULAR DESIGN</div>
-        <div class="cover-subtitle">BITS ZG628T: Dissertation</div>
+        <div class="cover-subtitle">BITS ZG628T: Dissertation — Final Report</div>
         <div class="cover-by">by</div>
         <div class="cover-author">Akik Jana</div>
         <div class="cover-id">(2024AB05287)</div>
@@ -102,7 +102,7 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
         
         <div class="cover-institute">BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE</div>
         <div class="cover-location">PILANI (RAJASTHAN)</div>
-        <div class="cover-date">June 2026</div>
+        <div class="cover-date">August 2026</div>
     </div>
     <div class="page-break"></div>
     """
@@ -166,7 +166,7 @@ graph TD
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>M.Tech Dissertation Progress Report</title>
+    <title>M.Tech Final Dissertation Report</title>
     {MATHJAX_HEAD}
     <style>
         @page {{

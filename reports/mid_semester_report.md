@@ -1,5 +1,5 @@
 # BITS PILANI — WORK INTEGRATED LEARNING PROGRAMMES (WILP)
-## M. Tech. Mid-Semester Dissertation Progress Report
+## M. Tech. Final Dissertation Report
 **Academic Year: 2025-2026 | Second Semester**
 
 ---
@@ -43,14 +43,14 @@ mock tensors.
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Student</div>
         <div class="sig-field"><b>Name:</b> Akik Jana</div>
-        <div class="sig-field"><b>Date:</b> June 22, 2026</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
         <div class="sig-field"><b>Place:</b> Bangalore</div>
     </div>
     <div class="sig-col">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Supervisor</div>
         <div class="sig-field"><b>Name:</b> Dr. Arnab Bandyopadhyay</div>
-        <div class="sig-field"><b>Date:</b> June 22, 2026</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
         <div class="sig-field"><b>Place:</b> Hyderabad</div>
     </div>
 </div>
