@@ -405,6 +405,41 @@ Full write-up: [`results/real/seed_variance_20260802.report.md`](results/real/se
 Reproduce: `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22`
 then `python src/seed_variance_study.py --replicates 4`
 
+### Interface pLDDT ranks binders where ipTM does not
+
+The negative above is about **ipTM**, not about the predicted structures — 132 of
+which were still on disk. Re-scoring them with other interface measures cost no
+folding at all, and one metric passes the test ipTM fails.
+
+| metric | cognate vs **own scramble** | rank | chance | effect / run-to-run noise |
+| :--- | ---: | ---: | ---: | ---: |
+| ipTM | p = 0.416 | 2.00 | 2.50 | 0.20x |
+| pDockQ | p = 0.797 | 2.14 | 2.50 | 0.05x |
+| **interface pLDDT** | **p < 0.0001** | **1.91** | 2.50 | **1.72x** |
+| contacts / density / buried SASA | p = 0.05–0.45 | 2.3–2.6 | 2.50 | — |
+
+A scramble fixes composition and length and destroys only order, so beating it is
+the property a screening reference needs. **Only interface pLDDT does**, with
+~8.6x ipTM's effect-to-noise ratio, and it reproduces at p < 0.05 in **100%** of
+simulated re-runs (ipTM's headline: 49%).
+
+Note pDockQ: it multiplies interface pLDDT by a contact term, and contacts run
+the *wrong* way here — scrambles make **more** of them (38.5 vs 32.9). Combining
+the two cancels the signal.
+
+Order-sensitivity is established and clears Bonferroni over the six metrics
+tested. Receptor-specificity (rank p = 0.027) does not clear it, and needs more
+receptors. Interface pLDDT is read from the same confidence head as ipTM, so this
+is a better readout of one model rather than an independent one — but the
+information is demonstrably there, and ipTM discards it.
+
+**Practical recommendation: rank on interface pLDDT, not ipTM, and not on pDockQ
+for short peptides.**
+
+Full write-up: [`results/real/rescore_interface_metrics_20260802.report.md`](results/real/rescore_interface_metrics_20260802.report.md)
+
+Reproduce: `python src/rescore_interface_metrics.py`
+
 ### The low-rank OPM is not reachable on pretrained weights
 
 The low-rank OuterProductMean saves ~97% of the activation memory the stock layer

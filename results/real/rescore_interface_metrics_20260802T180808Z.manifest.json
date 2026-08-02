@@ -1,0 +1,108 @@
+{
+  "run_id": "rescore_interface_metrics_20260802T180808Z",
+  "experiment": "alternative_interface_metrics_on_existing_folds",
+  "timestamp_utc": "20260802T180808Z",
+  "code_sha": "07b83e09ffaf7cc88423c346d88d2969f59fa9ed",
+  "inputs": "the 132 Boltz-2 folds of the 22-receptor PTM-clean panel; no new folding",
+  "hardware": "arm64",
+  "python": "3.13.5",
+  "command": "python src/rescore_interface_metrics.py",
+  "run_to_run_sd": {
+    "iface_plddt": 1.9172,
+    "pdockq": 0.1498,
+    "n_contacts": 12.6466,
+    "source": "recomputed from the 96 replicate folds of the seed-variance study"
+  },
+  "reproducibility_simulation": {
+    "iface_plddt_scramble_control_p_lt_0.05_fraction": 1.0,
+    "iface_plddt_rank_p_lt_0.05_fraction": 0.84,
+    "iptm_rank_p_lt_0.05_fraction": 0.49,
+    "iface_plddt_mean_rank_ci95": [
+      1.64,
+      2.14
+    ]
+  },
+  "effect": {
+    "cognate_minus_own_scramble_plddt": 3.3,
+    "ci95": [
+      2.13,
+      4.47
+    ],
+    "n_pairs": 44
+  },
+  "multiple_comparisons": "6 metrics tested; Bonferroni alpha = 0.0083. The scramble control clears it; the within-receptor rank test (p=0.0265) does not.",
+  "results": {
+    "iptm": {
+      "cognate_mean": 0.5015305727720261,
+      "scrambled_mean": 0.4887602139603008,
+      "decoy_mean": 0.4317308869777304,
+      "cognate_minus_own_scramble": 0.01277035881172527,
+      "p_cognate_vs_own_scramble": 0.4159570675622161,
+      "mean_rank": 2.0,
+      "chance": 2.5,
+      "p_rank_vs_chance": 0.03366556940321102,
+      "cognate_first": 8,
+      "n_receptors": 22
+    },
+    "pdockq": {
+      "cognate_mean": 0.47436807887852167,
+      "scrambled_mean": 0.4658762615147831,
+      "decoy_mean": 0.4041601448959911,
+      "cognate_minus_own_scramble": 0.00849181736373848,
+      "p_cognate_vs_own_scramble": 0.796937684114636,
+      "mean_rank": 2.1363636363636362,
+      "chance": 2.5,
+      "p_rank_vs_chance": 0.10809360699901945,
+      "cognate_first": 7,
+      "n_receptors": 22
+    },
+    "iface_plddt": {
+      "cognate_mean": 49.60439624472462,
+      "scrambled_mean": 46.3082807829588,
+      "decoy_mean": 45.930416416868844,
+      "cognate_minus_own_scramble": 3.2961154617658157,
+      "p_cognate_vs_own_scramble": 1.0433668612352626e-06,
+      "mean_rank": 1.9090909090909092,
+      "chance": 2.5,
+      "p_rank_vs_chance": 0.026525669350955638,
+      "cognate_first": 12,
+      "n_receptors": 22
+    },
+    "n_contacts": {
+      "cognate_mean": 32.86363636363637,
+      "scrambled_mean": 38.45454545454545,
+      "decoy_mean": 33.95454545454545,
+      "cognate_minus_own_scramble": -5.590909090909091,
+      "p_cognate_vs_own_scramble": 0.05378492319821822,
+      "mean_rank": 2.5454545454545454,
+      "chance": 2.5,
+      "p_rank_vs_chance": 0.8540344462431794,
+      "cognate_first": 5,
+      "n_receptors": 22
+    },
+    "contact_density": {
+      "cognate_mean": 3.24263388675444,
+      "scrambled_mean": 3.6915970283559214,
+      "decoy_mean": 3.6154781958635716,
+      "cognate_minus_own_scramble": -0.4489631416014815,
+      "p_cognate_vs_own_scramble": 0.12164158276274174,
+      "mean_rank": 2.5454545454545454,
+      "chance": 2.5,
+      "p_rank_vs_chance": 0.8802601138950152,
+      "cognate_first": 4,
+      "n_receptors": 22
+    },
+    "delta_sasa": {
+      "cognate_mean": 1800.1189708459997,
+      "scrambled_mean": 1860.7601073942444,
+      "decoy_mean": 1632.2917474942526,
+      "cognate_minus_own_scramble": -60.6411365482445,
+      "p_cognate_vs_own_scramble": 0.4541487164645635,
+      "mean_rank": 2.272727272727273,
+      "chance": 2.5,
+      "p_rank_vs_chance": 0.4066554624422869,
+      "cognate_first": 9,
+      "n_receptors": 22
+    }
+  }
+}
