@@ -1,0 +1,338 @@
+[
+  {
+    "device": "cpu",
+    "replicate": 0,
+    "name": "pair_128",
+    "iptm": 0.11700142920017242,
+    "iface_plddt": 38.16833333333334
+  },
+  {
+    "device": "cpu",
+    "replicate": 0,
+    "name": "pair_066",
+    "iptm": 0.37498003244400024,
+    "iface_plddt": 44.114347826086956
+  },
+  {
+    "device": "cpu",
+    "replicate": 0,
+    "name": "pair_111",
+    "iptm": 0.40271541476249695,
+    "iface_plddt": 40.31315789473685
+  },
+  {
+    "device": "cpu",
+    "replicate": 0,
+    "name": "pair_085",
+    "iptm": 0.4698633849620819,
+    "iface_plddt": 42.3046511627907
+  },
+  {
+    "device": "cpu",
+    "replicate": 0,
+    "name": "pair_035",
+    "iptm": 0.5935049653053284,
+    "iface_plddt": 52.98615384615385
+  },
+  {
+    "device": "cpu",
+    "replicate": 0,
+    "name": "pair_108",
+    "iptm": 0.5075013637542725,
+    "iface_plddt": 46.162
+  },
+  {
+    "device": "cpu",
+    "replicate": 1,
+    "name": "pair_128",
+    "iptm": 0.21002057194709778,
+    "iface_plddt": 40.73740740740741
+  },
+  {
+    "device": "cpu",
+    "replicate": 1,
+    "name": "pair_066",
+    "iptm": 0.3735286295413971,
+    "iface_plddt": 46.743
+  },
+  {
+    "device": "cpu",
+    "replicate": 1,
+    "name": "pair_111",
+    "iptm": 0.36863625049591064,
+    "iface_plddt": 43.81424242424242
+  },
+  {
+    "device": "cpu",
+    "replicate": 1,
+    "name": "pair_085",
+    "iptm": 0.6364753246307373,
+    "iface_plddt": 44.988684210526316
+  },
+  {
+    "device": "cpu",
+    "replicate": 1,
+    "name": "pair_035",
+    "iptm": 0.5274975299835205,
+    "iface_plddt": 54.98285714285714
+  },
+  {
+    "device": "cpu",
+    "replicate": 1,
+    "name": "pair_108",
+    "iptm": 0.632249653339386,
+    "iface_plddt": 52.29285714285714
+  },
+  {
+    "device": "cpu",
+    "replicate": 2,
+    "name": "pair_128",
+    "iptm": 0.1673567295074463,
+    "iface_plddt": 36.926249999999996
+  },
+  {
+    "device": "cpu",
+    "replicate": 2,
+    "name": "pair_066",
+    "iptm": 0.45743587613105774,
+    "iface_plddt": 47.895500000000006
+  },
+  {
+    "device": "cpu",
+    "replicate": 2,
+    "name": "pair_111",
+    "iptm": 0.3761539161205292,
+    "iface_plddt": 45.28346153846154
+  },
+  {
+    "device": "cpu",
+    "replicate": 2,
+    "name": "pair_085",
+    "iptm": 0.5244941711425781,
+    "iface_plddt": 41.952666666666666
+  },
+  {
+    "device": "cpu",
+    "replicate": 2,
+    "name": "pair_035",
+    "iptm": 0.5353192090988159,
+    "iface_plddt": 52.58136363636363
+  },
+  {
+    "device": "cpu",
+    "replicate": 2,
+    "name": "pair_108",
+    "iptm": 0.5532970428466797,
+    "iface_plddt": 44.67148148148148
+  },
+  {
+    "device": "cpu",
+    "replicate": 3,
+    "name": "pair_128",
+    "iptm": 0.13815315067768097,
+    "iface_plddt": 37.48135135135136
+  },
+  {
+    "device": "cpu",
+    "replicate": 3,
+    "name": "pair_066",
+    "iptm": 0.36733680963516235,
+    "iface_plddt": 46.74909090909091
+  },
+  {
+    "device": "cpu",
+    "replicate": 3,
+    "name": "pair_111",
+    "iptm": 0.3203769028186798,
+    "iface_plddt": 45.661249999999995
+  },
+  {
+    "device": "cpu",
+    "replicate": 3,
+    "name": "pair_085",
+    "iptm": 0.5380033850669861,
+    "iface_plddt": 43.897234042553194
+  },
+  {
+    "device": "cpu",
+    "replicate": 3,
+    "name": "pair_035",
+    "iptm": 0.5236523747444153,
+    "iface_plddt": 53.71695652173913
+  },
+  {
+    "device": "cpu",
+    "replicate": 3,
+    "name": "pair_108",
+    "iptm": 0.5793498158454895,
+    "iface_plddt": 48.67333333333334
+  },
+  {
+    "device": "mps",
+    "replicate": 0,
+    "name": "pair_128",
+    "iptm": 0.11194160580635071,
+    "iface_plddt": 37.79787878787879
+  },
+  {
+    "device": "mps",
+    "replicate": 0,
+    "name": "pair_066",
+    "iptm": 0.31487300992012024,
+    "iface_plddt": 42.94074074074074
+  },
+  {
+    "device": "mps",
+    "replicate": 0,
+    "name": "pair_111",
+    "iptm": 0.26354122161865234,
+    "iface_plddt": 41.12636363636364
+  },
+  {
+    "device": "mps",
+    "replicate": 0,
+    "name": "pair_085",
+    "iptm": 0.4829019010066986,
+    "iface_plddt": 43.97416666666667
+  },
+  {
+    "device": "mps",
+    "replicate": 0,
+    "name": "pair_035",
+    "iptm": 0.5133199691772461,
+    "iface_plddt": 56.14041666666666
+  },
+  {
+    "device": "mps",
+    "replicate": 0,
+    "name": "pair_108",
+    "iptm": 0.5192214846611023,
+    "iface_plddt": 49.126976744186045
+  },
+  {
+    "device": "mps",
+    "replicate": 1,
+    "name": "pair_128",
+    "iptm": 0.17263191938400269,
+    "iface_plddt": 39.098837209302324
+  },
+  {
+    "device": "mps",
+    "replicate": 1,
+    "name": "pair_066",
+    "iptm": 0.3875110149383545,
+    "iface_plddt": 44.1225
+  },
+  {
+    "device": "mps",
+    "replicate": 1,
+    "name": "pair_111",
+    "iptm": 0.3574972450733185,
+    "iface_plddt": 45.70045454545455
+  },
+  {
+    "device": "mps",
+    "replicate": 1,
+    "name": "pair_085",
+    "iptm": 0.6473241448402405,
+    "iface_plddt": 44.1291304347826
+  },
+  {
+    "device": "mps",
+    "replicate": 1,
+    "name": "pair_035",
+    "iptm": 0.4786474108695984,
+    "iface_plddt": 48.54423076923077
+  },
+  {
+    "device": "mps",
+    "replicate": 1,
+    "name": "pair_108",
+    "iptm": 0.5052397847175598,
+    "iface_plddt": 47.63463414634146
+  },
+  {
+    "device": "mps",
+    "replicate": 2,
+    "name": "pair_128",
+    "iptm": 0.13089163601398468,
+    "iface_plddt": 38.65125
+  },
+  {
+    "device": "mps",
+    "replicate": 2,
+    "name": "pair_066",
+    "iptm": 0.3910585939884186,
+    "iface_plddt": 43.650625000000005
+  },
+  {
+    "device": "mps",
+    "replicate": 2,
+    "name": "pair_111",
+    "iptm": 0.3926467001438141,
+    "iface_plddt": 44.61588235294117
+  },
+  {
+    "device": "mps",
+    "replicate": 2,
+    "name": "pair_085",
+    "iptm": 0.47554850578308105,
+    "iface_plddt": 41.42239130434782
+  },
+  {
+    "device": "mps",
+    "replicate": 2,
+    "name": "pair_035",
+    "iptm": 0.5120320320129395,
+    "iface_plddt": 49.29125
+  },
+  {
+    "device": "mps",
+    "replicate": 2,
+    "name": "pair_108",
+    "iptm": 0.5658608078956604,
+    "iface_plddt": 48.465
+  },
+  {
+    "device": "mps",
+    "replicate": 3,
+    "name": "pair_128",
+    "iptm": 0.15344327688217163,
+    "iface_plddt": 38.76666666666667
+  },
+  {
+    "device": "mps",
+    "replicate": 3,
+    "name": "pair_066",
+    "iptm": 0.37205690145492554,
+    "iface_plddt": 38.440999999999995
+  },
+  {
+    "device": "mps",
+    "replicate": 3,
+    "name": "pair_111",
+    "iptm": 0.2532522976398468,
+    "iface_plddt": 40.78285714285715
+  },
+  {
+    "device": "mps",
+    "replicate": 3,
+    "name": "pair_085",
+    "iptm": 0.5934209227561951,
+    "iface_plddt": 42.00452830188679
+  },
+  {
+    "device": "mps",
+    "replicate": 3,
+    "name": "pair_035",
+    "iptm": 0.5640801191329956,
+    "iface_plddt": 51.274375
+  },
+  {
+    "device": "mps",
+    "replicate": 3,
+    "name": "pair_108",
+    "iptm": 0.4969303011894226,
+    "iface_plddt": 46.81368421052632
+  }
+]
