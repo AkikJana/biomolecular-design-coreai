@@ -177,6 +177,15 @@ def parse_runs(paragraph, line_text):
                 else:
                     paragraph.add_run(sub_token)
 
+def strip_html_tags(s):
+    """Visible text of an HTML fragment, with entities and <br> normalised."""
+    s = re.sub(r'<br\s*/?>', ' ', s)
+    s = re.sub(r'<[^>]+>', '', s)
+    s = s.replace('&nbsp;', ' ').replace('&amp;', '&')
+    s = s.replace('&lt;', '<').replace('&gt;', '>')
+    return " ".join(s.split())
+
+
 def create_docx(md_path: str, docx_path: str):
     doc = Document()
     
@@ -346,8 +355,6 @@ def create_docx(md_path: str, docx_path: str):
     in_flowchart = False
     flowchart_steps = []
     
-    in_sig_block = False
-    
     i = 0
     while i < len(md_lines):
         line = md_lines[i].strip()
@@ -366,61 +373,121 @@ def create_docx(md_path: str, docx_path: str):
             continue
             
         # Detect Signature Block HTML
+        # Detect Signature Block HTML.
+        #
+        # The previous version closed on the first </div> it saw. These blocks
+        # nest <div class="sig-col"> and <div class="sig-line"></div> inside,
+        # so it exited at the first inner close and emitted every remaining
+        # line as literal HTML -- 48 such paragraphs in the final report. It
+        # also hardcoded names and dates instead of reading them, so the
+        # Certificate and Abstract Sheet blocks rendered identically.
         if '<div class="signature-block">' in line:
-            in_sig_block = True
+            depth = line.count('<div') - line.count('</div>')
+            block = []
             i += 1
-            continue
-            
-        if in_sig_block:
-            if '</div>' in line and not ('<div' in line or '<span' in line or '<p' in line):
-                # Close signature block and render
-                in_sig_block = False
-                
-                # Render the 2-column signature table
-                sig_table = doc.add_table(rows=5, cols=2)
+            while i < len(md_lines) and depth > 0:
+                raw = md_lines[i].strip()
+                depth += raw.count('<div') - raw.count('</div>')
+                block.append(raw)
+                i += 1
+
+            cols, current = [], None
+            for raw in block:
+                if 'class="sig-col"' in raw:
+                    current = {"title": None, "fields": [], "img": None}
+                    cols.append(current)
+                if current is None:
+                    continue
+                m = re.search(r'class="sig-title">(.*?)</div>', raw)
+                if m:
+                    current["title"] = strip_html_tags(m.group(1))
+                m = re.search(r'class="sig-field">(.*?)</div>', raw)
+                if m:
+                    current["fields"].append(strip_html_tags(m.group(1)))
+                m = re.search(r'<img[^>]*src="([^"]+)"', raw)
+                if m:
+                    current["img"] = m.group(1)
+
+            cols = [c for c in cols if c["title"] or c["fields"] or c["img"]]
+            if cols:
+                sig_table = doc.add_table(rows=1, cols=len(cols))
                 sig_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-                
-                # Student column (Col 0)
-                cell_std = sig_table.cell(0, 0)
-                p_std_line = cell_std.paragraphs[0]
-                p_std_line.paragraph_format.space_after = Pt(4)
-                p_std_line.add_run("_______________________________\n").bold = True
-                run_st = p_std_line.add_run("Signature of the Student\n")
-                run_st.bold = True
-                run_st.font.size = Pt(11)
-                
-                p_std_details = cell_std.add_paragraph()
-                p_std_details.paragraph_format.space_after = Pt(2)
-                p_std_details.add_run("Name: ").bold = True
-                p_std_details.add_run("Akik Jana\n")
-                p_std_details.add_run("Date: ").bold = True
-                p_std_details.add_run("June 16, 2026\n")
-                p_std_details.add_run("Place: ").bold = True
-                p_std_details.add_run("Bangalore")
-                
-                # Supervisor column (Col 1)
-                cell_sup = sig_table.cell(0, 1)
-                p_sup_line = cell_sup.paragraphs[0]
-                p_sup_line.paragraph_format.space_after = Pt(4)
-                p_sup_line.add_run("_______________________________\n").bold = True
-                run_spt = p_sup_line.add_run("Signature of the Supervisor\n")
-                run_spt.bold = True
-                run_spt.font.size = Pt(11)
-                
-                p_sup_details = cell_sup.add_paragraph()
-                p_sup_details.paragraph_format.space_after = Pt(2)
-                p_sup_details.add_run("Name: ").bold = True
-                p_sup_details.add_run("Dr. Arnab Bandyopadhyay\n")
-                p_sup_details.add_run("Date: ").bold = True
-                p_sup_details.add_run("June 16, 2026\n")
-                p_sup_details.add_run("Place: ").bold = True
-                p_sup_details.add_run("Hyderabad")
-                
-                # Add spacing after signature block
+                for idx, col in enumerate(cols):
+                    cell = sig_table.cell(0, idx)
+                    p_line = cell.paragraphs[0]
+                    p_line.paragraph_format.space_after = Pt(4)
+                    # Only a column that names a signatory gets a rule; the
+                    # Place/Date column on the checklist has no signature line.
+                    if col.get("img"):
+                        img_path = os.path.join(
+                            os.path.dirname(os.path.abspath(md_path)), col["img"])
+                        if os.path.exists(img_path):
+                            p_line.add_run().add_picture(img_path, width=Inches(1.6))
+                            p_line.add_run("\n")
+                    if col["title"]:
+                        p_line.add_run("_______________________________\n").bold = True
+                        r_t = p_line.add_run(col["title"] + "\n")
+                        r_t.bold = True
+                        r_t.font.size = Pt(11)
+                    p_det = cell.add_paragraph()
+                    p_det.paragraph_format.space_after = Pt(2)
+                    for field in col["fields"]:
+                        label, sep, value = field.partition(":")
+                        p_det.add_run(label + (sep or "")).bold = True
+                        p_det.add_run(value + "\n")
                 doc.add_paragraph()
+            continue
+
+        # Raw HTML table (the checklist is one, so its font size can be
+        # controlled for the PDF). Previously printed verbatim into Word.
+        if line.startswith('<table'):
+            html = []
+            while i < len(md_lines) and '</table>' not in md_lines[i]:
+                html.append(md_lines[i]); i += 1
+            if i < len(md_lines):
+                html.append(md_lines[i]); i += 1
+            blob = " ".join(x.strip() for x in html)
+            rows = re.findall(r'<tr[^>]*>(.*?)</tr>', blob, re.S)
+            parsed = [[strip_html_tags(c) for c in
+                       re.findall(r'<t[dh][^>]*>(.*?)</t[dh]>', r, re.S)]
+                      for r in rows]
+            parsed = [r for r in parsed if r]
+            if parsed:
+                ncol = max(len(r) for r in parsed)
+                tbl = doc.add_table(rows=len(parsed), cols=ncol)
+                tbl.style = 'Table Grid'
+                for ri, row in enumerate(parsed):
+                    for ci in range(ncol):
+                        para = tbl.cell(ri, ci).paragraphs[0]
+                        run = para.add_run(row[ci] if ci < len(row) else "")
+                        run.font.size = Pt(8)
+                        run.font.name = 'Times New Roman'
+                        if ri == 0:
+                            run.bold = True
+                doc.add_paragraph()
+            continue
+
+        # Styled <p> wrapper: keep the text, drop the markup. The declaration
+        # paragraph spans several source lines, so gather to the closing tag.
+        if (line.startswith('<p ') or line.startswith('<p>')) and not in_flowchart:
+            chunk = []
+            while i < len(md_lines) and '</p>' not in md_lines[i]:
+                chunk.append(md_lines[i]); i += 1
+            if i < len(md_lines):
+                chunk.append(md_lines[i]); i += 1
+            text = strip_html_tags(" ".join(x.strip() for x in chunk))
+            if text:
+                parse_runs(doc.add_paragraph(), text)
+            continue
+
+        # Any remaining bare tag line carries no content of its own. The
+        # flowchart container is excluded: its opening div is empty of text but
+        # its dedicated handler further down needs to see it.
+        if (line.startswith('<') and not strip_html_tags(line)
+                and 'flowchart' not in line and not in_flowchart):
             i += 1
             continue
-            
+
         # Detect Flowchart Block HTML
         if '<div class="flowchart-container">' in line:
             in_flowchart = True

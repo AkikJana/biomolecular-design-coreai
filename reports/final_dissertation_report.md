@@ -47,19 +47,21 @@ my supervision.
 
 <div class="signature-block">
     <div class="sig-col">
+        <img class="sig-img" src="assets/sig_supervisor.png" alt="Signature">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Supervisor</div>
         <div class="sig-field"><b>Name:</b> Dr. Arnab Bandyopadhyay</div>
         <div class="sig-field"><b>Designation:</b> RnD Division, Dr. Reddy's Laboratories</div>
-        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
         <div class="sig-field"><b>Place:</b> Hyderabad</div>
     </div>
     <div class="sig-col">
+        <img class="sig-img" src="assets/sig_student.png" alt="Signature">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Student</div>
         <div class="sig-field"><b>Name:</b> Akik Jana</div>
         <div class="sig-field"><b>ID No.:</b> 2024AB05287</div>
-        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
         <div class="sig-field"><b>Place:</b> Bangalore</div>
     </div>
 </div>
@@ -127,16 +129,19 @@ stand; the accompanying accuracy claims are bounded and stated.
 
 <div class="signature-block">
     <div class="sig-col">
+        <img class="sig-img" src="assets/sig_student.png" alt="Signature">
+        <img class="sig-img" src="assets/sig_supervisor.png" alt="Signature">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Student</div>
         <div class="sig-field"><b>Name:</b> Akik Jana</div>
-        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
     </div>
     <div class="sig-col">
+        <img class="sig-img" src="assets/sig_supervisor.png" alt="Signature">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Supervisor</div>
         <div class="sig-field"><b>Name:</b> Dr. Arnab Bandyopadhyay</div>
-        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
     </div>
 </div>
 
@@ -971,19 +976,19 @@ in this report is read as a production-setting result:
 
 # CHECKLIST OF ITEMS FOR THE FINAL DISSERTATION / PROJECT / PROJECT WORK REPORT
 
-<table style="width:100%; border-collapse:collapse; font-size:8.6pt; line-height:1.25;">
+<table style="width:100%; border-collapse:collapse; font-size:8.0pt; line-height:1.12;">
   <thead>
     <tr style="background:#0B2B52; color:#fff;">
-      <th style="width:5%; padding:3px;">#</th>
-      <th style="text-align:left; padding:3px;">Item</th>
-      <th style="width:16%; padding:3px;">Yes / No</th>
+      <th style="width:5%; padding:2px;">#</th>
+      <th style="text-align:left; padding:2px;">Item</th>
+      <th style="width:16%; padding:2px;">Yes / No</th>
     </tr>
   </thead>
   <tbody>
     <tr><td style="text-align:center">1</td><td>Final report neatly formatted with all elements required for a technical report</td><td style="text-align:center">Yes</td></tr>
     <tr><td style="text-align:center">2</td><td>Cover page in proper format as given in Annexure A</td><td style="text-align:center">Yes</td></tr>
     <tr><td style="text-align:center">3</td><td>Title page (inner cover page) in proper format</td><td style="text-align:center">Yes</td></tr>
-    <tr><td style="text-align:center">4</td><td>(a) Certificate from the Supervisor in proper format &nbsp; (b) Signed by the Supervisor</td><td style="text-align:center">(a) Yes<br>(b) To be signed</td></tr>
+    <tr><td style="text-align:center">4</td><td>(a) Certificate from the Supervisor in proper format &nbsp; (b) Signed by the Supervisor</td><td style="text-align:center">(a) Yes<br>(b) Yes</td></tr>
     <tr><td style="text-align:center">5</td><td>Abstract within one page &nbsp; / &nbsp; Technical keywords specified</td><td style="text-align:center">Yes / Yes</td></tr>
     <tr><td style="text-align:center">6</td><td>Title appropriate, descriptive and precise; no uncommon abbreviations or acronyms</td><td style="text-align:center">Yes</td></tr>
     <tr><td style="text-align:center">7</td><td>List of abbreviations / acronyms included</td><td style="text-align:center">Yes</td></tr>
@@ -995,16 +1000,17 @@ in this report is read as a production-setting result:
   </tbody>
 </table>
 
-<p style="font-size:9.5pt; margin-top:10px;"><b>Declaration by Student:</b>
+<p style="font-size:9pt; margin-top:6px; margin-bottom:4px;"><b>Declaration by Student:</b>
 I certify that I have properly verified all the items in this checklist and
 ensure that the report is in proper format as specified in the course handout.</p>
 
 <div class="signature-block">
     <div class="sig-col">
         <div class="sig-field"><b>Place:</b> Bangalore</div>
-        <div class="sig-field"><b>Date:</b> _______________</div>
+        <div class="sig-field"><b>Date:</b> August 2, 2026</div>
     </div>
     <div class="sig-col">
+        <img class="sig-img" src="assets/sig_student.png" alt="Signature">
         <div class="sig-line"></div>
         <div class="sig-title">Signature of the Student</div>
         <div class="sig-field"><b>Name:</b> Akik Jana</div>

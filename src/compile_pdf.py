@@ -63,7 +63,11 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
     # The keys are the *markdown-relative* refs as they appear in reports/*.md
     # ("assets/foo.png"), not resolved filesystem paths -- substituting the
     # latter would no-op and leave unresolvable links behind.
-    refs = sorted(set(re.findall(r"\]\((assets/[^)\s]+)\)", body_content)))
+    # Markdown image syntax AND html src="assets/..." -- the signature scans
+    # are placed with <img> inside the signature blocks, and would otherwise
+    # survive as relative paths that headless Chrome cannot resolve.
+    refs = sorted(set(re.findall(r"\]\((assets/[^)\s]+)\)", body_content))
+                  | set(re.findall(r'src="(assets/[^"]+)"', body_content)))
     if not refs:
         print("[PDF] Warning: no figure references found in the markdown")
     for ref in refs:
@@ -75,7 +79,8 @@ def convert_md_to_pdf(md_path: str, pdf_path: str):
         body_content = body_content.replace(ref, uri)
         print(f"[PDF] inlined {ref}")
 
-    leftover = re.findall(r"\]\((assets/[^)\s]+)\)", body_content)
+    leftover = (re.findall(r"\]\((assets/[^)\s]+)\)", body_content)
+                + re.findall(r'src="(assets/[^"]+)"', body_content))
     if leftover:
         raise RuntimeError(
             f"figures left as unresolved relative refs and would render blank: "
@@ -301,6 +306,11 @@ graph TD
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+        }}
+        .sig-img {{
+            display: block;
+            height: 38px;
+            margin: 0 0 -6px 0;
         }}
         .sig-line {{
             width: 100%;
