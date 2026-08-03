@@ -1,0 +1,738 @@
+{
+  "per_candidate": [
+    {
+      "receptor_id": "1BE9",
+      "label": "cognate",
+      "raw_iptm": 0.6285117268562317,
+      "delta_iptm": -0.023637622594833374,
+      "raw_iface_plddt": 51.910000000000004,
+      "delta_iface_plddt": 5.575096618357485
+    },
+    {
+      "receptor_id": "1BE9",
+      "label": "decoy",
+      "raw_iptm": 0.22949954867362976,
+      "delta_iptm": -0.09980018436908722,
+      "raw_iface_plddt": 38.79700000000001,
+      "delta_iface_plddt": -0.003374999999991246
+    },
+    {
+      "receptor_id": "1BE9",
+      "label": "decoy",
+      "raw_iptm": 0.7191978096961975,
+      "delta_iptm": 0.15630629658699036,
+      "raw_iface_plddt": 49.70764705882352,
+      "delta_iface_plddt": 5.37147058823529
+    },
+    {
+      "receptor_id": "1BE9",
+      "label": "decoy",
+      "raw_iptm": 0.47633177042007446,
+      "delta_iptm": 0.16274267435073853,
+      "raw_iface_plddt": 40.893055555555556,
+      "delta_iface_plddt": 0.6193591269841292
+    },
+    {
+      "receptor_id": "1CKA",
+      "label": "cognate",
+      "raw_iptm": 0.6145397424697876,
+      "delta_iptm": 0.13467013835906982,
+      "raw_iface_plddt": 68.2708,
+      "delta_iface_plddt": 12.216466666666662
+    },
+    {
+      "receptor_id": "1CKA",
+      "label": "decoy",
+      "raw_iptm": 0.5850750207901001,
+      "delta_iptm": -0.0056047141551971436,
+      "raw_iface_plddt": 56.68842105263159,
+      "delta_iface_plddt": 3.3377067669173
+    },
+    {
+      "receptor_id": "1CKA",
+      "label": "decoy",
+      "raw_iptm": 0.33553168177604675,
+      "delta_iptm": 0.05193476378917694,
+      "raw_iface_plddt": 51.50818181818181,
+      "delta_iface_plddt": 2.387258897289314
+    },
+    {
+      "receptor_id": "1CKA",
+      "label": "decoy",
+      "raw_iptm": 0.374177485704422,
+      "delta_iptm": -0.09158554673194885,
+      "raw_iface_plddt": 43.79,
+      "delta_iface_plddt": -8.577222222222225
+    },
+    {
+      "receptor_id": "1D4T",
+      "label": "cognate",
+      "raw_iptm": 0.45087817311286926,
+      "delta_iptm": 0.06531506776809692,
+      "raw_iface_plddt": 44.409354838709675,
+      "delta_iface_plddt": 1.2210108079009458
+    },
+    {
+      "receptor_id": "1D4T",
+      "label": "decoy",
+      "raw_iptm": 0.33808770775794983,
+      "delta_iptm": -0.017168790102005005,
+      "raw_iface_plddt": 41.99964285714286,
+      "delta_iface_plddt": -0.8082523997741333
+    },
+    {
+      "receptor_id": "1D4T",
+      "label": "decoy",
+      "raw_iptm": 0.36045902967453003,
+      "delta_iptm": -0.10930316150188446,
+      "raw_iface_plddt": 39.64739130434783,
+      "delta_iface_plddt": -5.18071092831962
+    },
+    {
+      "receptor_id": "1D4T",
+      "label": "decoy",
+      "raw_iptm": 0.5796846151351929,
+      "delta_iptm": 0.05199989676475525,
+      "raw_iface_plddt": 45.47217391304348,
+      "delta_iface_plddt": -1.1335953177257494
+    },
+    {
+      "receptor_id": "1ELW",
+      "label": "cognate",
+      "raw_iptm": 0.604794979095459,
+      "delta_iptm": 0.03069901466369629,
+      "raw_iface_plddt": 52.495999999999995,
+      "delta_iface_plddt": 1.1316608695652093
+    },
+    {
+      "receptor_id": "1ELW",
+      "label": "decoy",
+      "raw_iptm": 0.5339875221252441,
+      "delta_iptm": -0.010053038597106934,
+      "raw_iface_plddt": 45.41354838709678,
+      "delta_iface_plddt": -5.6401441804707915
+    },
+    {
+      "receptor_id": "1ELW",
+      "label": "decoy",
+      "raw_iptm": 0.5928254127502441,
+      "delta_iptm": 0.06053262948989868,
+      "raw_iface_plddt": 49.32636363636364,
+      "delta_iface_plddt": 1.2959415584415623
+    },
+    {
+      "receptor_id": "1ELW",
+      "label": "decoy",
+      "raw_iptm": 0.496294230222702,
+      "delta_iptm": 0.019293978810310364,
+      "raw_iface_plddt": 46.94820512820513,
+      "delta_iface_plddt": -1.3695942903995189
+    },
+    {
+      "receptor_id": "1NLO",
+      "label": "cognate",
+      "raw_iptm": 0.4589260518550873,
+      "delta_iptm": 0.03951027989387512,
+      "raw_iface_plddt": 47.919999999999995,
+      "delta_iface_plddt": 0.3200961538461442
+    },
+    {
+      "receptor_id": "1NLO",
+      "label": "decoy",
+      "raw_iptm": 0.5709244012832642,
+      "delta_iptm": 0.13637985289096832,
+      "raw_iface_plddt": 53.038000000000004,
+      "delta_iface_plddt": 6.637736842105269
+    },
+    {
+      "receptor_id": "1NLO",
+      "label": "decoy",
+      "raw_iptm": 0.30022132396698,
+      "delta_iptm": 0.02402360737323761,
+      "raw_iface_plddt": 43.41033333333335,
+      "delta_iface_plddt": 1.517551075268834
+    },
+    {
+      "receptor_id": "1NLO",
+      "label": "decoy",
+      "raw_iptm": 0.4408593773841858,
+      "delta_iptm": 0.06135238707065582,
+      "raw_iface_plddt": 43.92,
+      "delta_iface_plddt": 2.5107659932660056
+    },
+    {
+      "receptor_id": "1OAI",
+      "label": "cognate",
+      "raw_iptm": 0.7107295989990234,
+      "delta_iptm": 0.224860280752182,
+      "raw_iface_plddt": 59.61866666666666,
+      "delta_iface_plddt": 6.946790008841724
+    },
+    {
+      "receptor_id": "1OAI",
+      "label": "decoy",
+      "raw_iptm": 0.5418888926506042,
+      "delta_iptm": -0.05564296245574951,
+      "raw_iface_plddt": 49.83090909090909,
+      "delta_iface_plddt": 2.787645202020201
+    },
+    {
+      "receptor_id": "1OAI",
+      "label": "decoy",
+      "raw_iptm": 0.4146343469619751,
+      "delta_iptm": -0.04885387420654297,
+      "raw_iface_plddt": 48.922121212121205,
+      "delta_iface_plddt": -0.808275810211299
+    },
+    {
+      "receptor_id": "1OAI",
+      "label": "decoy",
+      "raw_iptm": 0.6703145503997803,
+      "delta_iptm": 0.08365362882614136,
+      "raw_iface_plddt": 44.785625,
+      "delta_iface_plddt": -4.905747549019601
+    },
+    {
+      "receptor_id": "1SEM",
+      "label": "cognate",
+      "raw_iptm": 0.5803124904632568,
+      "delta_iptm": -0.07926127314567566,
+      "raw_iface_plddt": 61.03,
+      "delta_iface_plddt": 0.7841413043478269
+    },
+    {
+      "receptor_id": "1SEM",
+      "label": "decoy",
+      "raw_iptm": 0.5257919430732727,
+      "delta_iptm": 0.06927445530891418,
+      "raw_iface_plddt": 55.25466666666666,
+      "delta_iface_plddt": 4.067452380952375
+    },
+    {
+      "receptor_id": "1SEM",
+      "label": "decoy",
+      "raw_iptm": 0.5546640157699585,
+      "delta_iptm": -0.023944973945617676,
+      "raw_iface_plddt": 46.379999999999995,
+      "delta_iface_plddt": -6.202105263157904
+    },
+    {
+      "receptor_id": "1SEM",
+      "label": "decoy",
+      "raw_iptm": 0.5105447173118591,
+      "delta_iptm": 0.11581452190876007,
+      "raw_iface_plddt": 57.49058823529411,
+      "delta_iface_plddt": 10.105065359477116
+    },
+    {
+      "receptor_id": "1TP5",
+      "label": "cognate",
+      "raw_iptm": 0.5963631868362427,
+      "delta_iptm": -0.008738875389099121,
+      "raw_iface_plddt": 48.70903225806451,
+      "delta_iface_plddt": 5.866510706340378
+    },
+    {
+      "receptor_id": "1TP5",
+      "label": "decoy",
+      "raw_iptm": 0.2631007432937622,
+      "delta_iptm": -0.12343151867389679,
+      "raw_iface_plddt": 38.573333333333345,
+      "delta_iface_plddt": -0.3131159420289791
+    },
+    {
+      "receptor_id": "1TP5",
+      "label": "decoy",
+      "raw_iptm": 0.6497141122817993,
+      "delta_iptm": 0.1269174963235855,
+      "raw_iface_plddt": 41.01315789473685,
+      "delta_iface_plddt": -0.5666278195488701
+    },
+    {
+      "receptor_id": "1TP5",
+      "label": "decoy",
+      "raw_iptm": 0.35630717873573303,
+      "delta_iptm": 0.05683319270610809,
+      "raw_iface_plddt": 40.69826086956522,
+      "delta_iface_plddt": 1.9156194554238084
+    },
+    {
+      "receptor_id": "1YCR",
+      "label": "cognate",
+      "raw_iptm": 0.4657794237136841,
+      "delta_iptm": -0.00872066617012024,
+      "raw_iface_plddt": 46.663783783783785,
+      "delta_iface_plddt": 2.94194229194229
+    },
+    {
+      "receptor_id": "1YCR",
+      "label": "decoy",
+      "raw_iptm": 0.3200376331806183,
+      "delta_iptm": -0.11610682308673859,
+      "raw_iface_plddt": 40.80275,
+      "delta_iface_plddt": -3.424111842105262
+    },
+    {
+      "receptor_id": "1YCR",
+      "label": "decoy",
+      "raw_iptm": 0.22068844735622406,
+      "delta_iptm": -0.047941312193870544,
+      "raw_iface_plddt": 40.536500000000004,
+      "delta_iface_plddt": -3.3415740740740674
+    },
+    {
+      "receptor_id": "1YCR",
+      "label": "decoy",
+      "raw_iptm": 0.39374375343322754,
+      "delta_iptm": -0.1692596971988678,
+      "raw_iface_plddt": 43.63041666666667,
+      "delta_iface_plddt": -2.104166666666657
+    },
+    {
+      "receptor_id": "2FNT",
+      "label": "cognate",
+      "raw_iptm": 0.3912370800971985,
+      "delta_iptm": -0.0013511180877685547,
+      "raw_iface_plddt": 46.45846153846154,
+      "delta_iface_plddt": 1.4622219551282072
+    },
+    {
+      "receptor_id": "2FNT",
+      "label": "decoy",
+      "raw_iptm": 0.3250649869441986,
+      "delta_iptm": 0.08063510060310364,
+      "raw_iface_plddt": 43.78666666666667,
+      "delta_iface_plddt": 4.466448412698405
+    },
+    {
+      "receptor_id": "2FNT",
+      "label": "decoy",
+      "raw_iptm": 0.3772010803222656,
+      "delta_iptm": 0.12485413253307343,
+      "raw_iface_plddt": 42.9890243902439,
+      "delta_iface_plddt": 1.872679044898554
+    },
+    {
+      "receptor_id": "2FNT",
+      "label": "decoy",
+      "raw_iptm": 0.35653674602508545,
+      "delta_iptm": 0.01799216866493225,
+      "raw_iface_plddt": 44.156800000000004,
+      "delta_iface_plddt": 0.3548333333333318
+    },
+    {
+      "receptor_id": "2GBQ",
+      "label": "cognate",
+      "raw_iptm": 0.5907525420188904,
+      "delta_iptm": 0.11974835395812988,
+      "raw_iface_plddt": 55.361379310344816,
+      "delta_iface_plddt": 4.251917771883271
+    },
+    {
+      "receptor_id": "2GBQ",
+      "label": "decoy",
+      "raw_iptm": 0.6041417121887207,
+      "delta_iptm": 0.0922262966632843,
+      "raw_iface_plddt": 50.73533333333334,
+      "delta_iface_plddt": 0.26449122807017744
+    },
+    {
+      "receptor_id": "2GBQ",
+      "label": "decoy",
+      "raw_iptm": 0.4508810341358185,
+      "delta_iptm": -0.04071474075317383,
+      "raw_iface_plddt": 49.23071428571429,
+      "delta_iface_plddt": -1.3872376593657947
+    },
+    {
+      "receptor_id": "2GBQ",
+      "label": "decoy",
+      "raw_iptm": 0.3490767478942871,
+      "delta_iptm": -0.02505834400653839,
+      "raw_iface_plddt": 47.50272727272727,
+      "delta_iface_plddt": -2.910944055944057
+    },
+    {
+      "receptor_id": "3DS4",
+      "label": "cognate",
+      "raw_iptm": 0.400532603263855,
+      "delta_iptm": 0.025070473551750183,
+      "raw_iface_plddt": 44.55583333333334,
+      "delta_iface_plddt": -0.07872222222222547
+    },
+    {
+      "receptor_id": "3DS4",
+      "label": "decoy",
+      "raw_iptm": 0.4869895577430725,
+      "delta_iptm": -0.06966370344161987,
+      "raw_iface_plddt": 43.795454545454554,
+      "delta_iface_plddt": -4.623087121212116
+    },
+    {
+      "receptor_id": "3DS4",
+      "label": "decoy",
+      "raw_iptm": 0.3518853187561035,
+      "delta_iptm": -0.19868683815002441,
+      "raw_iface_plddt": 45.56166666666667,
+      "delta_iface_plddt": 0.31623323013415927
+    },
+    {
+      "receptor_id": "3DS4",
+      "label": "decoy",
+      "raw_iptm": 0.3542224168777466,
+      "delta_iptm": -0.16720306873321533,
+      "raw_iface_plddt": 41.86631578947369,
+      "delta_iface_plddt": -4.593336988304088
+    },
+    {
+      "receptor_id": "4LN2",
+      "label": "cognate",
+      "raw_iptm": 0.3711082935333252,
+      "delta_iptm": -0.04840470850467682,
+      "raw_iface_plddt": 42.68714285714286,
+      "delta_iface_plddt": -4.540821886446885
+    },
+    {
+      "receptor_id": "4LN2",
+      "label": "decoy",
+      "raw_iptm": 0.5027493834495544,
+      "delta_iptm": 0.042276084423065186,
+      "raw_iface_plddt": 48.728,
+      "delta_iface_plddt": 3.782069548872194
+    },
+    {
+      "receptor_id": "4LN2",
+      "label": "decoy",
+      "raw_iptm": 0.372304230928421,
+      "delta_iptm": 0.005487263202667236,
+      "raw_iface_plddt": 47.653437499999995,
+      "delta_iface_plddt": 2.116111523769092
+    },
+    {
+      "receptor_id": "4LN2",
+      "label": "decoy",
+      "raw_iptm": 0.4681479334831238,
+      "delta_iptm": 0.02643011510372162,
+      "raw_iface_plddt": 46.05470588235294,
+      "delta_iface_plddt": 1.01687621202327
+    },
+    {
+      "receptor_id": "4O36",
+      "label": "cognate",
+      "raw_iptm": 0.22365327179431915,
+      "delta_iptm": 0.010736636817455292,
+      "raw_iface_plddt": 38.038444444444444,
+      "delta_iface_plddt": 0.15293393393393018
+    },
+    {
+      "receptor_id": "4O36",
+      "label": "decoy",
+      "raw_iptm": 0.2585878372192383,
+      "delta_iptm": 0.11712829768657684,
+      "raw_iface_plddt": 38.06589743589743,
+      "delta_iface_plddt": 2.6121578898998266
+    },
+    {
+      "receptor_id": "4O36",
+      "label": "decoy",
+      "raw_iptm": 0.20065227150917053,
+      "delta_iptm": 0.054194375872612,
+      "raw_iface_plddt": 37.89853658536586,
+      "delta_iface_plddt": 2.693203252032525
+    },
+    {
+      "receptor_id": "4O36",
+      "label": "decoy",
+      "raw_iptm": 0.17909972369670868,
+      "delta_iptm": -0.03632397949695587,
+      "raw_iface_plddt": 38.17032258064516,
+      "delta_iface_plddt": -0.5128718637992762
+    },
+    {
+      "receptor_id": "4Z8J",
+      "label": "cognate",
+      "raw_iptm": 0.6563315987586975,
+      "delta_iptm": 0.22054685652256012,
+      "raw_iface_plddt": 45.709500000000006,
+      "delta_iface_plddt": 1.8143232323232397
+    },
+    {
+      "receptor_id": "4Z8J",
+      "label": "decoy",
+      "raw_iptm": 0.3848906457424164,
+      "delta_iptm": -0.08025655150413513,
+      "raw_iface_plddt": 44.205714285714286,
+      "delta_iface_plddt": -0.9106092436974791
+    },
+    {
+      "receptor_id": "4Z8J",
+      "label": "decoy",
+      "raw_iptm": 0.4572638273239136,
+      "delta_iptm": -0.12926459312438965,
+      "raw_iface_plddt": 38.906666666666666,
+      "delta_iface_plddt": -4.591413210445467
+    },
+    {
+      "receptor_id": "4Z8J",
+      "label": "decoy",
+      "raw_iptm": 0.3454568684101105,
+      "delta_iptm": 0.04401232302188873,
+      "raw_iface_plddt": 42.74666666666666,
+      "delta_iface_plddt": -1.8757030812324942
+    },
+    {
+      "receptor_id": "6YOO",
+      "label": "cognate",
+      "raw_iptm": 0.5320889949798584,
+      "delta_iptm": 0.0919485092163086,
+      "raw_iface_plddt": 46.544761904761906,
+      "delta_iface_plddt": 0.19414064230343087
+    },
+    {
+      "receptor_id": "6YOO",
+      "label": "decoy",
+      "raw_iptm": 0.46545249223709106,
+      "delta_iptm": 0.1514153629541397,
+      "raw_iface_plddt": 40.54159090909091,
+      "delta_iface_plddt": -1.5694842788790098
+    },
+    {
+      "receptor_id": "6YOO",
+      "label": "decoy",
+      "raw_iptm": 0.39095059037208557,
+      "delta_iptm": -0.24824807047843933,
+      "raw_iface_plddt": 38.32363636363637,
+      "delta_iface_plddt": -5.849144886363632
+    },
+    {
+      "receptor_id": "6YOO",
+      "label": "decoy",
+      "raw_iptm": 0.538499653339386,
+      "delta_iptm": 0.034381672739982605,
+      "raw_iface_plddt": 44.09533333333332,
+      "delta_iface_plddt": 0.31317424242423186
+    },
+    {
+      "receptor_id": "7OKL",
+      "label": "cognate",
+      "raw_iptm": 0.5309080481529236,
+      "delta_iptm": 0.10298123955726624,
+      "raw_iface_plddt": 44.144000000000005,
+      "delta_iface_plddt": 0.5100000000000051
+    },
+    {
+      "receptor_id": "7OKL",
+      "label": "decoy",
+      "raw_iptm": 0.4763239324092865,
+      "delta_iptm": 0.14069142937660217,
+      "raw_iface_plddt": 47.86178571428572,
+      "delta_iface_plddt": 2.562994047619057
+    },
+    {
+      "receptor_id": "7OKL",
+      "label": "decoy",
+      "raw_iptm": 0.29722848534584045,
+      "delta_iptm": -0.12231069803237915,
+      "raw_iface_plddt": 43.3375,
+      "delta_iface_plddt": 0.24887362637362997
+    },
+    {
+      "receptor_id": "7OKL",
+      "label": "decoy",
+      "raw_iptm": 0.34967759251594543,
+      "delta_iptm": -0.025580644607543945,
+      "raw_iface_plddt": 40.6165,
+      "delta_iface_plddt": -4.383525062656638
+    },
+    {
+      "receptor_id": "7S7J",
+      "label": "cognate",
+      "raw_iptm": 0.6609936356544495,
+      "delta_iptm": 0.2273472249507904,
+      "raw_iface_plddt": 50.67580645161289,
+      "delta_iface_plddt": 5.136025985663075
+    },
+    {
+      "receptor_id": "7S7J",
+      "label": "decoy",
+      "raw_iptm": 0.4951683282852173,
+      "delta_iptm": -0.07893621921539307,
+      "raw_iface_plddt": 47.04454545454546,
+      "delta_iface_plddt": 2.165434343434349
+    },
+    {
+      "receptor_id": "7S7J",
+      "label": "decoy",
+      "raw_iptm": 0.5798325538635254,
+      "delta_iptm": -0.10207110643386841,
+      "raw_iface_plddt": 45.155333333333346,
+      "delta_iface_plddt": -3.92799999999999
+    },
+    {
+      "receptor_id": "7S7J",
+      "label": "decoy",
+      "raw_iptm": 0.6647598147392273,
+      "delta_iptm": 0.10611465573310852,
+      "raw_iface_plddt": 47.212380952380954,
+      "delta_iface_plddt": -0.6978021978021971
+    },
+    {
+      "receptor_id": "8HLO",
+      "label": "cognate",
+      "raw_iptm": 0.5262669324874878,
+      "delta_iptm": 0.037829428911209106,
+      "raw_iface_plddt": 58.055,
+      "delta_iface_plddt": 7.211570048309177
+    },
+    {
+      "receptor_id": "8HLO",
+      "label": "decoy",
+      "raw_iptm": 0.4064875841140747,
+      "delta_iptm": 0.06392821669578552,
+      "raw_iface_plddt": 50.464166666666664,
+      "delta_iface_plddt": 2.032366666666668
+    },
+    {
+      "receptor_id": "8HLO",
+      "label": "decoy",
+      "raw_iptm": 0.5820705890655518,
+      "delta_iptm": 0.08741560578346252,
+      "raw_iface_plddt": 52.47777777777778,
+      "delta_iface_plddt": -0.21252525252524634
+    },
+    {
+      "receptor_id": "8HLO",
+      "label": "decoy",
+      "raw_iptm": 0.5136353373527527,
+      "delta_iptm": -0.08384960889816284,
+      "raw_iface_plddt": 59.905,
+      "delta_iface_plddt": 9.188798701298701
+    },
+    {
+      "receptor_id": "8KDX",
+      "label": "cognate",
+      "raw_iptm": 0.41403770446777344,
+      "delta_iptm": 0.01570981740951538,
+      "raw_iface_plddt": 49.19615384615385,
+      "delta_iface_plddt": 4.2385785565785525
+    },
+    {
+      "receptor_id": "8KDX",
+      "label": "decoy",
+      "raw_iptm": 0.3524414896965027,
+      "delta_iptm": 0.08637433499097824,
+      "raw_iface_plddt": 48.93399999999999,
+      "delta_iface_plddt": 1.8586014492753478
+    },
+    {
+      "receptor_id": "8KDX",
+      "label": "decoy",
+      "raw_iptm": 0.46673303842544556,
+      "delta_iptm": 0.05952192842960358,
+      "raw_iface_plddt": 48.72764705882353,
+      "delta_iface_plddt": -1.6046689584924891
+    },
+    {
+      "receptor_id": "8KDX",
+      "label": "decoy",
+      "raw_iptm": 0.5555585622787476,
+      "delta_iptm": 0.009645253419876099,
+      "raw_iface_plddt": 59.00852941176471,
+      "delta_iface_plddt": 5.915434173669482
+    },
+    {
+      "receptor_id": "9F6S",
+      "label": "cognate",
+      "raw_iptm": 0.5598968267440796,
+      "delta_iptm": -0.05016180872917175,
+      "raw_iface_plddt": 48.10761904761905,
+      "delta_iface_plddt": -8.26012680167851
+    },
+    {
+      "receptor_id": "9F6S",
+      "label": "decoy",
+      "raw_iptm": 0.45125505328178406,
+      "delta_iptm": 0.04463772475719452,
+      "raw_iface_plddt": 41.20151515151515,
+      "delta_iface_plddt": -7.659688552188541
+    },
+    {
+      "receptor_id": "9F6S",
+      "label": "decoy",
+      "raw_iptm": 0.48717015981674194,
+      "delta_iptm": 0.022594407200813293,
+      "raw_iface_plddt": 46.96227272727273,
+      "delta_iface_plddt": -0.32670454545453964
+    },
+    {
+      "receptor_id": "9F6S",
+      "label": "decoy",
+      "raw_iptm": 0.606726884841919,
+      "delta_iptm": -0.007976502180099487,
+      "raw_iface_plddt": 49.68947368421052,
+      "delta_iface_plddt": 1.8978070175438546
+    },
+    {
+      "receptor_id": "9GRF",
+      "label": "cognate",
+      "raw_iptm": 0.502036452293396,
+      "delta_iptm": 0.2022421732544899,
+      "raw_iface_plddt": 46.50533333333334,
+      "delta_iface_plddt": 0.7336792929292955
+    },
+    {
+      "receptor_id": "9GRF",
+      "label": "decoy",
+      "raw_iptm": 0.4101492762565613,
+      "delta_iptm": -0.03864242136478424,
+      "raw_iface_plddt": 41.839615384615385,
+      "delta_iface_plddt": -4.044278196465697
+    },
+    {
+      "receptor_id": "9GRF",
+      "label": "decoy",
+      "raw_iptm": 0.4760226309299469,
+      "delta_iptm": 0.16062766313552856,
+      "raw_iface_plddt": 40.567619047619054,
+      "delta_iface_plddt": -1.3648958333333283
+    },
+    {
+      "receptor_id": "9GRF",
+      "label": "decoy",
+      "raw_iptm": 0.45220255851745605,
+      "delta_iptm": 0.008078917860984802,
+      "raw_iface_plddt": 39.986666666666665,
+      "delta_iface_plddt": -2.672337662337661
+    }
+  ],
+  "summary": {
+    "raw_iptm": {
+      "cognate_first": 9,
+      "n_receptors": 22,
+      "mean_rank": 1.7272727272727273,
+      "chance": 2.5,
+      "p": 0.0006008450213644959
+    },
+    "delta_iptm": {
+      "cognate_first": 9,
+      "n_receptors": 22,
+      "mean_rank": 2.227272727272727,
+      "chance": 2.5,
+      "p": 0.2755039164300944
+    },
+    "raw_iface_plddt": {
+      "cognate_first": 13,
+      "n_receptors": 22,
+      "mean_rank": 1.5454545454545454,
+      "chance": 2.5,
+      "p": 0.0003341034695720669
+    },
+    "delta_iface_plddt": {
+      "cognate_first": 10,
+      "n_receptors": 22,
+      "mean_rank": 1.9545454545454546,
+      "chance": 2.5,
+      "p": 0.033120412882473325
+    }
+  }
+}
