@@ -198,6 +198,37 @@ def slide_rescore(prs):
     return s
 
 
+def slide_localise(prs):
+    """The qualification to 7.6 -- half the signal is foldability."""
+    s = blank_slide(prs)
+    add_chrome(s, "Measured — Where That Signal Actually Comes From")
+    add_callout(s, 1.30, "Interface pLDDT responds to sequence order. Does it "
+                         "respond to BINDING, or just to the peptide being "
+                         "better folded?", height=0.85)
+
+    set_lines(find_or_add_body(s, 2.30), [
+        "Splitting the metric by chain — no new folding:",
+        "•  peptide side  +5.25   but whole-chain peptide pLDDT  +4.87   →  mostly "
+        "FOLDABILITY, not interface",
+        "•  RECEPTOR side  +2.38  (p = 6e-5)  →  the receptor's own residues are "
+        "placed better when given the right peptide.",
+        "   A disordered peptide cannot do that. This term survives the objection.",
+        "",
+        "Is the response tied to the binding site?  88 folds, alanine scan:",
+        "•  interface→Ala 36.77  vs  surface→Ala 38.62   diff −1.84, p = 0.244 — "
+        "right direction, not significant",
+        "•  80% power would need 123 receptors; every arm drops 7–12 pLDDT, so both "
+        "may sit near a floor.",
+    ], size=14)
+
+    add_note(s, 5.95,
+             "⚠  This QUALIFIES slide 19. Half the pooled signal is peptide "
+             "foldability, which slide 19 did not separate. What stands: the "
+             "receptor responds to which peptide it is given. Not established: "
+             "that the response is localised to the binding site.")
+    return s
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="src",
@@ -296,16 +327,18 @@ def main():
                  "Same structures, two readouts. ipTM cannot separate a cognate "
                  "from its own scramble; interface pLDDT can. The information is "
                  "in the prediction — ipTM discards it.")                # -> 20
+    slide_localise(prs)                                                  # -> 21
 
     n = len(prs.slides)
-    # appended in order: glance, opm, iptm, rank, pval, rescore, rescore-fig
-    for src_idx, dst_idx in ((n - 7, 11),    # glance   -> after Key Insight
-                             (n - 6, 13),    # opm fig  -> after OPM text
-                             (n - 5, 15),    # iptm fig -> after ipTM text
-                             (n - 4, 17),    # rank fig -> after repro text
-                             (n - 3, 18),    # pval fig
-                             (n - 2, 19),    # rescore text
-                             (n - 1, 20)):   # rescore figure
+    # appended: glance, opm, iptm, rank, pval, rescore, rescore-fig, localise
+    for src_idx, dst_idx in ((n - 8, 11),    # glance   -> after Key Insight
+                             (n - 7, 13),    # opm fig  -> after OPM text
+                             (n - 6, 15),    # iptm fig -> after ipTM text
+                             (n - 5, 17),    # rank fig -> after repro text
+                             (n - 4, 18),    # pval fig
+                             (n - 3, 19),    # rescore text
+                             (n - 2, 20),    # rescore figure
+                             (n - 1, 21)):   # signal localisation
         move_slide(prs, src_idx, dst_idx)
 
     # -- renumber ------------------------------------------------------------
