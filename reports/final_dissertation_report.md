@@ -175,14 +175,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding ....................... 18  
 &nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
 &nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Ranks Binders Where ipTM Does Not ....................... 21  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 23  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 23  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 24  
-9. FUTURE PLAN .............................................................. 26  
-10. REFERENCES .............................................................. 29  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 31  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 33  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 35  
+&nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 23  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 25  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 25  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 26  
+9. FUTURE PLAN .............................................................. 28  
+10. REFERENCES .............................................................. 31  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 33  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 35  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 37  
 
 &nbsp;
 
@@ -840,6 +841,92 @@ binders is present in the prediction, and ipTM discards it.
 
 <div class="page-break"></div>
 
+### 7.7 Localising the Interface-pLDDT Signal
+
+Section 7.6 establishes that interface pLDDT responds to sequence order. It does
+not establish *what* it is responding to. Two further experiments address the
+most natural objection: a scrambled peptide is often more disordered, so the
+result could reflect peptide foldability with no binding information in it.
+
+#### 7.7.1 Which side of the interface carries the signal
+
+Interface pLDDT averages over residues on both chains, so the two readings
+separate. This costs no further folding — it re-reads the structures of
+Section 7.4.
+
+| Quantity | cognate | scrambled | decoy | cognate − own scramble | p |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| Pooled interface pLDDT | 49.60 | 46.31 | 45.93 | +3.30 | 0.00000 |
+| **Receptor side** | **51.94** | **49.56** | **49.41** | **+2.38** | **0.00006** |
+| Peptide side | 44.37 | 39.12 | 39.16 | +5.25 | 0.00001 |
+| Peptide, whole chain | 44.08 | 39.21 | 39.13 | +4.87 | 0.00003 |
+
+**The objection is half correct.** Whole-chain peptide pLDDT moves by +4.87,
+almost as much as the peptide-side interface value of +5.25. Most of the
+peptide-side component is therefore not about the interface at all: it is the
+peptide being placed more confidently along its whole length. Section 7.6 did
+not separate these, and to that extent overstated what the pooled figure means.
+
+**The receptor side survives the objection.** The receptor's own residues are
+placed more confidently when the cognate peptide is present (+2.38, p = 6e-5).
+A more disordered peptide cannot make the receptor's residues more certain, so
+peptide foldability does not account for this term. It is the strongest evidence
+in this dissertation that the metric reads something about the interaction.
+
+Taken alone the receptor side ranks the cognate against decoys at p = 0.086 —
+separating a peptide from its own scramble but again not establishing receptor
+specificity.
+
+#### 7.7.2 Is the response tied to the binding site?
+
+If the receptor responds to the correct peptide, the response should depend on
+the binding site. Four arms were folded with the same cognate peptide, all in
+single-sequence mode so that MSA presence is not a confound. The site is defined
+as the 15 receptor residues nearest the peptide (mean 13.4): an 8 Å cutoff marks
+roughly half of a small domain as interface, and alanine-substituting that many
+residues destroys the fold, reintroducing the confound the control exists to
+remove.
+
+| Arm | receptor side | vs real | p |
+| :--- | ---: | ---: | ---: |
+| Real receptor | 45.70 | — | — |
+| Interface → alanine | 36.77 | −8.92 | 0.00001 |
+| Surface → alanine (control) | 38.62 | −7.08 | 0.00048 |
+| Scrambled receptor | 34.03 | −11.67 | 0.00000 |
+
+The decisive comparison is interface-alanine against surface-alanine, since both
+mutate the same number of residues:
+
+```
+difference   -1.84    95% CI [-5.05, +1.36]    p = 0.244
+paired dz     0.255   ->  80% power requires n = 123 receptors
+```
+
+Mutating the binding site costs more than mutating an equal number of exposed
+residues elsewhere, but not detectably so. **This is an underpowered result
+rather than a negative one**: the direction is correct and resolving it would
+need roughly six times the present panel.
+
+Two further caveats bound the interpretation. Single-sequence folding lowers the
+baseline from 51.94 to 45.70, leaving less headroom; and every perturbation costs
+7–12 pLDDT, so both arms may be compressed near a floor that would mask a real
+difference. The scrambled-receptor arm falls furthest, as expected, but is
+uninformative alone because shuffling destroys the fold as well as the site.
+
+#### 7.7.3 Summary
+
+**Strengthened.** The receptor responds to which peptide it is given, and peptide
+foldability cannot explain that.
+
+**Not established.** That the response is localised to the binding site.
+
+Neither result changes the recommendation of Section 7.6 — rank on interface
+pLDDT rather than ipTM — but the mechanism behind it is only partly
+characterised, and one component of the pooled metric is now known to be largely
+peptide foldability.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -892,6 +979,15 @@ Fourth, and positively, **the information ipTM discards is recoverable**
 distinguishes a cognate from its own scramble (p < 0.0001, reproducing in 100%
 of simulated re-runs) at 8.6 times ipTM's effect-to-noise ratio. The failure is
 specific to ipTM as a readout, not general to the prediction.
+
+Section 7.7 then localises that signal, and qualifies it. Splitting the metric by
+chain shows most of its peptide-side component is whole-chain peptide confidence
+rather than interface confidence — the foldability objection is partly correct.
+What survives is the receptor side: the receptor's own residues are placed more
+confidently when given the cognate peptide (+2.38, p = 6e-5), which peptide
+disorder cannot explain. An alanine scan of the binding site points the same way
+but falls short of significance (p = 0.244, requiring roughly six times the
+panel), so the response is not yet shown to be site-localised.
 
 **Overall.** The efficiency techniques transfer as engineering. The ipTM-based
 accuracy claims do not survive measurement — but the structures do carry a
