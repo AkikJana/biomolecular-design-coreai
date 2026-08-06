@@ -148,7 +148,7 @@ def slide_at_a_glance(prs):
     row2 = [("0.378", "OPM held-out error\nat rank 32 (at capacity)", RED),
             ("22 / 132", "receptors / complexes\nPTM-clean panel", TEAL),
             ("0.0628", "ipTM run-to-run SD\n(24 × 4 replicates)", RED),
-            ("49%", "of re-runs reproduce\nthe headline p < 0.05", RED)]
+            ("1.73", "cognate rank on DeCAF\n(chance 2.50, p = 0.004)", GREEN)]
     for i, (big, cap, col) in enumerate(row1):
         stat_card(s, 0.60 + i * 3.10, 1.35, 2.90, big, cap, col)
     for i, (big, cap, col) in enumerate(row2):
@@ -159,15 +159,17 @@ def slide_at_a_glance(prs):
         "Top row — engineering delivered.  Bottom row — measurement outcomes, "
         "which are what redirected the project:",
         "the low-rank OPM is unreachable on pretrained weights, and ipTM does not "
-        "rank binders reproducibly — but interface pLDDT does (slides 19–20).",
+        "rank binders reproducibly on the stock models — but interface pLDDT does "
+        "(slides 19–20), and a few-step-distilled model does far better (slides 22–23).",
     ], size=14)
     box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.60),
                              Inches(6.05), Inches(12.20), Inches(0.85))
     box.fill.solid(); box.fill.fore_color.rgb = WARN_BG; box.line.fill.background()
     set_lines(box, [
         "⚠  Settings throughout are far below Boltz defaults — 10 sampling steps "
-        "vs 200, 1 recycling vs 3, MSA depth 32 vs 8192. The settings confound is "
-        "stated, not resolved.",
+        "vs 200, 1 recycling vs 3, MSA depth 32 vs 8192. Slide 22 probes this "
+        "directly: it attenuates the signal but does not wholly explain the "
+        "negatives.",
     ], size=12.5, color=WARN_FG)
     return s
 
@@ -191,10 +193,11 @@ def slide_rescore(prs):
         "0.20× — an 8.6× better ratio. Reproduces at p < 0.05 in 100% of re-runs.",
     ], size=14.5)
     add_note(s, 5.95,
-             "⚠  pDockQ multiplies interface pLDDT by a contact term — and contacts "
-             "run the WRONG way here (scrambles make more: 38.5 vs 32.9), cancelling "
-             "the signal. Order-sensitivity is established; receptor-specificity "
-             "(p = 0.027) is not yet.")
+             "⚠  pDockQ multiplies interface pLDDT by a contact term — contacts run "
+             "the WRONG way here (scrambles make more: 38.5 vs 32.9), cancelling the "
+             "signal. NOTE: slide 22 shows this result is MODEL-DEPENDENT — it does "
+             "not hold on Boltz-1 — and that receptor specificity IS established on "
+             "a few-step-trained model.")
     return s
 
 
@@ -226,6 +229,35 @@ def slide_localise(prs):
              "foldability, which slide 19 did not separate. What stands: the "
              "receptor responds to which peptide it is given. Not established: "
              "that the response is localised to the binding site.")
+    return s
+
+
+def slide_few_step(prs):
+    """Section 7.8 -- and the correction it forces on slide 19."""
+    s = blank_slide(prs)
+    add_chrome(s, "Measured — Few-Step Distillation Changes the Picture")
+    add_callout(s, 1.28, "Everything so far was folded at 10 steps on models "
+                         "built for 200. What happens on a model TRAINED for 10?",
+                height=0.85)
+    set_lines(find_or_add_body(s, 2.25), [
+        "Same 132 pairs. Boltz-1 added as a de-confounding arm — DeCAF changes "
+        "the base model AND the sampling regime, and only Boltz-1 shares its base.",
+        "",
+        "cognate − own scramble        Boltz-2            Boltz-1            DeCAF",
+        "  ipTM                        +0.013 (p=0.42)    +0.039 (p=.0043)   +0.201 (p=2e-5)",
+        "  interface pLDDT             +3.30  (p<1e-5)    +1.54  (p=0.067)   +9.54  (p<1e-5)",
+        "",
+        "rank vs decoys (chance 2.50)  2.00 / 1.91        1.86 / 1.91        1.77 / 1.73",
+        "",
+        "DeCAF vs Boltz-1 — same base, device, step count — gives 5–6× larger "
+        "effects. On DeCAF, interface pLDDT and receptor side CLEAR Bonferroni: "
+        "receptor specificity is established for the first time in this work.",
+    ], size=13.5)
+    add_note(s, 6.00,
+             "⚠  Two claims weaken. Stock models are NOT signal-free — Boltz-1 "
+             "separates on ipTM (p=0.0043). And slide 19's interface-pLDDT result "
+             "is MODEL-DEPENDENT: strong on Boltz-2 and DeCAF, not significant on "
+             "Boltz-1 (p=0.067). 'Settings explain the negatives' is too simple.")
     return s
 
 
@@ -328,17 +360,26 @@ def main():
                  "from its own scramble; interface pLDDT can. The information is "
                  "in the prediction — ipTM discards it.")                # -> 20
     slide_localise(prs)                                                  # -> 21
+    slide_few_step(prs)                                                  # -> 22
+    figure_slide(prs, "Three Arms — What Few-Step Training Buys",
+                 "fig_few_step_arms.png",
+                 "Effects normalised by the run-to-run noise of Section 7.5 so "
+                 "metrics on different scales compare. DeCAF vs Boltz-1 isolates "
+                 "few-step training; the Boltz-2 arm ran on CPU, the others on MPS.")
+                                                                         # -> 23
 
     n = len(prs.slides)
     # appended: glance, opm, iptm, rank, pval, rescore, rescore-fig, localise
-    for src_idx, dst_idx in ((n - 8, 11),    # glance   -> after Key Insight
-                             (n - 7, 13),    # opm fig  -> after OPM text
-                             (n - 6, 15),    # iptm fig -> after ipTM text
-                             (n - 5, 17),    # rank fig -> after repro text
-                             (n - 4, 18),    # pval fig
-                             (n - 3, 19),    # rescore text
-                             (n - 2, 20),    # rescore figure
-                             (n - 1, 21)):   # signal localisation
+    for src_idx, dst_idx in ((n - 10, 11),   # glance   -> after Key Insight
+                             (n - 9, 13),    # opm fig  -> after OPM text
+                             (n - 8, 15),    # iptm fig -> after ipTM text
+                             (n - 7, 17),    # rank fig -> after repro text
+                             (n - 6, 18),    # pval fig
+                             (n - 5, 19),    # rescore text
+                             (n - 4, 20),    # rescore figure
+                             (n - 3, 21),    # signal localisation
+                             (n - 2, 22),    # few-step arms
+                             (n - 1, 23)):   # few-step figure
         move_slide(prs, src_idx, dst_idx)
 
     # -- renumber ------------------------------------------------------------

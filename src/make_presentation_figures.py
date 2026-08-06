@@ -235,10 +235,61 @@ def fig_metric_comparison():
     return "fig_metric_comparison.png"
 
 
+def fig_few_step_arms():
+    """Three arms: does few-step training explain the signal?"""
+    decaf = _need(REPO_ROOT / "artifacts" / "decaf_scramble_result.json")["summary"]
+    b1 = _need(REPO_ROOT / "artifacts" / "boltz1_scramble_result.json")["summary"]
+    # Boltz-2 values come from Sections 7.6/7.7, folded on CPU
+    b2 = {"iptm": {"cognate_minus_own_scramble": 0.013, "mean_rank": 2.00},
+          "iface_plddt": {"cognate_minus_own_scramble": 3.30, "mean_rank": 1.91},
+          "receptor_side": {"cognate_minus_own_scramble": 2.38}}
+    # divide by the run-to-run SD measured in 7.5 so metrics on different
+    # scales (ipTM 0-1, pLDDT 0-100) can share an axis
+    sd = {"iptm": 0.0628, "iface_plddt": 1.9172, "receptor_side": 1.9172}
+    mets = ["iptm", "iface_plddt", "receptor_side"]
+    labels = ["ipTM", "interface\npLDDT", "receptor\nside"]
+    arms = [("Boltz-2", b2, GREEN), ("Boltz-1", b1, BLUE), ("DeCAF", decaf, RED)]
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.4, 3.9))
+    x = np.arange(len(mets)); w = 0.26
+    for i, (name, src, colour) in enumerate(arms):
+        vals = [src.get(m, {}).get("cognate_minus_own_scramble", np.nan) / sd[m]
+                for m in mets]
+        axes[0].bar(x + (i - 1) * w, vals, w, label=name, color=colour, alpha=0.9)
+    axes[0].axhline(1.0, color=NAVY, ls=":", lw=1.2)
+    axes[0].text(2.45, 1.08, "= noise", fontsize=8, color=NAVY, ha="right")
+    axes[0].set_xticks(x); axes[0].set_xticklabels(labels, fontsize=9)
+    axes[0].set_ylabel("effect / run-to-run noise")
+    axes[0].set_title("Order sensitivity", fontsize=11.5)
+    axes[0].legend(fontsize=8.5, framealpha=0.95)
+    axes[0].grid(axis="y", alpha=0.25, lw=0.5)
+
+    rm = ["iptm", "iface_plddt"]
+    rl = ["ipTM", "interface pLDDT"]
+    xr = np.arange(len(rm))
+    for i, (name, src, colour) in enumerate(arms):
+        vals = [src.get(m, {}).get("mean_rank", np.nan) for m in rm]
+        axes[1].bar(xr + (i - 1) * w, vals, w, label=name, color=colour, alpha=0.9)
+    axes[1].axhline(2.5, color=NAVY, ls="--", lw=1.4)
+    axes[1].text(1.45, 2.55, "chance", fontsize=8.5, color=NAVY, ha="right")
+    axes[1].set_xticks(xr); axes[1].set_xticklabels(rl, fontsize=9)
+    axes[1].set_ylim(1.0, 2.8)
+    axes[1].set_ylabel("mean cognate rank (lower = better)")
+    axes[1].set_title("Receptor specificity", fontsize=11.5)
+    axes[1].grid(axis="y", alpha=0.25, lw=0.5)
+
+    fig.suptitle("Few-step distillation, not the base model, drives the gain",
+                 fontsize=12.5, fontweight="bold", y=0.99)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    fig.savefig(OUT / "fig_few_step_arms.png"); plt.close(fig)
+    return "fig_few_step_arms.png"
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     for fn in (fig_opm_rank, fig_iptm_classes, fig_rank_stability,
-               fig_pvalue_repro, fig_metric_comparison):
+               fig_pvalue_repro, fig_metric_comparison,
+               fig_few_step_arms):
         print(f"  wrote {OUT / fn()}")
 
 
