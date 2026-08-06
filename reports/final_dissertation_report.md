@@ -175,15 +175,16 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding ....................... 18  
 &nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
 &nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Ranks Binders Where ipTM Does Not ....................... 21  
-&nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 23  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 25  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 25  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 26  
-9. FUTURE PLAN .............................................................. 28  
-10. REFERENCES .............................................................. 31  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 33  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 35  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 37  
+&nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
+&nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 26  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 28  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 28  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 29  
+9. FUTURE PLAN .............................................................. 32  
+10. REFERENCES .............................................................. 35  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 37  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 39  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 41  
 
 &nbsp;
 
@@ -839,6 +840,16 @@ better *readout* of one model rather than an independent second opinion. The
 practical implication is unchanged: the information required to rank these
 binders is present in the prediction, and ipTM discards it.
 
+**Correction — this result is model-dependent.** Section 7.8 re-runs the
+identical pairs on stock Boltz-1 and on a few-step-distilled model. Interface
+pLDDT separates a cognate from its own scramble strongly on Boltz-2 (+3.30) and
+on DeCAF-Boltz (+9.54), but **not on Boltz-1** (+1.54, p = 0.067, with a
+confidence interval spanning zero, and receptor side p = 0.43). The
+recommendation to rank on interface pLDDT holds for the models on which it was
+measured; it does not generalise to every cofolding model, and this section
+should not be read as though it does. Section 7.8 also shows that receptor
+specificity, left open above, **is** established on the few-step model.
+
 <div class="page-break"></div>
 
 ### 7.7 Localising the Interface-pLDDT Signal
@@ -927,6 +938,93 @@ peptide foldability.
 
 <div class="page-break"></div>
 
+### 7.8 Few-Step Distillation, and What It Reveals About the Negatives
+
+Every result in Sections 7.2 to 7.7 was folded at 10 sampling steps from models
+whose default is 200 (Section 1.5). The obvious objection is that the failures
+are artefacts of under-sampling rather than properties of the metrics. Testing it
+requires a model that is *good* at few steps.
+
+DeCAF-Boltz distils Boltz-1 into a few-step generator [23]. Running the identical
+132 pairs through it — and through stock Boltz-1 as a de-confounding arm, since
+DeCAF changes both the base model and the sampling regime — answers the
+objection, though not in the direction anticipated.
+
+| Arm | Base | Trained for 10 steps | Device |
+| :--- | :--- | :---: | :--- |
+| Boltz-2 | Boltz-2 | no | CPU |
+| Boltz-1 | Boltz-1 | no | MPS |
+| DeCAF-Boltz | Boltz-1 | **yes** | MPS |
+
+DeCAF and Boltz-1 share a base, a device and a step count, so that pair isolates
+few-step training.
+
+**Order sensitivity — cognate minus its own scramble:**
+
+| Metric | Boltz-2 | Boltz-1 | DeCAF |
+| :--- | ---: | ---: | ---: |
+| ipTM | +0.013 (p = 0.42) | +0.039 (p = 0.0043) | **+0.201 (p = 2e-5)** |
+| Interface pLDDT | +3.30 (p < 1e-5) | +1.54 (p = 0.067) | **+9.54 (p < 1e-5)** |
+| Receptor side | +2.38 (p = 6e-5) | +0.71 (p = 0.43) | **+5.95 (p = 1e-5)** |
+
+**Receptor specificity — cognate ranked against its own decoys, chance 2.50:**
+
+| Metric | Boltz-2 | Boltz-1 | DeCAF |
+| :--- | ---: | ---: | ---: |
+| ipTM | 2.00 (p = 0.034) | 1.86 (p = 0.017) | **1.77 (p = 0.0087)** |
+| Interface pLDDT | 1.91 (p = 0.027) | 1.91 (p = 0.010) | **1.73 (p = 0.0042)** |
+| Receptor side | — | 2.05 (p = 0.054) | **1.77 (p = 0.0032)** |
+
+On DeCAF, interface pLDDT and receptor side clear a Bonferroni threshold of
+0.0083 for six metrics. **This is the first point in this dissertation at which
+receptor specificity is established rather than merely suggested**, and every
+bootstrap interval excludes chance (interface pLDDT [1.32, 2.18]).
+
+#### 7.8.1 What the de-confounding shows
+
+**Few-step training accounts for the gain.** Measured against its own teacher on
+the same device at the same step count, DeCAF delivers 5–6× larger effects. The
+base model is not the explanation.
+
+**Two findings complicate the simple version, and neither is discarded.**
+
+*Stock models are not signal-free.* Boltz-1 at 10 steps separates cognate from
+scramble on ipTM (p = 0.0043) and ranks above chance (p = 0.017). Reduced
+sampling attenuates the signal rather than destroying it. Only Boltz-2's ipTM was
+genuinely flat, so Section 7.4's conclusion should be read as a statement about
+that model rather than about ipTM in general.
+
+*Section 7.6 is model-dependent.* Interface pLDDT is the best readout on Boltz-2
+and on DeCAF, but on Boltz-1 it does not reach significance while ipTM does. The
+correction is recorded in Section 7.6 itself.
+
+#### 7.8.2 Revised position
+
+An earlier reading of the DeCAF result — that the settings gap explains the
+negatives — was too simple and is not adopted. The three arms support something
+narrower:
+
+1. Few-step distillation substantially improves both order sensitivity and
+   receptor specificity, by 5–6× over its own teacher at the same budget.
+2. Stock models at reduced sampling retain weak but real signal, not none.
+3. Which readout carries the signal varies by model.
+
+#### 7.8.3 Limitations
+
+The Boltz-2 arm ran on CPU while the others ran on MPS. Section 7.5's device
+check established ipTM equivalence within the noise margin but left interface
+pLDDT unresolved (TOST p = 0.168, underpowered at n = 6), so comparisons
+involving the Boltz-2 column carry that caveat; the DeCAF-to-Boltz-1 contrast
+does not. Folds are single and unseeded, and DeCAF's own run-to-run variance is
+unmeasured. The panel remains 22 receptors, with bootstrap upper bounds reaching
+2.18 to 2.23.
+
+The DeCAF fork reverts to the teacher sampler if it does not recognise the
+distilled head, which would yield plausible numbers from the wrong model. Each
+batch asserts the confirmation string in its log and refuses to score otherwise.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -989,9 +1087,20 @@ disorder cannot explain. An alanine scan of the binding site points the same way
 but falls short of significance (p = 0.244, requiring roughly six times the
 panel), so the response is not yet shown to be site-localised.
 
+Fifth, **few-step distillation changes the picture materially** (Section 7.8).
+Re-running the panel on a model distilled for 10-step sampling raises both order
+sensitivity and receptor specificity by 5–6× over its own teacher at the same
+budget, and establishes receptor specificity for the first time in this work
+(interface pLDDT rank 1.73 against chance 2.50, p = 0.0042, clearing Bonferroni).
+The de-confounding arm attributes this to the distillation rather than to the
+base model. It also qualifies two earlier conclusions: stock models at reduced
+sampling retain weak but real signal rather than none, and the interface-pLDDT
+recommendation of Section 7.6 is model-dependent.
+
 **Overall.** The efficiency techniques transfer as engineering. The ipTM-based
-accuracy claims do not survive measurement — but the structures do carry a
-usable signal once read correctly. Reporting this is the substantive contribution: each negative
+accuracy claims do not survive measurement on the models originally tested — but
+the structures carry a usable signal once read correctly, and a model built for
+the sampling budget recovers substantially more of it. Reporting this is the substantive contribution: each negative
 result is established with controls, held-out splits, power analysis and
 replication, and each redirects effort away from a direction that would not have
 worked.
@@ -1077,6 +1186,7 @@ longer sits on the critical path to a defensible result.
 20. Kussie, P. H., Gorina, S., Marechal, V. et al., "Structure of the MDM2 Oncoprotein Bound to the p53 Tumor Suppressor Transactivation Domain," *Science*, Vol. 274, No. 5289, 1996, pp. 948–953.
 21. Watson, J. L., Juergens, D., Bennett, N. R. et al., "De Novo Design of Protein Structure and Function with RFdiffusion," *Nature*, Vol. 620, 2023, pp. 1089–1100.
 22. Dauparas, J., Anishchenko, I., Bennett, N. et al., "Robust Deep Learning-Based Protein Sequence Design Using ProteinMPNN," *Science*, Vol. 378, No. 6615, 2022, pp. 49–56.
+23. Scarpellini, G., Shprints, R., Holderrieth, P. et al., "Few-step Cofolding with All-Atom Flow Maps," *arXiv preprint* arXiv:2606.08375, 2026.
 
 <div class="page-break"></div>
 

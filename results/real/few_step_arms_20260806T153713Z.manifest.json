@@ -1,0 +1,163 @@
+{
+  "run_id": "few_step_arms_20260806T153713Z",
+  "experiment": "decaf_vs_stock_few_step_arms",
+  "timestamp_utc": "20260806T153713Z",
+  "code_sha": "3c0e73c1e2d2265839efb444a58fa6b2861d3681",
+  "pairs": "the n=22 PTM-clean panel verbatim: 22 cognate, 44 scrambled, 66 decoy",
+  "settings": {
+    "sampling_steps": 10,
+    "recycling_steps": 1,
+    "msa_depth": 32,
+    "diffusion_samples": 1
+  },
+  "arms": {
+    "boltz2": {
+      "device": "cpu",
+      "few_step_trained": false,
+      "note": "the Section 7.4-7.7 benchmark; DEVICE DIFFERS from the other arms"
+    },
+    "boltz1": {
+      "device": "mps",
+      "few_step_trained": false,
+      "note": "de-confounding arm: same base as DeCAF, not few-step trained"
+    },
+    "decaf": {
+      "device": "mps",
+      "few_step_trained": true,
+      "checkpoint": "genesisml/decaf decaf_conf_ckpt.ckpt (MIT)",
+      "note": "distils Boltz-1; DecafSampler engagement asserted per batch"
+    }
+  },
+  "clean_contrast": "DeCAF vs boltz1 -- same base, device and step count, so the difference isolates few-step training",
+  "known_confound": "the boltz2 arm ran on CPU while the others ran on MPS; the MPS equivalence check established ipTM equivalence but left interface pLDDT unresolved",
+  "hardware": "arm64",
+  "python": "3.13.5",
+  "commands": [
+    "python src/decaf_scramble_test.py --base decaf --batch-size 12",
+    "python src/decaf_scramble_test.py --base boltz1 --batch-size 12"
+  ],
+  "results": {
+    "decaf": {
+      "iptm": {
+        "cognate": 0.5811680758541281,
+        "scrambled": 0.38037491869181395,
+        "cognate_minus_own_scramble": 0.2007931571623141,
+        "ci95": [
+          0.11652724071768182,
+          0.2850590736069464
+        ],
+        "p": 1.9091272289632523e-05,
+        "n_pairs": 44,
+        "mean_rank": 1.7727272727272727,
+        "chance": 2.5,
+        "cognate_first": 12,
+        "p_rank": 0.008668524816784397,
+        "n_receptors": 22
+      },
+      "iface_plddt": {
+        "cognate": 80.18572521543182,
+        "scrambled": 70.64559046300072,
+        "cognate_minus_own_scramble": 9.540134752431099,
+        "ci95": [
+          6.2919179829114915,
+          12.788351521950705
+        ],
+        "p": 4.7299695017506886e-07,
+        "n_pairs": 44,
+        "mean_rank": 1.7272727272727273,
+        "chance": 2.5,
+        "cognate_first": 13,
+        "p_rank": 0.004210548022972778,
+        "n_receptors": 22
+      },
+      "receptor_side": {
+        "cognate": 84.93378010990631,
+        "scrambled": 78.98337770568946,
+        "cognate_minus_own_scramble": 5.95040240421686,
+        "ci95": [
+          3.6078743830085402,
+          8.29293042542518
+        ],
+        "p": 6.765751791887196e-06,
+        "n_pairs": 44,
+        "mean_rank": 1.7727272727272727,
+        "chance": 2.5,
+        "cognate_first": 11,
+        "p_rank": 0.003220802290833296,
+        "n_receptors": 22
+      },
+      "peptide_side": {
+        "cognate": 70.4805955882353,
+        "scrambled": 53.79992851481555,
+        "cognate_minus_own_scramble": 16.68066707341975,
+        "ci95": [
+          11.073250811877813,
+          22.28808333496169
+        ],
+        "p": 3.666758614621765e-07,
+        "n_pairs": 44
+      }
+    },
+    "boltz1": {
+      "iptm": {
+        "cognate": 0.2027242915196852,
+        "scrambled": 0.1634564475918358,
+        "cognate_minus_own_scramble": 0.039267843927849426,
+        "ci95": [
+          0.013027564577999064,
+          0.06550812327769978
+        ],
+        "p": 0.0042658943637338366,
+        "n_pairs": 44,
+        "mean_rank": 1.8636363636363635,
+        "chance": 2.5,
+        "cognate_first": 11,
+        "p_rank": 0.01677777112171814,
+        "n_receptors": 22
+      },
+      "iface_plddt": {
+        "cognate": 47.79169475661927,
+        "scrambled": 46.24896722339925,
+        "cognate_minus_own_scramble": 1.5427275332200183,
+        "ci95": [
+          -0.11364824213563351,
+          3.19910330857567
+        ],
+        "p": 0.0671284135627695,
+        "n_pairs": 44,
+        "mean_rank": 1.9090909090909092,
+        "chance": 2.5,
+        "cognate_first": 9,
+        "p_rank": 0.010441005400018365,
+        "n_receptors": 22
+      },
+      "receptor_side": {
+        "cognate": 49.50439303084283,
+        "scrambled": 48.79358202551537,
+        "cognate_minus_own_scramble": 0.710811005327463,
+        "ci95": [
+          -1.0820967906656447,
+          2.503718801320571
+        ],
+        "p": 0.42837679065505235,
+        "n_pairs": 44,
+        "mean_rank": 2.0454545454545454,
+        "chance": 2.5,
+        "cognate_first": 8,
+        "p_rank": 0.05443527796746396,
+        "n_receptors": 22
+      },
+      "peptide_side": {
+        "cognate": 43.28572915972916,
+        "scrambled": 39.76682168841259,
+        "cognate_minus_own_scramble": 3.5189074713165613,
+        "ci95": [
+          1.416821862274381,
+          5.620993080358742
+        ],
+        "p": 0.0015694934047446952,
+        "n_pairs": 44
+      }
+    }
+  }
+}
