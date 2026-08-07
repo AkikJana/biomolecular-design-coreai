@@ -177,14 +177,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Ranks Binders Where ipTM Does Not ....................... 21  
 &nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
 &nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 26  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 28  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 28  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 29  
-9. FUTURE PLAN .............................................................. 32  
-10. REFERENCES .............................................................. 35  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 37  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 39  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 41  
+&nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 28  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 31  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 31  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 32  
+9. FUTURE PLAN .............................................................. 35  
+10. REFERENCES .............................................................. 38  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 40  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 42  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 44  
 
 &nbsp;
 
@@ -771,6 +772,15 @@ i.e. 1,200–2,100 folds for the panel. That is a GPU-scale workload, which make
 the deferred CUDA phase a prerequisite for the next round rather than a
 throughput improvement.
 
+**This generalises beyond Boltz-2 (Section 7.9).** Repeating the identical design
+on the few-step-distilled model leaves ipTM stable for 0 of 4 receptors and
+interface pLDDT for only 1 of 4, so the instability is a property of these
+folding models rather than of the reduced-sampling regime — which strengthens
+this section rather than qualifying it. Section 7.9 also shows the recommendation
+needs splitting: averaging is required for per-receptor claims, but does not
+rescue a weak metric in aggregate, because the variance decomposition finds
+aggregate discriminability signal-limited rather than noise-limited.
+
 The observation generalises beyond this project: ranking candidate binders from a
 *single* AlphaFold or Boltz run is common practice, and at reduced sampling
 settings a single run does not reproduce its own ranking.
@@ -1005,7 +1015,10 @@ negatives — was too simple and is not adopted. The three arms support somethin
 narrower:
 
 1. Few-step distillation substantially improves both order sensitivity and
-   receptor specificity, by 5–6× over its own teacher at the same budget.
+   receptor specificity, by 5–6× over its own teacher at the same budget in raw
+   effect size. **Section 7.9 qualifies what that buys**: DeCAF is also ~1.6×
+   noisier, so once its own sampling noise is measured rather than assumed, the
+   advantage in discriminability is 2.2–2.6×, not 5–6×.
 2. Stock models at reduced sampling retain weak but real signal, not none.
 3. Which readout carries the signal varies by model.
 
@@ -1022,6 +1035,115 @@ unmeasured. The panel remains 22 receptors, with bootstrap upper bounds reaching
 The DeCAF fork reverts to the teacher sampler if it does not recognise the
 distilled head, which would yield plausible numbers from the wrong model. Each
 batch asserts the confirmation string in its log and refuses to score otherwise.
+
+<div class="page-break"></div>
+
+### 7.9 Variance Decomposition and the Reproducibility of the Few-Step Model
+
+Two analyses that correct claims made earlier in this section.
+
+#### 7.9.1 The rank tests were discarding most of the data
+
+Every test in Sections 7.4 to 7.8 collapses six folds per receptor into a single
+integer rank. That protects against receptor-level baseline variation — the
+nuisance the within-receptor design exists to remove — but discards magnitude,
+which is why results sat near p = 0.03 at n = 22.
+
+A linear mixed model with receptor as a random effect,
+
+    s(R,P) = μ + α_R + β·cognate + γ·scramble + δ_RP + ε,
+
+gives the same protection without the loss.
+
+| Arm | Metric | Rank-test p | Mixed-model p |
+| :--- | :--- | ---: | ---: |
+| Boltz-2 | ipTM | 0.034 | **0.0042** |
+| Boltz-2 | Interface pLDDT | 0.027 | **0.00005** |
+| Boltz-1 | ipTM | 0.017 | **0.00009** |
+| DeCAF | Interface pLDDT | 0.0042 | **< 1e-5** |
+
+Roughly an order of magnitude, from the estimator alone. Several results
+described above as suggestive but not significant were limited by the analysis
+rather than by the evidence.
+
+#### 7.9.2 A ceiling on any score from these models
+
+Splitting residual variance into the receptor–peptide interaction δ (the binding
+signal) and fold-to-fold sampling noise ε measured from replicates:
+
+| Arm | Metric | σ²_receptor | σ²_interaction | σ²_noise | Signal/noise |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| Boltz-2 | ipTM | 0.0054 | 0.0059 | 0.0039 | 1.48 |
+| Boltz-2 | Interface pLDDT | 14.46 | 10.01 | 3.68 | 2.72 |
+| Boltz-1 | ipTM | 0.0023 | 0.0002 | 0.0039 | **0.05** |
+| Boltz-1 | Interface pLDDT | 13.48 | 9.90 | 3.68 | 2.69 |
+| DeCAF | ipTM | 0.0157 | 0.0366 | 0.0096 | 3.80 |
+| DeCAF | Interface pLDDT | 85.84 | 55.82 | 9.17 | **6.08** |
+
+The ratio bounds *any* score computed from that model, which makes two points
+the rank tests could not.
+
+**Boltz-1's ipTM is noise-limited (0.05); every other cell is signal-limited.**
+Its weak result is a different failure from Boltz-2's — one signal is drowned,
+the other is nearly absent — and Section 7.8 treats the two as one phenomenon.
+
+**Averaging is not a general remedy.** Every other cell exceeds 1, so noise is
+not the binding constraint on aggregate discriminability.
+
+#### 7.9.3 The few-step model is noisier, not cleaner
+
+The decomposition above initially applied Boltz-2's noise term to the DeCAF arm
+for want of a measurement, on the expectation that a model distilled to land
+accurately in ten steps would be less stochastic. **The opposite holds.**
+Repeating Section 7.5's design exactly — same 24 complexes, same 4 receptors,
+4 identical unseeded re-runs:
+
+| Metric | DeCAF SD | Boltz-2 SD | Ratio |
+| :--- | ---: | ---: | ---: |
+| ipTM | 0.0981 | 0.0628 | **1.56** |
+| Interface pLDDT | 3.029 | 1.917 | **1.58** |
+
+Fewer, larger jumps move further per draw, so run-to-run spread grows. Correcting
+the decomposition accordingly:
+
+| Metric | S/N, borrowed noise | S/N, measured | Advantage over Boltz-2 |
+| :--- | ---: | ---: | :--- |
+| ipTM | 10.71 | **3.80** | 2.6× (not 7.2×) |
+| Interface pLDDT | 16.68 | **6.08** | 2.2× (not 6.1×) |
+
+DeCAF remains the strongest arm by a clear margin, but by roughly half what the
+borrowed figure implied. The raw effect sizes of Section 7.8 are unaffected —
+they are measured, not inferred; what changes is the discriminability those
+effects purchase once the model's own noise is accounted for.
+
+#### 7.9.4 Rank instability generalises
+
+Cognate rank among its own decoys, across four identical re-runs:
+
+```
+ipTM             stable 0/4    1YCR [1,2,1,1]  6YOO [2,2,2,1]
+                               8KDX [4,2,3,2]  9F6S [2,3,3,3]
+interface pLDDT  stable 1/4    1YCR [1,3,1,1]  6YOO [2,2,2,2]
+                               8KDX [4,4,3,3]  9F6S [2,3,2,2]
+```
+
+Single unseeded folds do not reproduce their own per-receptor rankings on the
+few-step model either, so Section 7.5's finding describes these folding models
+generally rather than the reduced-sampling regime.
+
+This does not contradict the signal-limited verdict of 7.9.2. Aggregate
+discriminability is not noise-bound, yet individual within-receptor comparisons
+are close enough that a single draw reorders them. The recommendation therefore
+splits: **average for per-receptor claims; averaging will not rescue a weak
+metric in aggregate.**
+
+#### 7.9.5 Limitations
+
+Boltz-1 has no replicate study of its own and borrows the Boltz-2 noise term, so
+its rows are an assumption rather than a measurement. The replicate design covers
+4 receptors, chosen in Section 7.5 to span the observed outcomes, not the full
+panel. The mixed model assumes additive receptor effects and homoscedastic
+residuals; neither was tested.
 
 <div class="page-break"></div>
 
@@ -1111,7 +1233,11 @@ worked.
    peptides.** This is the one recommendation here that improves a result rather
    than qualifying it. pDockQ actively cancels the signal in this regime,
    because its contact term favours scrambled peptides.
-2. **Report replicate-averaged confidence, never a single fold.** On this
+2. **Report replicate-averaged confidence for per-receptor claims.**
+   Section 7.9 refines this: rank instability generalises to the few-step model,
+   so per-receptor rankings do require averaging — but the variance decomposition
+   finds aggregate discriminability signal-limited rather than noise-limited, so
+   averaging will not rescue a weak metric at the population level. On this
    evidence, 9 to 16 replicate folds per complex are required before a
    per-receptor ranking is meaningful. Practitioners ranking binders on a single
    AlphaFold or Boltz run should treat those rankings as provisional.
