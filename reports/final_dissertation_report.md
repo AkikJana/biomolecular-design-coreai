@@ -187,6 +187,7 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 28  
 &nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 30  
 &nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 34  
+&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 38  
 8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 31  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 31  
 &nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 32  
@@ -1582,6 +1583,116 @@ rather than sequence models generally.
 
 <div class="page-break"></div>
 
+### 7.12 Reading the Panel as a Competition
+
+Every readout in Sections 7.2 to 7.11 is something the model reports about its
+own output — ipTM, pLDDT, PAE and the metrics built from them all come from the
+confidence head. That is why they all sit under the ceiling of Section 7.9.2,
+and why combining readouts, combining models, and rescoring with a physics
+energy function each buy nothing. Escaping it requires information the model did
+not produce. Three sources were available and all three were tested.
+
+#### 7.12.1 The one that works: reciprocal best match
+
+The panel has been read in one direction throughout — *for this receptor, is the
+cognate the best of its candidate peptides?* It also contains the transpose,
+because each peptide is folded against its own receptor and against the several
+that borrowed it as a decoy. That direction asks *for this peptide, is its own
+receptor the best of the targets it was tried against?*, and it works at least
+as well:
+
+| direction | mean rank | chance | p |
+| :--- | ---: | ---: | ---: |
+| receptor-centric (Sections 7.4–7.10) | 1.73 | 2.50 | 0.0042 |
+| peptide-centric | 1.58 | 2.66 | 0.0014 |
+
+Requiring **both** is the binding analogue of reciprocal best hits in homology
+search. Measured across both panels, both readouts and all five draws — twelve
+combinations in total:
+
+| | one-directional | reciprocal |
+| :--- | ---: | ---: |
+| precision | 56% (range 42–72%) | **88% (range 75–100%)** |
+| enrichment over base rate | 2.3× | **3.5×** |
+| calls retained | — | 49% |
+
+Pooled over the twelve, the filter discards **87% of wrong calls (84 of 97) and
+23% of right ones (29 of 125)**. That asymmetry is the result: a criterion that
+merely shrank the candidate set would discard both classes in proportion.
+Permutation tests against discarding the same number of calls at random clear
+0.05 in ten of twelve cells.
+
+**It replicates, which nothing else in this section does.** Precision improves
+in 12 of 12 combinations. Draws within a panel share receptors and are not
+independent, so the defensible unit is panel × readout — 4 of 4 — rather than
+the 12-way sign test.
+
+This is not a better score. It is the same scores read as a two-way competition,
+so it gets its power from the structure of the screen rather than from the
+model, which is precisely why the Section 7.9.2 ceiling does not apply to it.
+
+**Deployed form.** Score each candidate against the target *and* against a small
+panel of off-targets, and keep only candidates whose best target is yours. The
+cost is five to ten times the folds, which is real but bounded, and buys
+precision from 56% to 88%.
+
+**Limitations.** Call counts are small — seven to thirteen per combination, so a
+reported 100% is eight of eight. The competition is also incidental rather than
+designed: each peptide meets only the three to six receptors that happened to
+borrow it, and a deployed off-target panel would be chosen deliberately. And the
+filter improves both regimes without undoing contamination — held-out precision
+before filtering is 50% against 60% in training, consistent with Section 7.10.
+
+#### 7.12.2 Two that do not: external ground truth and sample agreement
+
+**Site correctness.** The crystal says which receptor residues contact the
+peptide, so for any prediction one can ask what fraction of its contacts fall
+inside that known site. This is information from outside the model entirely.
+Measured on 120 folds across 20 held-out receptors:
+
+| class | site precision | site recall |
+| :--- | ---: | ---: |
+| cognate | 0.452 | 0.562 |
+| decoy | 0.445 | 0.580 |
+| scrambled | 0.449 | 0.541 |
+
+Rank 2.50 against chance 2.50, p = 0.906. **The measurement works and the
+discrimination is absent**: random contacts would give a precision of 0.148, so
+the model locates the true groove three times better than chance — and does it
+equally for every class. Site-finding is driven by the receptor, not the
+peptide. A groove is concave, hydrophobic and accessible whether or not the
+peptide belongs in it.
+
+**Pose convergence.** If a peptide genuinely binds it has one favourable pose to
+find, so independent draws should agree; a non-binder should scatter. Folding
+the panel twice with structures retained and superposing on the receptor:
+
+| class | peptide RMSD between draws | receptor RMSD |
+| :--- | ---: | ---: |
+| cognate | 8.35 Å | 2.68 Å |
+| decoy | 9.67 Å | 3.12 Å |
+| scrambled | 9.99 Å | 3.34 Å |
+
+The direction is right and the effect is not significant (+1.64 Å, p = 0.129;
+rank 2.41, p = 0.713). Receptor RMSD also varies by class and correlates with
+peptide RMSD at r = +0.36, so part of the apparent signal is the whole complex
+being more reproducible rather than the peptide being better placed; regressing
+it out halves the effect to +1.08 Å (p = 0.350).
+
+**Together these two say something specific.** Every peptide lands in the same
+correct pocket, and every peptide is then placed 8 to 10 Å differently within it
+on each draw. For a peptide of ten to twenty residues that is a different pose
+each time. The pocket is determined by the receptor; the pose is not determined
+at all.
+
+That closes the account of why so much of this section failed. Inter-chain
+contacts, contact density, buried surface area, pDockQ, PRODIGY's binding energy
+and pose agreement are all reading a placement that is correct in location and
+arbitrary in detail. **The only axis carrying binding information is
+confidence**, which is exactly why every readout reduces to the same ceiling.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -1697,6 +1808,20 @@ do not transfer to peptide binder discrimination. It does, however, pass the
 scramble control that demoted ipTM — showing that order sensitivity and receptor
 specificity are separable capabilities rather than two tests of one.
 
+**Eighth, and the one actionable positive of the search: requiring the match to
+hold in both directions raises precision from 56% to 88%** (Section 7.12).
+Reading the panel as a competition in the peptide direction as well as the
+receptor direction, and keeping only reciprocal best matches, discards 87% of
+wrong calls and 23% of right ones. It replicates in 12 of 12 panel-readout-draw
+combinations, which nothing else in this work does, and it costs nothing at
+inference because it re-reads scores already computed. Two other attempts to
+escape the ceiling failed: scoring predictions against the crystal's known
+binding site does not discriminate at all (p = 0.906 — every peptide finds the
+right groove), and pose agreement between draws is not significant once receptor
+reproducibility is regressed out. Together those two show that the pocket is
+determined by the receptor while the pose is not determined at all, which is why
+every contact-derived readout in this work failed.
+
 One further correction belongs here rather than in a footnote. Section 7.10 was
 first written from a single draw of the held-out panel, and a second independent
 draw moved its central p-value four orders of magnitude. The claim that interface
@@ -1734,12 +1859,19 @@ what it measures, and most published ones lack all six.
    pDockQ, PAE-based metrics, any physics energy function — is meaningless on the
    former and works on the latter. This is the largest single quality difference
    measured in this work, and it costs nothing at inference.
-3. **Split the benchmark on the model's training cutoff, and report both
+3. **Require the match in both directions before calling a hit.** Score each
+   candidate against the target *and* against a small panel of off-targets, and
+   keep only candidates whose best target is yours. Precision rises from 56% to
+   88% and enrichment from 2.3x to 3.5x, discarding 87% of wrong calls against
+   23% of right ones (Section 7.12). It costs five to ten times the folds and
+   nothing in modelling, and it is the only intervention in this work that
+   improved in every panel, readout and draw tested.
+4. **Split the benchmark on the model's training cutoff, and report both
    halves.** This was the most consequential control in the project and the last
    one applied. Boltz-1 and AlphaFold3 both cut off at 2021-09-30. Without the
    split, a panel drawn from the PDB measures retrieval and prediction together
    and reports the sum as accuracy.
-4. **Report replicate-averaged confidence for per-receptor claims — and for
+5. **Report replicate-averaged confidence for per-receptor claims — and for
    any headline number.** Section 7.10.3 is the cautionary case: a single draw
    put the held-out interface-pLDDT effect at p = 0.089 and a second put it at
    p = 0.00008.
@@ -1750,11 +1882,11 @@ what it measures, and most published ones lack all six.
    evidence, 9 to 16 replicate folds per complex are required before a
    per-receptor ranking is meaningful. Practitioners ranking binders on a single
    AlphaFold or Boltz run should treat those rankings as provisional.
-5. **Always include a scramble control.** Composition and length alone reproduce
+6. **Always include a scramble control.** Composition and length alone reproduce
    most of the apparent discrimination between a cognate and a decoy. Without a
    composition-matched control, a benchmark cannot distinguish binder
    recognition from composition sensitivity.
-6. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
+7. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
    candidate complexes were PTM-dependent, and folding the canonical sequence
    makes those "positives" non-binding, which silently penalises the metric
    under test. An allowlist of known PTM codes is not sufficient — it passed a
@@ -1763,11 +1895,11 @@ what it measures, and most published ones lack all six.
    no list, and additionally catches glycosylation (9GRF) and peptides that are
    substantially synthetic (1NLO). Reject any peptide whose canonical sequence
    contains `X` (Section 7.10.1).
-7. **Do not treat operator-level memory savings as drop-in.** A substituted
+8. **Do not treat operator-level memory savings as drop-in.** A substituted
    operator should be validated against pretrained weights on real activations
    before its microbenchmark saving is claimed.
-8. **Deploy on GPU before extending the biological claims.** The replicate
-   folding required by recommendation 4 is a 1,200–2,100 fold workload for this
+9. **Deploy on GPU before extending the biological claims.** The replicate
+   folding required by recommendation 5 is a 1,200–2,100 fold workload for this
    panel, which is not a CPU-scale task.
 
 <div class="page-break"></div>
@@ -1785,20 +1917,43 @@ what it measures, and most published ones lack all six.
 | 3 | Pre-trained Weight Verification | 21 Mar 2026 – 10 Jun 2026 | Run local predictions with Boltz-1 parameters | **COMPLETED** |
 | 4 | Edge Optimization & Integration | 11 Jun 2026 – 22 Jun 2026 | Integrate Low-Rank, CFG student, and Neural Refiner; resolve MPS dependencies | **COMPLETED** |
 | 5 | Reference & Surrogate Validation | 23 Jun 2026 – 31 Jul 2026 | Measure ipTM as a ranking reference against PDB complexes; distil and evaluate the surrogate; establish the low-rank OPM reachability result | **COMPLETED** |
-| 6 | Production GPU Scaling | 01 Aug 2026 – 20 Aug 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
-| 7 | Powered Specificity Run | 01 Aug 2026 – 02 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark (Section 7.4) | **COMPLETED** |
-| 8 | Measurement Reproducibility | 02 Aug 2026 – 02 Aug 2026 | Quantify ipTM run-to-run variance (Section 7.5) | **COMPLETED** |
-| 9 | Replicate-Averaged Rerun (GPU) | 03 Aug 2026 – 20 Aug 2026 | 9-16 replicate folds per complex; requires CUDA deployment | **PENDING** |
-| 10 | Final Thesis | 03 Aug 2026 – 28 Aug 2026 | Consolidate results and write the dissertation | **IN PROGRESS** |
+| 6 | Powered Specificity Run | 01 Aug 2026 – 02 Aug 2026 | Complete the 22-receptor Boltz-2 benchmark (Section 7.4) | **COMPLETED** |
+| 7 | Measurement Reproducibility | 02 Aug 2026 – 02 Aug 2026 | Quantify ipTM run-to-run variance (Section 7.5) | **COMPLETED** |
+| 8 | Few-Step Distillation Arms | 05 Aug 2026 – 06 Aug 2026 | Run the panel on Boltz-1 and DeCAF to de-confound model from step count (Sections 7.8, 7.9) | **COMPLETED** |
+| 9 | Held-Out Panel & Panel Integrity | 08 Aug 2026 – 09 Aug 2026 | Build a 22-receptor post-cutoff panel, fold it three times, audit the original panel for non-binders (Sections 7.10, 7.10.1) | **COMPLETED** |
+| 10 | Backbone Convergence & Search for a Better Readout | 09 Aug 2026 – 10 Aug 2026 | Audit predicted geometry; test physics rescoring, cross-model ensembling, a sequence model, site correctness, pose convergence and reciprocal matching (Sections 7.11, 7.12) | **COMPLETED** |
+| 11 | Production GPU Scaling | 12 Aug 2026 – 20 Aug 2026 | Deploy on CUDA and run NCCL scale tests | **PENDING** |
+| 12 | Final Thesis | 10 Aug 2026 – 28 Aug 2026 | Consolidate results and write the dissertation | **IN PROGRESS** |
 
 **Change of plan, and why.** The original phase 5 (CUDA/NCCL scaling) was
 deferred in favour of validating the scoring reference, because the binder
 screen planned for phase 6 depends on it: a screen ranked by a signal that does
 not discriminate binders would produce candidates with no meaning regardless of
 how fast it ran. That validation (Section 7.2) showed the dependency does not
-hold, which is why the remaining plan prioritises the powered specificity run
-over the TNF-alpha screen. Scaling work remains valuable for throughput but no
-longer sits on the critical path to a defensible result.
+hold, which is why the plan prioritised measurement over throughput.
+
+**A second change, and the reason GPU scaling has moved to the end.** An earlier
+version of this plan listed a replicate-averaged rerun as *pending on CUDA
+deployment*, on the assumption that 9 to 16 folds per complex was not a
+CPU-scale workload. Two developments removed the dependency. MPS acceleration
+gives roughly 3x over CPU (Section 5), and few-step distillation folds the whole
+132-complex panel in about twenty minutes (Section 7.8). The held-out panel was
+consequently folded **five times** on this laptop rather than once on a cluster,
+and it was the third of those draws that overturned the conclusion the first two
+supported (Section 7.10.3). Replicate averaging is now measured rather than
+deferred, and it is the intervention with the largest effect on held-out
+discriminability (+0.119 AUC, Section 7.9.4).
+
+Scaling remains valuable for throughput and for extending the panel past 22
+receptors, which Section 7.10.6 identifies as the binding constraint on the
+central open question. It no longer sits on the critical path to a defensible
+result, and it is scheduled after the analysis rather than before it.
+
+**What the remaining time is for.** Section 7.10.6 shows the panel cannot settle
+whether held-out degradation is metric-specific, and Section 7.12 shows the
+reciprocal-match result rests on seven to thirteen calls per combination. Both
+want more receptors rather than more analysis, and both are throughput problems
+— which is what phase 11 addresses.
 
 
 <div class="page-break"></div>

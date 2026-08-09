@@ -247,6 +247,11 @@ def main():
     ap.add_argument("--ckpt", default=str(DECAF_HOME / "decaf_conf_ckpt.ckpt"))
     ap.add_argument("--work", default=str(REPO_ROOT / "artifacts" / "heldout_panel"))
     ap.add_argument("--analyse-only", action="store_true")
+    ap.add_argument("--keep-structures", action="store_true",
+                    help="do not delete each batch after scoring. Needed to "
+                         "compare the *pose* across draws rather than the "
+                         "score: a real binder should land in the same place "
+                         "each time and a non-binder should scatter.")
     ap.add_argument("--run-tag", default="",
                     help="suffix for the score store, so a repeat run is a new "
                          "independent draw rather than a no-op resume. Folds "
@@ -305,7 +310,11 @@ def main():
         todo = [p for p in pairs if p["name"] not in done]
         for start in range(0, len(todo), args.batch_size):
             chunk = todo[start:start + args.batch_size]
-            bdir = work / f"b{start // args.batch_size:02d}"
+            # The run tag has to be in the batch directory name, not just the
+            # score file: with --keep-structures two runs would otherwise write
+            # predictions into the same b00/b01 and the second would overwrite
+            # the first, which is exactly the comparison being set up.
+            bdir = work / f"b{args.run_tag}{start // args.batch_size:02d}"
             inputs = bdir / "inputs"
             if inputs.exists():
                 shutil.rmtree(inputs)
@@ -330,7 +339,8 @@ def main():
             store.write_text(json.dumps(recs, indent=2))
             print(f"  batch {start // args.batch_size}: {len(got)}/{len(chunk)} "
                   f"in {el:.0f}s", flush=True)
-            shutil.rmtree(bdir, ignore_errors=True)
+            if not args.keep_structures:
+                shutil.rmtree(bdir, ignore_errors=True)
 
     summary = analyse(recs)
     # Sensitivity: the same test with the cofactor-dependent members removed,
