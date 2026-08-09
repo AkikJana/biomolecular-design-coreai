@@ -124,8 +124,15 @@ peptide composition rather than to binding, and a single unseeded fold does not
 reproduce its own ranking. Each negative result is supported by controls, held-out splits, power analysis
 and replication. Re-scoring the same structures then recovered a positive
 result: interface pLDDT separates a binder from its own scramble where ipTM
-cannot, at 8.6 times the effect-to-noise ratio, yielding a concrete
-recommendation for how such candidates should be ranked.
+cannot, at 8.6 times the effect-to-noise ratio. A second panel of receptors
+released after the model's training cutoff then bounded that recovery — over
+three independent draws both readouts retain only about half their effect on
+complexes the model was not trained on, so a benchmark figure quoted without
+stating which regime it was measured in is roughly a factor of two optimistic.
+Auditing the predicted coordinates themselves explains much of the rest: at the
+reduced sampling used throughout, only 14% of backbone bonds are physically
+plausible against 96% for a model distilled for that step budget, and every
+geometry-derived readout fails on the former and works on the latter.
 
 &nbsp;
 
@@ -174,10 +181,12 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 17  
 &nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding ....................... 18  
 &nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
-&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Ranks Binders Where ipTM Does Not ....................... 21  
+&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards ............................. 21  
 &nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
 &nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 26  
 &nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 28  
+&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 30  
+&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 34  
 8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 31  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 31  
 &nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 32  
@@ -246,7 +255,7 @@ measure.
 3. Reduce sampler cost through classifier-free-guidance distillation and
    speculative integration.
 4. Build a distilled surrogate capable of ranking candidate binders on-device.
-5. **Validate each of the above against pretrained checkpoints and
+8. **Validate each of the above against pretrained checkpoints and
    experimentally determined structures, rather than against synthetic tensors.**
 
 Objective 5 is the one that distinguishes this work. It was added after the
@@ -305,7 +314,7 @@ this report:
    (Boltz default 200), 1 recycling iteration (default 3) and MSA depth 32
    (default 8192). These were forced by CPU-only execution on a laptop. The
    settings confound is stated, not resolved.
-2. **Panel size.** The binder benchmark uses 22 receptors. This was sized by a
+5. **Panel size.** The binder benchmark uses 22 receptors. This was sized by a
    power analysis, but it remains small relative to the generality of the claim.
 3. **Measurement noise.** Folds are unseeded, and Section 7.5 quantifies what
    that costs. Per-complex results are not reproducible at these settings.
@@ -788,11 +797,18 @@ settings a single run does not reproduce its own ranking.
 <div class="page-break"></div>
 
 
-### 7.6 Interface pLDDT Ranks Binders Where ipTM Does Not
+### 7.6 Interface pLDDT Recovers What ipTM Discards — On Structures the Model Has Seen
 
 Sections 7.2 to 7.5 indict **ipTM**, not the predicted structures — 132 of which
 remained on disk. Re-scoring them with other interface measures required no
-further folding, and changes the practical conclusion of this dissertation.
+further folding.
+
+The result below is real and reproduces. Its scope, however, is narrower than
+this section originally claimed: **Section 7.10 shows that most of the advantage
+disappears on complexes released after the model's training cutoff.** This
+section should be read as characterising the readouts on the panel as
+constituted — which is largely a panel of structures the model was trained on —
+and Section 7.10 as establishing what transfers.
 
 Six measures were computed from the same complexes and put through the identical
 tests. Contacts use a 8 Å CB–CB criterion (CA for glycine); pDockQ follows
@@ -816,6 +832,18 @@ interface pLDDT by a contact term, and the contact term runs the wrong way in
 this regime: scrambled peptides make *more* inter-chain contacts than cognates
 (38.5 against 32.9). Combining the two cancels the signal that interface pLDDT
 carries on its own.
+
+**The cause is not short peptides — it is unconverged geometry.** Section 7.11
+shows that only 14% of backbone bonds in these Boltz-2 structures are physically
+plausible against 96% for a few-step-distilled model, and that on converged
+structures the contact ordering reverses to the sensible direction (cognates
+61.4, scrambles 51.8). Every contact-derived entry
+in the table above — inter-chain contacts, contact density, buried surface area,
+pDockQ — is computed from CB–CB distances on a backbone that is not connected,
+and should be read as describing point clouds rather than complexes. Replacing
+pDockQ's contact term with a PAE-derived one (pDockQ2) repairs it on the same
+structures, from p = 0.797 to p = 0.00026. The ipTM and interface-pLDDT rows are
+unaffected: both come from the confidence head rather than the coordinates.
 
 **The result survives the reproducibility test that demoted ipTM.** The 96
 replicate folds of Section 7.5 were re-scored the same way to obtain a
@@ -846,19 +874,36 @@ test gives p = 0.027, which does not clear that threshold, although it
 reproduces in 84% of simulated re-runs. More receptors would settle it.
 
 Interface pLDDT is read from the same confidence head as ipTM, so this is a
-better *readout* of one model rather than an independent second opinion. The
-practical implication is unchanged: the information required to rank these
-binders is present in the prediction, and ipTM discards it.
+better *readout* of one model rather than an independent second opinion.
 
-**Correction — this result is model-dependent.** Section 7.8 re-runs the
-identical pairs on stock Boltz-1 and on a few-step-distilled model. Interface
-pLDDT separates a cognate from its own scramble strongly on Boltz-2 (+3.30) and
-on DeCAF-Boltz (+9.54), but **not on Boltz-1** (+1.54, p = 0.067, with a
-confidence interval spanning zero, and receptor side p = 0.43). The
-recommendation to rank on interface pLDDT holds for the models on which it was
-measured; it does not generalise to every cofolding model, and this section
-should not be read as though it does. Section 7.8 also shows that receptor
-specificity, left open above, **is** established on the few-step model.
+#### 7.6.1 Two corrections, in opposite directions
+
+**Four of the twenty-two cognate pairs were not binders.** The benchmark folds
+two sequences, which is faithful only if the crystallised peptide *is* its
+canonical sequence. For four members it is not (Section 7.10.1). 1NLO is the
+worst: five of eleven positions are synthetic groups rather than amino acids, so
+what SH3 binds in that crystal is a small molecule while what was folded is the
+string `XXXXPLPPLPX`. 9GRF's peptide is O-glycosylated and its receptor reads
+the glycan. A non-binding cognate scores like a scramble and therefore *dilutes*
+the contrast it belongs to, so removing these members should raise every effect
+— which it does, in 9 of 9 arm-metric cells. Boltz-2's interface pLDDT goes from
++3.30 to +3.47.
+
+**The earlier claim that this result is model-dependent does not survive that
+correction.** Section 7.8 reported that interface pLDDT fails on stock Boltz-1
+(+1.54, p = 0.067). With the two unfoldable members removed it is p = 0.013, and
+removing the capped peptides as well gives p = 0.001; the receptor-side term
+moves from p = 0.428 to p = 0.012. Boltz-1 does show the effect. That claim was
+substantially an artefact of two non-binders in a 22-receptor panel, and it is
+withdrawn rather than annotated.
+
+**The correction that does hold is a larger one.** Both of the above are
+in-training comparisons. Section 7.10 folds a second panel of 22 receptors
+released *after* the training cutoff and finds the interface-pLDDT effect
+weakens from +12.03 to +4.99, and ipTM's from +0.265 to +0.137 — both roughly
+halve. The readout recommended here remains the best single one measured, but
+the figures in this section describe a panel that is largely training data and
+should be read as an upper bound on what a novel target would give.
 
 <div class="page-break"></div>
 
@@ -891,8 +936,14 @@ not separate these, and to that extent overstated what the pooled figure means.
 **The receptor side survives the objection.** The receptor's own residues are
 placed more confidently when the cognate peptide is present (+2.38, p = 6e-5).
 A more disordered peptide cannot make the receptor's residues more certain, so
-peptide foldability does not account for this term. It is the strongest evidence
-in this dissertation that the metric reads something about the interaction.
+peptide foldability does not account for this term.
+
+That argument is sound and the measurement holds on this panel. What it does not
+establish is that the effect is about *binding* rather than about recognition of
+a complex the model was trained on: on the held-out panel of Section 7.10 the
+receptor-side term falls from +7.38 to +2.57, and the interaction is significant
+on both scales (p = 0.013 raw, p = 0.0099 within-receptor). The foldability
+objection is answered; a retrieval objection takes its place.
 
 Taken alone the receptor side ranks the cognate against decoys at p = 0.086 —
 separating a peptide from its own scramble but again not establishing receptor
@@ -936,15 +987,21 @@ uninformative alone because shuffling destroys the fold as well as the site.
 
 #### 7.7.3 Summary
 
-**Strengthened.** The receptor responds to which peptide it is given, and peptide
-foldability cannot explain that.
+**Established.** On this panel the receptor responds to which peptide it is
+given, and peptide foldability cannot explain that.
 
-**Not established.** That the response is localised to the binding site.
+**Not established.** That the response is localised to the binding site
+(p = 0.244, requiring roughly six times the panel).
 
-Neither result changes the recommendation of Section 7.6 — rank on interface
-pLDDT rather than ipTM — but the mechanism behind it is only partly
-characterised, and one component of the pooled metric is now known to be largely
-peptide foldability.
+**Not established, and newly in doubt.** That the response is about binding at
+all rather than about having seen the complex. The receptor-side term is the
+component of interface pLDDT that degrades *most* on held-out structures
+(Section 7.10) — it is both the part best defended against the foldability
+objection and the part least likely to transfer.
+
+One component of the pooled metric is now known to be largely peptide
+foldability, and another is now known to be largely retrieval. What remains is
+smaller than this section originally implied.
 
 <div class="page-break"></div>
 
@@ -1004,9 +1061,20 @@ sampling attenuates the signal rather than destroying it. Only Boltz-2's ipTM wa
 genuinely flat, so Section 7.4's conclusion should be read as a statement about
 that model rather than about ipTM in general.
 
-*Section 7.6 is model-dependent.* Interface pLDDT is the best readout on Boltz-2
-and on DeCAF, but on Boltz-1 it does not reach significance while ipTM does. The
-correction is recorded in Section 7.6 itself.
+*The apparent model-dependence was a panel defect — withdrawn.* This section
+originally reported that interface pLDDT reaches significance on Boltz-2 and
+DeCAF but not on Boltz-1 (+1.54, p = 0.067), and concluded that which readout
+carries the signal varies by model. Section 7.10.1 shows the Boltz-1 column was
+being diluted by two cognate pairs that are not binders. Removing them:
+
+| Boltz-1 | all 22 | minus 1NLO, 9GRF | minus those + capped |
+| :--- | ---: | ---: | ---: |
+| Interface pLDDT | +1.54 (p = 0.067) | +2.18 (p = 0.013) | +2.95 (p = 0.001) |
+| Receptor side | +0.71 (p = 0.428) | +1.41 (p = 0.125) | +2.32 (p = 0.012) |
+
+Both halves move together and the receptor-side term moves furthest. Boltz-1
+behaves like the other two arms once non-binders are removed, and the claim is
+withdrawn.
 
 #### 7.8.2 Revised position
 
@@ -1020,7 +1088,10 @@ narrower:
    noisier, so once its own sampling noise is measured rather than assumed, the
    advantage in discriminability is 2.2–2.6×, not 5–6×.
 2. Stock models at reduced sampling retain weak but real signal, not none.
-3. Which readout carries the signal varies by model.
+3. ~~Which readout carries the signal varies by model.~~ Withdrawn above: the
+   three arms agree once the panel is clean. **Section 7.10 replaces this with a
+   sharper statement** — which readout carries the signal depends not on the
+   model but on whether the complex was in its training set.
 
 #### 7.8.3 Limitations
 
@@ -1137,6 +1208,18 @@ are close enough that a single draw reorders them. The recommendation therefore
 splits: **average for per-receptor claims; averaging will not rescue a weak
 metric in aggregate.**
 
+**Revised on held-out data.** That split was measured where the signal is
+strongest. On the held-out panel the effects are roughly halved, so sampling
+noise is a proportionally larger share, and averaging helps in aggregate too:
+three draws take within-receptor AUC from 0.616 to 0.735, a gain of +0.119 with
+a bootstrap interval of [+0.010, +0.226]. It is the only intervention tested in
+this work whose interval excludes zero — against +0.017 for a cross-model
+ensemble, −0.033 for physics rescoring, and −0.13 for combining thirteen
+readouts. Which statistic is used barely matters: mean, median and best-of-three
+differ by less than the bootstrap spread, and penalising draw-to-draw
+disagreement actively hurts (0.735 to 0.676), because decoys are *more* stable
+across draws than cognates.
+
 #### 7.9.5 Limitations
 
 Boltz-1 has no replicate study of its own and borrows the Boltz-2 noise term, so
@@ -1144,6 +1227,358 @@ its rows are an assumption rather than a measurement. The replicate design cover
 4 receptors, chosen in Section 7.5 to span the observed outcomes, not the full
 panel. The mixed model assumes additive receptor effects and homoscedastic
 residuals; neither was tested.
+
+<div class="page-break"></div>
+
+### 7.10 Is the Panel Measuring Prediction or Retrieval?
+
+Every complex tested so far is a PDB entry, and Boltz-1 — which DeCAF distils —
+was trained on entries released before **2021-09-30**, the same cutoff as
+AlphaFold3. So "interface pLDDT is high for cognates" may mean "the model has
+seen this complex". This section asks two questions the preceding sections
+assumed away: whether the cognate pairs are binders at all, and whether the
+results survive on structures released after the cutoff.
+
+#### 7.10.1 Four of the twenty-two cognate pairs were not binders
+
+RCSB FASTA returns canonical sequence, and returns `X` for any component that is
+not one of the twenty amino acids. Neither is visible downstream: the FASTA
+parses, the fold succeeds, the confidence scores look ordinary.
+
+| PDB | folded as | actually crystallised |
+| :--- | :--- | :--- |
+| 1NLO | `XXXXPLPPLPX` | ACE, MN1, MN2, MN7, NH2 — a designed synthetic ligand |
+| 2GBQ | `XVPPPVPPRRRX` | acetyl and amide terminal caps |
+| 1SEM | `XPPPVPPRRR` | acetyl cap |
+| 9GRF | `AASTTTPAPA` | O-glycosylated at Ser3 and Thr4 |
+
+**1NLO is not a peptide.** Five of eleven positions are 4-carboxypiperidine,
+benzene derivatives and terminal caps. **9GRF is the subtle one:** StcE is a
+mucin-selective protease that recognises the O-glycan, so the bare backbone is
+not a substrate. This is the defect that removed 1I8H (Section 6.3), whose
+peptide needs phosphothreonine and whose "true binder ranked last of six" was
+correct behaviour on a non-binder.
+
+**Why the PTM audit missed them.** That audit tests each peptide against a fixed
+list of PTM codes, which cannot catch a modification not on the list. The
+held-out panel turned up **7F3S**, a histone H3 tail carrying benzoyl-lysine read
+by a bromodomain-containing receptor — precisely the 1I8H failure, and the
+allowlist passed it. Asking a different question fixes this: instead of *"is this
+one of the modifications I know about?"*, ask *"is anything bonded to this
+chain?"* — one `covale` scan over the mmCIF, with no list to maintain. It
+recovers all four, and correctly clears 1ELW, 6YOO and 7S7J, whose nickel, zinc
+and calcium are not bonded to the peptide. A metal at a lattice contact does not
+change whether a peptide binds; a sugar on its own serine does.
+
+**A prediction, fixed in advance.** A cognate that cannot bind scores like a
+scramble and dilutes the contrast it belongs to, so removing these members must
+*raise* every effect. The exclusions were chosen by whether a sequence can be
+folded faithfully, never by inspecting a p-value. **The effect grew in 9 of 9
+arm-metric cells** — the flags come from structural annotation, the effects from
+folds run weeks earlier.
+
+The rank tests move the other way, and reporting only the effects would be
+selective: DeCAF's interface-pLDDT rank test goes from p = 0.0042 to p = 0.0235.
+The mean ranks barely move (1.73 to 1.83 against chance 2.50); what changes is
+that the Wilcoxon loses four of twenty-two samples. That is a power loss, not a
+weaker effect, and it is the limitation Section 7.9.1 already documents.
+
+#### 7.10.2 A panel of complexes the model was not trained on
+
+Of the main panel only 6 receptors postdate the cutoff. A second panel of **22
+receptors released after it** was screened identically — PTM-clean, tag-free,
+receptor and peptide deduplicated — with decoys drawn from within the held-out
+set, so no fold in the comparison involves a training structure. 132 folds on
+DeCAF at the same 10 sampling steps and 1 recycling step.
+
+**These numbers are the mean of three independent draws**, for a reason recorded
+in 7.10.3: the first draw alone was misleading, and so was the second.
+
+| Metric | in-training (16 receptors) | held-out (22 receptors) |
+| :--- | ---: | ---: |
+| ipTM | +0.265 (p = 1e-5) | +0.137 (p = 0.0001) |
+| Interface pLDDT | +12.03 (p < 1e-5) | +4.99 (p = 0.0006) |
+| Receptor side | +7.38 (p = 2e-5) | +2.91 (p = 0.0016) |
+
+Cognate ranked against its own decoys, chance 2.50:
+
+| Metric | in-training | held-out |
+| :--- | ---: | ---: |
+| ipTM | 1.77 (p = 0.0087) | 1.73 (p = 0.0069), 14 of 22 first |
+| Interface pLDDT | 1.73 (p = 0.0042) | 1.91 (p = 0.020), 11 of 22 first |
+
+Every effect is smaller held out, by roughly half in both cases: interface pLDDT
+retains 41% of its in-training effect and ipTM 52%. Neither readout survives
+markedly better than the other.
+
+Comparing two p-values is not a test. A mixed model with receptor as a random
+effect gives the interaction directly, fitted on raw scores and on scores
+z-scored within receptor so the answer does not depend on units:
+
+| Metric | raw | within-receptor z |
+| :--- | ---: | ---: |
+| ipTM | −0.128 (p = 0.052) | −0.096 (p = 0.737) |
+| Interface pLDDT | −7.04 (p = 0.0068) | −0.521 (p = 0.058) |
+| Receptor side | −4.47 (p = 0.014) | −0.451 (p = 0.124) |
+
+**On the scale-free measure nothing degrades significantly.** The raw column
+says interface pLDDT and receptor side weaken held out; the z-scored column
+says that could be a scale effect, since the held-out panel has smaller
+within-receptor spread (5.65 against 8.64) and raw differences shrink with it.
+Two draws gave p = 0.0029 for interface pLDDT on the z scale and three give
+p = 0.058, so the earlier version of this section overstated a result that the
+third draw did not support.
+
+**What this panel can and cannot establish.** It can establish that both
+readouts weaken substantially on complexes the model was not trained on. It
+cannot establish that the weakening is specific to interface pLDDT rather than
+general, because that claim is significant on one scale and not the other, and
+because the rank ordering of the two metrics reversed between draws (7.10.3).
+At 22 receptors with the sampling noise measured here, the panel does not
+support a fine distinction between two readouts. That is a statement about
+power, and Section 7.10.6 gives what would be needed to settle it.
+
+#### 7.10.3 One draw was not enough, and this section originally used one
+
+The held-out panel was first written up from a single set of folds. Folds are
+unseeded, so re-running the identical panel at identical settings gives an
+independent draw. Three were run, and the first two each produced a conclusion
+the third withdrew.
+
+**Order sensitivity, cognate minus its own scramble:**
+
+| Metric | draw 1 | draw 2 | draw 3 | mean |
+| :--- | ---: | ---: | ---: | ---: |
+| ipTM | +0.110 (p = 0.0036) | +0.162 (p = 3e-5) | +0.138 (p = 2e-4) | +0.137 |
+| **Interface pLDDT** | **+2.76 (p = 0.089)** | +6.37 (p = 8e-5) | +5.85 (p = 7e-5) | **+4.99** |
+| Receptor side | +1.39 (p = 0.201) | +3.75 (p = 0.0019) | +3.59 (p = 5e-4) | +2.91 |
+
+Draw 1 is the outlier on every row. Read alone it said the interface-pLDDT
+effect *collapses* held out and is no longer significant; three draws say it
+weakens to 41% of its in-training value and remains significant at p = 0.0006.
+
+**Receptor specificity, cognate ranked among its own decoys:**
+
+| Metric | draw 1 | draw 2 | draw 3 | mean |
+| :--- | ---: | ---: | ---: | ---: |
+| ipTM | 1.64 (p = 0.0020) | 1.50 (p = 0.0001) | **1.86 (p = 0.017)** | 1.73 |
+| Interface pLDDT | 2.09 (p = 0.141) | 2.05 (p = 0.086) | **1.73 (p = 0.0029)** | 1.91 |
+
+**Draw 3 reverses the ordering.** After two draws this section claimed that the
+rank test was the stable one and that interface pLDDT reproducibly failed
+receptor specificity while ipTM reproducibly passed. In draw 3 interface pLDDT
+scores 1.73 and beats ipTM's 1.86. Averaged over three draws the two are 1.73
+and 1.91, both significant, and their difference is well inside the spread of a
+single draw.
+
+So the honest reading is neither of the first two. **Both readouts weaken
+held out by roughly half; neither can be shown to weaken more than the other on
+this panel.** The claim that ipTM specifically survives was an artefact of which
+draws happened to have been run.
+
+This is Section 7.5 turned on this dissertation's own headline, twice. Section
+8.2 recommends replicate averaging precisely to prevent it, and the
+recommendation was written before it was followed. The methodological lesson is
+sharper than the scientific one: a single unseeded fold is not a measurement,
+and neither, on this evidence, are two.
+
+#### 7.10.4 Confounds that do not explain it
+
+**Peptide length.** Held-out peptides are longer (12.8 against 10.3 aa,
+p = 0.10). This cannot matter, and is reported as a non-control rather than a
+passed one: the effect is a within-receptor contrast between a peptide and a
+*permutation of itself*, so length and composition are equal by construction.
+Length is also constant within receptor, so the random intercept absorbs it —
+adding it as a covariate leaves β and p unchanged to five decimals.
+
+**A ceiling compressing the held-out differences.** The opposite holds. Cognate
+ipTM is 0.631 in training against 0.419 held out; interface pLDDT is 81.57
+against 68.42. The model is markedly *less* confident on structures it has not
+seen, which is itself the signature the experiment was built to detect.
+Within-receptor spread is also smaller on the held-out panel (5.65 against
+8.64), which favours the held-out effect after z-scoring — and the collapse
+survives it.
+
+**Settings and alignments.** Both panels: DeCAF, 10 sampling steps, 1 recycling
+step. The six receptors common to both reuse the main panel's cached alignments
+byte-for-byte, so the shared members cannot contribute an MSA difference.
+
+**Panel integrity.** Removing the three held-out members with components bonded
+to the peptide *strengthens* the conclusion: ipTM reaches +0.123 (p = 0.0043)
+with a rank of 1.26 against chance 2.21 (p = 0.0003, 14 of 19 first), while
+interface pLDDT stays marginal at p = 0.057.
+
+#### 7.10.5 What this establishes
+
+**Both readouts lose roughly half their effect on complexes the model was not
+trained on**, and the loss is large enough to matter: interface pLDDT falls from
++12.03 to +4.99, ipTM from +0.265 to +0.137. Sections 7.6 to 7.8 characterise
+the readouts on a panel that is largely training data, and the numbers there
+should be read as an upper bound on what a novel target would give.
+
+**What it does not establish** is that either readout degrades more than the
+other. That claim was made twice in earlier versions of this section, in
+opposite directions, and neither survived the next draw.
+
+The practical consequence is unchanged by the retraction: a screening figure
+quoted without stating whether the complexes were in the model's training set
+is roughly a factor of two optimistic.
+
+#### 7.10.6 Limitations
+
+Two panels of 16 and 22 receptors, three draws each on the held-out side. The
+held-out effects are small in absolute terms (+0.137 and +4.99), and the central
+question — whether the degradation is metric-specific — is significant on the
+raw scale and not on the scale-free one. Settling it needs more receptors rather
+than more draws: the draw-to-draw spread is now well characterised and the
+receptor-to-receptor spread is what limits the comparison.
+
+The panels differ in receptor identity as well as in training status; only
+folding the same complexes on a model trained with and without them would
+isolate contamination completely, which would require retraining. The cutoff is
+taken from the published Boltz-1 and AlphaFold3 training description and is
+assumed to apply to DeCAF through distillation.
+
+**And the panel is not homology-decontaminated, because it cannot be.** A
+temporal split is not the current standard on its own; contamination-aware
+protein benchmarks pair it with sequence filtering, admitting only sequences
+below 30% identity to anything released before the cutoff. Not one of the 22
+held-out receptors passes that: the median maximum identity to the pre-cutoff
+PDB is **1.000**, and 17 of 22 have a relative at 90% or above. This is not a
+selection failure — 22 candidates sampled at random from the whole screened pool
+give the same answer, 0 of 22 under every threshold. Peptide-binding domains are
+too densely represented in the PDB for sequence-level decontamination to be
+achievable at all.
+
+What the split therefore isolates is **complex-level** novelty with
+receptor-level familiarity held constant: both panels sit at ~1.0 receptor
+identity to training, and only the receptor-peptide pairing is new. That is the
+operationally relevant comparison for screening, where the target is a
+characterised protein and the candidate peptide is the novel part, but it is a
+weaker claim than "structures the model has never seen", and this section makes
+no such claim.
+
+<div class="page-break"></div>
+
+### 7.11 Why the Readouts Behave As They Do: Backbone Convergence
+
+Sections 7.4 to 7.10 accumulate readouts that fail for reasons stated
+separately: pDockQ fails because its contact term runs backwards; ipTM tracks
+composition; a physics energy function returns nonsense; a PAE-derived metric
+reported as best-in-class in the literature does not reproduce here. This
+section gives a single cause for all of them, found by auditing something the
+earlier sections took for granted — whether the predicted structures are
+structures at all.
+
+#### 7.11.1 At ten sampling steps, the coordinates are not a folded protein
+
+A peptide bond fixes consecutive alpha-carbons at 3.80 Å. Measuring every
+consecutive CA–CA distance across the 132 Boltz-2 folds of Section 7.4:
+
+| | Boltz-2 at 10 steps | DeCAF at 10 steps |
+| :--- | ---: | ---: |
+| median CA–CA distance | 5.48 Å | **3.74 Å** |
+| physically plausible (3.4–4.2 Å) | **14.0%** | **96.2%** |
+| broken (> 5 Å) | 56.2% | **0.0%** |
+| implausibly short (< 3.0 Å) | 12.4% | 1.0% |
+| chains more than half non-physical | 99% | — |
+| structures measured | 132 | 69 |
+
+Observed distances run from 0.33 Å to 63.4 Å. Residue numbering is sequential,
+so this is not a file-ordering artefact: the backbone genuinely is not
+connected. What Boltz-2 returns at 10 sampling steps is a partially denoised
+point cloud carrying approximately correct residue identity and per-residue
+confidence, not a folded chain.
+
+This is the physical form of the objection Section 7.8 tested statistically.
+Ten steps of an intended two hundred does not converge the coordinates, and
+**DeCAF, distilled *for* ten steps, does.** Section 7.8 measured that
+distillation buys a 5–6× larger effect without being able to say what it bought.
+It buys geometry.
+
+#### 7.11.2 What one cause explains
+
+**pDockQ (Section 7.6).** Its contact term was found to run the wrong way,
+scrambled peptides making more inter-chain contacts than cognates, 38.5 against
+32.9. On DeCAF's converged structures the ordering reverses to the sensible
+direction — cognates 61.4, decoys 55.3, scrambles 51.8 — so the inversion was a
+property of unconverged geometry, not of short peptides. Section 7.6's
+explanation was right about the mechanism and wrong about the cause.
+
+**pDockQ2.** Replacing that contact term with a PAE-derived one repairs the
+metric on the same Boltz-2 structures, from p = 0.797 on the scramble control to
+p = 0.00026, which is what the mechanism predicts.
+
+**Minimum PAE.** Reported as the best enrichment metric for AlphaFold3 and
+Boltz-2 on a ligand benchmark, it fails outright on the Boltz-2 panel here
+(scramble control p = 0.611) and is among the best readouts on the DeCAF held-out
+panel (mean rank 1.55 over two draws, 15 of 22 cognates first). PAE is a
+prediction *about geometry*; it means little when the geometry has not
+converged. The published result was measured at full sampling.
+
+**Physics rescoring.** PRODIGY returns a femtomolar dissociation constant for an
+arbitrary peptide on the Boltz-2 structures. That is a garbage-in failure, not a
+method failure — an energy function assumes a physical backbone.
+
+The unifying statement: **geometry-dependent readouts require a converged
+sampler. At reduced sampling only the non-geometric confidence outputs retain
+meaning, and few-step distillation restores geometry and the geometric readouts
+with it.**
+
+#### 7.11.3 Physics rescoring on structures that support it
+
+With DeCAF's 96%-physical backbones an energy function has something to read,
+which is the direction the recent literature takes to exceed confidence-metric
+performance. Scored on 69 folds across 12 held-out receptors:
+
+| Readout | cognate − scramble | mean rank (chance 2.50) | AUC within |
+| :--- | ---: | ---: | ---: |
+| Interface pLDDT | +7.63 (p = 5e-5) | 1.73 (p = 0.036) | **0.856** |
+| pDockQ2 | +0.112 (p = 0.006) | 1.64 (p = 0.025) | 0.807 |
+| **PRODIGY ΔG** | +0.671 (p = 0.109) | **2.36 (p = 0.889)** | **0.563** |
+
+And it does not combine: adding ΔG to interface pLDDT under leave-one-receptor-
+out takes AUC from 0.856 to 0.823. The contact signal exists on converged
+structures but is worth only 0.53 kcal/mol between cognates and scrambles, which
+PRODIGY's polarity weighting and non-interacting-surface terms dilute rather
+than sharpen.
+
+This is one contact-count regression rather than a force field, so it bounds
+what PRODIGY does here and not what physics could do in general.
+
+#### 7.11.4 A sequence model, for scale
+
+Two 2026 results argue that structure-based representations are the wrong
+instrument: a fine-tuned Boltz-2 underperforms sequence-based alternatives for
+protein-protein affinity at both small and large data scale, and binding
+affinity predicted from ESM-2 embeddings gains little from adding structure.
+MINT — ESM-2 650M with cross-chain attention, trained on 96 million
+protein-protein interactions from STRING — provides a zero-shot interaction
+probability with nothing fitted from this panel:
+
+| Score | within-receptor AUC |
+| :--- | ---: |
+| **DeCAF interface pLDDT (structural)** | **0.807** |
+| MINT zero-shot, in-training panel | 0.662 |
+| MINT zero-shot, both panels | 0.614 |
+| MINT zero-shot, held-out panel | 0.561 |
+
+Its receptor specificity is weak: mean rank 2.05 to 2.37 against chance 2.50,
+significant on neither panel. **Those published results do not transfer to this
+task** — they concern affinity regression on protein-protein complexes, and this
+is binder discrimination for short peptides, where the cofolding readout is
+clearly ahead.
+
+One result is worth isolating. MINT **passes the scramble control** (+0.064,
+p = 0.003 across both panels), the control that demoted ipTM in Section 7.4. It
+reads peptide order from sequence alone, and still cannot rank a cognate against
+another receptor's cognate. Order sensitivity and receptor specificity are
+therefore separable capabilities, and this dissertation has been treating them as
+two tests of one property. MINT has the first without the second.
+
+MINT is somewhat out of domain — trained on full-length STRING pairs, asked here
+about peptides of 6 to 23 residues — so this bounds one zero-shot sequence model
+rather than sequence models generally.
 
 <div class="page-break"></div>
 
@@ -1194,11 +1629,11 @@ the headline significance verdict to a coin flip: p < 0.05 in 49% of re-runs.
 Ranking candidate binders from a single folding run is common practice, and at
 reduced sampling settings it is not reproducible.
 
-Fourth, and positively, **the information ipTM discards is recoverable**
-(Section 7.6). Re-scoring the same structures shows interface pLDDT
-distinguishes a cognate from its own scramble (p < 0.0001, reproducing in 100%
-of simulated re-runs) at 8.6 times ipTM's effect-to-noise ratio. The failure is
-specific to ipTM as a readout, not general to the prediction.
+Fourth, and positively, **the information ipTM discards is recoverable on
+structures the model was trained on** (Section 7.6). Re-scoring the same
+structures shows interface pLDDT distinguishes a cognate from its own scramble
+(p < 0.0001, reproducing in 100% of simulated re-runs) at 8.6 times ipTM's
+effect-to-noise ratio.
 
 Section 7.7 then localises that signal, and qualifies it. Splitting the metric by
 chain shows most of its peptide-side component is whole-chain peptide confidence
@@ -1209,6 +1644,24 @@ disorder cannot explain. An alanine scan of the binding site points the same way
 but falls short of significance (p = 0.244, requiring roughly six times the
 panel), so the response is not yet shown to be site-localised.
 
+**Sixth, and this reframes the fourth: most of that advantage was retrieval**
+(Section 7.10). A second panel of 22 receptors released after the training
+cutoff — decoys drawn from within it, so no fold involves a training structure —
+finds **both** readouts losing roughly half their effect — interface pLDDT from
++12.03 to +4.99, ipTM from +0.265 to +0.137 — over three independent draws. An
+earlier reading of one draw, and then of two, claimed the degradation was
+specific to one metric; both claims were withdrawn when the next draw reversed
+them (Section 7.10.3). What stands is that a screening figure quoted without
+saying whether the complexes were in training is about twice as good as it
+should be. The interaction is significant on both raw and scale-free
+measures for interface pLDDT and undetectable for ipTM. Longer held-out peptides
+cannot explain it — the contrast is against a permutation of the same peptide —
+and a ceiling cannot either, since the model is markedly *less* confident on
+structures it has not seen. The same section finds four of the original
+twenty-two cognate pairs were not binders at all, including one that is a
+synthetic ligand rather than a peptide; removing them raises every effect, and
+withdraws Section 7.8's claim that the readouts are model-dependent.
+
 Fifth, **few-step distillation changes the picture materially** (Section 7.8).
 Re-running the panel on a model distilled for 10-step sampling raises both order
 sensitivity and receptor specificity by 5–6× over its own teacher at the same
@@ -1216,24 +1669,80 @@ budget, and establishes receptor specificity for the first time in this work
 (interface pLDDT rank 1.73 against chance 2.50, p = 0.0042, clearing Bonferroni).
 The de-confounding arm attributes this to the distillation rather than to the
 base model. It also qualifies two earlier conclusions: stock models at reduced
-sampling retain weak but real signal rather than none, and the interface-pLDDT
-recommendation of Section 7.6 is model-dependent.
+sampling retain weak but real signal rather than none. (Its further claim that
+the readouts are model-dependent is withdrawn in Section 7.10.1.)
 
-**Overall.** The efficiency techniques transfer as engineering. The ipTM-based
-accuracy claims do not survive measurement on the models originally tested — but
-the structures carry a usable signal once read correctly, and a model built for
-the sampling budget recovers substantially more of it. Reporting this is the substantive contribution: each negative
-result is established with controls, held-out splits, power analysis and
-replication, and each redirects effort away from a direction that would not have
-worked.
+**Overall.** The efficiency techniques transfer as engineering. The accuracy
+claims are weaker and more conditional than either the ipTM literature or the
+early sections of this dissertation suggest: on structures the model has not
+seen, a cofolding confidence score enriches for binders but does not select
+them, and the readout that works there is not the one that works in training.
+
+**Seventh, and it explains much of the rest: at reduced sampling the predicted
+coordinates are not folded proteins** (Section 7.11). Only 14% of backbone bonds
+in the Boltz-2 structures are physically plausible, against 96.2% for the
+few-step-distilled model, which finally says what Section 7.8's 5–6× advantage
+was buying — geometry. One cause then accounts for four separate failures:
+pDockQ's inverted contact term, minimum PAE working on one arm and not the
+other, a physics energy function returning femtomolar affinities for arbitrary
+peptides, and the contact-based rows of Section 7.6 generally. Geometry-dependent
+readouts require a converged sampler; at ten steps only the non-geometric
+confidence outputs retain meaning.
+
+A sequence-model comparison bounds the alternative. MINT, trained on 96 million
+protein-protein interactions, reaches within-receptor AUC 0.614 zero-shot against
+0.807 for the best structural readout, so recent results reporting that
+sequence-based representations beat structure-based ones for affinity regression
+do not transfer to peptide binder discrimination. It does, however, pass the
+scramble control that demoted ipTM — showing that order sensitivity and receptor
+specificity are separable capabilities rather than two tests of one.
+
+One further correction belongs here rather than in a footnote. Section 7.10 was
+first written from a single draw of the held-out panel, and a second independent
+draw moved its central p-value four orders of magnitude. The claim that interface
+pLDDT *collapses* on held-out complexes was a property of one sample; it weakens.
+What replicates is the rank test, and the surviving claim is narrower: retrieval
+buys the model the ability to tell receptors apart, not order sensitivity in
+general. Section 8.2's own recommendation to average replicates was written
+before it was followed.
+
+The substantive contribution is that this was measurable at all. Six independent
+controls were applied — a composition-matched scramble, replicate folds, a
+de-confounding base-model arm, mixed-effects estimation, a peptide-integrity
+audit, and a training-cutoff split — and **each one overturned a result that
+looked solid without it**. A cofolding benchmark lacking these will overstate
+what it measures, and most published ones lack all six.
 
 ## 8.2 Recommendations
 
-1. **Rank on interface pLDDT, not ipTM — and not on pDockQ for short
-   peptides.** This is the one recommendation here that improves a result rather
-   than qualifying it. pDockQ actively cancels the signal in this regime,
-   because its contact term favours scrambled peptides.
-2. **Report replicate-averaged confidence for per-receptor claims.**
+1. **Rank on interface pLDDT, never on pDockQ, and halve your expectations for
+   a novel target.** Interface pLDDT carries 8.6 times ipTM's effect-to-noise
+   ratio (Section 7.6) and is the best single readout in every arm tested. On
+   complexes released after the training cutoff — the screening case — it and
+   ipTM both retain roughly half their effect (Section 7.10); three draws could
+   not establish that either degrades more than the other, and two earlier
+   attempts to claim one did were withdrawn. Quoting a benchmark figure without
+   stating whether the complexes were in training is the single easiest way to
+   overstate a cofolding screen, by about a factor of two. pDockQ fails outright:
+   its contact term is computed on unconverged geometry and favours scrambled
+   peptides (Sections 7.6, 7.11). **pDockQ2 repairs it** by substituting a
+   PAE-derived term, and is the second-best readout measured.
+2. **Use a model distilled for the step budget you can afford, not a stock model
+   run short.** At ten sampling steps a stock model returns 14% physically
+   plausible backbone bonds; a few-step-distilled model returns 96.2%
+   (Section 7.11). Every geometry-derived readout — contacts, buried area,
+   pDockQ, PAE-based metrics, any physics energy function — is meaningless on the
+   former and works on the latter. This is the largest single quality difference
+   measured in this work, and it costs nothing at inference.
+3. **Split the benchmark on the model's training cutoff, and report both
+   halves.** This was the most consequential control in the project and the last
+   one applied. Boltz-1 and AlphaFold3 both cut off at 2021-09-30. Without the
+   split, a panel drawn from the PDB measures retrieval and prediction together
+   and reports the sum as accuracy.
+4. **Report replicate-averaged confidence for per-receptor claims — and for
+   any headline number.** Section 7.10.3 is the cautionary case: a single draw
+   put the held-out interface-pLDDT effect at p = 0.089 and a second put it at
+   p = 0.00008.
    Section 7.9 refines this: rank instability generalises to the few-step model,
    so per-receptor rankings do require averaging — but the variance decomposition
    finds aggregate discriminability signal-limited rather than noise-limited, so
@@ -1241,18 +1750,24 @@ worked.
    evidence, 9 to 16 replicate folds per complex are required before a
    per-receptor ranking is meaningful. Practitioners ranking binders on a single
    AlphaFold or Boltz run should treat those rankings as provisional.
-3. **Always include a scramble control.** Composition and length alone reproduce
+5. **Always include a scramble control.** Composition and length alone reproduce
    most of the apparent discrimination between a cognate and a decoy. Without a
    composition-matched control, a benchmark cannot distinguish binder
    recognition from composition sensitivity.
-4. **Screen benchmark panels for post-translational modifications.** Seven of 25
-   candidate complexes were PTM-dependent; folding the canonical sequence makes
-   those "positives" non-binding, which silently penalises the metric under test.
-5. **Do not treat operator-level memory savings as drop-in.** A substituted
+6. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
+   candidate complexes were PTM-dependent, and folding the canonical sequence
+   makes those "positives" non-binding, which silently penalises the metric
+   under test. An allowlist of known PTM codes is not sufficient — it passed a
+   benzoyl-lysine (7F3S) and cannot catch a modification nobody anticipated.
+   Scanning the mmCIF for anything covalently bonded to the peptide chain needs
+   no list, and additionally catches glycosylation (9GRF) and peptides that are
+   substantially synthetic (1NLO). Reject any peptide whose canonical sequence
+   contains `X` (Section 7.10.1).
+7. **Do not treat operator-level memory savings as drop-in.** A substituted
    operator should be validated against pretrained weights on real activations
    before its microbenchmark saving is claimed.
-6. **Deploy on GPU before extending the biological claims.** The replicate
-   folding required by recommendation 1 is a 1,200–2,100 fold workload for this
+8. **Deploy on GPU before extending the biological claims.** The replicate
+   folding required by recommendation 4 is a 1,200–2,100 fold workload for this
    panel, which is not a CPU-scale task.
 
 <div class="page-break"></div>
