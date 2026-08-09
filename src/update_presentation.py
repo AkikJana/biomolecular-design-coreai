@@ -36,7 +36,9 @@ WARN_FG = RGBColor(0x8A, 0x52, 0x00)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 FOOTER = RGBColor(0x55, 0x55, 0x55)
 
-FOOTER_TEXT = "Boltz-Fast · Mid-Semester Review · Akik Jana (2024AB05287)"
+# The deck became the final-dissertation deck; slides added by importers of
+# add_chrome() inherit this string, so it must track the deck it now is.
+FOOTER_TEXT = "Boltz-Fast · Final Dissertation Report · Akik Jana (2024AB05287)"
 
 
 def find_shape(slide, needle):
