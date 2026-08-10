@@ -126,7 +126,7 @@ and replication. Re-scoring the same structures then recovered a positive
 result: interface pLDDT separates a binder from its own scramble where ipTM
 cannot, at 8.6 times the effect-to-noise ratio. A second panel of receptors
 released after the model's training cutoff then bounded that recovery — over
-three independent draws both readouts retain only about half their effect on
+five independent draws both readouts retain only about half their effect on
 complexes the model was not trained on, so a benchmark figure quoted without
 stating which regime it was measured in is roughly a factor of two optimistic.
 Auditing the predicted coordinates themselves explains much of the rest: at the
@@ -901,7 +901,7 @@ withdrawn rather than annotated.
 **The correction that does hold is a larger one.** Both of the above are
 in-training comparisons. Section 7.10 folds a second panel of 22 receptors
 released *after* the training cutoff and finds the interface-pLDDT effect
-weakens from +12.03 to +4.99, and ipTM's from +0.265 to +0.137 — both roughly
+weakens from +12.03 to +5.24, and ipTM's from +0.265 to +0.137 — both roughly
 halve. The readout recommended here remains the best single one measured, but
 the figures in this section describe a panel that is largely training data and
 should be read as an upper bound on what a novel target would give.
@@ -1292,25 +1292,25 @@ receptor and peptide deduplicated — with decoys drawn from within the held-out
 set, so no fold in the comparison involves a training structure. 132 folds on
 DeCAF at the same 10 sampling steps and 1 recycling step.
 
-**These numbers are the mean of three independent draws**, for a reason recorded
+**These numbers are the mean of five independent draws**, for a reason recorded
 in 7.10.3: the first draw alone was misleading, and so was the second.
 
 | Metric | in-training (16 receptors) | held-out (22 receptors) |
 | :--- | ---: | ---: |
-| ipTM | +0.265 (p = 1e-5) | +0.137 (p = 0.0001) |
-| Interface pLDDT | +12.03 (p < 1e-5) | +4.99 (p = 0.0006) |
-| Receptor side | +7.38 (p = 2e-5) | +2.91 (p = 0.0016) |
+| ipTM | +0.265 (p = 1e-5) | +0.137 (p = 5e-5) |
+| Interface pLDDT | +12.03 (p < 1e-5) | +5.24 (p = 0.0001) |
+| Receptor side | +7.38 (p = 2e-5) | +3.16 (p = 0.0002) |
 
 Cognate ranked against its own decoys, chance 2.50:
 
 | Metric | in-training | held-out |
 | :--- | ---: | ---: |
-| ipTM | 1.77 (p = 0.0087) | 1.73 (p = 0.0069), 14 of 22 first |
-| Interface pLDDT | 1.73 (p = 0.0042) | 1.91 (p = 0.020), 11 of 22 first |
+| ipTM | 1.77 (p = 0.0087) | 1.59 (p = 0.0004), 13 of 22 first |
+| Interface pLDDT | 1.73 (p = 0.0042) | 1.82 (p = 0.0090), 12 of 22 first |
 
-Every effect is smaller held out, by roughly half in both cases: interface pLDDT
-retains 41% of its in-training effect and ipTM 52%. Neither readout survives
-markedly better than the other.
+Every effect is smaller held out, by roughly half in every case: interface pLDDT
+retains 44% of its in-training effect, ipTM 52% and the receptor side 43%.
+Neither readout survives markedly better than the other.
 
 Comparing two p-values is not a test. A mixed model with receptor as a random
 effect gives the interaction directly, fitted on raw scores and on scores
@@ -1318,17 +1318,20 @@ z-scored within receptor so the answer does not depend on units:
 
 | Metric | raw | within-receptor z |
 | :--- | ---: | ---: |
-| ipTM | −0.128 (p = 0.052) | −0.096 (p = 0.737) |
-| Interface pLDDT | −7.04 (p = 0.0068) | −0.521 (p = 0.058) |
-| Receptor side | −4.47 (p = 0.014) | −0.451 (p = 0.124) |
+| ipTM | −0.128 (p = 0.048) | +0.021 (p = 0.941) |
+| Interface pLDDT | −6.79 (p = 0.0070) | −0.503 (p = 0.066) |
+| Receptor side | −4.22 (p = 0.016) | −0.438 (p = 0.134) |
 
 **On the scale-free measure nothing degrades significantly.** The raw column
-says interface pLDDT and receptor side weaken held out; the z-scored column
-says that could be a scale effect, since the held-out panel has smaller
-within-receptor spread (5.65 against 8.64) and raw differences shrink with it.
-Two draws gave p = 0.0029 for interface pLDDT on the z scale and three give
-p = 0.058, so the earlier version of this section overstated a result that the
-third draw did not support.
+says all three weaken held out; the z-scored column says that could be a scale
+effect, since the held-out panel has smaller within-receptor spread (5.65
+against 8.64) and raw differences shrink with it. ipTM's raw value sits on the
+threshold at p = 0.048 and should not be read as a category change from the
+p = 0.052 that three draws gave.
+
+Two draws gave p = 0.0029 for interface pLDDT on the z scale, three gave
+p = 0.058 and five give p = 0.066 — the earlier version of this section
+overstated a result that every subsequent draw declined to support.
 
 **What this panel can and cannot establish.** It can establish that both
 readouts weaken substantially on complexes the model was not trained on. It
@@ -1343,39 +1346,43 @@ power, and Section 7.10.6 gives what would be needed to settle it.
 
 The held-out panel was first written up from a single set of folds. Folds are
 unseeded, so re-running the identical panel at identical settings gives an
-independent draw. Three were run, and the first two each produced a conclusion
-the third withdrew.
+independent draw. Five were run, and the first two each produced a conclusion
+that a later draw withdrew.
 
 **Order sensitivity, cognate minus its own scramble:**
 
-| Metric | draw 1 | draw 2 | draw 3 | mean |
-| :--- | ---: | ---: | ---: | ---: |
-| ipTM | +0.110 (p = 0.0036) | +0.162 (p = 3e-5) | +0.138 (p = 2e-4) | +0.137 |
-| **Interface pLDDT** | **+2.76 (p = 0.089)** | +6.37 (p = 8e-5) | +5.85 (p = 7e-5) | **+4.99** |
-| Receptor side | +1.39 (p = 0.201) | +3.75 (p = 0.0019) | +3.59 (p = 5e-4) | +2.91 |
+| Metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ipTM | +0.110 | +0.162 | +0.138 | +0.152 | +0.120 | **+0.137** |
+| **Interface pLDDT** | **+2.76** | +6.37 | +5.85 | +6.46 | +4.76 | **+5.24** |
+| Receptor side | +1.39 | +3.75 | +3.59 | +4.21 | +2.89 | **+3.16** |
 
-Draw 1 is the outlier on every row. Read alone it said the interface-pLDDT
-effect *collapses* held out and is no longer significant; three draws say it
-weakens to 41% of its in-training value and remains significant at p = 0.0006.
+Draw 1 is the outlier on every row — the only one where interface pLDDT fails to
+reach significance (p = 0.089 against 6e-4 to 8e-5 for the other four). Read
+alone it said the effect *collapses* held out; five draws say it weakens to 44%
+of its in-training value and remains significant at p = 0.0001.
 
-**Receptor specificity, cognate ranked among its own decoys:**
+**Receptor specificity, cognate ranked among its own decoys (chance 2.50):**
 
-| Metric | draw 1 | draw 2 | draw 3 | mean |
-| :--- | ---: | ---: | ---: | ---: |
-| ipTM | 1.64 (p = 0.0020) | 1.50 (p = 0.0001) | **1.86 (p = 0.017)** | 1.73 |
-| Interface pLDDT | 2.09 (p = 0.141) | 2.05 (p = 0.086) | **1.73 (p = 0.0029)** | 1.91 |
+| Metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ipTM | 1.64 | 1.50 | **1.86** | 1.64 | 1.45 | **1.59** |
+| Interface pLDDT | 2.09 | 2.05 | **1.73** | 1.73 | 1.91 | **1.82** |
 
-**Draw 3 reverses the ordering.** After two draws this section claimed that the
-rank test was the stable one and that interface pLDDT reproducibly failed
-receptor specificity while ipTM reproducibly passed. In draw 3 interface pLDDT
-scores 1.73 and beats ipTM's 1.86. Averaged over three draws the two are 1.73
-and 1.91, both significant, and their difference is well inside the spread of a
-single draw.
+**Draw 3 reverses the ordering.** After two draws this section claimed the rank
+test was the stable one and that interface pLDDT reproducibly failed receptor
+specificity while ipTM reproducibly passed. In draw 3 interface pLDDT scores
+1.73 and beats ipTM's 1.86 — the one draw in five where that happens.
 
-So the honest reading is neither of the first two. **Both readouts weaken
-held out by roughly half; neither can be shown to weaken more than the other on
-this panel.** The claim that ipTM specifically survives was an artefact of which
-draws happened to have been run.
+Averaged over five draws the two are 1.59 and 1.82, both significant, and their
+difference is smaller than the range either metric covers across draws (ipTM
+1.45–1.86; interface pLDDT 1.73–2.09). ipTM is ahead on average and the panel
+cannot resolve whether that is real.
+
+So the honest reading is neither of the first two. **Both readouts weaken held
+out by roughly half; neither can be shown to weaken more than the other on this
+panel.** The claim that ipTM specifically survives was made on a rank difference
+this panel is not powered to resolve.
 
 This is Section 7.5 turned on this dissertation's own headline, twice. Section
 8.2 recommends replicate averaging precisely to prevent it, and the
@@ -1413,7 +1420,7 @@ interface pLDDT stays marginal at p = 0.057.
 
 **Both readouts lose roughly half their effect on complexes the model was not
 trained on**, and the loss is large enough to matter: interface pLDDT falls from
-+12.03 to +4.99, ipTM from +0.265 to +0.137. Sections 7.6 to 7.8 characterise
++12.03 to +5.24, ipTM from +0.265 to +0.137. Sections 7.6 to 7.8 characterise
 the readouts on a panel that is largely training data, and the numbers there
 should be read as an upper bound on what a novel target would give.
 
@@ -1427,8 +1434,8 @@ is roughly a factor of two optimistic.
 
 #### 7.10.6 Limitations
 
-Two panels of 16 and 22 receptors, three draws each on the held-out side. The
-held-out effects are small in absolute terms (+0.137 and +4.99), and the central
+Two panels of 16 and 22 receptors, five draws on the held-out side. The
+held-out effects are small in absolute terms (+0.137 and +5.24), and the central
 question — whether the degradation is metric-specific — is significant on the
 raw scale and not on the scale-free one. Settling it needs more receptors rather
 than more draws: the draw-to-draw spread is now well characterised and the
@@ -1759,7 +1766,7 @@ panel), so the response is not yet shown to be site-localised.
 (Section 7.10). A second panel of 22 receptors released after the training
 cutoff — decoys drawn from within it, so no fold involves a training structure —
 finds **both** readouts losing roughly half their effect — interface pLDDT from
-+12.03 to +4.99, ipTM from +0.265 to +0.137 — over three independent draws. An
++12.03 to +5.24, ipTM from +0.265 to +0.137 — over five independent draws. An
 earlier reading of one draw, and then of two, claimed the degradation was
 specific to one metric; both claims were withdrawn when the next draw reversed
 them (Section 7.10.3). What stands is that a screening figure quoted without
@@ -1844,7 +1851,7 @@ what it measures, and most published ones lack all six.
    a novel target.** Interface pLDDT carries 8.6 times ipTM's effect-to-noise
    ratio (Section 7.6) and is the best single readout in every arm tested. On
    complexes released after the training cutoff — the screening case — it and
-   ipTM both retain roughly half their effect (Section 7.10); three draws could
+   ipTM both retain roughly half their effect (Section 7.10); five draws could
    not establish that either degrades more than the other, and two earlier
    attempts to claim one did were withdrawn. Quoting a benchmark figure without
    stating whether the complexes were in training is the single easiest way to

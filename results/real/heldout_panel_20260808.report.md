@@ -7,7 +7,7 @@ on entries released before 2021-09-30. So "interface pLDDT is high for cognates"
 could mean "the model has seen this complex".
 
 An earlier version of this report, written from a single draw, claimed the two
-readouts swap places on held-out complexes. Three draws do not support that and
+readouts swap places on held-out complexes. Five draws do not support that and
 it has been withdrawn; what survives is that both weaken by roughly half.
 
 A second panel of **22 receptors released after the cutoff** tests it, screened
@@ -15,52 +15,53 @@ identically and with decoys drawn from within the held-out set, so no fold in
 the comparison involves a training structure. 132 folds on DeCAF at the same 10
 sampling steps and 1 recycling step.
 
-## The result, over three independent draws
+## The result, over five independent draws
 
 Folds are unseeded, so re-running the identical panel gives an independent draw.
-Three were run. The first two each produced a conclusion the third withdrew, and
+Five were run. The first two each produced a conclusion a later draw withdrew, and
 that is the main finding of this experiment (see "One draw is not a measurement"
 below).
 
 | metric | in-training (16 receptors) | held-out (22 receptors) |
 | :--- | ---: | ---: |
-| ipTM | +0.265 (p = 1e-5) | +0.137 (p = 0.0001) |
-| interface pLDDT | +12.03 (p < 1e-5) | +4.99 (p = 0.0006) |
-| receptor side | +7.38 (p = 2e-5) | +2.91 (p = 0.0016) |
+| ipTM | +0.265 (p = 1e-5) | +0.137 (p = 5e-5) |
+| interface pLDDT | +12.03 (p < 1e-5) | +5.24 (p = 0.0001) |
+| receptor side | +7.38 (p = 2e-5) | +3.16 (p = 0.0002) |
 
 Cognate ranked against its own decoys, chance 2.50:
 
 | metric | in-training | held-out |
 | :--- | ---: | ---: |
-| ipTM | 1.77 (p = 0.0087) | 1.73 (p = 0.0069), 14 of 22 first |
-| interface pLDDT | 1.73 (p = 0.0042) | 1.91 (p = 0.020), 11 of 22 first |
+| ipTM | 1.77 (p = 0.0087) | 1.59 (p = 0.0004), 13 of 22 first |
+| interface pLDDT | 1.73 (p = 0.0042) | 1.82 (p = 0.0090), 12 of 22 first |
 
 **Both readouts lose roughly half their effect on complexes the model was not
-trained on** — interface pLDDT retains 41%, ipTM 52%. Neither can be shown to
-survive better than the other.
+trained on** — interface pLDDT retains 44%, ipTM 52%, receptor side 43%. Neither
+can be shown to survive better than the other.
 
-## One draw is not a measurement, and neither are two
+## One draw is not a measurement, and neither are two (five were run)
 
 **Order sensitivity, cognate minus its own scramble:**
 
-| metric | draw 1 | draw 2 | draw 3 | mean |
-| :--- | ---: | ---: | ---: | ---: |
-| ipTM | +0.110 (p = 0.0036) | +0.162 (p = 3e-5) | +0.138 (p = 2e-4) | +0.137 |
-| **interface pLDDT** | **+2.76 (p = 0.089)** | +6.37 (p = 8e-5) | +5.85 (p = 7e-5) | **+4.99** |
-| receptor side | +1.39 (p = 0.201) | +3.75 (p = 0.0019) | +3.59 (p = 5e-4) | +2.91 |
+| metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ipTM | +0.110 | +0.162 | +0.138 | +0.152 | +0.120 | **+0.137** |
+| **interface pLDDT** | **+2.76** | +6.37 | +5.85 | +6.46 | +4.76 | **+5.24** |
+| receptor side | +1.39 | +3.75 | +3.59 | +4.21 | +2.89 | **+3.16** |
 
 **Receptor specificity, cognate ranked among its own decoys:**
 
 | metric | draw 1 | draw 2 | draw 3 | mean |
 | :--- | ---: | ---: | ---: | ---: |
-| ipTM | 1.64 (p = 0.0020) | 1.50 (p = 0.0001) | **1.86 (p = 0.017)** | 1.73 |
-| interface pLDDT | 2.09 (p = 0.141) | 2.05 (p = 0.086) | **1.73 (p = 0.0029)** | 1.91 |
+| ipTM | 1.64 | 1.50 | **1.86** | 1.64 | 1.45 | **1.59** |
+| interface pLDDT | 2.09 | 2.05 | **1.73** | 1.73 | 1.91 | **1.82** |
 
 Draw 1 alone said the interface-pLDDT effect *collapses* held out. Draws 1 and 2
 together said the rank test was the stable one and that ipTM specifically
 survived while interface pLDDT specifically failed. **Draw 3 reverses the rank
-ordering**, and averaged over three draws the two metrics are 1.73 and 1.91,
-both significant, differing by less than the spread of a single draw.
+ordering** — the one draw in five where it does. Averaged over five draws the two
+are 1.59 and 1.82, both significant, differing by less than the range either
+covers across draws (ipTM 1.45-1.86, interface pLDDT 1.73-2.09).
 
 Both claims are withdrawn. This is Section 7.5's own finding turned on the
 project's headline, twice.
@@ -72,12 +73,12 @@ fitted on raw scores and on scores z-scored within receptor:
 
 | metric | raw | within-receptor z |
 | :--- | ---: | ---: |
-| ipTM | −0.128 (p = 0.052) | −0.096 (p = 0.737) |
-| interface pLDDT | −7.04 (p = 0.0068) | −0.521 (p = 0.058) |
-| receptor side | −4.47 (p = 0.014) | −0.451 (p = 0.124) |
+| ipTM | −0.128 (p = 0.048) | +0.021 (p = 0.941) |
+| interface pLDDT | −6.79 (p = 0.0070) | −0.503 (p = 0.066) |
+| receptor side | −4.22 (p = 0.016) | −0.438 (p = 0.134) |
 
 **On the scale-free measure nothing degrades significantly.** Two draws gave
-p = 0.0029 for interface pLDDT; three give p = 0.058. The raw column may be a
+p = 0.0029 for interface pLDDT, three gave p = 0.058 and five give p = 0.066. The raw column may be a
 scale effect, since the held-out panel has smaller within-receptor spread (5.65
 against 8.64).
 
@@ -126,6 +127,8 @@ replicate and should not be repeated.
 python src/heldout_panel.py --batch-size 20
 python src/heldout_panel.py --with-pae --batch-size 20
 python src/heldout_panel.py --with-pae --run-tag 2 --batch-size 20
+python src/heldout_panel.py --keep-structures --run-tag p1 --batch-size 20
+python src/heldout_panel.py --keep-structures --run-tag p2 --batch-size 20
 python src/heldout_replicates.py
 python src/homology_decontamination.py
 ```
