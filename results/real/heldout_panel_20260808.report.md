@@ -49,10 +49,10 @@ can be shown to survive better than the other.
 | **interface pLDDT** | **+2.76** | +6.37 | +5.85 | +6.46 | +4.76 | **+5.24** |
 | receptor side | +1.39 | +3.75 | +3.59 | +4.21 | +2.89 | **+3.16** |
 
-**Receptor specificity, cognate ranked among its own decoys:**
+**Receptor specificity, cognate ranked among its own decoys (chance 2.50):**
 
-| metric | draw 1 | draw 2 | draw 3 | mean |
-| :--- | ---: | ---: | ---: | ---: |
+| metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
 | ipTM | 1.64 | 1.50 | **1.86** | 1.64 | 1.45 | **1.59** |
 | interface pLDDT | 2.09 | 2.05 | **1.73** | 1.73 | 1.91 | **1.82** |
 
@@ -78,9 +78,9 @@ fitted on raw scores and on scores z-scored within receptor:
 | receptor side | −4.22 (p = 0.016) | −0.438 (p = 0.134) |
 
 **On the scale-free measure nothing degrades significantly.** Two draws gave
-p = 0.0029 for interface pLDDT, three gave p = 0.058 and five give p = 0.066. The raw column may be a
-scale effect, since the held-out panel has smaller within-receptor spread (5.65
-against 8.64).
+p = 0.0029 for interface pLDDT, three gave p = 0.058 and five give p = 0.066.
+The raw column may be a scale effect, since the held-out panel has smaller
+within-receptor spread (5.65 against 8.64).
 
 ## Confounds that do not explain it
 
