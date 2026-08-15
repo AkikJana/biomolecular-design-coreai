@@ -60,23 +60,63 @@ PANEL = ART / "pdb_binders_b2_n22"
 WORK = ART / "settings_confound"
 
 
-def fold(inputs, out, sampling, recycling, msa_depth):
-    """One batch at the given settings. msa_depth=None means full alignment."""
+def free_gib(path=REPO_ROOT):
+    st = os.statvfs(path)
+    return st.f_bavail * st.f_frsize / 2**30
+
+
+def fold(inputs, out, sampling, recycling, msa_depth, per_fold_budget=300):
+    """One batch at the given settings. msa_depth=None means full alignment.
+
+    Boltz gets its own TMPDIR and the cache size is reported per batch. The
+    volume did fill during a run -- the fold died with "The volume Macintosh HD
+    is out of space" -- but measurement afterwards did not support blaming the
+    graph cache: the scratch directory stayed at 0 B and the Metal shader cache
+    held steady at 180 MB while free space rose. The scratch directory is kept
+    because it makes the claim measurable rather than assumed; the guard that
+    actually addresses a full volume is --min-free-gib.
+    """
     cmd = [sys.executable, "-m", "boltz.main", "predict", str(inputs),
            "--out_dir", str(out), "--model", "boltz1",
            "--accelerator", "gpu", "--output_format", "pdb", "--override",
            "--recycling_steps", str(recycling),
-           "--sampling_steps", str(sampling), "--diffusion_samples", "1"]
+           "--sampling_steps", str(sampling), "--diffusion_samples", "1",
+           # Fork-based dataloader workers deadlock intermittently here: the
+           # main thread parks in a condition wait at ~0% CPU and never returns,
+           # after the run reports leaked loky semaphores. Three batches hung
+           # this way. Loading in-process removes the fork entirely, and the
+           # data pipeline is not the bottleneck at 200 sampling steps.
+           "--num_workers", "0", "--preprocessing-threads", "1"]
     if msa_depth is not None:
         cmd += ["--subsample_msa", "--num_subsampled_msa", str(msa_depth),
                 "--max_msa_seqs", str(msa_depth)]
-    env = dict(os.environ, PYTORCH_ENABLE_MPS_FALLBACK="1")
+    scratch = WORK / ".mpscache"
+    shutil.rmtree(scratch, ignore_errors=True)
+    scratch.mkdir(parents=True, exist_ok=True)
+    env = dict(os.environ, PYTORCH_ENABLE_MPS_FALLBACK="1", TMPDIR=str(scratch))
+    # A batch that hangs is worse than one that fails: it holds the lock, keeps
+    # its process alive, and every liveness check reports it as healthy. One
+    # batch blocked for three hours at 0.4% CPU after the volume filled, and was
+    # reported as "running" twice before the score store's mtime gave it away.
+    # A generous per-fold budget turns that silence into an exception.
+    n_folds = len(list(inputs.glob("*.yaml")))
+    budget = max(600, n_folds * per_fold_budget)
     t0 = time.perf_counter()
-    proc = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, env=env,
+                              timeout=budget)
+    except subprocess.TimeoutExpired:
+        shutil.rmtree(scratch, ignore_errors=True)
+        raise RuntimeError(
+            f"boltz produced nothing for {budget}s on {n_folds} folds "
+            f"(budget {per_fold_budget}s each) -- treating as hung, not slow")
+    cache_gib = sum(f.stat().st_size for f in scratch.rglob("*") if f.is_file()) / 2**30
+    shutil.rmtree(scratch, ignore_errors=True)
     if proc.returncode != 0:
-        print((proc.stdout + proc.stderr)[-1200:], file=sys.stderr)
+        # 1200 characters twice cut off the line that mattered.
+        print((proc.stdout + proc.stderr)[-6000:], file=sys.stderr)
         raise RuntimeError("boltz predict failed")
-    return out / f"boltz_results_{inputs.name}", time.perf_counter() - t0
+    return out / f"boltz_results_{inputs.name}", time.perf_counter() - t0, cache_gib
 
 
 def score_dir(results, names):
@@ -146,6 +186,11 @@ def main():
                     help="comma-separated subset, e.g. cognate,scrambled. The "
                          "scramble control is the decisive test and needs only "
                          "66 of the 132 folds, so it can be run first.")
+    ap.add_argument("--per-fold-budget", type=int, default=300,
+                    help="seconds per fold before a batch is declared hung; "
+                         "observed cost is 106-130s")
+    ap.add_argument("--min-free-gib", type=float, default=6.0,
+                    help="refuse to start a batch below this much free disk")
     ap.add_argument("--analyse-only", action="store_true")
     args = ap.parse_args()
     depth = None if args.msa_depth == 0 else args.msa_depth
@@ -204,8 +249,15 @@ def main():
                     f"  - protein:\n      id: A\n      sequence: {p['receptor']}\n{rline}"
                     f"  - protein:\n      id: B\n      sequence: {p['peptide']}\n"
                     f"      msa: empty\n")
-            res, el = fold(inputs, bdir, args.sampling_steps,
-                           args.recycling_steps, depth)
+            if free_gib() < args.min_free_gib:
+                raise SystemExit(
+                    f"only {free_gib():.1f} GiB free, need {args.min_free_gib} "
+                    f"-- stopping cleanly at {len(recs)} folds rather than "
+                    f"filling the volume mid-fold. Scores are saved; rerun to "
+                    f"resume.")
+            res, el, cache_gib = fold(inputs, bdir, args.sampling_steps,
+                                      args.recycling_steps, depth,
+                                      args.per_fold_budget)
             got = score_dir(res, [p["name"] for p in chunk])
             for p in chunk:
                 if p["name"] in got:
@@ -214,7 +266,8 @@ def main():
                                  **got[p["name"]]})
             store.write_text(json.dumps(recs, indent=2))
             print(f"  batch {start // args.batch_size}: {len(got)}/{len(chunk)} "
-                  f"in {el:.0f}s", flush=True)
+                  f"in {el:.0f}s | mps cache {cache_gib:.1f} GiB purged | "
+                  f"{free_gib():.1f} GiB free", flush=True)
             shutil.rmtree(bdir, ignore_errors=True)
 
     reduced = json.loads((ART / "boltz1_scramble_result.json").read_text())["per_fold"]
