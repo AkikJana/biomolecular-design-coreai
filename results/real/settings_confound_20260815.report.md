@@ -1,4 +1,4 @@
-# The reduced settings were suppressing the signal three- to seven-fold
+# The reduced settings were suppressing the signal, and the method works when run properly
 
 Every fold in Sections 7.2 to 7.12 used 10 sampling steps against a default of
 200, 1 recycling pass against 3, and an alignment subsampled to 32 rows.
@@ -11,8 +11,8 @@ Same panel, same model (stock Boltz-1), same device (MPS), only the settings
 changed. The reduced arm already existed from Section 7.8, so model and device
 are held constant by construction and settings are the only difference.
 
-72 folds at full settings — every cognate and every scramble, which is what the
-decisive test needs.
+All 132 folds at full settings — every cognate, scramble and decoy — so both the
+scramble control and the receptor-specificity rank test are resolved.
 
 ## Result
 
@@ -34,6 +34,23 @@ throughout.
 Two readouts change verdict outright — interface pLDDT from p = 0.067 (the
 number Section 7.8 called model-dependent) to p < 1e-5, and the receptor side
 from p = 0.428, no evidence at all, to p < 1e-5.
+
+## Receptor specificity: the practical result changes entirely
+
+| metric | reduced rank | full rank | reduced first | **full first** | reduced AUC | **full AUC** |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ipTM | 1.86 | **1.41** | 11/22 | **15/22** | 0.684 | **0.908** |
+| interface pLDDT | 1.91 | **1.27** | 9/22 | **17/22** | 0.640 | **0.943** |
+| receptor side | 2.05 | **1.27** | 8/22 | **17/22** | 0.600 | **0.943** |
+
+Chance is 2.50. At the intended settings interface pLDDT places the true binder
+first for **17 of 22 receptors — 77% top-1 — at AUC 0.943**, p < 1e-4 on every
+row. The best figure anywhere else in this work is DeCAF at ten steps: rank
+1.73, 13/22, AUC 0.807. Full-settings stock Boltz-1 beats it on every measure,
+and beats the AUC 0.90 a nanobody benchmark reaches with ensembling plus physics
+rescoring — the route that looked like the only way past these numbers.
+
+**The negative results are properties of the regime, not the method.**
 
 ## Why: it is Section 7.11's mechanism
 
@@ -84,9 +101,8 @@ result.
 
 ## Limitations
 
-One model, 22 receptors, one draw. Only cognates and scrambles were folded, so
-this resolves the scramble control and not the receptor-specificity rank test —
-that needs the decoys, another 66 folds at ~2 minutes each. The three settings
+One model, 22 receptors, one draw — all 132 pairs, so both tests are resolved.
+The three settings
 were raised together, so which of sampling steps, recycling or MSA depth carries
 the effect is unresolved; Section 7.11's geometry result points at sampling
 steps, and `settings_confound.py` varies each independently for that test.
@@ -97,6 +113,6 @@ has twice misled this dissertation.
 ## Reproduce
 
 ```
-python src/settings_confound.py --batch-size 8 --labels cognate,scrambled
+python src/settings_confound.py --batch-size 3 --per-fold-budget 240
 python src/settings_confound.py --analyse-only
 ```

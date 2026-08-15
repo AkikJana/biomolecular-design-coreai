@@ -234,6 +234,7 @@ def main():
               f"{'full' if depth is None else depth}")
         done = {r["name"] for r in recs}
         todo = [p for p in pairs if p["name"] not in done]
+        skipped = []
         for start in range(0, len(todo), args.batch_size):
             chunk = todo[start:start + args.batch_size]
             bdir = WORK / f"b{start // args.batch_size:02d}"
@@ -255,10 +256,41 @@ def main():
                     f"-- stopping cleanly at {len(recs)} folds rather than "
                     f"filling the volume mid-fold. Scores are saved; rerun to "
                     f"resume.")
-            res, el, cache_gib = fold(inputs, bdir, args.sampling_steps,
-                                      args.recycling_steps, depth,
-                                      args.per_fold_budget)
-            got = score_dir(res, [p["name"] for p in chunk])
+            # Boltz hangs intermittently on this machine -- main thread parked
+            # in a condition wait at ~0% CPU, no error, indefinitely. Neither
+            # dataloader workers nor MSA depth explains it: the deepest
+            # alignment in the panel (4Z8J, 14,159 rows) folds fine, and the
+            # hang persists with --num_workers 0. Rather than keep guessing at
+            # the cause, a timed-out batch is retried one fold at a time; folds
+            # that hang alone are recorded and skipped so the run completes.
+            try:
+                res, el, cache_gib = fold(inputs, bdir, args.sampling_steps,
+                                          args.recycling_steps, depth,
+                                          args.per_fold_budget)
+                got = score_dir(res, [p["name"] for p in chunk])
+            except RuntimeError as exc:
+                print(f"  batch {start // args.batch_size} failed ({exc}); "
+                      f"retrying {len(chunk)} folds individually", flush=True)
+                got, el, cache_gib = {}, 0.0, 0.0
+                for one in chunk:
+                    solo = bdir / f"solo_{one['name']}"
+                    sin = solo / "inputs"
+                    shutil.rmtree(solo, ignore_errors=True)
+                    sin.mkdir(parents=True)
+                    shutil.copy2(inputs / f"{one['name']}.yaml",
+                                 sin / f"{one['name']}.yaml")
+                    try:
+                        r1, e1, c1 = fold(sin, solo, args.sampling_steps,
+                                          args.recycling_steps, depth,
+                                          args.per_fold_budget)
+                        got.update(score_dir(r1, [one["name"]]))
+                        el += e1
+                    except RuntimeError:
+                        skipped.append(one["name"])
+                        print(f"    skipped {one['name']} "
+                              f"({one['receptor_id']}, {one['label']}) -- hung alone",
+                              flush=True)
+                    shutil.rmtree(solo, ignore_errors=True)
             for p in chunk:
                 if p["name"] in got:
                     recs.append({**{k: p[k] for k in
@@ -269,6 +301,9 @@ def main():
                   f"in {el:.0f}s | mps cache {cache_gib:.1f} GiB purged | "
                   f"{free_gib():.1f} GiB free", flush=True)
             shutil.rmtree(bdir, ignore_errors=True)
+        if skipped:
+            print(f"\n{len(skipped)} fold(s) skipped after hanging alone: "
+                  f"{', '.join(skipped)}", flush=True)
 
     reduced = json.loads((ART / "boltz1_scramble_result.json").read_text())["per_fold"]
     for r in reduced:

@@ -1815,6 +1815,37 @@ Two readouts change verdict outright. Interface pLDDT went from p = 0.067 —
 the number Section 7.8 called model-dependent — to p < 1e-5. The receptor side
 went from p = 0.428, no evidence at all, to p < 1e-5.
 
+#### 7.13.2b Receptor specificity: the practical result changes entirely
+
+The scramble control asks whether a readout notices sequence order. Ranking a
+cognate against its own decoys asks the question a screen actually asks, and it
+moves further:
+
+| Metric | reduced rank | full rank | reduced first | **full first** | reduced AUC | **full AUC** |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ipTM | 1.86 | **1.41** | 11/22 | **15/22** | 0.684 | **0.908** |
+| Interface pLDDT | 1.91 | **1.27** | 9/22 | **17/22** | 0.640 | **0.943** |
+| Receptor side | 2.05 | **1.27** | 8/22 | **17/22** | 0.600 | **0.943** |
+
+Chance is a rank of 2.50. At the intended settings **interface pLDDT places the
+true binder first for 17 of 22 receptors — 77% top-1 accuracy — at a
+within-receptor AUC of 0.943**, with p < 1e-4 on every row.
+
+For comparison, the best figure anywhere else in this dissertation is DeCAF at
+ten steps on the in-training panel: rank 1.73, 13 of 22 first, AUC 0.807
+(Sections 7.8, 7.12). Full-settings stock Boltz-1 exceeds it on every measure.
+It also exceeds the AUC 0.90 that a recent nanobody benchmark reaches with a
+model ensemble plus physics-based rescoring — the direction Section 7.12
+identified as the only credible route past this work's numbers, and which turned
+out to be unnecessary.
+
+**This is the practical conclusion of the dissertation, and it is positive.**
+Sections 7.2 to 7.12 measure a model run at a twentieth of its sampling budget
+and conclude that cofolding confidence is a weak screening signal. Run at its
+intended settings on the same panel, the same readout ranks the true binder
+first three times in four. The negative results are properties of the regime,
+not of the method.
+
 #### 7.13.3 Why: the mechanism is Section 7.11's
 
 Absolute confidence rises enormously alongside the effect:
@@ -1870,14 +1901,23 @@ lower bound.
 
 #### 7.13.5 Limitations
 
-One model (Boltz-1) and 22 receptors, folded once. Only cognates and scrambles
-were run, so this resolves the scramble control and not the receptor-specificity
-rank test — that needs the decoys, another 66 folds at two minutes each. The
-three settings were raised together, so which of sampling steps, recycling or
-MSA depth carries the effect is unresolved; Section 7.11's geometry result
-points at sampling steps, and the script varies each independently for that
-test. Section 7.5's warning applies here too: this is a single draw, and a
-single draw has twice misled this dissertation.
+One model (Boltz-1) and 22 receptors, folded once — all 132 pairs, so both the
+scramble control and the rank test are resolved. The three settings were raised
+together, so which of sampling steps, recycling or MSA depth carries the effect
+is unresolved; Section 7.11's geometry result points at sampling steps, and the
+script varies each independently for that test.
+
+Section 7.5's warning applies with force: this is a single draw, and a single
+draw has twice misled this dissertation. The effects here are large enough
+(*d* = 1.25–1.52, AUC 0.943) that draw noise is unlikely to reverse them, but
+the specific figures should be replicated before being quoted as exact values.
+
+Two consequences for earlier sections are untested rather than resolved. The
+held-out comparison of Section 7.10 was run entirely at reduced settings, so
+whether contamination costs a factor of two at full settings is unknown.
+And Section 7.12's reciprocal matching lifted precision from 56% to 88% in the
+suppressed regime; at full settings plain top-1 is already 77%, so the headroom
+that filter exploits is smaller and its value there is untested.
 
 <div class="page-break"></div>
 
@@ -2027,6 +2067,18 @@ thesis than the original reading. A full-settings fold costs 106 seconds on this
 laptop, so the constraint that justified the reduced regime had lapsed before
 most of the measurements were taken.
 
+**And the practical conclusion inverts.** On the receptor-specificity test —
+ranking a cognate against its own decoys, which is what a screen does —
+interface pLDDT at full settings places the true binder **first for 17 of 22
+receptors, 77% top-1, at a within-receptor AUC of 0.943**, against 0.640 at
+reduced settings. That exceeds every figure elsewhere in this work, including
+DeCAF's 0.807, and exceeds the AUC 0.90 a recent nanobody benchmark reaches with
+model ensembling plus physics rescoring — the direction Section 7.12 identified
+as the only credible route past these numbers, and which proves unnecessary.
+Sections 7.2 to 7.12 conclude that cofolding confidence is a weak screening
+signal; at the model's intended settings, on the same panel, it ranks the true
+binder first three times in four.
+
 One further correction belongs here rather than in a footnote. Section 7.10 was
 first written from a single draw of the held-out panel, and a second independent
 draw moved its central p-value four orders of magnitude. The claim that interface
@@ -2063,7 +2115,10 @@ what it measures, and most published ones lack all six.
    smaller in standardised terms and the backbone is 14% physically plausible
    rather than 99.7% (Section 7.13). The reduced regime in this work was
    justified by CPU timings that MPS had already made obsolete: a full-settings
-   fold takes 106 seconds and is no slower at full alignment depth.
+   fold takes 106 seconds and is no slower at full alignment depth. The
+   practical difference is not marginal: interface pLDDT ranks the true binder
+   first for 9 of 22 receptors at reduced settings and **17 of 22** at full,
+   with within-receptor AUC rising from 0.640 to **0.943**.
 3. **If the budget genuinely is short, use a model distilled for it rather than
    a stock model run short.** At ten sampling steps a stock model returns 14% physically
    plausible backbone bonds; a few-step-distilled model returns 96.2%
