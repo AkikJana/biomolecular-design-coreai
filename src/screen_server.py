@@ -86,8 +86,20 @@ def check_peptide(seq):
     return problems
 
 
-def scrambles_of(seq, n, rng):
-    """Permutations of the candidate: same composition and length, order destroyed."""
+def scrambles_of(seq, n, rng=None):
+    """Permutations of the candidate: same composition and length, order destroyed.
+
+    The stream is seeded from the peptide itself, so a candidate's null depends
+    only on that candidate. Drawing every scramble from one job-level generator
+    meant the permutations a peptide got depended on which other peptides were
+    in the box and in what order -- so adding a fourth candidate silently
+    changed the first three's nulls, and their scores moved between runs for no
+    reason the user could see. Being peptide-local also makes the null
+    reproducible across jobs, and lets the fold cache hit.
+    """
+    import hashlib
+    if rng is None:
+        rng = random.Random(hashlib.sha1(seq.encode()).hexdigest())
     out, seen, tries = [], {seq}, 0
     while len(out) < n and tries < 200:
         tries += 1
@@ -564,12 +576,11 @@ class Handler(BaseHTTPRequestHandler):
         if mode not in MODES:
             return self._send(400, json.dumps({"error": "unknown mode"}))
 
-        rng = random.Random(0)
         cands = []
         for p in peptides:
             probs = check_peptide(p)
             cands.append({"peptide": p, "problems": probs,
-                          "scrambles": [] if probs else scrambles_of(p, nulls, rng),
+                          "scrambles": [] if probs else scrambles_of(p, nulls),
                           "reps": [], "null_reps": [[] for _ in range(nulls)]})
 
         jid = uuid.uuid4().hex[:12]
