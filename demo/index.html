@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boltz-Fast — findings</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#0b2b52;--mut:#5a6b80;--line:#dfe4ea;
+      --blue:#1e6fb8;--teal:#0e8f9a;--green:#2e7d32;--amber:#c62828;}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1218;--card:#151c25;--ink:#e8eef6;
+      --mut:#9fb0c4;--line:#26313d;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+     font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+header{background:var(--ink);color:#fff;padding:26px 32px}
+@media (prefers-color-scheme:dark){header{background:#0a1017}}
+h1{margin:0;font-size:24px;letter-spacing:.2px}
+header p{margin:6px 0 0;opacity:.8;font-size:14px}
+main{max-width:1100px;margin:0 auto;padding:26px 20px 60px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;
+        padding:22px 24px;margin-bottom:20px}
+h2{margin:0 0 4px;font-size:19px}
+.sub{color:var(--mut);font-size:14px;margin:0 0 18px}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.card{flex:1 1 200px;border-radius:10px;padding:16px;color:#fff;text-align:center}
+.card .big{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.card .cap{font-size:12px;opacity:.92;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;font-weight:600}
+th{color:var(--mut);font-weight:600;font-size:13px}
+.toggle{display:inline-flex;background:var(--bg);border:1px solid var(--line);
+        border-radius:999px;padding:4px;margin:6px 0 4px}
+.toggle button{border:0;background:none;color:var(--mut);padding:8px 18px;
+        border-radius:999px;cursor:pointer;font-size:14px;font-weight:600}
+.toggle button.on{background:var(--ink);color:#fff}
+@media (prefers-color-scheme:dark){.toggle button.on{background:var(--blue)}}
+.bar{height:26px;background:var(--bg);border-radius:6px;overflow:hidden;
+     border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--blue);transition:width .45s ease}
+.barlab{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);
+        margin:14px 0 4px}
+code{background:var(--bg);border:1px solid var(--line);border-radius:6px;
+     padding:2px 6px;font-size:13px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;
+    padding:14px;overflow-x:auto;font-size:13px;margin:10px 0 0}
+.note{background:#fdf3e0;color:#8a5200;border-radius:8px;padding:12px 14px;
+      font-size:13.5px;margin-top:14px}
+@media (prefers-color-scheme:dark){.note{background:#2a2113;color:#e0b070}}
+.hi{background:rgba(198,40,40,.12);font-weight:700}
+</style></head><body>
+<header>
+  <h1>Boltz-Fast — what the measurements actually showed</h1>
+  <p>Every figure on this page is read from the run artifacts, not typed in.
+     Rebuild with <code style="background:rgba(255,255,255,.12);border:0;color:#fff">
+     python src/build_demo_site.py</code></p>
+</header>
+<main>
+
+<section>
+  <h2>1. The control that decides everything</h2>
+  <p class="sub">A screening score must prefer a binder to a <em>scramble of itself</em> —
+     identical composition and length, order destroyed. Without that control a benchmark
+     cannot tell binder recognition from composition sensitivity.</p>
+  <div class="row" id="integrity"></div>
+  <div class="note" id="integrity-note"></div>
+</section>
+
+<section>
+  <h2>2. The settings confound <span style="color:var(--amber)">— and it was real</span></h2>
+  <p class="sub">Same model, same device, same 132 pairs. Only the sampling settings change.
+     Click to switch.</p>
+  <div class="toggle">
+    <button id="b-red" class="on" onclick="setArm('reduced')">10 steps · 1 recycling · MSA 32</button>
+    <button id="b-full" onclick="setArm('full')">200 steps · 3 recycling · full MSA</button>
+  </div>
+  <div id="bars"></div>
+  <table id="settbl"></table>
+  <div class="note">A full-settings fold takes <b>106 s</b> on the laptop this was run on,
+     and is no slower at full alignment depth. The obstacle was the device, not the
+     settings — the reduced regime outlived the constraint that justified it.</div>
+</section>
+
+<section>
+  <h2>3. Why: at ten steps the coordinates are not a protein</h2>
+  <p class="sub">A peptide bond fixes consecutive alpha-carbons at 3.80 Å.
+     Measured over every consecutive CA–CA distance.</p>
+  <table id="geotbl"></table>
+</section>
+
+<section>
+  <h2>4. One draw is not a measurement</h2>
+  <p class="sub">Cognate rank among its own decoys, across five independent draws of the
+     identical held-out panel. Chance is 2.50. The highlighted cell is draw 3, which
+     reversed a conclusion drawn from the first two.</p>
+  <table id="drawtbl"></table>
+  <div class="note">Draw 1 alone said interface pLDDT collapses held out. Draws 1–2 said
+     ipTM specifically survives and interface pLDDT specifically fails. Draw 3 reversed
+     the ordering — both claims were withdrawn.</div>
+</section>
+
+<section>
+  <h2>5. Reproduce any of it</h2>
+  <p class="sub">All of these read cached artifacts and finish in seconds.</p>
+  <pre id="repro"></pre>
+</section>
+
+</main>
+<script>
+const D = {
+ "settings": {
+  "iptm": {
+   "reduced": {
+    "effect": 0.039267843927849426,
+    "p": 0.0042658943637338366,
+    "mean_rank": 1.8636363636363635,
+    "rank_p": 0.01677777112171814,
+    "first": 11,
+    "n_receptors": 22
+   },
+   "full": {
+    "effect": 0.2872958283194087,
+    "p": 1.8069813740732422e-10,
+    "mean_rank": 1.4090909090909092,
+    "rank_p": 0.00013315071530444963,
+    "first": 15,
+    "n_receptors": 22
+   }
+  },
+  "iface_plddt": {
+   "reduced": {
+    "effect": 1.5427275332200183,
+    "p": 0.0671284135627695,
+    "mean_rank": 1.9090909090909092,
+    "rank_p": 0.010441005400018365,
+    "first": 9,
+    "n_receptors": 22
+   },
+   "full": {
+    "effect": 11.851221370742786,
+    "p": 7.0766823228035e-13,
+    "mean_rank": 1.2727272727272727,
+    "rank_p": 2.1337398514774656e-05,
+    "first": 17,
+    "n_receptors": 22
+   }
+  },
+  "receptor_side": {
+   "reduced": {
+    "effect": 0.710811005327463,
+    "p": 0.42837679065505235,
+    "mean_rank": 2.0454545454545454,
+    "rank_p": 0.05443527796746396,
+    "first": 8,
+    "n_receptors": 22
+   },
+   "full": {
+    "effect": 5.128818009642842,
+    "p": 3.0619143452135367e-12,
+    "mean_rank": 1.2727272727272727,
+    "rank_p": 2.1337398514774656e-05,
+    "first": 17,
+    "n_receptors": 22
+   }
+  }
+ },
+ "draws": {
+  "iptm": {
+   "per_draw": [
+    1.6363636363636365,
+    1.5,
+    1.8636363636363635,
+    1.6363636363636365,
+    1.4545454545454546
+   ],
+   "mean": 1.5909090909090908,
+   "first": 13,
+   "p": 0.00035237178934701053
+  },
+  "iface_plddt": {
+   "per_draw": [
+    2.090909090909091,
+    2.0454545454545454,
+    1.7272727272727273,
+    1.7272727272727273,
+    1.9090909090909092
+   ],
+   "mean": 1.8181818181818181,
+   "first": 12,
+   "p": 0.009041371993797809
+  },
+  "receptor_side": {
+   "per_draw": [
+    2.0,
+    2.227272727272727,
+    2.0454545454545454,
+    1.8636363636363635,
+    1.7727272727272727
+   ],
+   "mean": 1.9090909090909092,
+   "first": 10,
+   "p": 0.016688753986983988
+  }
+ },
+ "reciprocal": {
+  "n_cells": 12,
+  "improved": 12,
+  "prec_uni": 0.5636595573902076,
+  "prec_rec": 0.8791046916046916,
+  "dropped_wrong": 84,
+  "total_wrong": 97,
+  "dropped_right": 29,
+  "total_right": 125
+ },
+ "geometry": {
+  "Boltz-2 @ 10 steps": {
+   "n_structures": 132,
+   "median": 5.4813337326049805,
+   "physical": 0.14037229173024107,
+   "broken": 0.5622520598108026
+  },
+  "DeCAF @ 10 steps": {
+   "median": 3.74,
+   "physical": 0.962,
+   "broken": 0.0,
+   "n_structures": 69,
+   "from_cache": true
+  },
+  "Boltz-1 @ 200 steps": {
+   "median": 3.8,
+   "physical": 0.997,
+   "broken": 0.0,
+   "n_structures": 4,
+   "from_cache": true
+  }
+ },
+ "integrity": {
+  "cells_grown": 9,
+  "cells_total": 9,
+  "excluded": [
+   "1NLO",
+   "9GRF"
+  ]
+ }
+};
+
+function pct(x){return (100*x).toFixed(1)+'%';}
+const NAMES={iptm:'ipTM', iface_plddt:'interface pLDDT', receptor_side:'receptor side'};
+let arm='reduced';
+
+function setArm(a){
+  arm=a;
+  document.getElementById('b-red').className  = a==='reduced'?'on':'';
+  document.getElementById('b-full').className = a==='full'?'on':'';
+  draw();
+}
+
+function draw(){
+  const keys=Object.keys(D.settings);
+  document.getElementById('bars').innerHTML = keys.map(k=>{
+    const v=D.settings[k][arm], best=D.settings[k].full.mean_rank;
+    const span=2.50-1.0, frac=Math.max(0,Math.min(1,(2.50-v.mean_rank)/span));
+    return `<div class="barlab"><span>${NAMES[k]||k} — rank ${v.mean_rank.toFixed(2)}
+            <span style="opacity:.7">(chance 2.50)</span></span>
+            <span>${v.first}/${v.n_receptors} ranked first</span></div>
+            <div class="bar"><i style="width:${(100*frac).toFixed(0)}%;
+            background:${arm==='full'?'var(--green)':'var(--blue)'}"></i></div>`;
+  }).join('');
+  document.getElementById('settbl').innerHTML =
+    `<tr><th>readout</th><th>cognate − scramble</th><th>p</th>
+         <th>mean rank</th><th>first of 22</th></tr>` +
+    keys.map(k=>{const v=D.settings[k][arm];
+      return `<tr><td>${NAMES[k]||k}</td><td>${v.effect>=0?'+':''}${v.effect.toFixed(3)}</td>
+        <td>${v.p<1e-4?'&lt; 1e-4':v.p.toFixed(4)}</td>
+        <td>${v.mean_rank.toFixed(2)}</td><td>${v.first}/${v.n_receptors}</td></tr>`;
+    }).join('');
+}
+
+(function(){
+  const g=D.integrity;
+  document.getElementById('integrity').innerHTML = [
+    ['#1e6fb8', g.cells_grown+' of '+g.cells_total, 'arm-metric cells where removing non-binders RAISED the effect'],
+    ['#0e8f9a', g.excluded.length+' of 22', 'cognate pairs that were not binders at all'],
+    ['#2e7d32', D.reciprocal.improved+' of '+D.reciprocal.n_cells, 'combinations where two-way matching improved precision'],
+  ].map(([c,b,cap])=>`<div class="card" style="background:${c}">
+       <div class="big">${b}</div><div class="cap">${cap}</div></div>`).join('');
+  const r=D.reciprocal;
+  document.getElementById('integrity-note').innerHTML =
+    `Requiring the match in <b>both directions</b> — a peptide's best target must be the
+     receptor whose best peptide it is — lifts precision from <b>${pct(r.prec_uni)}</b>
+     to <b>${pct(r.prec_rec)}</b>, discarding ${r.dropped_wrong} of ${r.total_wrong} wrong
+     calls against ${r.dropped_right} of ${r.total_right} right ones.
+     Excluded as non-binders: ${g.excluded.join(', ')}.`;
+
+  document.getElementById('geotbl').innerHTML =
+    `<tr><th>arm</th><th>median CA–CA</th><th>physically plausible</th>
+         <th>broken (&gt; 5 Å)</th></tr>` +
+    Object.entries(D.geometry).map(([k,v])=>
+      `<tr><td>${k}${v.from_cache?' <span style="color:var(--mut);font-weight:400">(cached)</span>':''}</td>
+       <td>${v.median.toFixed(2)} Å</td>
+       <td${v.physical<0.5?' class="hi"':''}>${pct(v.physical)}</td>
+       <td>${pct(v.broken)}</td></tr>`).join('');
+
+  const dk=Object.keys(D.draws);
+  const n=D.draws[dk[0]].per_draw.length;
+  document.getElementById('drawtbl').innerHTML =
+    `<tr><th>readout</th>${Array.from({length:n},(_,i)=>`<th>draw ${i+1}</th>`).join('')}
+       <th>mean</th><th>p</th></tr>` +
+    dk.map(k=>{const v=D.draws[k];
+      return `<tr><td>${NAMES[k]||k}</td>` +
+        v.per_draw.map((x,i)=>`<td${i===2?' class="hi"':''}>${x.toFixed(2)}</td>`).join('') +
+        `<td><b>${v.mean.toFixed(2)}</b></td>
+         <td>${v.p<1e-4?'&lt; 1e-4':v.p.toFixed(4)}</td></tr>`;
+    }).join('');
+
+  document.getElementById('repro').textContent = [
+    'python src/settings_confound.py --analyse-only    # the confound  (1.5 s)',
+    'python src/heldout_replicates.py                  # five draws    (1.1 s)',
+    'python src/reciprocal_match.py                    # two-way match (6 s)',
+    'python src/panel_integrity.py                     # non-binders   (2 s)',
+  ].join('\n');
+  draw();
+})();
+</script></body></html>
