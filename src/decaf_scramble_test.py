@@ -62,7 +62,7 @@ def build(scores_path):
             for p in pairs]
 
 
-def fold(inputs, out, ckpt, sampling, recycling, base="decaf"):
+def fold(inputs, out, ckpt, sampling, recycling, base="decaf", write_pae=False):
     """Fold one batch under `base`.
 
     The stock arms exist to de-confound: DeCAF changes both the base model
@@ -83,6 +83,10 @@ def fold(inputs, out, ckpt, sampling, recycling, base="decaf"):
             "--max_msa_seqs", "32", "--out_dir", str(out)]
     if base == "decaf":
         cmd.append("--no_kernels")
+    if write_pae:
+        # PAE-derived readouts (mPAE, ipSAE, pDockQ2) need the full matrix,
+        # which boltz does not write by default.
+        cmd.append("--write_full_pae")
     env = dict(os.environ, PYTORCH_ENABLE_MPS_FALLBACK="1")
     t0 = time.perf_counter()
     proc = subprocess.run(cmd, capture_output=True, text=True, env=env)

@@ -85,6 +85,69 @@ def is_tag_like(pep):
     return False
 
 
+def cofactors(pdb_id, cache):
+    """Components covalently attached to the peptide chain.
+
+    The question is not whether the crystal contains a ligand -- most do -- but
+    whether the *peptide* carries something the benchmark cannot fold. A metal
+    sitting on the receptor or at a lattice contact changes nothing about
+    whether the canonical peptide binds; a sugar bonded to its own serine does.
+
+    Testing bound-ligand names alone flagged four of the 22-receptor panel
+    (1ELW Ni, 6YOO Zn, 9GRF A2G, 7S7J Ca). Only one survives this test: 9GRF
+    carries nine covale records onto chain B at Ser3 OG and Thr4 OG1, matching
+    peptide AASTTTPAPA. StcE is a mucin-selective protease that reads the
+    O-glycan, so the canonical peptide is not a binder -- the same defect that
+    excluded 1I8H. The other three links are absent entirely.
+
+    Returns [] on a network failure: a missed cofactor costs one imperfect panel
+    member, whereas failing closed would silently shrink the panel whenever RCSB
+    is slow.
+    """
+    cf = cache / f"{pdb_id}.covale.json"
+    if cf.exists():
+        return json.loads(cf.read_text())
+    path = cache / f"{pdb_id}.cif"
+    if not path.exists():
+        proc = subprocess.run(
+            ["curl", "-s", "--max-time", "60",
+             f"https://files.rcsb.org/download/{pdb_id}.cif", "-o", str(path)],
+            capture_output=True, text=True)
+        if proc.returncode != 0 or not path.exists() or path.stat().st_size == 0:
+            return []
+    try:
+        import gemmi
+        st = gemmi.read_structure(str(path))
+        st.setup_entities()
+        # the peptide is the shortest polymer chain, matching fetch_chains()
+        polys = [(len(ch.get_polymer()), ch.name) for ch in st[0]
+                 if len(ch.get_polymer()) > 0]
+        if len(polys) < 2:
+            return []
+        pep_chain = min(polys)[1]
+        doc = gemmi.cif.read(str(path))
+        blk = doc.sole_block()
+        rows = blk.find("_struct_conn.", ["conn_type_id", "ptnr1_auth_asym_id",
+                                          "ptnr1_label_comp_id",
+                                          "ptnr2_auth_asym_id",
+                                          "ptnr2_label_comp_id"])
+        std = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY", "HIS",
+               "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP",
+               "TYR", "VAL", "MSE"}
+        found = []
+        for r in rows:
+            if r[0] != "covale":
+                continue
+            for me, them in ((1, 3), (3, 1)):
+                if r[me] == pep_chain and r[them + 1] not in std:
+                    found.append(r[them + 1])
+        out = sorted(set(found))
+        cf.write_text(json.dumps(out))
+        return out
+    except Exception:
+        return []
+
+
 def identity(a, b):
     """Similarity in [0,1]; substring containment scores near 1."""
     from difflib import SequenceMatcher
@@ -97,7 +160,7 @@ def similar_to_any(seq, pool, threshold):
     return any(identity(seq, s) >= threshold for s in pool)
 
 
-def search(rows=600):
+def search(rows=600, released_after=None):
     """Entry IDs matching the structural screen, best-resolution first."""
     query = {
         "query": {
@@ -116,7 +179,15 @@ def search(rows=600):
                  "parameters": {"attribute": "rcsb_entry_info.deposited_polymer_monomer_count",
                                 "operator": "range",
                                 "value": {"from": 60, "to": 190}}},
-            ],
+            ] + ([] if released_after is None else [
+                # Structures released after a model's training cutoff are the
+                # only ones on which it can be said to *predict* rather than
+                # recall. Boltz-1 and AlphaFold3 both cut off at 2021-09-30.
+                {"type": "terminal", "service": "text",
+                 "parameters": {"attribute": "rcsb_accession_info.initial_release_date",
+                                "operator": "greater",
+                                "value": released_after}},
+            ]),
         },
         "return_type": "entry",
         "request_options": {
@@ -173,6 +244,18 @@ def main():
     ap.add_argument("--want", type=int, default=14,
                     help="how many NEW receptors to accept")
     ap.add_argument("--max-check", type=int, default=400)
+    ap.add_argument("--receptor-max-id", type=float, default=RECEPTOR_MAX_ID,
+                    help="reject a candidate whose receptor is at least this "
+                         "identical to one already in the panel. The 0.90 "
+                         "default admitted a 0.86 pair (8T33/8X8A, both GABA-A "
+                         "receptor); a second panel wanting cleaner separation "
+                         "should pass 0.80")
+    ap.add_argument("--exclude", default="",
+                    help="comma-separated PDB ids already in the panel being "
+                         "built; excluded by id and deduplicated against")
+    ap.add_argument("--released-after", default=None,
+                    help="ISO date; keep only entries released after it, so the "
+                         "panel is genuinely held out from the model's training set")
     ap.add_argument("--cache", default=str(REPO_ROOT / "artifacts" / "pdb_discovery"))
     ap.add_argument("--out", default=str(REPO_ROOT / "artifacts" / "pdb_candidates.json"))
     args = ap.parse_args()
@@ -181,17 +264,34 @@ def main():
     cache.mkdir(parents=True, exist_ok=True)
 
     print("querying RCSB ...", flush=True)
-    ids = search()
+    if args.released_after:
+        print(f"  restricted to entries released after {args.released_after}")
+    ids = search(released_after=args.released_after)
     print(f"  {len(ids)} entries match the structural screen")
-    ids = [i for i in ids if i.upper() not in EXISTING]
+
+    # EXISTING is the main panel. A caller building a *second* panel must pass
+    # its members via --exclude, or they are neither skipped by id nor available
+    # to deduplicate against, and near-duplicates of them get accepted.
+    extra = [i.strip().upper() for i in args.exclude.split(",") if i.strip()]
+    known = list(dict.fromkeys(EXISTING + extra))
+    if extra:
+        print(f"  + {len(extra)} caller-supplied receptors to exclude")
+    ids = [i for i in ids if i.upper() not in known]
 
     # Existing receptors AND peptides, so additions are genuinely new on both
     # sides. Peptides matter most: a near-duplicate peptide turns another
     # receptor's decoy into a real binder.
     seen_receptors, seen_peptides = [], []
+    # Every directory that may hold a panel receptor's sequence. Omitting one
+    # silently disables deduplication against the receptors it contains:
+    # pdb_binders_b2_n22 was missing here, so 9GRF (StcE) and 8KDX (Fyn SH3)
+    # could not be matched, and their near-identical partners 9GRJ (0.98) and
+    # 9GHK (0.96) were accepted into a later panel. Two receptors that similar
+    # make each other's cognate peptide a mislabelled decoy.
     seqdirs = [REPO_ROOT / "artifacts" / d / "sequences"
-               for d in ("pdb_binders", "pdb_binders_b2_n25", "pdb_binders_b2")]
-    for pid in EXISTING:
+               for d in ("pdb_binders", "pdb_binders_b2_n22", "pdb_binders_b2_n25",
+                         "pdb_binders_b2", "heldout_panel")]
+    for pid in known:
         for sd in seqdirs:
             f = sd / f"{pid}.json"
             if f.exists():
@@ -230,7 +330,7 @@ def main():
             print(f"  - {pid} rejected: peptide {pseq} looks like a tag/linker, "
                   f"not a biological binder")
             continue
-        if similar_to_any(rseq, seen_receptors, RECEPTOR_MAX_ID):
+        if similar_to_any(rseq, seen_receptors, args.receptor_max_id):
             print(f"  - {pid} rejected: receptor {rlen}aa ({rname[:32]}) "
                   f">= {RECEPTOR_MAX_ID:.0%} identical to one already in the panel")
             continue
@@ -242,6 +342,11 @@ def main():
         if ptms:
             print(f"  - {pid} rejected: peptide needs {','.join(dict.fromkeys(ptms))}; "
                   f"canonical sequence is not binding-competent")
+            continue
+        cof = cofactors(pid, cache)
+        if cof:
+            print(f"  - {pid} rejected: interaction needs {', '.join(cof)}; "
+                  f"the benchmark folds protein only")
             continue
         seen_receptors.append(rseq)
         seen_peptides.append(pseq)
@@ -256,7 +361,7 @@ def main():
     print(f"wrote {args.out}")
     if len(accepted) < args.want:
         print(f"WARNING: wanted {args.want}, got {len(accepted)}", file=sys.stderr)
-    print("\nPDB_IDS = " + json.dumps(EXISTING + [a["pdb_id"] for a in accepted]))
+    print("\nPDB_IDS = " + json.dumps(known + [a["pdb_id"] for a in accepted]))
 
 
 if __name__ == "__main__":

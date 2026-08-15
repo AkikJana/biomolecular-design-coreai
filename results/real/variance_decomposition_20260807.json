@@ -1,0 +1,90 @@
+{
+  "noise_sd_by_arm": {
+    "boltz2": {
+      "iptm": 0.06284098003383594,
+      "iface_plddt": 1.9172006851796117
+    },
+    "boltz1": {
+      "iptm": 0.06284098003383594,
+      "iface_plddt": 1.9172006851796117
+    },
+    "decaf": {
+      "iptm": 0.09812164137522385,
+      "iface_plddt": 3.0288954519395457
+    }
+  },
+  "arms": {
+    "boltz2": {
+      "iptm": {
+        "n": 132,
+        "beta_cognate": 0.06979968579429555,
+        "p_cognate": 0.004201464627974468,
+        "beta_scramble": 0.05702932698257028,
+        "var_receptor": 0.0054031068004714,
+        "var_residual": 0.009809835464173414,
+        "var_noise": 0.003948988771612967,
+        "var_interaction": 0.005860846692560448,
+        "signal_to_noise": 1.4841386064935762
+      },
+      "iface_plddt": {
+        "n": 132,
+        "beta_cognate": 3.673979827855775,
+        "p_cognate": 5.470320092731473e-05,
+        "beta_scramble": 0.3778643660899596,
+        "var_receptor": 14.45725396674559,
+        "var_residual": 13.682445504037988,
+        "var_noise": 3.6756584672531725,
+        "var_interaction": 10.006787036784814,
+        "signal_to_noise": 2.7224474542279515
+      }
+    },
+    "boltz1": {
+      "iptm": {
+        "n": 132,
+        "beta_cognate": 0.062165722363826,
+        "p_cognate": 8.539534446750677e-05,
+        "beta_scramble": 0.022897878435976553,
+        "var_receptor": 0.0022891059010067202,
+        "var_residual": 0.004131248842985076,
+        "var_noise": 0.003948988771612967,
+        "var_interaction": 0.00018226007137210967,
+        "signal_to_noise": 0.046153605875578485
+      },
+      "iface_plddt": {
+        "n": 132,
+        "beta_cognate": 2.697913813523224,
+        "p_cognate": 0.002938924720376502,
+        "beta_scramble": 1.155186280303207,
+        "var_receptor": 13.477164371064887,
+        "var_residual": 13.578197473667224,
+        "var_noise": 3.6756584672531725,
+        "var_interaction": 9.902539006414052,
+        "signal_to_noise": 2.6940857249488257
+      }
+    },
+    "decaf": {
+      "iptm": {
+        "n": 132,
+        "beta_cognate": 0.25327019754684316,
+        "p_cognate": 1.7179432840264113e-06,
+        "beta_scramble": 0.052477040384529126,
+        "var_receptor": 0.01572880125562192,
+        "var_residual": 0.0462444842487916,
+        "var_noise": 0.00962785650616804,
+        "var_interaction": 0.03661662774262356,
+        "signal_to_noise": 3.803196248216339
+      },
+      "iface_plddt": {
+        "n": 132,
+        "beta_cognate": 10.479247035965953,
+        "p_cognate": 1.2929157965172472e-07,
+        "beta_scramble": 0.9391122835348528,
+        "var_receptor": 85.84240805198748,
+        "var_residual": 64.99820654837565,
+        "var_noise": 9.174207658780064,
+        "var_interaction": 55.823998889595586,
+        "signal_to_noise": 6.084885034858559
+      }
+    }
+  }
+}
