@@ -18,6 +18,10 @@ header span{opacity:.75;font-size:13px}
 main{max-width:1180px;margin:0 auto;padding:22px 18px 70px;
      display:grid;grid-template-columns:400px 1fr;gap:20px;align-items:start}
 @media (max-width:900px){main{grid-template-columns:1fr}}
+/* a grid child defaults to min-width:auto, so the results panel grew to the
+   table's min-content width and pushed the page sideways instead of letting
+   the table scroll inside it */
+main>*{min-width:0}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
 h2{margin:0 0 3px;font-size:16px}
 .hint{color:var(--mut);font-size:12.5px;margin:0 0 14px}
@@ -28,7 +32,10 @@ textarea,select,input{width:100%;font:13px/1.45 ui-monospace,SFMono-Regular,Menl
       border-radius:8px;padding:9px 10px}
 textarea{resize:vertical}
 select,input{font-family:inherit;font-size:13.5px}
-.two{display:flex;gap:10px}.two>*{flex:1}
+/* min-width:0 lets a flex child shrink below the intrinsic width of the select
+   inside it; without it these two rows forced the whole page 340px wider than
+   the viewport on a laptop at half-screen */
+.two{display:flex;gap:10px;flex-wrap:wrap}.two>*{flex:1 1 150px;min-width:0}
 button.go{width:100%;margin-top:16px;padding:12px;border:0;border-radius:9px;
       background:var(--blue);color:#fff;font-size:15px;font-weight:650;cursor:pointer}
 button.go:disabled{opacity:.5;cursor:default}
@@ -36,7 +43,10 @@ button.go:disabled{opacity:.5;cursor:default}
 .warn{background:#fdf3e0;color:#8a5200;border-radius:8px;padding:10px 12px;
       font-size:12.5px;margin-top:12px}
 @media (prefers-color-scheme:dark){.warn{background:#2a2113;color:#e2b978}}
-table{width:100%;border-collapse:collapse;font-size:13.5px}
+/* eight columns will not fit a narrow window; the table scrolls inside its own
+   box rather than dragging the page sideways with it */
+#results{overflow-x:auto}
+table{width:100%;min-width:600px;border-collapse:collapse;font-size:13.5px}
 th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right}
 th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
 th{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
@@ -45,6 +55,7 @@ td.seq{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
 .hit{background:rgba(46,125,50,.15);color:var(--green)}
 .no{background:rgba(198,40,40,.12);color:var(--red)}
 .skip{background:rgba(178,106,0,.15);color:var(--amber)}
+.warnpill{background:rgba(178,106,0,.15);color:var(--amber)}
 .bar{height:7px;background:var(--soft);border-radius:4px;overflow:hidden;margin-top:16px}
 .bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .4s}
 .empty{color:var(--mut);text-align:center;padding:48px 20px;font-size:14px}
@@ -94,7 +105,8 @@ code{background:var(--soft);border-radius:4px;padding:1px 5px;font-size:12.5px}
         <label for="scr">Scrambles per candidate</label>
         <select id="scr" onchange="estimate()">
           <option value="1">1 — no null spread</option>
-          <option value="2" selected>2</option><option>3</option><option>4</option>
+          <option value="2">2</option><option value="3" selected>3</option>
+          <option>4</option><option>5</option><option>6</option>
         </select>
       </div>
       <div>
@@ -149,10 +161,13 @@ function estimate(){
   const scr=+document.getElementById('scr').value;
   const n=nPeptides(), m=CFG.modes[mode];
   if(!m){return;}
-  const folds=n*(1+scr)*reps;
-  const secs=folds*m.sec_per_fold+120;
+  // a scramble is folded once, so the null costs `scr` folds and not `scr*reps`
+  const folds=n*(reps+scr);
+  // almost all of a run is fixed model construction (~45 s), paid once for the
+  // whole job; only the marginal ~9 s per fold scales
+  const secs=45+folds*m.sec_per_fold;
   document.getElementById('est').textContent = n===0 ? '—' :
-    `${folds} folds ≈ ${Math.max(1,Math.round(secs/60))} min`;
+    `${folds} folds ≈ ${Math.max(1,Math.round(secs/60))} min, less if any are cached`;
   document.getElementById('modewarn').innerHTML = mode==='quick'
     ? '<b>Quick mode is 3–4× faster and materially weaker.</b> At 10 sampling steps '+
       'the measured effect is 3–7× smaller and only ~14% of backbone bonds are '+
@@ -227,35 +242,46 @@ function render(j){
     (j.pooled_null_sd ? ` · null spread ${j.pooled_null_sd.toFixed(2)} (df ${j.pooled_df})` : '');
   if(!rows.length){ document.getElementById('results').innerHTML =
     '<div class="empty">Nothing scored.</div>'; return; }
-  document.getElementById('results').innerHTML = `<table>
+  const power = j.power_note
+    ? `<div class="warn" style="border-color:var(--amber)"><b>This job is small.</b> ${j.power_note}</div>`
+    : '';
+  document.getElementById('results').innerHTML = power + `<table>
     <tr><th>#</th><th>candidate</th><th>score</th><th>own scrambles</th>
-        <th>z</th><th>replicate SD</th><th>verdict</th></tr>` +
+        <th>t</th><th>p</th><th>replicate SD</th><th>verdict</th></tr>` +
     rows.map(r=>{
       if(r.status!=='scored'){
         return `<tr><td>—</td><td class="seq">${r.peptide}</td>
-          <td colspan="4" style="text-align:left;color:var(--mut)">
+          <td colspan="5" style="text-align:left;color:var(--mut)">
           ${(r.problems||[]).join('; ')||'fold failed'}</td>
           <td><span class="pill skip">not scored</span></td></tr>`;
       }
-      const z = r.z_vs_own_scrambles;                 // null when only one scramble
-      const hit = z!=null && z >= 1.0;
-      const cls = z==null ? 'skip' : (hit?'hit':'no');
-      const zcell = z==null
+      // t against the pooled scramble spread, and its one-sided p on pooled_df.
+      // A fixed cutoff on the ratio alone passed a GS-linker at 1.06; the p is
+      // what makes "hit" mean the same thing across jobs of different size.
+      const tv = r.t_vs_own_scrambles, pv = r.p_one_sided;
+      const cls = tv==null ? 'skip' : (pv<0.01 ? 'hit' : (pv<0.05 ? 'warnpill' : 'no'));
+      const strong = tv!=null && pv<0.05;
+      const zcell = tv==null
         ? `<span style="color:var(--mut)">n/a</span>`
-        : `${z>=0?'+':''}${z.toFixed(2)}`;
+        : `${tv>=0?'+':''}${tv.toFixed(2)}`;
+      const pcell = pv==null ? '—'
+        : (pv<0.001 ? '&lt;0.001' : pv.toFixed(3));
       const nullcell = r.null_sd==null
         ? `${r.null_mean.toFixed(2)} <span style="color:var(--mut)">(1 only)</span>`
         : `${r.null_mean.toFixed(2)} ± ${r.null_sd.toFixed(2)}`;
       return `<tr><td>${r.rank}</td><td class="seq">${r.peptide}</td>
         <td>${r.score.toFixed(2)}</td>
         <td>${nullcell}</td>
-        <td class="z" style="color:${hit?'var(--green)':'var(--mut)'}">${zcell}</td>
+        <td class="z" style="color:${strong?'var(--green)':'var(--mut)'}">${zcell}</td>
+        <td style="color:var(--mut)">${pcell}</td>
         <td>${r.replicate_sd==null?'—':r.replicate_sd.toFixed(2)}</td>
         <td><span class="pill ${cls}">${r.verdict}</span></td>
       </tr>`;
     }).join('') + `</table>
     <div class="warn">A ranking is a triage order, not a measurement of affinity.
-      z is in units of the pooled scramble spread; treat |z| &lt; 1 as no evidence.
+      t is the margin over the candidate's own scrambles in units of the pooled
+      scramble spread, and p is one-sided on that spread's degrees of freedom —
+      so it means the same thing whether the job had three candidates or ten.
       On a 22-target benchmark at these settings the true binder was ranked first for
       17 targets; on targets the model has seen before, expect roughly twice the
       apparent accuracy you would get on a novel one.</div>`;

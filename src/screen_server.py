@@ -47,14 +47,20 @@ warnings.filterwarnings("ignore")
 
 ART = REPO_ROOT / "artifacts"
 WORK = ART / "screen_jobs"
+MSA_CACHE = ART / "screen_msa_cache"
+FOLD_CACHE = ART / "screen_fold_cache"
 UI = REPO_ROOT / "demo" / "app.html"
 AA = set("ACDEFGHIKLMNPQRSTVWY")
 
+# sec_per_fold is the MARGINAL cost of one more fold, not the cost of a fold in
+# isolation. Model construction is ~45s and is paid once for the whole job, so a
+# 15-fold quick screen is 45 + 15*9 rather than 15*54.
+FIXED_STARTUP_SEC = 45
 MODES = {
     "quick": {"label": "Quick screen", "model": "decaf", "sampling": 10,
-              "recycling": 1, "msa_depth": 32, "sec_per_fold": 30},
+              "recycling": 1, "msa_depth": 32, "sec_per_fold": 9},
     "careful": {"label": "Careful screen", "model": "boltz1", "sampling": 200,
-                "recycling": 3, "msa_depth": None, "sec_per_fold": 110},
+                "recycling": 3, "msa_depth": None, "sec_per_fold": 33},
 }
 
 JOBS = {}
@@ -97,37 +103,91 @@ def scrambles_of(seq, n, rng):
 # ----------------------------------------------------------------- folding
 
 def fetch_msa(receptor, job_dir):
-    """Alignment for the target, cached by sequence so a re-screen is instant."""
+    """Alignment for the target, cached by sequence so a re-screen is instant.
+
+    This calls the alignment server directly rather than running a throwaway
+    fold to get the file as a side effect. The old route started a whole boltz
+    process on CPU -- ~47s of model construction -- purely to reach the MSA step
+    and then discard the structure it went on to predict.
+    """
     import hashlib
     key = hashlib.sha1(receptor.encode()).hexdigest()[:16]
-    cache = ART / "screen_msa_cache"
-    cache.mkdir(parents=True, exist_ok=True)
-    hit = cache / f"{key}.csv"
+    MSA_CACHE.mkdir(parents=True, exist_ok=True)
+    hit = MSA_CACHE / f"{key}.csv"
     if hit.exists():
         return str(hit), True
-    probe = job_dir / "msa" / "inputs"
-    probe.mkdir(parents=True, exist_ok=True)
-    (probe / "probe.yaml").write_text(
-        "version: 1\nsequences:\n"
-        f"  - protein:\n      id: A\n      sequence: {receptor}\n"
-        f"  - protein:\n      id: B\n      sequence: AAAAAA\n      msa: empty\n")
-    cmd = [sys.executable, "-m", "boltz.main", "predict", str(probe),
-           "--out_dir", str(probe.parent), "--model", "boltz1",
-           "--accelerator", "cpu", "--recycling_steps", "0", "--sampling_steps", "5",
-           "--output_format", "pdb", "--override", "--use_msa_server",
-           "--subsample_msa", "--num_subsampled_msa", "32", "--max_msa_seqs", "32",
-           "--num_workers", "0"]
-    env = dict(os.environ, PYTORCH_ENABLE_MPS_FALLBACK="1")
-    subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=900)
-    src = probe.parent / "boltz_results_inputs" / "msa" / "probe_0.csv"
-    if src.exists():
-        shutil.copy2(src, hit)
-        return str(hit), False
+    try:
+        sys.path.insert(0, str(Path.home() / ".boltz" / "decaf" / "repo" / "src"))
+        from boltz.data.msa.mmseqs2 import run_mmseqs2
+        tmp = job_dir / "msa"
+        tmp.mkdir(parents=True, exist_ok=True)
+        a3m = run_mmseqs2([receptor], str(tmp), use_env=True, use_filter=True)[0]
+        rows = ["key,sequence"]
+        for line in a3m.splitlines():
+            if line.startswith(">") or not line.strip():
+                continue
+            # a3m marks insertions relative to the query in lower case; dropping
+            # them leaves every row the query's width, which is what boltz reads
+            aligned = "".join(c for c in line.strip() if not c.islower())
+            if aligned:
+                rows.append(f"-1,{aligned}")
+        if len(rows) > 1:
+            hit.write_text("\n".join(rows) + "\n")
+            return str(hit), False
+    except Exception:                                              # noqa: BLE001
+        pass
     return None, False
 
 
-def fold_batch(pairs, job_dir, mode, msa_path, budget_per_fold):
-    """Fold a list of (name, receptor, peptide). Returns {name: readouts}."""
+# ----------------------------------------------------------------- fold cache
+
+def fold_key(receptor, peptide, cfg):
+    """Identity of a fold: same inputs *and* same settings, or it is not the same."""
+    import hashlib
+    stamp = f"{receptor}|{peptide}|{cfg['model']}|{cfg['sampling']}|" \
+            f"{cfg['recycling']}|{cfg['msa_depth']}"
+    return hashlib.sha1(stamp.encode()).hexdigest()[:20]
+
+
+def cache_read(key):
+    """Every independent fold ever run for this key, as a list.
+
+    Storing a list rather than one value is the whole point. Folds are unseeded,
+    so replicates are meant to differ; collapsing a key to a single cached value
+    would hand every replicate the same number, drive the replicate spread to
+    exactly zero, and make the tool claim a reproducibility it has not got.
+    Cached entries are genuine independent folds, so a replicate may draw one.
+    """
+    f = FOLD_CACHE / f"{key}.json"
+    if not f.exists():
+        return []
+    try:
+        return json.loads(f.read_text())
+    except Exception:                                              # noqa: BLE001
+        return []
+
+
+def cache_append(key, readouts):
+    FOLD_CACHE.mkdir(parents=True, exist_ok=True)
+    have = cache_read(key)
+    have.append(readouts)
+    tmp = FOLD_CACHE / f"{key}.json.tmp"
+    tmp.write_text(json.dumps(have[:12]))
+    tmp.replace(FOLD_CACHE / f"{key}.json")
+
+
+def fold_batch(pairs, job_dir, mode, msa_path, budget_per_fold, progress=None):
+    """Fold a list of (name, receptor, peptide) in ONE process. {name: readouts}.
+
+    Every fold in the list goes into a single input directory and a single
+    predict call, because the cost is almost all fixed: measured on this machine
+    a lone fold takes 53.9s and four take 74.7s, which puts model construction at
+    ~47s and the marginal fold at ~6.9s. Splitting a job across two calls pays
+    that 47s twice.
+
+    Progress therefore cannot come from counting calls. It is read off the
+    prediction directory instead, which boltz fills in as it goes.
+    """
     from Bio.PDB import PDBParser
     from interface_side_split import sides
 
@@ -162,13 +222,33 @@ def fold_batch(pairs, job_dir, mode, msa_path, budget_per_fold):
         cmd.append("--no_kernels")
 
     env = dict(os.environ, PYTORCH_ENABLE_MPS_FALLBACK="1")
-    proc = subprocess.run(cmd, capture_output=True, text=True, env=env,
-                          timeout=max(900, len(pairs) * budget_per_fold))
+    res = job_dir / f"boltz_results_{inputs.name}" / "predictions"
+    stop = threading.Event()
+
+    def watch():
+        while not stop.wait(3.0):
+            try:
+                n = sum(1 for d in res.iterdir()
+                        if (d / f"{d.name}_model_0.pdb").exists())
+            except OSError:
+                n = 0
+            progress(n)
+
+    watcher = None
+    if progress is not None:
+        watcher = threading.Thread(target=watch, daemon=True)
+        watcher.start()
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, env=env,
+                              timeout=max(900, 300 + len(pairs) * budget_per_fold * 3))
+    finally:
+        stop.set()
+        if watcher is not None:
+            watcher.join(timeout=5)
     if proc.returncode != 0:
         raise RuntimeError((proc.stdout + proc.stderr)[-1500:])
 
     parser = PDBParser(QUIET=True)
-    res = job_dir / f"boltz_results_{inputs.name}" / "predictions"
     out = {}
     for name, _, _ in pairs:
         pdb = res / name / f"{name}_model_0.pdb"
@@ -221,6 +301,21 @@ def summarise(job):
     pooled, pooled_df = pooled_null_sd(job)
     job["pooled_null_sd"] = pooled
     job["pooled_df"] = pooled_df
+    # With few scrambles the null has almost no degrees of freedom, and the
+    # critical value explodes: at df = 2 a candidate needs t > 2.92 to reach
+    # p < 0.05, so a real binder with a +11 margin still reads as nothing. That
+    # is a statement about the job's size, not about the candidate, and the tool
+    # says which rather than letting the user read a null result as evidence.
+    job["power_note"] = None
+    if pooled_df is not None and 0 < pooled_df < 5:
+        from scipy import stats
+        crit = float(stats.t.isf(0.05, pooled_df))
+        job["power_note"] = (
+            f"The scramble null has only {pooled_df} degree(s) of freedom, so a "
+            f"candidate needs t > {crit:.2f} before this job can call it a hit. "
+            f"An 'indistinguishable' verdict here may mean the job is too small "
+            f"rather than the candidate inactive — raise scrambles, or screen "
+            f"more candidates together.")
     rows = []
     for cand in job["candidates"]:
         if cand.get("problems"):
@@ -239,26 +334,37 @@ def summarise(job):
         # truthy. Rather than invent a denominator, the z is withheld and the
         # raw margin reported instead.
         ns = float(np.std(nulls, ddof=1)) if len(nulls) > 1 else None
-        # the pooled spread is the denominator; a per-candidate SD from two or
-        # three permutations is too unstable to divide by
-        z = ((v - nm) / pooled) if (pooled and pooled > 1e-6) else None
-        if z is None:
+        # The pooled spread is the denominator, and because it is estimated from
+        # a handful of deviations the ratio is a t statistic on pooled_df, not a
+        # z. Treating it as a z is what let a GSGSGSGSGSGS linker -- which binds
+        # nothing -- pass a fixed |z| >= 1 cutoff at 1.06. On the t scale that
+        # same candidate is p = 0.14, which is the honest answer.
+        t = p = None
+        if pooled and pooled > 1e-6:
+            se = pooled * float(np.sqrt(1.0 / len(got) + 1.0 / len(nulls)))
+            if se > 1e-9:
+                t = (v - nm) / se
+                from scipy import stats
+                p = float(stats.t.sf(t, pooled_df))
+        if t is None:
             verdict = (f"not enough scrambles to estimate a null "
                        f"(margin {v - nm:+.2f})")
-        elif z >= 1.0:
+        elif p < 0.01:
             verdict = "beats its own scrambles"
+        elif p < 0.05:
+            verdict = "suggestive — worth a replicate"
         else:
             verdict = "indistinguishable from its own scrambles"
         rows.append({**cand, "status": "scored", "score": v,
                      "replicate_sd": spread, "null_mean": nm, "null_sd": ns,
-                     "margin": v - nm, "z_vs_own_scrambles": z,
-                     "pooled_null_sd": pooled,
+                     "margin": v - nm, "t_vs_own_scrambles": t, "p_one_sided": p,
+                     "pooled_null_sd": pooled, "pooled_df": pooled_df,
                      "n_reps": len(got), "n_null": len(nulls),
                      "verdict": verdict})
     scored = [r for r in rows if r["status"] == "scored"]
-    # rank on z where it exists, else on the raw margin
-    scored.sort(key=lambda r: -(r["z_vs_own_scrambles"]
-                                if r["z_vs_own_scrambles"] is not None
+    # rank on the t statistic where it exists, else on the raw margin
+    scored.sort(key=lambda r: -(r["t_vs_own_scrambles"]
+                                if r["t_vs_own_scrambles"] is not None
                                 else r["margin"]))
     for i, r in enumerate(scored, 1):
         r["rank"] = i
@@ -285,50 +391,76 @@ def run_job(job_id):
         with JOBS_LOCK:
             job["msa"] = "cached" if cached else ("fetched" if msa else "none")
 
-        # every candidate gets its own permutations; that is the whole point
-        pairs, index = [], {}
+        # every candidate gets its own permutations; that is the whole point.
+        # A scramble is folded once: the null asks what this composition scores
+        # over orderings, so a fixed budget is better spent on more distinct
+        # permutations than on re-folding a few of them.
+        wanted, index = [], {}
         for ci, cand in enumerate(job["candidates"]):
             if cand.get("problems"):
                 continue
             for rep in range(job["replicates"]):
                 n = f"c{ci}_r{rep}"
-                pairs.append((n, job["receptor"], cand["peptide"]))
+                wanted.append((n, cand["peptide"]))
                 index[n] = (ci, "reps", rep)
             for si, sc in enumerate(cand["scrambles"]):
-                for rep in range(job["replicates"]):
-                    n = f"c{ci}_s{si}_r{rep}"
-                    pairs.append((n, job["receptor"], sc))
-                    index[n] = (ci, "null_reps", si)
+                n = f"c{ci}_s{si}"
+                wanted.append((n, sc))
+                index[n] = (ci, "null_reps", si)
 
         with JOBS_LOCK:
-            job["folds_total"] = len(pairs)
-        done = 0
-        batch = 6
-        for i in range(0, len(pairs), batch):
-            chunk = pairs[i:i + batch]
-            step(f"folding {done + 1}–{done + len(chunk)} of {len(pairs)} "
-                 f"({cfg['label'].lower()}) …", done)
-            got = fold_batch(chunk, job_dir, job["mode"], msa,
-                             cfg["sec_per_fold"] * 4)
-            for name, _, _ in chunk:
+            job["folds_total"] = len(wanted)
+
+        # Draw what earlier runs already folded under these exact settings. Each
+        # cached entry is one independent unseeded fold, so a replicate may take
+        # one -- but a key is drawn from only as many times as it has distinct
+        # entries, never reused twice inside a job.
+        taken, pairs, reused = {}, [], 0
+        for n, pep in wanted:
+            key = fold_key(job["receptor"], pep, cfg)
+            have = cache_read(key)
+            k = taken.get(key, 0)
+            if k < len(have):
+                taken[key] = k + 1
+                ci, kind, slot = index[n]
+                cand = job["candidates"][ci]
+                val = have[k].get(job["metric"])
+                (cand["reps"] if kind == "reps"
+                 else cand["null_reps"][slot]).append(val)
+                reused += 1
+            else:
+                taken[key] = k + 1
+                pairs.append((n, job["receptor"], pep))
+
+        with JOBS_LOCK:
+            job["reused"] = reused
+        if pairs:
+            step(f"folding {len(pairs)} structures "
+                 f"({cfg['label'].lower()})" +
+                 (f", {reused} reused" if reused else "") + " …", reused)
+            got = fold_batch(
+                pairs, job_dir, job["mode"], msa, cfg["sec_per_fold"],
+                progress=lambda n: step(
+                    f"folded {reused + n} of {len(wanted)}", reused + n))
+            for name, _, pep in pairs:
                 if name not in got:
                     continue
                 ci, kind, slot = index[name]
                 cand = job["candidates"][ci]
                 val = got[name].get(job["metric"])
-                if kind == "reps":
-                    cand["reps"].append(val)
-                else:
-                    cand["null_reps"][slot].append(val)
-            done += len(chunk)
-            step(f"folded {done} of {len(pairs)}", done)
+                (cand["reps"] if kind == "reps"
+                 else cand["null_reps"][slot]).append(val)
+                cache_append(fold_key(job["receptor"], pep, cfg), got[name])
             shutil.rmtree(job_dir / "boltz_results_inputs", ignore_errors=True)
+        step(f"folded {len(wanted)} of {len(wanted)}", len(wanted))
 
         results, metric = summarise(job)
         with JOBS_LOCK:
             job["results"] = results
             job["state"] = "done"
-            job["message"] = f"complete — {len(pairs)} folds"
+            job["message"] = (f"complete — {job['folds_total']} folds"
+                              + (f", {job.get('reused', 0)} reused from cache"
+                                 if job.get("reused") else ""))
             job["finished_at"] = time.time()
     except Exception as exc:                                   # noqa: BLE001
         with JOBS_LOCK:
@@ -397,7 +529,7 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(404, json.dumps({"error": "no such job"}))
                 view = {k: job[k] for k in
                         ("state", "message", "folds_done", "folds_total", "mode",
-                         "replicates", "metric", "msa", "pooled_null_sd",
+                         "replicates", "metric", "msa", "reused", "power_note", "pooled_null_sd",
                          "pooled_df") if k in job}
                 view["results"] = job.get("results")
                 view["elapsed"] = round(time.time() - job["started_at"], 1)
@@ -418,7 +550,7 @@ class Handler(BaseHTTPRequestHandler):
                     for p in (req.get("peptides") or []) if p.strip()]
         mode = req.get("mode", "quick")
         reps = max(1, min(5, int(req.get("replicates", 2))))
-        nulls = max(1, min(4, int(req.get("scrambles", 2))))
+        nulls = max(1, min(6, int(req.get("scrambles", 3))))
         metric = req.get("metric", "iface_plddt")
 
         if not receptor or len(set(receptor) - AA) or len(receptor) < 30:
@@ -441,7 +573,7 @@ class Handler(BaseHTTPRequestHandler):
                           "reps": [], "null_reps": [[] for _ in range(nulls)]})
 
         jid = uuid.uuid4().hex[:12]
-        n_folds = sum((1 + nulls) * reps for c in cands if not c["problems"])
+        n_folds = sum(reps + nulls for c in cands if not c["problems"])
         with JOBS_LOCK:
             JOBS[jid] = {"id": jid, "state": "queued", "message": "queued",
                          "receptor": receptor, "candidates": cands, "mode": mode,
@@ -451,7 +583,8 @@ class Handler(BaseHTTPRequestHandler):
         WORKQ.put(jid)
         return self._send(200, json.dumps({
             "job_id": jid, "folds": n_folds,
-            "eta_seconds": int(n_folds * MODES[mode]["sec_per_fold"] + 120)}))
+            "eta_seconds": int(FIXED_STARTUP_SEC
+                                + n_folds * MODES[mode]["sec_per_fold"])}))
 
 
 def main():
@@ -463,8 +596,10 @@ def main():
     threading.Thread(target=worker, daemon=True).start()
     srv = HTTPServer((args.host, args.port), Handler)
     print(f"Peptide screening tool  →  http://{args.host}:{args.port}")
-    print(f"  quick   : DeCAF, 10 steps   ~{MODES['quick']['sec_per_fold']}s/fold")
-    print(f"  careful : Boltz-1, 200 steps ~{MODES['careful']['sec_per_fold']}s/fold")
+    print(f"  ~{FIXED_STARTUP_SEC}s to start, then "
+          f"{MODES['quick']['sec_per_fold']}s/fold quick, "
+          f"{MODES['careful']['sec_per_fold']}s/fold careful")
+    print("  folds are cached, so re-screening a candidate is free")
     print("  every candidate is folded against permutations of itself")
     try:
         srv.serve_forever()
