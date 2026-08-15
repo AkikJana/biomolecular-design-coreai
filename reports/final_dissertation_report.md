@@ -188,6 +188,7 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 30  
 &nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 34  
 &nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 38  
+&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ..................... 41  
 8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 31  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 31  
 &nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 32  
@@ -313,9 +314,15 @@ this report:
 
 1. **Reduced inference settings.** Folding throughout uses 10 sampling steps
    (Boltz default 200), 1 recycling iteration (default 3) and MSA depth 32
-   (default 8192). These were forced by CPU-only execution on a laptop. The
-   settings confound is stated, not resolved.
-5. **Panel size.** The binder benchmark uses 22 receptors. This was sized by a
+   (default 8192). These were forced by CPU-only execution on a laptop.
+   **Section 7.13 resolves this confound and finds it was real**: at the
+   intended settings the cognate-versus-scramble effect is three to seven times
+   larger in standardised terms, and Cohen's *d* moves from 0.12–0.45 to
+   1.25–1.52. Every effect size measured in Sections 7.2 to 7.12 should be read
+   as a lower bound. The constraint that forced the reduced regime was also
+   removed part-way through: on MPS a full-settings fold takes 106 seconds and
+   is no slower at full alignment depth than at depth 32.
+2. **Panel size.** The binder benchmark uses 22 receptors. This was sized by a
    power analysis, but it remains small relative to the generality of the claim.
 3. **Measurement noise.** Folds are unseeded, and Section 7.5 quantifies what
    that costs. Per-complex results are not reproducible at these settings.
@@ -1700,6 +1707,120 @@ confidence**, which is exactly why every readout reduces to the same ceiling.
 
 <div class="page-break"></div>
 
+### 7.13 The Settings Confound, Resolved — and It Was Real
+
+Every fold in Sections 7.2 to 7.12 was taken far below the model's defaults: 10
+sampling steps against 200, 1 recycling pass against 3, and an alignment
+subsampled to 32 rows. Section 1.5 states this and Section 7.8 partly addresses
+it by running a model *trained* for ten steps, but nothing had been folded at
+the intended settings. "The settings confound is stated, not resolved" therefore
+stood as the strongest available criticism of every negative result in this
+work.
+
+It is now resolved, and **the criticism was correct**.
+
+#### 7.13.1 The comparison
+
+The same panel, the same model (stock Boltz-1), the same device (MPS), with only
+the settings changed. The reduced arm already existed from Section 7.8, so model
+and device are held constant by construction:
+
+| | sampling steps | recycling | MSA depth |
+| :--- | ---: | ---: | ---: |
+| reduced (Sections 7.2–7.12) | 10 | 1 | 32 |
+| full | 200 | 3 | full (up to 12,882 rows) |
+
+72 folds at full settings — every cognate and every scramble, which is what the
+decisive test needs. The scramble control is the one that matters here: a
+cognate against a permutation of itself, composition and length held equal.
+
+#### 7.13.2 The signal was suppressed by a factor of three to seven
+
+| Metric | reduced | full | Cohen's *d* | within-receptor z |
+| :--- | ---: | ---: | :--- | ---: |
+| ipTM | +0.039 (p = 0.004) | **+0.287 (p < 1e-5)** | 0.45 → **1.25** | 4.0× |
+| Interface pLDDT | +1.54 (p = 0.067) | **+11.85 (p < 1e-5)** | 0.28 → **1.52** | 4.7× |
+| Receptor side | +0.71 (p = 0.428) | **+5.13 (p < 1e-5)** | 0.12 → **1.45** | 7.3× |
+
+The raw effects are 7.2 to 7.7 times larger. That is partly scale — the model is
+far more confident overall at full settings — so the standardised columns are
+the honest ones, and they still show **2.7 to 12 times**. Cohen's *d* moves from
+negligible-to-small (0.12–0.45) to large (1.25–1.52) on all three readouts.
+
+It is not driven by outliers: the effect is larger at full settings for **21 of
+22 receptors** on ipTM and interface pLDDT, and 18 of 22 on the receptor side,
+with paired p ≤ 0.001 throughout.
+
+Two readouts change verdict outright. Interface pLDDT went from p = 0.067 —
+the number Section 7.8 called model-dependent — to p < 1e-5. The receptor side
+went from p = 0.428, no evidence at all, to p < 1e-5.
+
+#### 7.13.3 Why: the mechanism is Section 7.11's
+
+Absolute confidence rises enormously alongside the effect:
+
+| | reduced | full |
+| :--- | ---: | ---: |
+| cognate ipTM | 0.203 | **0.810** |
+| cognate interface pLDDT | 47.79 | **90.70** |
+
+And the backbones become physical. Measuring every consecutive CA–CA distance
+against the 3.80 Å a peptide bond fixes:
+
+| Arm | median CA–CA | physically plausible | broken (> 5 Å) |
+| :--- | ---: | ---: | ---: |
+| Boltz-2 @ 10 steps (Section 7.11) | 5.48 Å | 14.0% | 56.2% |
+| DeCAF @ 10 steps (Section 7.11) | 3.74 Å | 96.2% | 0.0% |
+| **Boltz-1 @ 200 steps** | **3.80 Å** | **99.7%** | **0.0%** |
+
+A median of exactly 3.80 Å is the ideal bond length to two decimals. Section
+7.11 established that geometry-dependent readouts need a converged sampler and
+that few-step distillation restores convergence; this shows the other way of
+restoring it — simply running the intended number of steps — and the confidence
+readouts recover with it.
+
+#### 7.13.4 What this costs, and what it changes
+
+**A full-settings fold takes 106 to 109 seconds on this laptop.** The runner's
+own comment records that a full alignment was intractable on CPU — a 40-complex
+run did not finish one batch in an hour and drove the machine to ~12 GB of swap.
+On MPS a full-depth fold at 200 steps is no slower than the same fold at depth
+32. **The obstacle was the device, not the settings**, and the reduced regime
+that shaped every result in Section 7 outlived the constraint that justified it.
+
+Three consequences, stated plainly:
+
+**Section 7.4's headline needs qualifying.** "ipTM tracks composition, not
+binding" was measured at 10 steps. At 200, ipTM separates a cognate from its own
+scramble with *d* = 1.25. The finding is a property of the reduced regime at
+least as much as of the metric.
+
+**Section 7.8's DeCAF result is reframed rather than overturned.** That section
+compared DeCAF against stock Boltz-1 *at the same reduced settings* and found a
+5–6× advantage; that comparison stands. What changes is the interpretation.
+Full-settings Boltz-1 reaches +0.287 and +11.85 where DeCAF at ten steps reached
++0.201 and +9.54, so distillation is not adding something the stock model lacks
+— it is recovering, at a twentieth of the sampling budget, most of what the
+stock model has when run properly. For an efficiency thesis that is a better
+result than the original reading, and it is the one the evidence supports.
+
+**Sections 7.6, 7.7 and 7.10 understate their effects.** Every effect size in
+those sections was measured in the suppressed regime and should be read as a
+lower bound.
+
+#### 7.13.5 Limitations
+
+One model (Boltz-1) and 22 receptors, folded once. Only cognates and scrambles
+were run, so this resolves the scramble control and not the receptor-specificity
+rank test — that needs the decoys, another 66 folds at two minutes each. The
+three settings were raised together, so which of sampling steps, recycling or
+MSA depth carries the effect is unresolved; Section 7.11's geometry result
+points at sampling steps, and the script varies each independently for that
+test. Section 7.5's warning applies here too: this is a single draw, and a
+single draw has twice misled this dissertation.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -1829,6 +1950,23 @@ reproducibility is regressed out. Together those two show that the pocket is
 determined by the receptor while the pose is not determined at all, which is why
 every contact-derived readout in this work failed.
 
+**Ninth, and it qualifies much of the above: the reduced inference settings were
+suppressing the signal by a factor of three to seven** (Section 7.13). Folding
+the panel on the same model and device at the intended 200 sampling steps, 3
+recycling passes and full alignment depth raises Cohen's *d* on the scramble
+control from 0.12–0.45 to 1.25–1.52, larger for 21 of 22 receptors, and takes
+interface pLDDT from p = 0.067 to p < 1e-5 and the receptor side from p = 0.428
+to p < 1e-5. Backbone geometry goes from 14% physically plausible to **99.7%**,
+with a median CA–CA distance of 3.80 Å — the ideal bond length. Section 7.4's
+"ipTM tracks composition, not binding" is therefore a property of the reduced
+regime at least as much as of the metric, and every effect size in Sections 7.2
+to 7.12 is a lower bound. Section 7.8's DeCAF comparison stands but is reframed:
+distillation recovers most of what the stock model has when run properly, at a
+twentieth of the sampling budget, which is a better result for an efficiency
+thesis than the original reading. A full-settings fold costs 106 seconds on this
+laptop, so the constraint that justified the reduced regime had lapsed before
+most of the measurements were taken.
+
 One further correction belongs here rather than in a footnote. Section 7.10 was
 first written from a single draw of the held-out panel, and a second independent
 draw moved its central p-value four orders of magnitude. The claim that interface
@@ -1859,26 +1997,33 @@ what it measures, and most published ones lack all six.
    its contact term is computed on unconverged geometry and favours scrambled
    peptides (Sections 7.6, 7.11). **pDockQ2 repairs it** by substituting a
    PAE-derived term, and is the second-best readout measured.
-2. **Use a model distilled for the step budget you can afford, not a stock model
-   run short.** At ten sampling steps a stock model returns 14% physically
+2. **Never run a stock cofolding model far below its intended sampling budget,
+   and re-measure the budget before assuming it is unaffordable.** At 10 of an
+   intended 200 steps the effect on the scramble control is three to seven times
+   smaller in standardised terms and the backbone is 14% physically plausible
+   rather than 99.7% (Section 7.13). The reduced regime in this work was
+   justified by CPU timings that MPS had already made obsolete: a full-settings
+   fold takes 106 seconds and is no slower at full alignment depth.
+3. **If the budget genuinely is short, use a model distilled for it rather than
+   a stock model run short.** At ten sampling steps a stock model returns 14% physically
    plausible backbone bonds; a few-step-distilled model returns 96.2%
    (Section 7.11). Every geometry-derived readout — contacts, buried area,
    pDockQ, PAE-based metrics, any physics energy function — is meaningless on the
    former and works on the latter. This is the largest single quality difference
    measured in this work, and it costs nothing at inference.
-3. **Require the match in both directions before calling a hit.** Score each
+4. **Require the match in both directions before calling a hit.** Score each
    candidate against the target *and* against a small panel of off-targets, and
    keep only candidates whose best target is yours. Precision rises from 56% to
    88% and enrichment from 2.3x to 3.5x, discarding 87% of wrong calls against
    23% of right ones (Section 7.12). It costs five to ten times the folds and
    nothing in modelling, and it is the only intervention in this work that
    improved in every panel, readout and draw tested.
-4. **Split the benchmark on the model's training cutoff, and report both
+5. **Split the benchmark on the model's training cutoff, and report both
    halves.** This was the most consequential control in the project and the last
    one applied. Boltz-1 and AlphaFold3 both cut off at 2021-09-30. Without the
    split, a panel drawn from the PDB measures retrieval and prediction together
    and reports the sum as accuracy.
-5. **Report replicate-averaged confidence for per-receptor claims — and for
+6. **Report replicate-averaged confidence for per-receptor claims — and for
    any headline number.** Section 7.10.3 is the cautionary case: a single draw
    put the held-out interface-pLDDT effect at p = 0.089 and a second put it at
    p = 0.00008.
@@ -1889,11 +2034,11 @@ what it measures, and most published ones lack all six.
    evidence, 9 to 16 replicate folds per complex are required before a
    per-receptor ranking is meaningful. Practitioners ranking binders on a single
    AlphaFold or Boltz run should treat those rankings as provisional.
-6. **Always include a scramble control.** Composition and length alone reproduce
+7. **Always include a scramble control.** Composition and length alone reproduce
    most of the apparent discrimination between a cognate and a decoy. Without a
    composition-matched control, a benchmark cannot distinguish binder
    recognition from composition sensitivity.
-7. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
+8. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
    candidate complexes were PTM-dependent, and folding the canonical sequence
    makes those "positives" non-binding, which silently penalises the metric
    under test. An allowlist of known PTM codes is not sufficient — it passed a
@@ -1902,11 +2047,11 @@ what it measures, and most published ones lack all six.
    no list, and additionally catches glycosylation (9GRF) and peptides that are
    substantially synthetic (1NLO). Reject any peptide whose canonical sequence
    contains `X` (Section 7.10.1).
-8. **Do not treat operator-level memory savings as drop-in.** A substituted
+9. **Do not treat operator-level memory savings as drop-in.** A substituted
    operator should be validated against pretrained weights on real activations
    before its microbenchmark saving is claimed.
-9. **Deploy on GPU before extending the biological claims.** The replicate
-   folding required by recommendation 5 is a 1,200–2,100 fold workload for this
+10. **Deploy on GPU before extending the biological claims.** The replicate
+   folding required by recommendation 6 is a 1,200–2,100 fold workload for this
    panel, which is not a CPU-scale task.
 
 <div class="page-break"></div>
