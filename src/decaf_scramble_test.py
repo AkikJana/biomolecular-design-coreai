@@ -62,7 +62,8 @@ def build(scores_path):
             for p in pairs]
 
 
-def fold(inputs, out, ckpt, sampling, recycling, base="decaf", write_pae=False):
+def fold(inputs, out, ckpt, sampling, recycling, base="decaf", write_pae=False,
+         msa_depth=32):
     """Fold one batch under `base`.
 
     The stock arms exist to de-confound: DeCAF changes both the base model
@@ -78,9 +79,13 @@ def fold(inputs, out, ckpt, sampling, recycling, base="decaf", write_pae=False):
                "--model", base]
     cmd += ["--sampling_steps", str(sampling), "--diffusion_samples", "1",
             "--recycling_steps", str(recycling), "--accelerator", "gpu",
-            "--output_format", "pdb", "--override",
-            "--subsample_msa", "--num_subsampled_msa", "32",
-            "--max_msa_seqs", "32", "--out_dir", str(out)]
+            "--output_format", "pdb", "--override", "--out_dir", str(out)]
+    # msa_depth=0 means take the alignment whole. Subsampling to 32 rows is one
+    # of the three reductions Section 7.13 found were suppressing the effect, so
+    # it has to be switchable rather than baked in.
+    if msa_depth:
+        cmd += ["--subsample_msa", "--num_subsampled_msa", str(msa_depth),
+                "--max_msa_seqs", str(msa_depth)]
     if base == "decaf":
         cmd.append("--no_kernels")
     if write_pae:

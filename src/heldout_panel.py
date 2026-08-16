@@ -241,6 +241,19 @@ def analyse(recs, drop=(), title="Held-out panel"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--batch-size", type=int, default=12)
+    # Section 7.10 folded this panel at 10 steps, 1 recycling pass and MSA depth
+    # 32 on DeCAF, and Section 7.13 then showed those three reductions suppress
+    # the effect three- to sevenfold. Whether the held-out penalty survives at
+    # the intended settings is therefore untested, and these flags are how it
+    # gets tested. Defaults reproduce Section 7.10 exactly.
+    ap.add_argument("--sampling-steps", type=int, default=10)
+    ap.add_argument("--recycling-steps", type=int, default=1)
+    ap.add_argument("--msa-depth", type=int, default=32,
+                    help="rows to subsample the alignment to; 0 takes it whole")
+    ap.add_argument("--base", default="decaf", choices=("decaf", "boltz1", "boltz2"),
+                    help="decaf is Section 7.10's arm; boltz1 matches Section "
+                         "7.13's full-settings arm, which is the like-for-like "
+                         "comparison for a contamination penalty")
     ap.add_argument("--decoys", type=int, default=3)
     ap.add_argument("--scrambles", type=int, default=2)
     ap.add_argument("--seed", type=int, default=0)
@@ -292,6 +305,18 @@ def main():
     store = work / (f"heldout_scores{'_pae' if args.with_pae else ''}"
                     f"{args.run_tag}.json")
     recs = json.loads(store.read_text()) if store.exists() else []
+
+    # The scores file is a bare list that three other scripts read, so the
+    # settings go in a sidecar rather than changing its shape. Without this a
+    # reduced-settings and a full-settings run are indistinguishable on disk,
+    # which is exactly the confusion Section 7.13 exists to resolve.
+    (work / f"heldout_settings{args.run_tag}.json").write_text(json.dumps({
+        "base": args.base, "sampling_steps": args.sampling_steps,
+        "recycling_steps": args.recycling_steps,
+        "msa_depth": args.msa_depth or "full",
+        "decoys": args.decoys, "scrambles": args.scrambles, "seed": args.seed,
+        "run_tag": args.run_tag or "(none)", "n_receptors": len(ids),
+    }, indent=2))
     if not args.analyse_only:
         seed_msa_cache(work)
         msas = {}
@@ -327,8 +352,9 @@ def main():
                     f"  - protein:\n      id: A\n      sequence: {p['receptor']}\n{rline}"
                     f"  - protein:\n      id: B\n      sequence: {p['peptide']}\n"
                     f"      msa: empty\n")
-            res, el = fold(inputs, bdir, args.ckpt, 10, 1, "decaf",
-                           write_pae=args.with_pae)
+            res, el = fold(inputs, bdir, args.ckpt, args.sampling_steps,
+                           args.recycling_steps, args.base,
+                           write_pae=args.with_pae, msa_depth=args.msa_depth)
             got = score_dir(res, [p["name"] for p in chunk],
                             with_pae=args.with_pae)
             for p in chunk:
