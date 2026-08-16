@@ -204,7 +204,7 @@ ABSTRACT SHEET .............................................................. iv
 10. REFERENCES .............................................................. 65  
 APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 67  
 APPENDIX B — REPRODUCTION OF RESULTS ........................................ 69  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 71  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 73  
 
 &nbsp;
 
@@ -2531,24 +2531,71 @@ below identify the entry points.
 | Panel construction screen | 7.4 | `python src/discover_pdb_binders.py --want 14` |
 | Powered 22-receptor run | 7.4 | `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22` |
 | Run-to-run variance study | 7.5 | `python src/seed_variance_study.py --replicates 4` |
+| Interface metrics beyond ipTM | 7.6 | `python src/rescore_interface_metrics.py` |
+| Scramble-normalised ranking | 7.6 | `python src/scramble_normalised_ranking.py` |
+| Which side of the interface carries the signal | 7.7 | `python src/interface_side_split.py` |
+| Binding-site controls for the receptor side | 7.7 | `python src/receptor_site_controls.py` |
+| Few-step distillation (DeCAF) scramble test | 7.8 | `python src/decaf_scramble_test.py --batch-size 12` |
+| DeCAF replicate study | 7.9 | `python src/decaf_replicate_study.py --replicates 4` |
+| Variance decomposition | 7.9 | `python src/variance_decomposition.py` |
+| Held-out panel (post-cutoff receptors) | 7.10 | `python src/heldout_panel.py --batch-size 12` |
+| Held-out replicate draws | 7.10 | `python src/heldout_replicates.py` |
+| Held-out vs in-training comparison | 7.10 | `python src/heldout_vs_training.py` |
+| Panel integrity (is every cognate a binder?) | 7.10 | `python src/panel_integrity.py` |
+| Homology decontamination | 7.10 | `python src/homology_decontamination.py` |
+| Backbone convergence (CA–CA geometry) | 7.11 | `python src/pose_convergence.py` |
+| Binding-site correctness against the crystal | 7.11 | `python src/site_correctness.py --tag p1` |
+| Physics rescoring (PRODIGY) | 7.11 | `python src/physics_rescore.py --structures DIR` |
+| Reciprocal best-match filter | 7.12 | `python src/reciprocal_match.py` |
+| Settings confound (full vs reduced) | 7.13 | `python src/settings_confound.py --batch-size 12` |
 | Screening tool | 7.14 | `python src/screen_server.py` → `http://127.0.0.1:8765` |
 | Verification suite | 6 | `python -m pytest -q` |
+
+Scripts that only re-analyse folds already on disk — `interface_side_split.py`,
+`variance_decomposition.py`, `reciprocal_match.py`, `pose_convergence.py` and the
+baselines — run in seconds and require no GPU. The entries that fold structures
+(`heldout_panel.py`, `decaf_scramble_test.py`, `settings_confound.py`) are the
+expensive ones; `settings_confound.py` additionally accepts `--sampling-steps`,
+`--recycling-steps` and `--msa-depth` independently, which is the route to
+resolving which of the three raised settings carries the effect of Section 7.13.
+
+Long folding runs should be started through `python src/detach.py <logfile>
+<command…>`, which places the run in its own session so it survives the parent
+shell exiting. Three runs during this work were lost to session teardown before
+that was adopted.
 
 The four screens of Section 7.14 are preset buttons in that interface, and their
 inputs are listed in `demo/EXAMPLES.md` for pasting. Because folds are cached by
 target, peptide and settings, a screen already run returns in about two seconds;
 deleting `artifacts/screen_fold_cache/` forces a genuine refold.
 
-**Inference settings used throughout Section 7**, stated here so that no figure
-in this report is read as a production-setting result:
+**Inference settings.** Two regimes appear in this report and the distinction is
+load-bearing, because Section 7.13 measures the difference between them and finds
+it accounts for a factor of three to seven in the standardised effect. No figure
+should be read without knowing which regime produced it.
 
-| Setting | Value used | Boltz default |
-| :--- | :---: | :---: |
-| Sampling steps | 10 | 200 |
-| Recycling steps | 1 | 3 |
-| MSA depth | 32 | 8192 |
-| Accelerator | CPU | GPU |
-| Diffusion seed | unseeded | unseeded |
+| Setting | Reduced regime | Full regime | Boltz default |
+| :--- | :---: | :---: | :---: |
+| Sampling steps | 10 | 200 | 200 |
+| Recycling steps | 1 | 3 | 3 |
+| MSA depth | 32 | full (up to 12,882 rows) | 8192 |
+| Accelerator | CPU, later MPS | MPS | GPU |
+| Diffusion seed | unseeded | unseeded | unseeded |
+
+A full-settings fold takes 106 to 109 seconds on this laptop and is no slower at
+full alignment depth (Section 7.13); the model distilled for ten steps folds the
+whole 132-complex panel in about twenty minutes (Section 7.8).
+
+**Sections 7.2 to 7.12 were folded entirely in the reduced regime**, which is why
+every effect size in them is a lower bound. Section 7.13 folds the same panel in
+the full regime and is the only direct comparison of the two. Section 7.14's fast
+mode is the reduced regime with a model distilled for it, and its careful mode is
+the full regime.
+
+The reduced regime was adopted when folding ran on CPU and a full-settings fold
+was prohibitive. It ceased to be necessary once the MPS path landed; the
+measurements that continued in it after that point did so by inertia, which is
+the substance of Section 7.13's finding against this work.
 
 
 <div class="page-break"></div>
