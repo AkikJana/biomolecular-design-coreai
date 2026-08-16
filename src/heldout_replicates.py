@@ -41,13 +41,49 @@ BASE_METRICS = ("iptm", "iface_plddt", "receptor_side")
 PAE_METRICS = ("iface_pae", "mpae", "pae_frac_lt10", "ipsae", "pdockq2")
 
 
-def draws():
-    """Every completed independent draw of the held-out panel, oldest first."""
-    found = []
+def regime_of(tag):
+    """The settings a draw was folded at: 'reduced', or a description of it.
+
+    Draws predating the settings sidecar have none, and all of them are the
+    reduced regime Section 7.10 used, so a missing sidecar means reduced.
+    """
+    side = PANEL / f"heldout_settings{tag}.json"
+    if not side.exists():
+        return "reduced"
+    try:
+        s = json.loads(side.read_text())
+    except Exception:                                              # noqa: BLE001
+        return "unknown"
+    if (s.get("sampling_steps") == 10 and s.get("recycling_steps") == 1
+            and s.get("msa_depth") == 32 and s.get("base") == "decaf"):
+        return "reduced"
+    return (f"{s.get('base')}@{s.get('sampling_steps')}/"
+            f"{s.get('recycling_steps')}/{s.get('msa_depth')}")
+
+
+def draws(regime="reduced"):
+    """Completed draws of the held-out panel folded at `regime`, oldest first.
+
+    The filter is not cosmetic. This globs heldout_scores*.json, so a run at
+    different settings lands in the same net and would be averaged in as though
+    it were another draw of the same experiment -- silently mixing a
+    full-settings fold into Section 7.10's reduced-settings estimate and moving
+    the very number that section is about.
+    """
+    found, skipped = [], []
     for f in sorted(PANEL.glob("heldout_scores*.json")):
         recs = json.loads(f.read_text())
-        if len(recs) >= 100:
-            found.append((f.stem.replace("heldout_scores", "") or "_1", recs))
+        if len(recs) < 100:
+            continue
+        raw = f.stem.replace("heldout_scores", "")
+        r = regime_of(raw)
+        if r != regime:
+            skipped.append((raw or "_1", r))
+            continue
+        found.append((raw or "_1", recs))
+    if skipped:
+        print("  ignoring draws folded at other settings: "
+              + ", ".join(f"{t} ({r})" for t, r in skipped))
     return found
 
 
@@ -116,9 +152,13 @@ def averaged(sets, metrics):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ART / "heldout_replicates.json"))
+    ap.add_argument("--regime", default="reduced",
+                    help="settings label to analyse; 'reduced' is Section 7.10's "
+                         "regime, or e.g. boltz1@200/3/full for the full-settings "
+                         "draws. Mixing regimes in one average is meaningless.")
     args = ap.parse_args()
 
-    sets = draws()
+    sets = draws(args.regime)
     if len(sets) < 2:
         raise SystemExit(f"need at least two draws, found {len(sets)}")
     print(f"{len(sets)} independent draws: {', '.join(t for t, _ in sets)}")
