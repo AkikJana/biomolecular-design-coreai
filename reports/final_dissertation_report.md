@@ -186,24 +186,25 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.1 Low-Rank Pair Representation on Pretrained Weights ...................... 16  
 &nbsp;&nbsp;&nbsp;&nbsp;7.2 Interface Confidence Does Not Rank Peptide Binders ...................... 17  
 &nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 17  
-&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition — at 10 Sampling Steps ............ 18  
+&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding — at 10 Sampling Steps ... 18  
 &nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
-&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards ............................. 21  
+&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards — On Structures the Model Has Seen ... 21  
 &nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
-&nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 26  
-&nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 28  
-&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 30  
-&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 34  
-&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 38  
-&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ..................... 41  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 31  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 31  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 32  
-9. FUTURE PLAN .............................................................. 35  
-10. REFERENCES .............................................................. 38  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 40  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 42  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 44  
+&nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 27  
+&nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 30  
+&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 34  
+&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 39  
+&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 42  
+&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 45  
+&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 49  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 54  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 54  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 57  
+9. FUTURE PLAN .............................................................. 61  
+10. REFERENCES .............................................................. 65  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 67  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 69  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 71  
 
 &nbsp;
 
@@ -214,7 +215,7 @@ Figure 2: C-alpha Backbone 3D Coordinate Plot ............................... 10
 Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 11  
 Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 12  
 Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 15  
-Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 22  
+Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 23  
 
 &nbsp;
 
@@ -342,8 +343,9 @@ Section 5 covers design considerations arising from the Apple Silicon port.
 Section 6 covers verification and testing, including two defects found in the
 test infrastructure itself. Section 7 reports the end-to-end measurements
 against pretrained weights, which contains the substantive findings of this
-work. Section 8 draws conclusions and recommendations, and Section 9 sets out
-the remaining plan.
+work, and closes at Section 7.14 with the screening tool those findings were
+built into. Section 8 draws conclusions and recommendations, and Section 9 sets
+out the remaining plan.
 
 <div class="page-break"></div>
 
@@ -1921,6 +1923,213 @@ that filter exploits is smaller and its value there is untested.
 
 <div class="page-break"></div>
 
+### 7.14 The Findings as a Tool
+
+Sections 7.2 to 7.13 are negative results with mechanisms attached. A negative
+result is only useful to a bench scientist if it changes what they would
+otherwise do, and a caveat in a report does not change anything. This section
+describes a local screening tool built so that the three findings most likely to
+mislead a user are enforced by the software rather than stated beside it, and
+reports what it does on targets it was not tuned for.
+
+The tool takes a target sequence and a list of candidate peptides and returns a
+ranking. It runs entirely on the machine that folds; nothing is uploaded.
+
+#### 7.14.1 Three findings, three behaviours
+
+**Section 7.4 — a confidence score can be blind to sequence order.** So no
+candidate is reported as a raw score. Every candidate is folded against
+permutations *of itself*, and reported as a statistic against that null. A
+candidate that does not separate from its own scrambles is not a hit, whatever
+its absolute confidence. This is the project's central control made compulsory:
+a user cannot obtain a ranking without it.
+
+**Section 7.13 — reduced settings suppress the effect three- to sevenfold.** So
+the fast mode is offered but declares its cost in the interface, quoting the
+suppression factor and the 14% of backbone bonds that are physically plausible
+at ten sampling steps (Section 7.11). The user is not told the tool is fast; they
+are told what fast costs.
+
+**Section 7.5 — a single fold does not reproduce its own ranking.** So replicates
+are a first-class control and the replicate spread is a column in the results
+table, next to the score it qualifies, rather than a footnote.
+
+Candidates that cannot be scored honestly are refused rather than scored badly:
+a non-standard residue, or a length outside the benchmarked range. Section 7.3
+found a non-peptide in the panel because a score was returned for something that
+should have been rejected; refusing is the corrected behaviour.
+
+#### 7.14.2 What it costs to run
+
+Almost all of a screen is fixed cost. Timing one fold against a batch of four
+separates the two components:
+
+| folds in one call | wall time | implied |
+| ---: | ---: | :--- |
+| 1 | 53.9 s | — |
+| 4 | 74.7 s | fixed ≈ 47 s, marginal ≈ 6.9 s |
+
+**87% of a lone fold is model construction.** Three consequences follow, and each
+was measured rather than assumed.
+
+First, a job is folded in a single process. An earlier design split jobs into
+chunks of six and paid the 47 s once per chunk.
+
+Second, a persistent worker process does not help, which is worth recording
+because it is the obvious optimisation. Calling `predict()` twice inside one
+process gave 45.9 s then **60.9 s** — the second call was slower, not cheaper.
+Boltz reconstructs its model per call, so keeping the process alive buys nothing
+and the idea was dropped.
+
+Third, folds are cached by target, peptide and settings. The cache stores a
+*list* of independent folds per key rather than one value: folds are unseeded and
+replicates are meant to differ, so collapsing a key to a single value would give
+every replicate the same number, drive the replicate spread to exactly zero, and
+have the tool claim a reproducibility it does not have.
+
+A further saving is statistical rather than computational. A scramble is folded
+once rather than once per replicate, because the null asks what a composition
+scores *over orderings*; a fixed budget buys more by sampling more distinct
+permutations than by re-folding a few of them. Folds per candidate fall from
+`(1 + s) × r` to `r + s`, a third fewer at the defaults, with a better-sampled
+null.
+
+| screen | folds | time |
+| :--- | ---: | ---: |
+| three candidates, cold | 15 | 177 s |
+| the same screen again | 15 | 3 s |
+| two candidates added to three cached | 25 | 135 s |
+| alignment for a target never seen before | — | 2.6 s |
+
+The alignment is fetched from the MSA server directly. The previous route started
+a boltz process on CPU purely to reach the MSA step and discarded the structure it
+went on to predict; the direct call returns the same 1,628 rows at the same width
+in 2.6 s against roughly 60 s.
+
+#### 7.14.3 Does it discriminate between targets?
+
+The question a screen asks is not whether a peptide scores well but whether it
+scores well *on this target*. The test is therefore the same candidate list
+against two different targets, where the correct answer differs. Three cognate
+peptides were taken from the panel of Section 7.4 — the p53 transactivation helix
+for MDM2, the C-terminal motif `KQTSV` for the PSD-95 PDZ3 domain, and the
+proline-rich `PPPALPPKKR` for the c-Crk SH3 domain — and each list was run
+unchanged against MDM2 and against PDZ3, at fast settings, two replicates and
+three scrambles.
+
+| candidate | MDM2 *t* | MDM2 *p* | PDZ3 *t* | PDZ3 *p* | cognate of |
+| :--- | ---: | ---: | ---: | ---: | :--- |
+| SQETFSDLWKLLPEN | **+3.88** | **0.002** | +0.06 | 0.477 | MDM2 |
+| KQTSV | +1.39 | 0.101 | **+7.72** | **<0.001** | PSD-95 PDZ3 |
+| PPPALPPKKR | −0.00 | 0.501 | +0.75 | 0.240 | c-Crk SH3 |
+
+Each cognate wins on its own target and loses on the other. The result is not an
+artefact of peptide length: `KQTSV` is the shortest candidate at five residues
+and it wins on one target and places second on the other. Each screen is 15 folds
+and about three minutes.
+
+Adding the designed MDM2 binder PMI (`TSFAEYWNLLSP`) and raising the settings
+reproduces the ordering more cleanly. At 200 sampling steps, three recycling
+passes and full alignment depth, with five scrambles, the pooled scramble spread
+falls from 5.36 to 2.65 and the separation widens:
+
+| candidate | *t* | *p* | |
+| :--- | ---: | ---: | :--- |
+| TSFAEYWNLLSP | **+8.24** | **<0.001** | designed MDM2 binder |
+| SQETFSDLWKLLPEN | **+7.72** | **<0.001** | cognate |
+| PPPALPPKKR | −0.52 | 0.694 | binds SH3 |
+| KQTSV | −0.57 | 0.711 | binds PDZ3 |
+
+Both foreign ligands go firmly negative — `KQTSV`'s borderline p = 0.101 at fast
+settings becomes p = 0.711 — and the designed binder correctly outranks the
+natural helix. This is Section 7.13's result reproduced by a different route and
+on a different question.
+
+#### 7.14.4 Where it does not work
+
+On the c-Crk SH3 domain the tool fails, and the failure is reported by it rather
+than discovered afterwards. The cognate `PPPALPPKKR` does not separate from its
+own scrambles at fast settings (*t* = +0.27, p = 0.40) and places second behind a
+peptide for a different target. Raising the settings does not rescue it:
+
+| candidate | *t* | *p* |
+| :--- | ---: | ---: |
+| KQTSV | +1.71 | 0.056 |
+| PPPALPPKKR | +1.69 | 0.058 |
+| SQETFSDLWKLLPEN | +0.12 | 0.454 |
+
+The one thing it gets right at either setting is placing the MDM2 helix last.
+
+A partial mechanism is available. `PPPALPPKKR` is 50% proline, and its
+permutations — `APPRLPPKKP`, `APRKPPKPLP` — remain proline-rich PxxP-like
+sequences. SH3 domains bind polyproline-II helices substantially through
+composition, so a permutation of a proline-rich ligand is a plausible ligand,
+and a control that destroys only order has little left to detect. The scramble
+control is conservative by construction, and this is the regime where that
+conservatism costs the most.
+
+That explanation is incomplete, and is reported as incomplete: `KQTSV` contains
+no proline at all and behaves the same way on this target, scoring 93.4 against
+scrambles at 86.6. This receptor returns high, flat interface confidence for most
+of what is put in front of it. What the tool reports is *no order-dependence
+detected*, which is a limit of the control rather than evidence that nothing
+binds — and the interface says "indistinguishable from its own scrambles", not
+"not a binder".
+
+#### 7.14.5 Two faults found by building it
+
+Turning a result into a tool exposed two statistical faults that the analysis
+scripts of Sections 7.2 to 7.13 had not, because those scripts operate on 132
+folds and the tool operates on twelve.
+
+**A null standard deviation estimated per candidate collapses.** With two
+permutations per candidate, a per-candidate SD occasionally comes out near zero
+by chance, and the ratio explodes. A real screen reported **z = +77.56** and
+**z = −80.16** — numbers that carry the appearance of overwhelming evidence and
+mean nothing. The denominator is now a spread pooled across every candidate in
+the job. On the same data the pooled estimate is 3.55 on 3 degrees of freedom,
+and the same three candidates report +4.29, −0.05 and −0.71.
+
+**A pooled SD is not a *z* denominator.** Because it is estimated from a handful
+of deviations, the ratio is a *t* statistic on those degrees of freedom. Judged
+against a fixed cutoff of one, `GSGSGSGSGSGS` — a flexible Gly–Ser linker that
+binds nothing — passed as a hit at 1.06. On the *t* scale the same candidate is
+p = 0.136. The tool now reports *t* and its one-sided *p*, so a verdict means the
+same thing in a three-candidate job as in a ten-candidate one.
+
+The second fault has a consequence the tool now states. With few scrambles the
+null has almost no degrees of freedom and the critical value is large: at df = 2
+a candidate needs *t* > 2.92 before the job can call anything, so a genuine
+binder with a margin of +11.3 still reads as nothing. That is a statement about
+the size of the job, not about the candidate, and an underpowered screen now says
+so rather than letting a null result pass for evidence of inactivity.
+
+A third fault was an engineering one with the same character: a single scramble
+gives `numpy.std(ddof=1) = NaN`, which a guard of the form `sd or 1e-9` does not
+catch, because NaN is truthy. The statistic is now withheld rather than invented
+when there is no spread to estimate.
+
+#### 7.14.6 What this does and does not establish
+
+The tool is a demonstration that the findings are actionable, not an independent
+validation of them. Three limits should be read with the numbers above.
+
+The two-target result rests on three targets and three peptides, one of which
+fails. It shows the readout is not simply rewarding peptide-shaped sequences; it
+does not establish a hit rate.
+
+All three targets are pre-cutoff structures the model was trained on. Section
+7.10 measured that held-out complexes cost roughly half the effect, so the
+separations in 7.14.3 should be read as approximately twice what a genuinely
+novel target would give.
+
+The ranking remains a triage order, not a measurement of affinity. Section
+7.11.3's physics rescoring reached AUC 0.563 against 0.856 for interface pLDDT,
+and adding it to the confidence readout made matters worse; nothing in this tool
+converts a rank into a binding constant.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -2087,6 +2296,23 @@ What replicates is the rank test, and the surviving claim is narrower: retrieval
 buys the model the ability to tell receptors apart, not order sensitivity in
 general. Section 8.2's own recommendation to average replicates was written
 before it was followed.
+
+**Tenth, the findings were made enforceable rather than advisory** (Section
+7.14). A caveat in a report changes nothing a bench scientist does, so the three
+results most likely to mislead one were built into a local screening tool as
+behaviour: no candidate can be ranked without being folded against permutations
+of itself, the fast mode declares its measured cost in the interface, and the
+replicate spread sits in the results table beside the score it qualifies.
+Sequences that cannot be scored honestly are refused rather than scored badly —
+the corrected response to Section 7.3's non-peptide. Run unchanged against two
+targets, the same three candidate peptides give opposite answers, each cognate
+separating from its own scrambles on its own target (p = 0.002 and p < 0.001) and
+not on the other (p = 0.477 and p = 0.101); a third target fails, and the tool
+reports that failure rather than the author discovering it afterwards. Building
+it also exposed two statistical faults that a 132-fold analysis had not: a
+per-candidate null SD estimated from two permutations reported z = +77.56, and a
+fixed cutoff on that ratio passed a Gly–Ser linker as a hit at 1.06 — p = 0.136
+once the statistic is treated as the *t* it is.
 
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
@@ -2305,7 +2531,13 @@ below identify the entry points.
 | Panel construction screen | 7.4 | `python src/discover_pdb_binders.py --want 14` |
 | Powered 22-receptor run | 7.4 | `python src/pdb_binder_benchmark.py --model boltz2 --work-dir artifacts/pdb_binders_b2_n22` |
 | Run-to-run variance study | 7.5 | `python src/seed_variance_study.py --replicates 4` |
+| Screening tool | 7.14 | `python src/screen_server.py` → `http://127.0.0.1:8765` |
 | Verification suite | 6 | `python -m pytest -q` |
+
+The four screens of Section 7.14 are preset buttons in that interface, and their
+inputs are listed in `demo/EXAMPLES.md` for pasting. Because folds are cached by
+target, peptide and settings, a screen already run returns in about two seconds;
+deleting `artifacts/screen_fold_cache/` forces a genuine refold.
 
 **Inference settings used throughout Section 7**, stated here so that no figure
 in this report is read as a production-setting result:
