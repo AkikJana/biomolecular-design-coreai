@@ -67,6 +67,52 @@ JOBS = {}
 JOBS_LOCK = threading.Lock()
 WORKQ = queue.Queue()
 
+# Receptors and cognate peptides are the panel's own, so a preset runs on the
+# sequences the reported results were measured on. Kept here rather than in the
+# page so the buttons and demo/EXAMPLES.md cannot drift apart.
+_MDM2 = ("SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCS"
+         "NDLLGDLFGVPSFSVKEHRKIYTMIYRNLVV")
+_SH3 = "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY"
+_PDZ = ("GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQ"
+        "ILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN")
+_THREE = ["SQETFSDLWKLLPEN", "PPPALPPKKR", "KQTSV"]
+
+EXAMPLES = [
+    {"id": "mdm2", "name": "MDM2 · p53", "target": "MDM2 (1YCR)",
+     "note": "p53's helix first at p = 0.002. PEPTIDEX is refused before folding.",
+     "receptor": _MDM2, "peptides": _THREE + ["TSFAEYWNLLSP", "PEPTIDEX"],
+     "mode": "quick", "replicates": 2, "scrambles": 3},
+    {"id": "pdz", "name": "PDZ · same candidates", "target": "PSD-95 PDZ3 (1BE9)",
+     "note": "The same three candidates, opposite answer: KQTSV first at "
+             "p < 0.001, and the helix that won on MDM2 at p = 0.48.",
+     "receptor": _PDZ, "peptides": _THREE,
+     "mode": "quick", "replicates": 2, "scrambles": 3},
+    {"id": "mdm2_careful", "name": "MDM2 · full sampling", "target": "MDM2 (1YCR)",
+     "note": "What 200 steps buys: the null tightens 5.36 → 2.65 and both real "
+             "binders reach p < 0.001.",
+     "receptor": _MDM2, "peptides": _THREE + ["TSFAEYWNLLSP"],
+     "mode": "careful", "replicates": 2, "scrambles": 5},
+    {"id": "sh3", "name": "SH3 · a negative", "target": "c-Crk SH3 (1CKA)",
+     "note": "The cognate does not separate from its own scrambles (p = 0.40), "
+             "and full sampling does not rescue it. Kept because it is honest.",
+     "receptor": _SH3, "peptides": _THREE,
+     "mode": "quick", "replicates": 2, "scrambles": 3},
+]
+
+
+def example_readiness(ex):
+    """Folds this preset still needs, so a button can say whether it is instant."""
+    cfg = MODES[ex["mode"]]
+    need = have = 0
+    for pep in ex["peptides"]:
+        if check_peptide(pep):
+            continue
+        for seq, n in ([(pep, ex["replicates"])]
+                       + [(s, 1) for s in scrambles_of(pep, ex["scrambles"])]):
+            need += n
+            have += min(n, len(cache_read(fold_key(ex["receptor"], seq, cfg))))
+    return need, have
+
 
 # ----------------------------------------------------------------- validation
 
@@ -512,6 +558,15 @@ class Handler(BaseHTTPRequestHandler):
             return o
         return json.dumps(clean(obj), allow_nan=False)
 
+    @staticmethod
+    def _example_view(ex):
+        need, have = example_readiness(ex)
+        left = need - have
+        cfg = MODES[ex["mode"]]
+        return {**ex, "folds": need, "cached": have,
+                "eta_seconds": 0 if not left
+                               else int(FIXED_STARTUP_SEC + left * cfg["sec_per_fold"])}
+
     def _send(self, code, body, ctype="application/json"):
         data = body if isinstance(body, bytes) else body.encode()
         self.send_response(code)
@@ -532,7 +587,8 @@ class Handler(BaseHTTPRequestHandler):
                               "recycling": v["recycling"],
                               "msa": "full" if v["msa_depth"] is None else v["msa_depth"],
                               "sec_per_fold": v["sec_per_fold"]}
-                          for k, v in MODES.items()}}))
+                          for k, v in MODES.items()},
+                "examples": [self._example_view(e) for e in EXAMPLES]}))
         if self.path.startswith("/api/job/"):
             jid = self.path.rsplit("/", 1)[-1]
             with JOBS_LOCK:
