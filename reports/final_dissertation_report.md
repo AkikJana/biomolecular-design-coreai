@@ -198,14 +198,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 45  
 &nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 49  
 &nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 54  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 57  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 57  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 61  
-9. FUTURE PLAN .............................................................. 64  
-10. REFERENCES .............................................................. 68  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 70  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 72  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 77  
+&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth .......... 57  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 61  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 61  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 65  
+9. FUTURE PLAN .............................................................. 68  
+10. REFERENCES .............................................................. 72  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 74  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 76  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 81  
 
 &nbsp;
 
@@ -345,8 +346,9 @@ Section 6 covers verification and testing, including two defects found in the
 test infrastructure itself. Section 7 reports the end-to-end measurements
 against pretrained weights, which contains the substantive findings of this
 work, and closes with the screening tool those findings were built into
-(Section 7.14) and an automated search that fails to improve on them
-(Section 7.15). Section 8 draws conclusions and recommendations, and Section 9 sets
+(Section 7.14), an automated search that fails to improve on them (Section
+7.15), and a decomposition of which inference setting carried the headline
+result (Section 7.16). Section 8 draws conclusions and recommendations, and Section 9 sets
 out the remaining plan.
 
 <div class="page-break"></div>
@@ -1907,21 +1909,35 @@ lower bound.
 
 One model (Boltz-1) and 22 receptors, folded once — all 132 pairs, so both the
 scramble control and the rank test are resolved. The three settings were raised
-together, so which of sampling steps, recycling or MSA depth carries the effect
-is unresolved; Section 7.11's geometry result points at sampling steps, and the
-script varies each independently for that test.
+together here, so this section on its own cannot say which of them carries the
+effect. **Section 7.16 resolves that by moving one knob at a time: sampling steps
+carry 56–69% of the standardised gain and the other two carry none of it.** The
+practical recommendation that follows is therefore narrower and cheaper than
+"use the intended settings", and it is stated in Section 7.16.4.
 
 Section 7.5's warning applies with force: this is a single draw, and a single
 draw has twice misled this dissertation. The effects here are large enough
 (*d* = 1.25–1.52, AUC 0.943) that draw noise is unlikely to reverse them, but
 the specific figures should be replicated before being quoted as exact values.
 
-Two consequences for earlier sections are untested rather than resolved. The
-held-out comparison of Section 7.10 was run entirely at reduced settings, so
-whether contamination costs a factor of two at full settings is unknown.
-And Section 7.12's reciprocal matching lifted precision from 56% to 88% in the
-suppressed regime; at full settings plain top-1 is already 77%, so the headroom
-that filter exploits is smaller and its value there is untested.
+One consequence for an earlier section remains untested. Section 7.12's
+reciprocal matching lifted precision from 56% to 88% in the suppressed regime; at
+full settings plain top-1 is already 77%, so the headroom that filter exploits is
+smaller and its value there is untested.
+
+A second consequence was untested when this section was written and has since
+been measured. The held-out comparison of Section 7.10 was run entirely at
+reduced settings, leaving open whether contamination costs a factor of two at the
+intended ones. The held-out panel has since been folded twice at 200 sampling
+steps, 3 recycling passes and full alignment depth, on the same stock Boltz-1 as
+this section's full arm, and **the penalty persists**: interface pLDDT retains
+51% of its in-training effect held out, ipTM 59% and the receptor side 58%, with
+every readout still significant (p ≤ 0.0017). Standardised the retention is
+closer to a third than a half — 38%, 40% and 38% of Cohen's *d* — because full
+settings raise absolute confidence across the board, so Section 7.10's raw-scale
+"roughly half" is the optimistic reading of the same data. The two draws agree to
+within 5%, against the 38–89% spread its five reduced-settings draws showed;
+converged sampling stabilises the estimate as well as enlarging it.
 
 <div class="page-break"></div>
 
@@ -2239,6 +2255,129 @@ changes that arithmetic.
 
 <div class="page-break"></div>
 
+### 7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth
+
+Section 7.13 raised three settings at once — sampling steps 10 → 200, recycling
+1 → 3, alignment depth 32 → full — and measured a three- to sevenfold larger
+standardised effect. Raising three things together cannot say which of them
+mattered, and for an efficiency thesis that is the question worth answering: the
+three do not cost the same, and "use the intended settings" is a recommendation
+that spends on all of them.
+
+Section 7.11 supplies a testable prediction. At ten sampling steps only 14% of
+consecutive backbone bonds are physically plausible, against 99.7% at two
+hundred, and four separate readout failures were traced to that. If unconverged
+geometry is the mechanism, sampling steps should carry the effect and alignment
+depth should carry little of it.
+
+#### 7.16.1 One knob at a time
+
+Five cells, all stock Boltz-1 on MPS, differing only in settings. The two
+endpoints already existed; the three middle arms were folded for this section.
+
+| Arm | sampling | recycling | MSA depth | source |
+| :--- | ---: | ---: | :--- | :--- |
+| reduced | 10 | 1 | 32 | Section 7.8 |
+| sampling | **200** | 1 | 32 | this section |
+| alignment | 10 | 1 | **full** | this section |
+| recycling | 10 | **3** | 32 | this section |
+| full | 200 | 3 | full | Section 7.13 |
+
+Each arm ran the scramble control — 22 cognates against their 44 permutations,
+66 folds — which is the test Section 7.13's suppression figure is computed from.
+A knob's *share* is its standardised gain over the reduced baseline divided by
+the full arm's gain over the same baseline.
+
+#### 7.16.2 Sampling steps carry it; the other two carry none of it
+
+| Arm | cognate − scramble | *p* | Cohen's *d* | share of the full gain |
+| :--- | ---: | ---: | ---: | ---: |
+| **Interface pLDDT** | | | | |
+| reduced | +1.54 | 0.067 | 0.28 | — |
+| **sampling** | **+8.82** | **2.5e-09** | **1.13** | **69%** |
+| alignment | +0.83 | 0.243 | 0.18 | −8% |
+| recycling | +1.40 | 0.157 | 0.22 | −5% |
+| full | +11.85 | 7.1e-13 | 1.52 | 100% |
+| **ipTM** | | | | |
+| reduced | +0.039 | 0.004 | 0.45 | — |
+| **sampling** | **+0.213** | **3.9e-07** | **0.90** | **56%** |
+| alignment | +0.033 | 0.020 | 0.36 | −11% |
+| recycling | +0.051 | 0.007 | 0.43 | −3% |
+| full | +0.287 | 1.8e-10 | 1.25 | 100% |
+| **Receptor side** | | | | |
+| reduced | +0.71 | 0.428 | 0.12 | — |
+| **sampling** | **+5.02** | **2.2e-07** | **0.93** | **61%** |
+| alignment | −1.06 | 0.127 | −0.23 | −27% |
+| recycling | −0.02 | 0.988 | −0.00 | −9% |
+| full | +5.13 | 3.1e-12 | 1.45 | 100% |
+
+Sampling steps alone carry **56% to 69%** of the standardised gain and take every
+readout from marginal-or-nothing to p < 1e-6. Interface pLDDT moves from
+p = 0.067 — the figure Section 7.8 called model-dependent — to 2.5e-09 with the
+sampling budget as the only change.
+
+Alignment depth and recycling, moved alone, carry **none of it.** Every share is
+negative: each arm sits marginally *below* the reduced baseline in standardised
+terms on all three readouts. This is Section 7.11's prediction confirmed by
+direct test rather than inferred from a coordinate audit.
+
+#### 7.16.3 The three settings are synergistic, not independent
+
+The single-knob shares sum to 41% (ipTM), 55% (interface pLDDT) and 25%
+(receptor side) — well short of the 100% that exact additivity would give. The
+three settings together therefore deliver substantially more than the three
+knobs deliver separately.
+
+That is the mechanism, stated the other way round: **a deeper alignment and extra
+recycling passes are worth nothing on an unconverged structure and worth
+something on a converged one.** Extra evidence cannot help a model that is not
+yet placing atoms at plausible bond lengths. It is the same explanation Section
+7.11 offered for four readout failures, and it predicts exactly this pattern —
+one knob that must move first, and two that only pay once it has.
+
+#### 7.16.4 The recommendation, revised
+
+Section 7.13 concluded that the reduced regime was suppressing the signal and
+that the intended settings should be used. That is correct but more expensive
+than it needs to be. Measured per fold on this hardware:
+
+| Arm | cost per fold | standardised *d* (interface pLDDT) |
+| :--- | ---: | ---: |
+| sampling only | **33 s** | **1.13** |
+| alignment only | 27 s | 0.18 |
+| recycling only | 20 s | 0.22 |
+| full | 106–109 s | 1.52 |
+
+**Raising sampling steps alone buys 69% of the available gain for a third of the
+cost of raising everything.** A screen that cannot afford 106 seconds a fold
+should spend its budget on sampling steps and leave recycling and alignment depth
+reduced; it should not spend it on a deeper alignment, which on this evidence
+buys nothing at all until sampling has converged.
+
+This is the form of result an efficiency dissertation should be reporting, and
+Section 7.13 could not state it because it moved all three knobs at once.
+
+#### 7.16.5 Limitations
+
+Each arm is a single draw of 66 folds. The effects are large — interface pLDDT's
+*d* moves 0.28 → 1.13 — and the ordering is unambiguous across all three
+readouts, but Section 7.5's warning stands and the share percentages should be
+treated as approximate rather than exact.
+
+The scramble control was run and the rank test was not: 66 folds per arm covers
+cognates and their permutations, not the decoys a per-target ranking needs. The
+decomposition therefore applies to order sensitivity, which is what Section
+7.13's suppression figure measures. Whether the practical ranking result of
+Section 7.13.2b decomposes the same way is untested, though the shared mechanism
+makes it likely.
+
+Only single-knob arms were folded. The pairwise arms that would locate the
+interaction precisely — sampling with recycling, sampling with full alignment —
+were not run, so Section 7.16.3 establishes that the settings interact without
+apportioning the interaction between them.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -2437,6 +2576,21 @@ the held-out panel the gain reverses, 0.688 for interface pLDDT alone against
 generalises: the confidence readout is not improved by combining it with the
 others, and the null distribution puts a number on how readily a 22-receptor
 panel manufactures the appearance that it is.
+
+**Twelfth, and it turns the ninth into an affordable recommendation: of the
+three settings raised together, sampling steps carried the effect and the other
+two carried none of it** (Section 7.16). Moving one knob at a time from the
+reduced baseline, 200 sampling steps alone recover 56–69% of the standardised
+gain and take every readout to p < 1e-6 — interface pLDDT from p = 0.067 to
+2.5e-09 with the sampling budget as the only change. Full alignment depth and
+three recycling passes, moved alone, each sit marginally *below* the reduced
+baseline on all three readouts. Because the single-knob shares sum to 25–55%
+rather than 100%, the settings are synergistic rather than independent: a deeper
+alignment cannot help a model that is not yet placing atoms at plausible bond
+lengths, which is Section 7.11's mechanism predicting exactly this pattern. The
+practical consequence is a cheaper recommendation than Section 7.13 could give —
+**33 seconds a fold for 69% of the gain against 106 seconds for all of it**, and
+no reason at all to spend on alignment depth until sampling has converged.
 
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
@@ -2676,6 +2830,8 @@ below identify the entry points.
 | Held-out panel at full settings | 7.10, 7.15 | `python src/heldout_panel.py --base boltz1 --sampling-steps 200 --recycling-steps 3 --msa-depth 0 --run-tag _full` |
 | Held-out vs in-training, both settings | 7.10 | `python src/heldout_at_full.py` |
 | Automated readout search | 7.15 | `python src/readout_search.py --n-null 200` |
+| Settings decomposition, one knob at a time | 7.16 | `bash src/queue_settings_decomposition.sh` |
+| Settings decomposition analysis | 7.16 | `python src/settings_decomposition.py` |
 | Verification suite | 6 | `python -m pytest -q` |
 
 Scripts that only re-analyse folds already on disk — `interface_side_split.py`,
