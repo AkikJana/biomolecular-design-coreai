@@ -197,14 +197,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 42  
 &nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 45  
 &nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 49  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 54  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 54  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 57  
-9. FUTURE PLAN .............................................................. 61  
-10. REFERENCES .............................................................. 65  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 67  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 69  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 73  
+&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 54  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 57  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 57  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 61  
+9. FUTURE PLAN .............................................................. 64  
+10. REFERENCES .............................................................. 68  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 70  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 72  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 77  
 
 &nbsp;
 
@@ -343,8 +344,9 @@ Section 5 covers design considerations arising from the Apple Silicon port.
 Section 6 covers verification and testing, including two defects found in the
 test infrastructure itself. Section 7 reports the end-to-end measurements
 against pretrained weights, which contains the substantive findings of this
-work, and closes at Section 7.14 with the screening tool those findings were
-built into. Section 8 draws conclusions and recommendations, and Section 9 sets
+work, and closes with the screening tool those findings were built into
+(Section 7.14) and an automated search that fails to improve on them
+(Section 7.15). Section 8 draws conclusions and recommendations, and Section 9 sets
 out the remaining plan.
 
 <div class="page-break"></div>
@@ -2130,6 +2132,113 @@ converts a rank into a binding constant.
 
 <div class="page-break"></div>
 
+### 7.15 An Automated Search Over Readouts, and What Its Controls Refuse
+
+Every readout in Sections 7.6 to 7.12 was chosen by hand, and Section 7.11.3
+tried exactly one combination — adding PRODIGY's ΔG to interface pLDDT, which
+lowered leave-one-receptor-out AUC from 0.856 to 0.823. That is an anecdote
+about one pairing. This section searches the combinations systematically.
+
+The search costs nothing to run: it operates on folds already on disk, needs no
+GPU, and finishes in about eleven minutes. What it demonstrates is not a better
+readout but how easily a search of this kind appears to find one.
+
+#### 7.15.1 The search, and why it is scored leave-one-receptor-out
+
+Seven per-fold features are available on the full-settings panel: interface
+pLDDT, ipTM, the receptor and peptide sides of the interface, the peptide's
+whole-chain confidence, and the two interface contact counts. All 63 subsets of
+size one to three are scored by within-receptor AUC — the standardised measure
+of Section 7.13 — with a logistic combination fitted **leave-one-receptor-out**
+for subsets larger than one.
+
+The cross-validation has to be by receptor. A random split leaks, because the
+six folds of one receptor share a baseline confidence: a model that has seen
+five of them has seen most of what it needs to place the sixth.
+
+#### 7.15.2 What it found
+
+| Readout | within-receptor AUC |
+| :--- | ---: |
+| **receptor side + interface contacts** (search winner) | **0.961** |
+| interface pLDDT alone (Section 7.13's headline) | 0.943 |
+| receptor side alone | 0.943 |
+| peptide whole-chain | 0.896 |
+| peptide side | 0.895 |
+| ipTM | 0.908 |
+| interface contacts, receptor side | 0.556 |
+| interface contacts, peptide side | 0.448 |
+
+The winner beats the dissertation's headline readout by **+0.018 AUC**. Taken at
+face value that is a new best result, arrived at automatically, and it is the
+kind of number this section exists to disbelieve.
+
+#### 7.15.3 Two controls, and both refuse it
+
+**A searched null.** The entire search is re-run on labels permuted within each
+receptor — the cognate label moved to a random fold of the same receptor, which
+preserves the design exactly and destroys only the association being measured.
+Over 200 permutations:
+
+| | AUC |
+| :--- | ---: |
+| best-of-search on permuted labels, mean | 0.607 |
+| 95th percentile | 0.700 |
+| **maximum** | **0.755** |
+
+A search over 63 subsets of pure noise reaches AUC 0.76. Any single number from
+an unnulled search of this size is uninterpretable.
+
+The decisive comparison is not the winner against chance — the features
+obviously carry signal — but the **gain** the search buys over simply taking the
+best readout on its own. On permuted labels that gain averages **+0.032**, which
+is *larger* than the +0.018 actually observed. The observed improvement sits at
+**p = 0.425**: entirely consistent with what searching noise produces.
+
+**The held-out panel, spent once.** The winning combination was applied a single
+time to the full-settings held-out folds of Section 7.10, with nothing selected
+on them. It reverses:
+
+| Readout | held-out AUC |
+| :--- | ---: |
+| interface pLDDT alone | **0.688** |
+| receptor side + interface contacts | 0.660 |
+
+The +0.018 gain becomes −0.029.
+
+The winner's own composition says the same thing without any statistics.
+`n_rec_iface` reaches AUC 0.556 by itself, barely above chance. Pairing a strong
+feature with a nearly useless one and gaining is the signature of a model fitting
+22 receptors, not of a discovery.
+
+A length control was run alongside, because decoys are drawn from other
+receptors' cognates and therefore differ in length from the true binder: peptide
+length alone reaches AUC 0.519. The panel carries no length confound for a search
+to exploit, which Section 7.6 could not assume and had to retire a vacuous
+control to establish.
+
+#### 7.15.4 What this establishes
+
+The ceiling stands. **Interface pLDDT on its own is not beaten by any
+combination of these readouts**, and Section 7.11.3's single negative pairing
+generalises to the whole space rather than being a property of PRODIGY.
+
+The more useful contribution is the null distribution. It puts a number on how
+readily an automated search over a 22-receptor panel manufactures an apparent
+improvement — a mean best of 0.607 and a maximum of 0.755 where no signal
+exists, and a mean gain of +0.032 over the best single feature. Any future
+search of this panel, by hand or by machine, has to clear that bar before its
+result means anything.
+
+This is also the honest boundary of automation for this problem. The search is
+cheap because it re-analyses folds already computed; the experiments that would
+actually advance this work — resolving which of the three settings carries
+Section 7.13's effect, extending the panel past 22 receptors, adding held-out
+draws — are folding-bound at roughly 106 seconds a fold, and no search loop
+changes that arithmetic.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -2313,6 +2422,21 @@ it also exposed two statistical faults that a 132-fold analysis had not: a
 per-candidate null SD estimated from two permutations reported z = +77.56, and a
 fixed cutoff on that ratio passed a Gly–Ser linker as a hit at 1.06 — p = 0.136
 once the statistic is treated as the *t* it is.
+
+**Eleventh, and it bounds what automation can add here: an automated search
+over readouts finds an improvement that both of its controls refuse** (Section
+7.15). Searching all 63 subsets of seven per-fold features, leave-one-receptor-
+out, returns the receptor side combined with interface contacts at AUC 0.961
+against interface pLDDT's 0.943 — a result that does not survive being asked
+what a search over noise produces. Re-running the identical search on labels
+permuted within each receptor gives a best-of-search averaging 0.607 and
+reaching 0.755 with no signal present, and a mean gain over the best single
+feature of +0.032 — larger than the +0.018 observed, at p = 0.425. Spent once on
+the held-out panel the gain reverses, 0.688 for interface pLDDT alone against
+0.660 for the pair. Section 7.11.3's single negative pairing therefore
+generalises: the confidence readout is not improved by combining it with the
+others, and the null distribution puts a number on how readily a 22-receptor
+panel manufactures the appearance that it is.
 
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
@@ -2549,6 +2673,9 @@ below identify the entry points.
 | Reciprocal best-match filter | 7.12 | `python src/reciprocal_match.py` |
 | Settings confound (full vs reduced) | 7.13 | `python src/settings_confound.py --batch-size 12` |
 | Screening tool | 7.14 | `python src/screen_server.py` → `http://127.0.0.1:8765` |
+| Held-out panel at full settings | 7.10, 7.15 | `python src/heldout_panel.py --base boltz1 --sampling-steps 200 --recycling-steps 3 --msa-depth 0 --run-tag _full` |
+| Held-out vs in-training, both settings | 7.10 | `python src/heldout_at_full.py` |
+| Automated readout search | 7.15 | `python src/readout_search.py --n-null 200` |
 | Verification suite | 6 | `python -m pytest -q` |
 
 Scripts that only re-analyse folds already on disk — `interface_side_split.py`,
