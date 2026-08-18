@@ -158,10 +158,20 @@ def main():
             if got == 3:
                 print(f"\n    single-knob shares sum to {tot:.0f}% of the full "
                       f"gain in standardised terms")
-                if abs(tot - 100) > 25:
-                    print(f"    ({'super' if tot > 100 else 'sub'}-additive: the "
-                          f"settings interact rather than contributing "
-                          f"separately)")
+                # A share is a knob's gain divided by the gain from moving
+                # all three. If they summed to 100% the settings would be
+                # exactly additive. Summing BELOW 100 means the three together
+                # deliver more than the parts do separately -- synergy, not
+                # redundancy. The first version of this line had the polarity
+                # backwards and would have reported the opposite mechanism.
+                if tot < 75:
+                    print(f"    super-additive: the three together deliver "
+                          f"{100 - tot:.0f} percentage points more than the "
+                          f"knobs do separately, so they are not independent "
+                          f"contributions")
+                elif tot > 125:
+                    print(f"    sub-additive: the knobs overlap, each "
+                          f"recovering gain the others also recover")
             else:
                 # additivity is a statement about all three knobs; one arm's
                 # share is not evidence for or against it
