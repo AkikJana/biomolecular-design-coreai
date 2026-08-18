@@ -47,6 +47,7 @@ from settings_confound import tests  # noqa: E402
 
 ART = REPO_ROOT / "artifacts"
 METRICS = ("iptm", "iface_plddt", "receptor_side")
+FULL_REGIME = "boltz1@200/3/full"
 
 
 # Each ROW must compare like with like. Section 7.10's held-out arm is DeCAF, so
@@ -65,11 +66,18 @@ PATHS = {
 def load(which):
     """The four cells of the design, or None where a cell is not on disk.
 
+    The held-out full cell is the fold-wise mean over every completed draw at
+    those settings, not the first one. Section 7.10's published figure averages
+    five draws, and quoting a single draw against it would compare an average
+    with a sample.
+
     Two of these files are a bare list of folds and two wrap it in a dict under
     `per_fold`. Returning the dict unnoticed gives an iteration over its keys and
     a confusing `string indices must be integers` several frames away, so the
     shape is normalised here and anything else is refused outright.
     """
+    if which == "held_full":
+        return average_full_draws()
     try:
         d = json.loads(PATHS[which].read_text())
     except Exception:                                              # noqa: BLE001
@@ -79,6 +87,18 @@ def load(which):
     if not isinstance(d, list) or not d or not isinstance(d[0], dict):
         return None
     return d
+
+
+def average_full_draws():
+    """Fold-wise mean across every completed full-settings draw."""
+    import heldout_replicates as HR
+    sets = HR.draws(FULL_REGIME)
+    if not sets:
+        return None
+    avg, _ = HR.averaged(sets, list(METRICS))
+    print(f"  held_full averages {len(sets)} draw(s): "
+          f"{', '.join(t for t, _ in sets)}")
+    return avg
 
 
 def paired_d(recs, metric):
