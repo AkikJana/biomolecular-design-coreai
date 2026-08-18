@@ -191,6 +191,12 @@ def main():
                          "observed cost is 106-130s")
     ap.add_argument("--min-free-gib", type=float, default=6.0,
                     help="refuse to start a batch below this much free disk")
+    ap.add_argument("--run-tag", default="",
+                    help="suffix for the score store, batch dirs and output, so "
+                         "one arm cannot be mistaken for another. Without it a "
+                         "second arm finds every fold name already present, "
+                         "skips all of them, and reports the FIRST arm's folds "
+                         "under the second arm's settings.")
     ap.add_argument("--analyse-only", action="store_true")
     args = ap.parse_args()
     depth = None if args.msa_depth == 0 else args.msa_depth
@@ -209,7 +215,7 @@ def main():
     # Only folding touches batch directories, so analysis must not be blocked --
     # and a run that is still writing its final batch would otherwise lock out
     # the very command used to read its results.
-    lock = WORK / ".lock"
+    lock = WORK / f".lock{args.run_tag}"
     if args.analyse_only:
         lock = None
     elif lock.exists():
@@ -225,8 +231,21 @@ def main():
         lock.write_text(str(os.getpid()))
         import atexit
         atexit.register(lambda: lock.exists() and lock.unlink())
-    store = WORK / "scores.json"
+    store = WORK / f"scores{args.run_tag}.json"
     recs = json.loads(store.read_text()) if store.exists() else []
+
+    # A resumed store must have been folded at the settings now being asked for,
+    # or the resume silently mixes two regimes into one arm.
+    side = WORK / f"arm{args.run_tag}.json"
+    want = {"sampling": args.sampling_steps, "recycling": args.recycling_steps,
+            "msa_depth": depth}
+    if side.exists():
+        have = json.loads(side.read_text())
+        if have != want and recs:
+            raise SystemExit(
+                f"{store.name} holds {len(recs)} folds at {have}, but this run "
+                f"asks for {want}. Use a different --run-tag.")
+    side.write_text(json.dumps(want, indent=2))
 
     if not args.analyse_only:
         print(f"{len(pairs)} pairs | Boltz-1 | MPS | {args.sampling_steps} steps, "
@@ -237,7 +256,7 @@ def main():
         skipped = []
         for start in range(0, len(todo), args.batch_size):
             chunk = todo[start:start + args.batch_size]
-            bdir = WORK / f"b{start // args.batch_size:02d}"
+            bdir = WORK / f"b{args.run_tag}{start // args.batch_size:02d}"
             inputs = bdir / "inputs"
             if inputs.exists():
                 shutil.rmtree(inputs)
@@ -333,12 +352,12 @@ def main():
     print("The question is whether the negatives are properties of the metrics or")
     print("of the reduced regime. If ipTM still fails its scramble control at full")
     print("settings, Section 7.4 stands on the model's own terms.")
-    (ART / "settings_confound.json").write_text(json.dumps(
+    (ART / f"settings_confound{args.run_tag}.json").write_text(json.dumps(
         {"settings": {"sampling": args.sampling_steps,
                       "recycling": args.recycling_steps,
                       "msa_depth": depth}, "per_fold": recs, "summary": out},
         indent=2, default=float))
-    print(f"\nwrote {ART}/settings_confound.json")
+    print(f"\nwrote {ART}/settings_confound{args.run_tag}.json")
 
 
 if __name__ == "__main__":
