@@ -64,18 +64,25 @@ def locate(pages, needles):
     body = next(i for i, t in enumerate(pages)
                 if BODY_MARKER in " ".join(t.split()))
     found = {}
-    for i, text in enumerate(pages):
-        flat = " ".join(text.split())
-        # The contents pages repeat every heading verbatim; searching them would
-        # resolve each entry to its own line rather than to the section.
-        if any(k in flat for k in ("TABLE OF CONTENTS", "LIST OF FIGURES",
-                                   "LIST OF TABLES")):
-            continue
-        for n in needles:
-            if n in found:
+
+    # The body is searched first and the front matter only for what the body
+    # does not contain. Skipping pages that carry a "LIST OF TABLES" header is
+    # not enough: with fifty-two entries that list runs over several pages and
+    # only the first is marked, so continuation pages look like ordinary text
+    # and every caption on them resolves to the contents page instead of to its
+    # own table. Front matter still resolves CERTIFICATE and the rest to roman
+    # numerals, because nothing in the body matches those.
+    for lo, hi in ((body, len(pages)), (0, body)):
+        for i in range(lo, hi):
+            flat = " ".join(pages[i].split())
+            if any(k in flat for k in ("TABLE OF CONTENTS", "LIST OF FIGURES",
+                                       "LIST OF TABLES")):
                 continue
-            if " ".join(n.split()) in flat:
-                found[n] = _roman(i) if i < body else str(i - body + 1)
+            for n in needles:
+                if n in found:
+                    continue
+                if " ".join(n.split()) in flat:
+                    found[n] = _roman(i) if i < body else str(i - body + 1)
     return found
 
 
@@ -99,9 +106,17 @@ def headings():
 
 
 def captions(prefix):
+    """Every `Figure N:` / `Table N:` caption, in document order.
+
+    Two forms are accepted. Figures caption with a `####` heading; tables use a
+    bold paragraph, because a heading-style table caption inside Section 7 would
+    sit at the same level as the 7.x subsections and read as structure rather
+    than as a caption. Matching only the heading form is how the list of tables
+    came to have four entries for fifty-two tables.
+    """
     md = MD.read_text()
-    return [m.group(1).strip() for m in
-            re.finditer(rf"^#{{2,4}} ({prefix} \d+: [^\n]+)$", md, re.M)]
+    pat = rf"^(?:#{{2,4}} |\*\*)({prefix} \d+: .+?)(?:\*\*)?$"
+    return [m.group(1).strip() for m in re.finditer(pat, md, re.M)]
 
 
 def dots(text, page, width=78):

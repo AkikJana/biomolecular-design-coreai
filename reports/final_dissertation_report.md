@@ -179,45 +179,45 @@ ABSTRACT SHEET .............................................................. iv
 2. MODULES IN BOLTZ-FAST ..................................................... 4  
 3. FUNCTIONAL BLOCK DIAGRAM & METHODOLOGY .................................... 7  
 4. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS ............................... 8  
-5. DESIGN CONSIDERATIONS .................................................... 13  
-6. VERIFICATION & TESTING (M1 & M6) ......................................... 14  
-&nbsp;&nbsp;&nbsp;&nbsp;6.1 Subsequent Hardening of the Suite ....................................... 14  
-7. MEASURED RESULTS VS PRETRAINED WEIGHTS ................................... 16  
-&nbsp;&nbsp;&nbsp;&nbsp;7.1 Low-Rank Pair Representation on Pretrained Weights ...................... 16  
-&nbsp;&nbsp;&nbsp;&nbsp;7.2 Interface Confidence Does Not Rank Peptide Binders ...................... 17  
-&nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 17  
-&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding — at 10 Sampling Steps ... 18  
-&nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
-&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards — On Structures the Model Has Seen ... 21  
+5. DESIGN CONSIDERATIONS .................................................... 12  
+6. VERIFICATION & TESTING (M1 & M6) ......................................... 13  
+&nbsp;&nbsp;&nbsp;&nbsp;6.1 Subsequent Hardening of the Suite ....................................... 13  
+7. MEASURED RESULTS VS PRETRAINED WEIGHTS ................................... 15  
+&nbsp;&nbsp;&nbsp;&nbsp;7.1 Low-Rank Pair Representation on Pretrained Weights ...................... 15  
+&nbsp;&nbsp;&nbsp;&nbsp;7.2 Interface Confidence Does Not Rank Peptide Binders ...................... 16  
+&nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 16  
+&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding — at 10 Sampling Steps ... 17  
+&nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 18  
+&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards — On Structures the Model Has Seen ... 20  
 &nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
 &nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 27  
 &nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 30  
 &nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 34  
-&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 39  
-&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 42  
-&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 45  
-&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 49  
-&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 54  
-&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth .......... 57  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 61  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 61  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 65  
-9. FUTURE PLAN .............................................................. 68  
-10. REFERENCES .............................................................. 72  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 74  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 76  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 81  
+&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 40  
+&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 43  
+&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 46  
+&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 50  
+&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 55  
+&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth .......... 58  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 62  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 62  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 66  
+9. FUTURE PLAN .............................................................. 69  
+10. REFERENCES .............................................................. 73  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 75  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 77  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 82  
 
 &nbsp;
 
 ## LIST OF FIGURES
 
 Figure 1: Core Modules in Boltz-Fast ......................................... 4  
-Figure 2: C-alpha Backbone 3D Coordinate Plot ............................... 10  
-Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 11  
-Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 12  
-Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 15  
-Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 23  
+Figure 2: C-alpha Backbone 3D Coordinate Plot ................................ 9  
+Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 10  
+Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 11  
+Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 14  
+Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 22  
 
 &nbsp;
 
@@ -225,8 +225,56 @@ Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 23
 
 Table 1: Computational Complexity & Scaling Comparison ....................... 8  
 Table 2: Speculative Flow Matching Grid Sweep Data ........................... 8  
-Table 3: Low-Rank Pair Representation Performance Scaling (Rank r=16, D_pair=128) ... 9  
-Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon .................. 10  
+Table 3: Low-Rank Pair Representation Performance Scaling (Rank r=16, D_pair=128) ... 8  
+Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon ................... 9  
+Table 5: Low-rank OPM — three experiments and their held-out error at rank 32 ... 15  
+Table 6: Boltz-1 and Boltz-2 mean ipTM by class on the identical 66 pairs ... 16  
+Table 7: Mean ipTM by class on the powered 22-receptor panel ................ 18  
+Table 8: Interface readouts on the scramble control ......................... 20  
+Table 9: Scramble-control effect against run-to-run spread .................. 21  
+Table 10: Which side of the interface carries the interface-pLDDT signal .... 24  
+Table 11: Binding-site controls for the receptor-side signal ................ 25  
+Table 12: The three arms of the few-step distillation comparison ............ 27  
+Table 13: Order sensitivity across the three arms — cognate minus its own scramble ... 27  
+Table 14: Receptor specificity across the three arms — cognate ranked against its own decoys ... 27  
+Table 15: De-confounding — effect with suspect panel members removed ........ 28  
+Table 16: Rank test against a mixed model with receptor as a random effect ... 30  
+Table 17: Variance decomposition, and the ceiling it implies ................ 30  
+Table 18: Run-to-run spread, DeCAF against Boltz-2 .......................... 31  
+Table 19: Signal-to-noise with borrowed and with measured noise ............. 31  
+Table 20: Panel members whose folded pair was not what was crystallised ..... 34  
+Table 21: In-training against held-out — scramble control ................... 35  
+Table 22: In-training against held-out — receptor specificity ............... 35  
+Table 23: Mixed-model interaction, raw and within-receptor z ................ 36  
+Table 24: Scramble control across five independent draws .................... 36  
+Table 25: Receptor specificity across five independent draws ................ 37  
+Table 26: Backbone geometry at ten sampling steps ........................... 40  
+Table 27: Physics rescoring against the confidence readouts ................. 41  
+Table 28: A sequence model's zero-shot AUC, for scale ....................... 42  
+Table 29: Reciprocal matching, each direction separately .................... 43  
+Table 30: Precision and calls retained under the reciprocal filter .......... 43  
+Table 31: Binding-site correctness against the crystal ...................... 44  
+Table 32: Pose reproducibility between independent draws .................... 45  
+Table 33: The reduced and full inference regimes ............................ 46  
+Table 34: Scramble control at reduced and full settings ..................... 46  
+Table 35: Receptor specificity at reduced and full settings ................. 47  
+Table 36: Absolute confidence at reduced and full settings .................. 48  
+Table 37: Backbone geometry by arm .......................................... 48  
+Table 38: Fixed and marginal cost of a fold ................................. 50  
+Table 39: Measured screen times, cold and cached ............................ 51  
+Table 40: The same three candidates against two targets ..................... 52  
+Table 41: MDM2 at full sampling, with a designed binder added ............... 52  
+Table 42: c-Crk SH3, where the scramble control saturates ................... 52  
+Table 43: Single readouts and the search winner ............................. 55  
+Table 44: Best-of-search on labels permuted within receptor ................. 56  
+Table 45: The search winner on the held-out panel ........................... 56  
+Table 46: The five settings arms ............................................ 58  
+Table 47: Per-knob decomposition of the settings effect ..................... 58  
+Table 48: Cost per fold against standardised effect ......................... 60  
+Table 49: Project phases and schedule ....................................... 69  
+Table 50: Abbreviations and glossary ........................................ 75  
+Table 51: Reproduction commands by section .................................. 77  
+Table 52: Inference settings in each regime ................................. 80  
 
 <div class="page-break"></div>
 
@@ -465,7 +513,7 @@ The sequence policies derived from preference alignment are passed to the accele
 
 # 4. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS
 
-### Table 1: Computational Complexity & Scaling Comparison
+**Table 1: Computational Complexity & Scaling Comparison**
 | Component | Standard Baseline | Implemented Optimization | Time Complexity | Memory / VRAM Scaling |
 | :--- | :--- | :--- | :---: | :---: |
 | **Inference Integration** | Outer ODE Solver | **Speculative Sampler** | O(N) vs. O(N/K) | O(1) vs. O(K) |
@@ -474,7 +522,7 @@ The sequence policies derived from preference alignment are passed to the accele
 | **Coordinate Quality** | Raw Diffusion Output | **Neural Refiner** | O(1) | O(1) |
 | **Sequence Parallelism** | Monolithic Attention | **Fold-CP Sequence Parallel** | O(N²) vs. O(N²/P) | O(N²) vs. O(N²/P) |
 
-### Table 2: Speculative Flow Matching Grid Sweep Data
+**Table 2: Speculative Flow Matching Grid Sweep Data**
 | Lookahead (K) | Tolerance (epsilon) | Evals (Target) | Accept Rate (%) | Speedup | Coordinate L2 Err |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | **2** | 0.001 | 50 | 0.00% | 0.34x | $2.64 \times 10^{-7}$ |
@@ -482,7 +530,7 @@ The sequence policies derived from preference alignment are passed to the accele
 | **4** | 0.030 | 13 | 100.00% | 3.85x | $8.27 \times 10^{-2}$ |
 | **8** | 0.030 | 7 | 100.00% | **7.14x** | $9.60 \times 10^{-2}$ |
 
-### Table 3: Low-Rank Pair Representation Performance Scaling (Rank r=16, D_pair=128)
+**Table 3: Low-Rank Pair Representation Performance Scaling (Rank r=16, D_pair=128)**
 | Sequence Length (N) | Full-Rank VRAM | Low-Rank VRAM | VRAM Saving Factor | Full-Rank Latency (F/B) | Low-Rank Latency (F/B) | Relative MSE |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 100 | 1.25 MB | 0.01 MB | **104x** | 1.0 / 2.2 ms | 0.7 / 2.2 ms | 84.07% |
@@ -507,7 +555,7 @@ substitution is attempted against pretrained weights.
 ### CoreAI Hardware Acceleration & Latency
 Surrogate models exported to Apple CoreAI runtimes execute dynamically on the macOS Neural Engine (ANE) without recompilation:
 
-### Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon
+**Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon**
 | Binder Sequence | Binder L | Target Receptor Type | Target L | Latency (ms) | Output Coordinate Shape | Recompilation Required |
 | :--- | :---: | :--- | :---: | :---: | :---: | :---: |
 | **Short Mutant** | 8 | Small Target (Hemoglobin) | 153 | 4.34 ms | `(1, 8, 3)` | **No** |
@@ -611,6 +659,8 @@ it had only ever been usable by training from scratch. Whether the ~97%
 activation saving could be obtained on released weights was tested in three
 experiments, each stricter than the last.
 
+**Table 5: Low-rank OPM — three experiments and their held-out error at rank 32**
+
 | Experiment | What it measures | Held-out error @ rank 32 |
 | :--- | :--- | :---: |
 | CP projection of weights | tensor approximation, random inputs | 0.77 |
@@ -687,6 +737,8 @@ identical 66 pairs were therefore re-folded under Boltz-2 with identical seeds
 and byte-identical cached alignments, leaving the checkpoint as the only
 variable. Every score rises by roughly 2.8x, and the classes rise together:
 
+**Table 6: Boltz-1 and Boltz-2 mean ipTM by class on the identical 66 pairs**
+
 | | cognate | decoy | scrambled |
 | :--- | :---: | :---: | :---: |
 | Boltz-1 | 0.1915 | 0.1684 | 0.1758 |
@@ -744,6 +796,8 @@ chance. Taken alone this reverses the n = 11 conclusion.
 **The scramble control refutes the binding interpretation.** A scramble
 preserves amino-acid composition and length exactly and destroys only sequence
 order — and order is what makes a binder a binder.
+
+**Table 7: Mean ipTM by class on the powered 22-receptor panel**
 
 | class | n | mean ipTM |
 | :--- | :---: | :---: |
@@ -858,6 +912,8 @@ Six measures were computed from the same complexes and put through the identical
 tests. Contacts use a 8 Å CB–CB criterion (CA for glycine); pDockQ follows
 Bryant et al.; buried area is Shrake–Rupley.
 
+**Table 8: Interface readouts on the scramble control**
+
 | Metric | cognate | scrambled | decoy | cognate vs own scramble | mean rank | chance |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
 | ipTM | 0.502 | 0.489 | 0.432 | p = 0.416 | 2.00 | 2.50 |
@@ -892,6 +948,8 @@ unaffected: both come from the confidence head rather than the coordinates.
 **The result survives the reproducibility test that demoted ipTM.** The 96
 replicate folds of Section 7.5 were re-scored the same way to obtain a
 run-to-run standard deviation for each new measure:
+
+**Table 9: Scramble-control effect against run-to-run spread**
 
 | Metric | effect on the scramble control | run-to-run SD | effect / noise |
 | :--- | ---: | ---: | ---: |
@@ -972,6 +1030,8 @@ Interface pLDDT averages over residues on both chains, so the two readings
 separate. This costs no further folding — it re-reads the structures of
 Section 7.4.
 
+**Table 10: Which side of the interface carries the interface-pLDDT signal**
+
 | Quantity | cognate | scrambled | decoy | cognate − own scramble | p |
 | :--- | ---: | ---: | ---: | ---: | ---: |
 | Pooled interface pLDDT | 49.60 | 46.31 | 45.93 | +3.30 | 0.00000 |
@@ -1010,6 +1070,8 @@ as the 15 receptor residues nearest the peptide (mean 13.4): an 8 Å cutoff mark
 roughly half of a small domain as interface, and alanine-substituting that many
 residues destroys the fold, reintroducing the confound the control exists to
 remove.
+
+**Table 11: Binding-site controls for the receptor-side signal**
 
 | Arm | receptor side | vs real | p |
 | :--- | ---: | ---: | ---: |
@@ -1069,6 +1131,8 @@ DeCAF-Boltz distils Boltz-1 into a few-step generator [23]. Running the identica
 DeCAF changes both the base model and the sampling regime — answers the
 objection, though not in the direction anticipated.
 
+**Table 12: The three arms of the few-step distillation comparison**
+
 | Arm | Base | Trained for 10 steps | Device |
 | :--- | :--- | :---: | :--- |
 | Boltz-2 | Boltz-2 | no | CPU |
@@ -1089,7 +1153,7 @@ efficiency that is the stronger claim, and it is the one the evidence supports:
 the comparison below measures how much of full-settings behaviour survives a
 20× cut in sampling, not a new capability.
 
-**Order sensitivity — cognate minus its own scramble:**
+**Table 13: Order sensitivity across the three arms — cognate minus its own scramble**
 
 | Metric | Boltz-2 | Boltz-1 | DeCAF |
 | :--- | ---: | ---: | ---: |
@@ -1097,7 +1161,7 @@ the comparison below measures how much of full-settings behaviour survives a
 | Interface pLDDT | +3.30 (p < 1e-5) | +1.54 (p = 0.067) | **+9.54 (p < 1e-5)** |
 | Receptor side | +2.38 (p = 6e-5) | +0.71 (p = 0.43) | **+5.95 (p = 1e-5)** |
 
-**Receptor specificity — cognate ranked against its own decoys, chance 2.50:**
+**Table 14: Receptor specificity across the three arms — cognate ranked against its own decoys**
 
 | Metric | Boltz-2 | Boltz-1 | DeCAF |
 | :--- | ---: | ---: | ---: |
@@ -1129,6 +1193,8 @@ originally reported that interface pLDDT reaches significance on Boltz-2 and
 DeCAF but not on Boltz-1 (+1.54, p = 0.067), and concluded that which readout
 carries the signal varies by model. Section 7.10.1 shows the Boltz-1 column was
 being diluted by two cognate pairs that are not binders. Removing them:
+
+**Table 15: De-confounding — effect with suspect panel members removed**
 
 | Boltz-1 | all 22 | minus 1NLO, 9GRF | minus those + capped |
 | :--- | ---: | ---: | ---: |
@@ -1189,6 +1255,8 @@ A linear mixed model with receptor as a random effect,
 
 gives the same protection without the loss.
 
+**Table 16: Rank test against a mixed model with receptor as a random effect**
+
 | Arm | Metric | Rank-test p | Mixed-model p |
 | :--- | :--- | ---: | ---: |
 | Boltz-2 | ipTM | 0.034 | **0.0042** |
@@ -1204,6 +1272,8 @@ rather than by the evidence.
 
 Splitting residual variance into the receptor–peptide interaction δ (the binding
 signal) and fold-to-fold sampling noise ε measured from replicates:
+
+**Table 17: Variance decomposition, and the ceiling it implies**
 
 | Arm | Metric | σ²_receptor | σ²_interaction | σ²_noise | Signal/noise |
 | :--- | :--- | ---: | ---: | ---: | ---: |
@@ -1232,6 +1302,8 @@ accurately in ten steps would be less stochastic. **The opposite holds.**
 Repeating Section 7.5's design exactly — same 24 complexes, same 4 receptors,
 4 identical unseeded re-runs:
 
+**Table 18: Run-to-run spread, DeCAF against Boltz-2**
+
 | Metric | DeCAF SD | Boltz-2 SD | Ratio |
 | :--- | ---: | ---: | ---: |
 | ipTM | 0.0981 | 0.0628 | **1.56** |
@@ -1239,6 +1311,8 @@ Repeating Section 7.5's design exactly — same 24 complexes, same 4 receptors,
 
 Fewer, larger jumps move further per draw, so run-to-run spread grows. Correcting
 the decomposition accordingly:
+
+**Table 19: Signal-to-noise with borrowed and with measured noise**
 
 | Metric | S/N, borrowed noise | S/N, measured | Advantage over Boltz-2 |
 | :--- | ---: | ---: | :--- |
@@ -1314,6 +1388,8 @@ RCSB FASTA returns canonical sequence, and returns `X` for any component that is
 not one of the twenty amino acids. Neither is visible downstream: the FASTA
 parses, the fold succeeds, the confidence scores look ordinary.
 
+**Table 20: Panel members whose folded pair was not what was crystallised**
+
 | PDB | folded as | actually crystallised |
 | :--- | :--- | :--- |
 | 1NLO | `XXXXPLPPLPX` | ACE, MN1, MN2, MN7, NH2 — a designed synthetic ligand |
@@ -1363,6 +1439,8 @@ DeCAF at the same 10 sampling steps and 1 recycling step.
 **These numbers are the mean of five independent draws**, for a reason recorded
 in 7.10.3: the first draw alone was misleading, and so was the second.
 
+**Table 21: In-training against held-out — scramble control**
+
 | Metric | in-training (16 receptors) | held-out (22 receptors) |
 | :--- | ---: | ---: |
 | ipTM | +0.265 (p = 1e-5) | +0.137 (p = 5e-5) |
@@ -1370,6 +1448,8 @@ in 7.10.3: the first draw alone was misleading, and so was the second.
 | Receptor side | +7.38 (p = 2e-5) | +3.16 (p = 0.0002) |
 
 Cognate ranked against its own decoys, chance 2.50:
+
+**Table 22: In-training against held-out — receptor specificity**
 
 | Metric | in-training | held-out |
 | :--- | ---: | ---: |
@@ -1383,6 +1463,8 @@ Neither readout survives markedly better than the other.
 Comparing two p-values is not a test. A mixed model with receptor as a random
 effect gives the interaction directly, fitted on raw scores and on scores
 z-scored within receptor so the answer does not depend on units:
+
+**Table 23: Mixed-model interaction, raw and within-receptor z**
 
 | Metric | raw | within-receptor z |
 | :--- | ---: | ---: |
@@ -1417,7 +1499,7 @@ unseeded, so re-running the identical panel at identical settings gives an
 independent draw. Five were run, and the first two each produced a conclusion
 that a later draw withdrew.
 
-**Order sensitivity, cognate minus its own scramble:**
+**Table 24: Scramble control across five independent draws**
 
 | Metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -1430,7 +1512,7 @@ reach significance (p = 0.089 against 6e-4 to 8e-5 for the other four). Read
 alone it said the effect *collapses* held out; five draws say it weakens to 44%
 of its in-training value and remains significant at p = 0.0001.
 
-**Receptor specificity, cognate ranked among its own decoys (chance 2.50):**
+**Table 25: Receptor specificity across five independent draws**
 
 | Metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -1551,6 +1633,8 @@ structures at all.
 A peptide bond fixes consecutive alpha-carbons at 3.80 Å. Measuring every
 consecutive CA–CA distance across the 132 Boltz-2 folds of Section 7.4:
 
+**Table 26: Backbone geometry at ten sampling steps**
+
 | | Boltz-2 at 10 steps | DeCAF at 10 steps |
 | :--- | ---: | ---: |
 | median CA–CA distance | 5.48 Å | **3.74 Å** |
@@ -1607,6 +1691,8 @@ With DeCAF's 96%-physical backbones an energy function has something to read,
 which is the direction the recent literature takes to exceed confidence-metric
 performance. Scored on 69 folds across 12 held-out receptors:
 
+**Table 27: Physics rescoring against the confidence readouts**
+
 | Readout | cognate − scramble | mean rank (chance 2.50) | AUC within |
 | :--- | ---: | ---: | ---: |
 | Interface pLDDT | +7.63 (p = 5e-5) | 1.73 (p = 0.036) | **0.856** |
@@ -1631,6 +1717,8 @@ affinity predicted from ESM-2 embeddings gains little from adding structure.
 MINT — ESM-2 650M with cross-chain attention, trained on 96 million
 protein-protein interactions from STRING — provides a zero-shot interaction
 probability with nothing fitted from this panel:
+
+**Table 28: A sequence model's zero-shot AUC, for scale**
 
 | Score | within-receptor AUC |
 | :--- | ---: |
@@ -1681,6 +1769,8 @@ that borrowed it as a decoy. That direction asks *for this peptide, is its own
 receptor the best of the targets it was tried against?*, and it works at least
 as well:
 
+**Table 29: Reciprocal matching, each direction separately**
+
 | direction | mean rank | chance | p |
 | :--- | ---: | ---: | ---: |
 | receptor-centric (Sections 7.4–7.10) | 1.73 | 2.50 | 0.0042 |
@@ -1689,6 +1779,8 @@ as well:
 Requiring **both** is the binding analogue of reciprocal best hits in homology
 search. Measured across both panels, both readouts and all five draws — twelve
 combinations in total:
+
+**Table 30: Precision and calls retained under the reciprocal filter**
 
 | | one-directional | reciprocal |
 | :--- | ---: | ---: |
@@ -1730,6 +1822,8 @@ peptide, so for any prediction one can ask what fraction of its contacts fall
 inside that known site. This is information from outside the model entirely.
 Measured on 120 folds across 20 held-out receptors:
 
+**Table 31: Binding-site correctness against the crystal**
+
 | class | site precision | site recall |
 | :--- | ---: | ---: |
 | cognate | 0.452 | 0.562 |
@@ -1746,6 +1840,8 @@ peptide belongs in it.
 **Pose convergence.** If a peptide genuinely binds it has one favourable pose to
 find, so independent draws should agree; a non-binder should scatter. Folding
 the panel twice with structures retained and superposing on the receptor:
+
+**Table 32: Pose reproducibility between independent draws**
 
 | class | peptide RMSD between draws | receptor RMSD |
 | :--- | ---: | ---: |
@@ -1791,6 +1887,8 @@ The same panel, the same model (stock Boltz-1), the same device (MPS), with only
 the settings changed. The reduced arm already existed from Section 7.8, so model
 and device are held constant by construction:
 
+**Table 33: The reduced and full inference regimes**
+
 | | sampling steps | recycling | MSA depth |
 | :--- | ---: | ---: | ---: |
 | reduced (Sections 7.2–7.12) | 10 | 1 | 32 |
@@ -1801,6 +1899,8 @@ decisive test needs. The scramble control is the one that matters here: a
 cognate against a permutation of itself, composition and length held equal.
 
 #### 7.13.2 The signal was suppressed by a factor of three to seven
+
+**Table 34: Scramble control at reduced and full settings**
 
 | Metric | reduced | full | Cohen's *d* | within-receptor z |
 | :--- | ---: | ---: | :--- | ---: |
@@ -1826,6 +1926,8 @@ went from p = 0.428, no evidence at all, to p < 1e-5.
 The scramble control asks whether a readout notices sequence order. Ranking a
 cognate against its own decoys asks the question a screen actually asks, and it
 moves further:
+
+**Table 35: Receptor specificity at reduced and full settings**
 
 | Metric | reduced rank | full rank | reduced first | **full first** | reduced AUC | **full AUC** |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -1856,6 +1958,8 @@ not of the method.
 
 Absolute confidence rises enormously alongside the effect:
 
+**Table 36: Absolute confidence at reduced and full settings**
+
 | | reduced | full |
 | :--- | ---: | ---: |
 | cognate ipTM | 0.203 | **0.810** |
@@ -1863,6 +1967,8 @@ Absolute confidence rises enormously alongside the effect:
 
 And the backbones become physical. Measuring every consecutive CA–CA distance
 against the 3.80 Å a peptide bond fixes:
+
+**Table 37: Backbone geometry by arm**
 
 | Arm | median CA–CA | physically plausible | broken (> 5 Å) |
 | :--- | ---: | ---: | ---: |
@@ -1982,6 +2088,8 @@ should have been rejected; refusing is the corrected behaviour.
 Almost all of a screen is fixed cost. Timing one fold against a batch of four
 separates the two components:
 
+**Table 38: Fixed and marginal cost of a fold**
+
 | folds in one call | wall time | implied |
 | ---: | ---: | :--- |
 | 1 | 53.9 s | — |
@@ -2012,6 +2120,8 @@ permutations than by re-folding a few of them. Folds per candidate fall from
 `(1 + s) × r` to `r + s`, a third fewer at the defaults, with a better-sampled
 null.
 
+**Table 39: Measured screen times, cold and cached**
+
 | screen | folds | time |
 | :--- | ---: | ---: |
 | three candidates, cold | 15 | 177 s |
@@ -2035,6 +2145,8 @@ proline-rich `PPPALPPKKR` for the c-Crk SH3 domain — and each list was run
 unchanged against MDM2 and against PDZ3, at fast settings, two replicates and
 three scrambles.
 
+**Table 40: The same three candidates against two targets**
+
 | candidate | MDM2 *t* | MDM2 *p* | PDZ3 *t* | PDZ3 *p* | cognate of |
 | :--- | ---: | ---: | ---: | ---: | :--- |
 | SQETFSDLWKLLPEN | **+3.88** | **0.002** | +0.06 | 0.477 | MDM2 |
@@ -2050,6 +2162,8 @@ Adding the designed MDM2 binder PMI (`TSFAEYWNLLSP`) and raising the settings
 reproduces the ordering more cleanly. At 200 sampling steps, three recycling
 passes and full alignment depth, with five scrambles, the pooled scramble spread
 falls from 5.36 to 2.65 and the separation widens:
+
+**Table 41: MDM2 at full sampling, with a designed binder added**
 
 | candidate | *t* | *p* | |
 | :--- | ---: | ---: | :--- |
@@ -2069,6 +2183,8 @@ On the c-Crk SH3 domain the tool fails, and the failure is reported by it rather
 than discovered afterwards. The cognate `PPPALPPKKR` does not separate from its
 own scrambles at fast settings (*t* = +0.27, p = 0.40) and places second behind a
 peptide for a different target. Raising the settings does not rescue it:
+
+**Table 42: c-Crk SH3, where the scramble control saturates**
 
 | candidate | *t* | *p* |
 | :--- | ---: | ---: |
@@ -2174,6 +2290,8 @@ five of them has seen most of what it needs to place the sixth.
 
 #### 7.15.2 What it found
 
+**Table 43: Single readouts and the search winner**
+
 | Readout | within-receptor AUC |
 | :--- | ---: |
 | **receptor side + interface contacts** (search winner) | **0.961** |
@@ -2196,6 +2314,8 @@ receptor — the cognate label moved to a random fold of the same receptor, whic
 preserves the design exactly and destroys only the association being measured.
 Over 200 permutations:
 
+**Table 44: Best-of-search on labels permuted within receptor**
+
 | | AUC |
 | :--- | ---: |
 | best-of-search on permuted labels, mean | 0.607 |
@@ -2214,6 +2334,8 @@ is *larger* than the +0.018 actually observed. The observed improvement sits at
 **The held-out panel, spent once.** The winning combination was applied a single
 time to the full-settings held-out folds of Section 7.10, with nothing selected
 on them. It reverses:
+
+**Table 45: The search winner on the held-out panel**
 
 | Readout | held-out AUC |
 | :--- | ---: |
@@ -2275,6 +2397,8 @@ depth should carry little of it.
 Five cells, all stock Boltz-1 on MPS, differing only in settings. The two
 endpoints already existed; the three middle arms were folded for this section.
 
+**Table 46: The five settings arms**
+
 | Arm | sampling | recycling | MSA depth | source |
 | :--- | ---: | ---: | :--- | :--- |
 | reduced | 10 | 1 | 32 | Section 7.8 |
@@ -2289,6 +2413,8 @@ A knob's *share* is its standardised gain over the reduced baseline divided by
 the full arm's gain over the same baseline.
 
 #### 7.16.2 Sampling steps carry it; the other two carry none of it
+
+**Table 47: Per-knob decomposition of the settings effect**
 
 | Arm | cognate − scramble | *p* | Cohen's *d* | share of the full gain |
 | :--- | ---: | ---: | ---: | ---: |
@@ -2340,6 +2466,8 @@ one knob that must move first, and two that only pay once it has.
 Section 7.13 concluded that the reduced regime was suppressing the signal and
 that the intended settings should be used. That is correct but more expensive
 than it needs to be. Measured per fold on this hardware:
+
+**Table 48: Cost per fold against standardised effect**
 
 | Arm | cost per fold | standardised *d* (interface pLDDT) |
 | :--- | ---: | ---: |
@@ -2681,6 +2809,8 @@ what it measures, and most published ones lack all six.
 
 # 9. FUTURE PLAN
 
+**Table 49: Project phases and schedule**
+
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
 | 1 | Dissertation Outline | 05 Jan 2026 – 04 Feb 2026 | Literature review and prepare outline | **COMPLETED** |
@@ -2760,6 +2890,8 @@ want more receptors rather than more analysis, and both are throughput problems
 
 # APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
+**Table 50: Abbreviations and glossary**
+
 | Abbreviation | Full Form |
 | :--- | :--- |
 | MLA | Multi-Head Latent Attention |
@@ -2797,6 +2929,8 @@ repository. Each experiment writes a provenance manifest under `results/real/`
 recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
+
+**Table 51: Reproduction commands by section**
 
 | Result | Section | Command |
 | :--- | :---: | :--- |
@@ -2856,6 +2990,8 @@ deleting `artifacts/screen_fold_cache/` forces a genuine refold.
 load-bearing, because Section 7.13 measures the difference between them and finds
 it accounts for a factor of three to seven in the standardised effect. No figure
 should be read without knowing which regime produced it.
+
+**Table 52: Inference settings in each regime**
 
 | Setting | Reduced regime | Full regime | Boltz default |
 | :--- | :---: | :---: | :---: |
