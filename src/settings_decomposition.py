@@ -93,21 +93,34 @@ def paired_d(recs, metric):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ART / "settings_decomposition.json"))
+    ap.add_argument("--min-folds", type=int, default=60,
+                    help="an arm below this is in progress, not a result. A "
+                         "six-fold arm is one receptor and produced a -161%% "
+                         "share on the first pass of this script.")
     args = ap.parse_args()
 
-    cells = {}
+    cells, partial = {}, []
     for name, label, path in ARMS:
         recs = load(path)
+        if recs is not None and len(recs) < args.min_folds:
+            partial.append(f"{name} ({len(recs)} folds)")
+            print(f"  {name:11} {label:16} {len(recs)} folds — IN PROGRESS, "
+                  f"excluded")
+            recs = None
+        else:
+            print(f"  {name:11} {label:16} "
+                  f"{'missing' if recs is None else str(len(recs)) + ' folds'}")
         cells[name] = recs
-        n = "missing" if recs is None else f"{len(recs)} folds"
-        print(f"  {name:11} {label:16} {n}")
     if cells["reduced"] is None or cells["full"] is None:
         raise SystemExit("both endpoints are needed")
     missing = [n for n in ("sampling", "alignment", "recycling")
                if cells[n] is None]
     if missing:
-        print(f"\n*** arms not yet folded: {', '.join(missing)} — "
-              f"shares below are incomplete ***")
+        print(f"\n*** arms not complete: {', '.join(missing)} — the share column "
+              f"is partial and must not be read as a decomposition ***")
+    if partial:
+        print(f"    (in progress, excluded rather than reported: "
+              f"{', '.join(partial)})")
 
     result = {}
     for metric in METRICS:
@@ -141,11 +154,19 @@ def main():
                   f"{(d or float('nan')):>7.2f}{share}")
         if "shares" in m:
             tot = sum(m["shares"].values())
-            print(f"\n    single-knob shares sum to {tot:.0f}% of the full gain "
-                  f"in standardised terms")
-            if abs(tot - 100) > 25:
-                print(f"    ({'super' if tot > 100 else 'sub'}-additive: the "
-                      f"settings interact rather than contributing separately)")
+            got = len(m["shares"])
+            if got == 3:
+                print(f"\n    single-knob shares sum to {tot:.0f}% of the full "
+                      f"gain in standardised terms")
+                if abs(tot - 100) > 25:
+                    print(f"    ({'super' if tot > 100 else 'sub'}-additive: the "
+                          f"settings interact rather than contributing "
+                          f"separately)")
+            else:
+                # additivity is a statement about all three knobs; one arm's
+                # share is not evidence for or against it
+                print(f"\n    {got} of 3 knobs measured; "
+                      f"{tot:.0f}% of the full gain accounted for so far")
         result[metric] = m
 
     print(f"\n{'=' * 78}")
