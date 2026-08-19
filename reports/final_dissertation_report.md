@@ -195,19 +195,19 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 34  
 &nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 41  
 &nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 44  
-&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 47  
-&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 51  
-&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 56  
-&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth .......... 59  
-&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 63  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 66  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 66  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 70  
-9. FUTURE PLAN .............................................................. 74  
-10. REFERENCES .............................................................. 78  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 80  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 82  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 87  
+&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 48  
+&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 52  
+&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 57  
+&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth .......... 60  
+&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 64  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 67  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 67  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 71  
+9. FUTURE PLAN .............................................................. 75  
+10. REFERENCES .............................................................. 79  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 81  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 83  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 88  
 
 &nbsp;
 
@@ -257,28 +257,29 @@ Table 30: Reciprocal matching, each direction separately .................... 44
 Table 31: Precision and calls retained under the reciprocal filter .......... 44  
 Table 32: Binding-site correctness against the crystal ...................... 45  
 Table 33: Pose reproducibility between independent draws .................... 46  
-Table 34: The reduced and full inference regimes ............................ 47  
-Table 35: Scramble control at reduced and full settings ..................... 47  
-Table 36: Receptor specificity at reduced and full settings ................. 48  
-Table 37: Absolute confidence at reduced and full settings .................. 49  
-Table 38: Backbone geometry by arm .......................................... 49  
-Table 39: Fixed and marginal cost of a fold ................................. 51  
-Table 40: Measured screen times, cold and cached ............................ 52  
-Table 41: The same three candidates against two targets ..................... 53  
-Table 42: MDM2 at full sampling, with a designed binder added ............... 53  
-Table 43: c-Crk SH3, where the scramble control saturates ................... 53  
-Table 44: Single readouts and the search winner ............................. 56  
-Table 45: Best-of-search on labels permuted within receptor ................. 57  
-Table 46: The search winner on the held-out panel ........................... 57  
-Table 47: The five settings arms ............................................ 59  
-Table 48: Per-knob decomposition of the settings effect ..................... 59  
-Table 49: Cost per fold against standardised effect ......................... 61  
-Table 50: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 63  
-Table 51: Candidate rewrites of the diffusion loop's inner operators ........ 64  
-Table 52: Project phases and schedule ....................................... 74  
-Table 53: Abbreviations and glossary ........................................ 80  
-Table 54: Reproduction commands by section .................................. 82  
-Table 55: Inference settings in each regime ................................. 85  
+Table 34: The reciprocal filter at reduced and at full settings ............. 47  
+Table 35: The reduced and full inference regimes ............................ 48  
+Table 36: Scramble control at reduced and full settings ..................... 48  
+Table 37: Receptor specificity at reduced and full settings ................. 49  
+Table 38: Absolute confidence at reduced and full settings .................. 49  
+Table 39: Backbone geometry by arm .......................................... 50  
+Table 40: Fixed and marginal cost of a fold ................................. 52  
+Table 41: Measured screen times, cold and cached ............................ 53  
+Table 42: The same three candidates against two targets ..................... 54  
+Table 43: MDM2 at full sampling, with a designed binder added ............... 54  
+Table 44: c-Crk SH3, where the scramble control saturates ................... 54  
+Table 45: Single readouts and the search winner ............................. 57  
+Table 46: Best-of-search on labels permuted within receptor ................. 58  
+Table 47: The search winner on the held-out panel ........................... 58  
+Table 48: The five settings arms ............................................ 60  
+Table 49: Per-knob decomposition of the settings effect ..................... 60  
+Table 50: Cost per fold against standardised effect ......................... 62  
+Table 51: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 64  
+Table 52: Candidate rewrites of the diffusion loop's inner operators ........ 65  
+Table 53: Project phases and schedule ....................................... 75  
+Table 54: Abbreviations and glossary ........................................ 81  
+Table 55: Reproduction commands by section .................................. 83  
+Table 56: Inference settings in each regime ................................. 86  
 
 <div class="page-break"></div>
 
@@ -1921,6 +1922,47 @@ confidence**, which is exactly why every readout reduces to the same ceiling.
 
 <div class="page-break"></div>
 
+#### 7.12.3 The filter at the model's intended settings
+
+Section 7.13.5 flagged this as untested, and the concern was specific: the
+reciprocal filter buys precision by discarding calls, and at full settings plain
+one-directional precision is already high, so there may be less for it to buy.
+The folds exist, so the question is a re-analysis rather than a run.
+
+**Table 34: The reciprocal filter at reduced and at full settings**
+
+| Panel | Readout | one-directional | reciprocal | permutation *p* |
+| :--- | :--- | ---: | ---: | ---: |
+| in-training, reduced | Interface pLDDT | 12/20 = 60% | 11/13 = 85% | 0.0044 |
+| in-training, reduced | ipTM | 11/19 = 58% | 9/11 = 82% | 0.0209 |
+| **in-training, full** | **Interface pLDDT** | **14/19 = 74%** | **11/12 = 92%** | **0.0386** |
+| **in-training, full** | **ipTM** | **12/18 = 67%** | **11/11 = 100%** | **0.0003** |
+| held out, full, draw 1 | Interface pLDDT | 13/20 = 65% | 9/10 = 90% | 0.0294 |
+| held out, full, draw 2 | Interface pLDDT | 10/19 = 53% | 9/11 = 82% | 0.0047 |
+| held out, full, draw 1 | ipTM | 12/20 = 60% | 9/12 = 75% | 0.1161 |
+| held out, full, draw 2 | ipTM | 13/19 = 68% | 10/12 = 83% | 0.0944 |
+
+**The filter survives the settings correction.** One-directional precision does
+rise at full settings, as expected — 60% to 74% on interface pLDDT — and the
+filter still adds to it, reaching 92%, and beating a random discard of the same
+number of calls at p = 0.0386.
+
+**On ipTM at full settings every reciprocal call is correct**, 11 of 11, against
+a permutation null at p = 0.0003. That is the strongest precision figure in this
+dissertation. It rests on eleven calls, so the point estimate should not be read
+as "this filter is perfect"; what the permutation test establishes is that
+discarding those particular seven calls is not what a random discard of seven
+achieves.
+
+**It does not fully transfer to held-out complexes, and the two readouts part
+company there.** Interface pLDDT's gain replicates on both full-settings held-out
+draws (p = 0.0294 and 0.0047). ipTM's does not (p = 0.1161 and 0.0944) — the
+readout that reaches 100% precision on complexes the model was trained on is the
+one whose advantage fails to replicate on complexes it was not. That is the
+contamination effect of Section 7.10.6 appearing in a second, independent form,
+and it is a reason to prefer interface pLDDT for the screening case even though
+ipTM wins the in-training headline.
+
 ### 7.13 The Settings Confound, Resolved — and It Was Real
 
 Every fold in Sections 7.2 to 7.12 was taken far below the model's defaults: 10
@@ -1939,7 +1981,7 @@ The same panel, the same model (stock Boltz-1), the same device (MPS), with only
 the settings changed. The reduced arm already existed from Section 7.8, so model
 and device are held constant by construction:
 
-**Table 34: The reduced and full inference regimes**
+**Table 35: The reduced and full inference regimes**
 
 | | sampling steps | recycling | MSA depth |
 | :--- | ---: | ---: | ---: |
@@ -1952,7 +1994,7 @@ cognate against a permutation of itself, composition and length held equal.
 
 #### 7.13.2 The signal was suppressed by a factor of three to seven
 
-**Table 35: Scramble control at reduced and full settings**
+**Table 36: Scramble control at reduced and full settings**
 
 | Metric | reduced | full | Cohen's *d* | within-receptor z |
 | :--- | ---: | ---: | :--- | ---: |
@@ -1979,7 +2021,7 @@ The scramble control asks whether a readout notices sequence order. Ranking a
 cognate against its own decoys asks the question a screen actually asks, and it
 moves further:
 
-**Table 36: Receptor specificity at reduced and full settings**
+**Table 37: Receptor specificity at reduced and full settings**
 
 | Metric | reduced rank | full rank | reduced first | **full first** | reduced AUC | **full AUC** |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -2010,7 +2052,7 @@ not of the method.
 
 Absolute confidence rises enormously alongside the effect:
 
-**Table 37: Absolute confidence at reduced and full settings**
+**Table 38: Absolute confidence at reduced and full settings**
 
 | | reduced | full |
 | :--- | ---: | ---: |
@@ -2020,7 +2062,7 @@ Absolute confidence rises enormously alongside the effect:
 And the backbones become physical. Measuring every consecutive CA–CA distance
 against the 3.80 Å a peptide bond fixes:
 
-**Table 38: Backbone geometry by arm**
+**Table 39: Backbone geometry by arm**
 
 | Arm | median CA–CA | physically plausible | broken (> 5 Å) |
 | :--- | ---: | ---: | ---: |
@@ -2078,10 +2120,11 @@ draw has twice misled this dissertation. The effects here are large enough
 (*d* = 1.25–1.52, AUC 0.943) that draw noise is unlikely to reverse them, but
 the specific figures should be replicated before being quoted as exact values.
 
-One consequence for an earlier section remains untested. Section 7.12's
-reciprocal matching lifted precision from 56% to 88% in the suppressed regime; at
-full settings plain top-1 is already 77%, so the headroom that filter exploits is
-smaller and its value there is untested.
+Both consequences for earlier sections have since been measured. Section 7.12's
+reciprocal matching was expected to have less headroom at full settings, where
+one-directional precision is already higher. It retains its advantage anyway,
+reaching 92% on interface pLDDT and 11 of 11 on ipTM; Section 7.12.3 reports it,
+including the respect in which it fails to transfer to held-out complexes.
 
 A second consequence was untested when this section was written and has since
 been measured. The held-out comparison of Section 7.10 was run entirely at
@@ -2134,7 +2177,7 @@ should have been rejected; refusing is the corrected behaviour.
 Almost all of a screen is fixed cost. Timing one fold against a batch of four
 separates the two components:
 
-**Table 39: Fixed and marginal cost of a fold**
+**Table 40: Fixed and marginal cost of a fold**
 
 | folds in one call | wall time | implied |
 | ---: | ---: | :--- |
@@ -2166,7 +2209,7 @@ permutations than by re-folding a few of them. Folds per candidate fall from
 `(1 + s) × r` to `r + s`, a third fewer at the defaults, with a better-sampled
 null.
 
-**Table 40: Measured screen times, cold and cached**
+**Table 41: Measured screen times, cold and cached**
 
 | screen | folds | time |
 | :--- | ---: | ---: |
@@ -2191,7 +2234,7 @@ proline-rich `PPPALPPKKR` for the c-Crk SH3 domain — and each list was run
 unchanged against MDM2 and against PDZ3, at fast settings, two replicates and
 three scrambles.
 
-**Table 41: The same three candidates against two targets**
+**Table 42: The same three candidates against two targets**
 
 | candidate | MDM2 *t* | MDM2 *p* | PDZ3 *t* | PDZ3 *p* | cognate of |
 | :--- | ---: | ---: | ---: | ---: | :--- |
@@ -2209,7 +2252,7 @@ reproduces the ordering more cleanly. At 200 sampling steps, three recycling
 passes and full alignment depth, with five scrambles, the pooled scramble spread
 falls from 5.36 to 2.65 and the separation widens:
 
-**Table 42: MDM2 at full sampling, with a designed binder added**
+**Table 43: MDM2 at full sampling, with a designed binder added**
 
 | candidate | *t* | *p* | |
 | :--- | ---: | ---: | :--- |
@@ -2230,7 +2273,7 @@ than discovered afterwards. The cognate `PPPALPPKKR` does not separate from its
 own scrambles at fast settings (*t* = +0.27, p = 0.40) and places second behind a
 peptide for a different target. Raising the settings does not rescue it:
 
-**Table 43: c-Crk SH3, where the scramble control saturates**
+**Table 44: c-Crk SH3, where the scramble control saturates**
 
 | candidate | *t* | *p* |
 | :--- | ---: | ---: |
@@ -2336,7 +2379,7 @@ five of them has seen most of what it needs to place the sixth.
 
 #### 7.15.2 What it found
 
-**Table 44: Single readouts and the search winner**
+**Table 45: Single readouts and the search winner**
 
 | Readout | within-receptor AUC |
 | :--- | ---: |
@@ -2360,7 +2403,7 @@ receptor — the cognate label moved to a random fold of the same receptor, whic
 preserves the design exactly and destroys only the association being measured.
 Over 200 permutations:
 
-**Table 45: Best-of-search on labels permuted within receptor**
+**Table 46: Best-of-search on labels permuted within receptor**
 
 | | AUC |
 | :--- | ---: |
@@ -2381,7 +2424,7 @@ is *larger* than the +0.018 actually observed. The observed improvement sits at
 time to the full-settings held-out folds of Section 7.10, with nothing selected
 on them. It reverses:
 
-**Table 46: The search winner on the held-out panel**
+**Table 47: The search winner on the held-out panel**
 
 | Readout | held-out AUC |
 | :--- | ---: |
@@ -2456,7 +2499,7 @@ depth should carry little of it.
 Five cells, all stock Boltz-1 on MPS, differing only in settings. The two
 endpoints already existed; the three middle arms were folded for this section.
 
-**Table 47: The five settings arms**
+**Table 48: The five settings arms**
 
 | Arm | sampling | recycling | MSA depth | source |
 | :--- | ---: | ---: | :--- | :--- |
@@ -2473,7 +2516,7 @@ the full arm's gain over the same baseline.
 
 #### 7.16.2 Sampling steps carry it; the other two carry none of it
 
-**Table 48: Per-knob decomposition of the settings effect**
+**Table 49: Per-knob decomposition of the settings effect**
 
 | Arm | cognate − scramble | *p* | Cohen's *d* | share of the full gain |
 | :--- | ---: | ---: | ---: | ---: |
@@ -2526,7 +2569,7 @@ Section 7.13 concluded that the reduced regime was suppressing the signal and
 that the intended settings should be used. That is correct but more expensive
 than it needs to be. Measured per fold on this hardware:
 
-**Table 49: Cost per fold against standardised effect**
+**Table 50: Cost per fold against standardised effect**
 
 | Arm | cost per fold | standardised *d* (interface pLDDT) |
 | :--- | ---: | ---: |
@@ -2590,7 +2633,7 @@ investigation.
 Combining the exact call counts with per-call costs measured properly, by
 amortising over queued iterations, gives shares that mean something:
 
-**Table 50: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency**
+**Table 51: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency**
 
 | Operator | calls per fold | ms per call | total | share of a 78.5 s fold |
 | :--- | ---: | ---: | ---: | ---: |
@@ -2627,7 +2670,7 @@ operation, on the reference's own weights so that any difference in output is a
 bug rather than a different model. Each is checked against the reference on five
 random draws before being timed:
 
-**Table 51: Candidate rewrites of the diffusion loop's inner operators**
+**Table 52: Candidate rewrites of the diffusion loop's inner operators**
 
 | Operator | rewrite | ms | speedup | max abs. difference |
 | :--- | :--- | ---: | ---: | ---: |
@@ -3024,7 +3067,7 @@ what it measures, and most published ones lack all six.
 
 # 9. FUTURE PLAN
 
-**Table 52: Project phases and schedule**
+**Table 53: Project phases and schedule**
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -3106,7 +3149,7 @@ want more receptors rather than more analysis, and both are throughput problems
 
 # APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
-**Table 53: Abbreviations and glossary**
+**Table 54: Abbreviations and glossary**
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -3146,7 +3189,7 @@ recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
 
-**Table 54: Reproduction commands by section**
+**Table 55: Reproduction commands by section**
 
 | Result | Section | Command |
 | :--- | :---: | :--- |
@@ -3210,7 +3253,7 @@ load-bearing, because Section 7.13 measures the difference between them and find
 it accounts for a factor of three to seven in the standardised effect. No figure
 should be read without knowing which regime produced it.
 
-**Table 55: Inference settings in each regime**
+**Table 56: Inference settings in each regime**
 
 | Setting | Reduced regime | Full regime | Boltz default |
 | :--- | :---: | :---: | :---: |

@@ -52,6 +52,24 @@ def in_training_rows(metric):
             if p["name"] in dec and p["label"] in ("cognate", "decoy")]
 
 
+def full_settings_rows(metric):
+    """Same rows, from the full-settings arm of Section 7.13.
+
+    Section 7.13.5 records this as untested: the reciprocal filter lifted
+    precision from 56% to 88% in the suppressed regime, but at full settings
+    plain top-1 is already 77%, so the headroom the filter exploits is smaller
+    and its value there was unknown. The folds exist, so the question is a
+    re-analysis rather than a run.
+    """
+    main = json.loads((ART / "pdb_binders_b2_n22" / "pdb_binder_scores.json").read_text())
+    full = {r["name"]: r for r in json.loads(
+        (ART / "settings_confound.json").read_text())["per_fold"]}
+    return [{"rec": p["receptor_id"], "pep": p["peptide"],
+             "cog": p["receptor_id"] == p["peptide_from"], "v": full[p["name"]][metric]}
+            for p in main
+            if p["name"] in full and p["label"] in ("cognate", "decoy")]
+
+
 def heldout_rows(metric, store):
     """Same, for a held-out draw. Peptide sequences are rebuilt from the seed."""
     from heldout_panel import ALREADY, NEW
@@ -115,7 +133,9 @@ def main():
     args = ap.parse_args()
     rng = np.random.default_rng(0)
 
-    sets = [("in-training", lambda m: in_training_rows(m))]
+    sets = [("in-train reduced", lambda m: in_training_rows(m)),
+            ("in-train FULL", lambda m: full_settings_rows(m))]
+    # PARTIAL_ files are abandoned runs and are excluded by the glob
     for f in sorted(PANEL.glob("heldout_scores*.json")):
         tag = f.stem.replace("heldout_scores", "") or "_1"
         sets.append((f"held-out{tag}", lambda m, f=f: heldout_rows(m, f)))
