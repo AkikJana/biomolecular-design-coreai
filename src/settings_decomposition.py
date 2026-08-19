@@ -90,6 +90,43 @@ def paired_d(recs, metric):
     return float(e.mean() / sd) if sd > 1e-12 else None
 
 
+def decoy_coverage(recs):
+    """Receptors that have both a cognate and at least one decoy.
+
+    The rank test and the AUC are only meaningful once an arm carries decoys for
+    the whole panel. An arm folded to 78 of 132 has decoys for some receptors and
+    not others, and scoring it produced an AUC of 0.917 -- higher than the full
+    arm's 0.864, from a subset of receptors that happened to be easy. The
+    scramble control is unaffected, because it needs only cognates and scrambles.
+    """
+    by = {}
+    for r in recs:
+        by.setdefault(r["receptor_id"], set()).add(r["label"])
+    return sum(1 for v in by.values() if "cognate" in v and "decoy" in v), len(by)
+
+
+def within_auc(recs, metric):
+    """P(cognate outranks a decoy of its own receptor), ties at half.
+
+    Only defined once an arm carries decoys. Section 7.16 ran the scramble
+    control alone, so this is empty for arms folded before the decoys were added.
+    """
+    wins = n = 0
+    by = {}
+    for r in recs:
+        by.setdefault(r["receptor_id"], []).append(r)
+    for g in by.values():
+        c = [x[metric] for x in g if x["label"] == "cognate"
+             and x.get(metric) is not None]
+        d = [x[metric] for x in g if x["label"] == "decoy"
+             and x.get(metric) is not None]
+        for cv in c:
+            for dv in d:
+                n += 1
+                wins += 1.0 if cv > dv else (0.5 if cv == dv else 0.0)
+    return float(wins / n) if n else None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ART / "settings_decomposition.json"))
@@ -122,11 +159,16 @@ def main():
         print(f"    (in progress, excluded rather than reported: "
               f"{', '.join(partial)})")
 
+    # the panel's full decoy coverage, taken from the reduced baseline
+    n_rec_full = decoy_coverage(cells["reduced"])[0]
+    print(f"\n  panel has decoys for {n_rec_full} receptors; an arm below that "
+          f"has its rank test and AUC withheld")
+
     result = {}
     for metric in METRICS:
         print(f"\n{'=' * 78}\n{metric}\n{'=' * 78}")
         print(f"  {'arm':11}{'settings':16}{'cog-scr':>10}{'p':>10}{'d':>7}"
-              f"{'share of full':>15}")
+              f"{'share':>8}{'rank':>7}{'first':>8}{'AUC':>7}")
         base = tests(cells["reduced"], metric)
         base_d = paired_d(cells["reduced"], metric)
         fullt = tests(cells["full"], metric)
@@ -148,10 +190,24 @@ def main():
                 m.setdefault("shares", {})[name] = frac
             elif name == "full":
                 share = f"{'100%':>14}"
+            # suppress rank and AUC unless the arm's decoys cover the panel
+            covered, n_rec = decoy_coverage(recs)
+            full_cov = covered >= n_rec_full
+            auc = within_auc(recs, metric) if full_cov else None
+            if not full_cov:
+                t = {k: v for k, v in t.items()
+                     if k not in ("mean_rank", "first", "n_receptors", "rank_p")}
             m[name] = {"effect": t["effect"], "p": t["p"], "d": d,
-                       "n": t.get("n_pairs")}
+                       "n": t.get("n_pairs"), "mean_rank": t.get("mean_rank"),
+                       "first": t.get("first"), "n_receptors": t.get("n_receptors"),
+                       "rank_p": t.get("rank_p"), "auc": auc}
+            rk = f"{t['mean_rank']:.2f}" if t.get("mean_rank") else "—"
+            fi = (f"{t['first']}/{t['n_receptors']}"
+                  if t.get("first") is not None else "—")
+            au = f"{auc:.3f}" if auc else "—"
             print(f"  {name:11}{label:16}{t['effect']:>10.3f}{t['p']:>10.2g}"
-                  f"{(d or float('nan')):>7.2f}{share}")
+                  f"{(d or float('nan')):>7.2f}{share.replace('%','%')[-8:]:>8}"
+                  f"{rk:>7}{fi:>8}{au:>7}")
         if "shares" in m:
             tot = sum(m["shares"].values())
             got = len(m["shares"])
