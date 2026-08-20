@@ -117,6 +117,30 @@ def main():
           "postdate every model's training\n")
 
     rows = []
+    # This work's own readouts, recomputed from the released Boltz-2 structures
+    # by src/anthropic_iface_plddt.py. Section 7.18 could only compare ipSAE,
+    # which is not what Section 8.2 recommends; these rows are the recommendation
+    # itself, scored against the same measured binding.
+    own = ART / "anthropic_binder" / "iface_plddt_boltz2.json"
+    if own.exists():
+        o = pd.DataFrame(json.loads(own.read_text()))
+        df = df.merge(o[["uuid", "iface_plddt", "receptor_side", "peptide_side",
+                         "peptide_whole"]], on="uuid", how="left")
+        for col, lab in (("iface_plddt", "Interface pLDDT  (this work's readout)"),
+                         ("receptor_side", "  receptor side"),
+                         ("peptide_side", "  binder side"),
+                         ("peptide_whole", "  binder whole-chain pLDDT")):
+            if df[col].notna().sum() < 100:
+                continue
+            auc = within_target_auc(df, col)
+            ap_val, n_t = macro_ap(df, col)
+            lo, hi = boot_ci(df, col, macro_ap, args.n_boot)
+            rows.append({"predictor": col, "label": lab, "within_auc": auc,
+                         "macro_ap": ap_val, "ap_ci": [lo, hi], "n_targets": n_t,
+                         "n_scored": int(df[col].notna().sum())})
+        print(f"  interface pLDDT recomputed for {df['iface_plddt'].notna().sum()} "
+              f"of {len(df)} designs\n")
+
     for key, label in PREDICTORS.items():
         col = f"ipsae_min_{key}"
         if col not in df.columns:
@@ -139,6 +163,13 @@ def main():
 
     base = df["y"].mean()
     print(f"\n  chance: AUC 0.500, macro-AP ~{base:.3f} (the base rate)")
+
+    ip = next((r for r in rows if r["predictor"] == "iface_plddt"), None)
+    if ip:
+        bz = next(r for r in rows if r["predictor"] == "boltz2")
+        print(f"\n  this work's readout vs the released score, same structures:")
+        print(f"    interface pLDDT  AUC {ip['within_auc']:.3f}  AP {ip['macro_ap']:.3f}")
+        print(f"    ipSAE (Boltz-2)  AUC {bz['within_auc']:.3f}  AP {bz['macro_ap']:.3f}")
 
     b = next(r for r in rows if r["predictor"] == "boltz2")
     print(f"\n{'=' * 78}")

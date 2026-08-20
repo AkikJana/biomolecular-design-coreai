@@ -201,14 +201,14 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 60  
 &nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 65  
 &nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 68  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 71  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 71  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 75  
-9. FUTURE PLAN .............................................................. 79  
-10. REFERENCES .............................................................. 83  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 85  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 87  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 92  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 72  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 72  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 77  
+9. FUTURE PLAN .............................................................. 80  
+10. REFERENCES .............................................................. 84  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 86  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 88  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 93  
 
 &nbsp;
 
@@ -279,10 +279,12 @@ Table 51: Cost per fold against standardised effect ......................... 63
 Table 52: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 65  
 Table 53: Candidate rewrites of the diffusion loop's inner operators ........ 66  
 Table 54: Ten co-folding predictors scored against measured binding, by ipSAE ... 68  
-Table 55: Project phases and schedule ....................................... 79  
-Table 56: Abbreviations and glossary ........................................ 85  
-Table 57: Reproduction commands by section .................................. 87  
-Table 58: Inference settings in each regime ................................. 90  
+Table 55: This work's readouts on Anthropic's designs, scored against measured binding ... 69  
+Table 56: Paired differences, 2,000 bootstrap resamples over targets ........ 70  
+Table 57: Project phases and schedule ....................................... 80  
+Table 58: Abbreviations and glossary ........................................ 86  
+Table 59: Reproduction commands by section .................................. 88  
+Table 60: Inference settings in each regime ................................. 91  
 
 <div class="page-break"></div>
 
@@ -2827,7 +2829,8 @@ which makes one row directly comparable to this work's own arm.
 #### 7.18.1 What the comparison is, and what it is not
 
 The released confidence score is ipSAE — the readout Section 7.11.4 examined —
-and not interface pLDDT, which is this work's headline. The positives are
+and not interface pLDDT, which is this work's headline; Section 7.18.3
+recomputes the latter from the released structures so that both are tested. The positives are
 synthesised binders rather than crystallised cognate pairs, and the panels share
 no targets. This is therefore **not the same measurement made twice**, and the
 numbers below should not be read as a reproduction of anything in Section 7.13.
@@ -2861,7 +2864,69 @@ its own panel. The spread across ten independently developed models is narrow �
 AUC 0.62 to 0.67 — which suggests the ceiling belongs to the task rather than to
 any one model.
 
-#### 7.18.3 The ordering is Section 7.10's argument, from outside
+#### 7.18.3 This work's own readout, recomputed from their structures
+
+Section 8.2 recommends interface pLDDT, not ipSAE, so the comparison above tests
+the readout family rather than the recommendation. Boltz-2 writes per-residue
+pLDDT into the B-factor column of the structures released with the study, and
+there are 1,440 Boltz-2 models, one per design — so the recommendation itself can
+be scored on the same designs without folding anything.
+
+The readout is computed exactly as Section 7.7 computes it: an 8.0 Å cutoff
+between representative atoms, CB where present and CA otherwise, and interface
+pLDDT as the mean CA pLDDT over the contacting residues of both sides. One thing
+could not be reused. Section 7.7's implementation takes the first two chains as
+receptor and peptide, and five of these targets are oligomeric — the 15-PGDH
+models carry two 266-residue target chains and one 76-residue binder — so it
+would have measured the target against itself. The binder chain is identified by
+matching the released binder length instead, with every other chain pooled as the
+target. All 1,320 designs scored; none was skipped.
+
+**Table 55: This work's readouts on Anthropic's designs, scored against measured binding**
+
+| Readout | within-target AUC | macro-AP |
+| :--- | ---: | ---: |
+| Interface pLDDT | 0.626 | 0.436 |
+| ipSAE (same structures) | 0.628 | 0.436 |
+| receptor side | 0.622 | 0.426 |
+| binder side | 0.610 | 0.428 |
+| binder whole-chain pLDDT | 0.593 | 0.405 |
+
+Comparing overlapping intervals is not a test of a difference, and these scores
+come from the same designs and the same structures, so the comparisons are
+paired: targets are resampled and both scores recomputed on each resample.
+
+**Table 56: Paired differences, 2,000 bootstrap resamples over targets**
+
+| Comparison | Δ macro-AP | 95% CI | Δ AUC | 95% CI |
+| :--- | ---: | :--- | ---: | :--- |
+| interface pLDDT − ipSAE | +0.000 | [−0.051, +0.049] | −0.001 | [−0.054, +0.050] |
+| **interface pLDDT − binder whole-chain** | **+0.032** | **[+0.014, +0.050]** | **+0.033** | **[+0.005, +0.061]** |
+| interface pLDDT − OpenDDE (best predictor) | −0.095 | [−0.184, +0.001] | −0.007 | [−0.058, +0.040] |
+
+Three results, and the middle one is the substantive one.
+
+**Interface pLDDT and ipSAE are indistinguishable on measured binding.** The
+difference is zero to three decimal places on both measures, with intervals
+covering it. Section 8.2's preference between the two rests on Section 7.6's
+panel and finds no support here — and no contradiction either.
+
+**Interface pLDDT beats the binder's whole-chain pLDDT, and the interval excludes
+zero on both measures.** This is Section 7.7's central claim, tested from
+outside. That section asked whether interface pLDDT reads binding or merely
+peptide foldability, and answered it internally by showing the receptor's own
+residues respond to the partner. Here the same question is put to designs that
+were synthesised and measured: a readout confined to the interface predicts real
+binding better than the binder's overall confidence does. The margin is small —
+about 0.03 on both scales — but it is the claim, and it holds.
+
+**Interface pLDDT is not distinguishable from the best of ten predictors.**
+OpenDDE leads the table on macro-AP, but the paired interval on the difference
+covers zero. Nothing in this dataset separates the ten predictors from each other
+or from this work's readout, which is the more useful reading of the narrow 0.62
+to 0.67 band they all occupy.
+
+#### 7.18.4 The ordering is Section 7.10's argument, from outside
 
 | | within-target AUC |
 | :--- | ---: |
@@ -2882,12 +2947,13 @@ target should expect something closer to 0.63 — not because the model is worse
 than reported, but because the reported number was never a measurement of that
 situation.
 
-#### 7.18.4 Limitations
+#### 7.18.5 Limitations
 
-The score compared is ipSAE and not interface pLDDT, so this validates the
-readout family rather than this work's specific recommendation. Computing
-interface pLDDT on the released structures would close that gap and was not done
-here.
+The comparison of Section 7.18.2 is of ipSAE, the score [25] released, and
+therefore of the readout family rather than of this work's recommendation.
+Section 7.18.3 closes that gap by recomputing interface pLDDT from the released
+Boltz-2 structures; what remains untested is every readout this work examined
+that needs a PAE matrix, since only the structures and their pLDDT were used.
 
 Their designs are single-chain *de novo* binders against structured targets;
 this work's are short natural peptides, several of them disordered in isolation.
@@ -3145,7 +3211,13 @@ on different molecules and a different readout. The held-out figure is much
 closer to the wet-lab figure than the headline is, and still above it. The
 practical consequence is that Section 7.13's AUC 0.943 should be read as the
 value of the readout on the panel it was measured on, and a screen against a
-novel target should expect something nearer 0.63.
+novel target should expect something nearer 0.63. Recomputing this work's own
+interface pLDDT from their released Boltz-2 structures puts it at 0.626, level
+with ipSAE and with the best of the ten predictors, and — the one comparison
+whose paired interval excludes zero — **above the binder's whole-chain pLDDT by
++0.033 AUC [+0.005, +0.061]**. Section 7.7's claim that the readout carries
+interface information rather than foldability alone therefore survives a test
+against binding that was actually measured.
 
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
@@ -3167,15 +3239,19 @@ what it measures, and most published ones lack all six.
    proposed it. On a 22-receptor panel a search over 63 subsets reaches AUC 0.755
    with no signal present, so any future search of this panel — by hand or by
    machine — must report that null before its result can be read.
-1. **Rank on interface pLDDT, never on pDockQ, and halve your expectations for
-   a novel target.** Interface pLDDT carries 8.6 times ipTM's effect-to-noise
+1. **Rank on interface pLDDT, never on pDockQ, and expect a novel target to
+   score far below any in-training benchmark.** Interface pLDDT carries 8.6 times ipTM's effect-to-noise
    ratio (Section 7.6) and is the best single readout in every arm tested. On
    complexes released after the training cutoff — the screening case — it and
    ipTM both retain roughly half their effect (Section 7.10); five draws could
    not establish that either degrades more than the other, and two earlier
    attempts to claim one did were withdrawn. Quoting a benchmark figure without
    stating whether the complexes were in training is the single easiest way to
-   overstate a cofolding screen, by about a factor of two. pDockQ fails outright:
+   overstate a cofolding screen, by about a factor of two. Scored against binding
+   measured in a wet lab on designs no model had seen, interface pLDDT reaches
+   within-target AUC 0.626 — indistinguishable from ipSAE and from the best of
+   ten independently developed predictors, and far below the 0.943 this work
+   reports on its own in-training panel (Section 7.18). pDockQ fails outright:
    its contact term is computed on unconverged geometry and favours scrambled
    peptides (Sections 7.6, 7.11). **pDockQ2 repairs it** by substituting a
    PAE-derived term, and is the second-best readout measured.
@@ -3247,7 +3323,7 @@ what it measures, and most published ones lack all six.
 
 # 9. FUTURE PLAN
 
-**Table 55: Project phases and schedule**
+**Table 57: Project phases and schedule**
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -3330,7 +3406,7 @@ want more receptors rather than more analysis, and both are throughput problems
 
 # APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
-**Table 56: Abbreviations and glossary**
+**Table 58: Abbreviations and glossary**
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -3370,7 +3446,7 @@ recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
 
-**Table 57: Reproduction commands by section**
+**Table 59: Reproduction commands by section**
 
 | Result | Section | Command |
 | :--- | :---: | :--- |
@@ -3435,7 +3511,7 @@ load-bearing, because Section 7.13 measures the difference between them and find
 it accounts for a factor of three to seven in the standardised effect. No figure
 should be read without knowing which regime produced it.
 
-**Table 58: Inference settings in each regime**
+**Table 60: Inference settings in each regime**
 
 | Setting | Reduced regime | Full regime | Boltz default |
 | :--- | :---: | :---: | :---: |
