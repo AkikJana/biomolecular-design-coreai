@@ -201,14 +201,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 62  
 &nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 67  
 &nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 70  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 74  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 74  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 79  
-9. FUTURE PLAN .............................................................. 82  
-10. REFERENCES .............................................................. 86  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 88  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 90  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 95  
+&nbsp;&nbsp;&nbsp;&nbsp;7.19 The Scramble Control Against Measured Binding, and Where It Stops Working ... 74  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 77  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 77  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 82  
+9. FUTURE PLAN .............................................................. 86  
+10. REFERENCES .............................................................. 90  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 92  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 94  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 99  
 
 &nbsp;
 
@@ -282,10 +283,12 @@ Table 54: Candidate rewrites of the diffusion loop's inner operators ........ 68
 Table 55: Ten co-folding predictors scored against measured binding, by ipSAE ... 70  
 Table 56: This work's readouts on Anthropic's designs, scored against measured binding ... 71  
 Table 57: Paired differences, 2,000 bootstrap resamples over targets ........ 72  
-Table 58: Project phases and schedule ....................................... 82  
-Table 59: Abbreviations and glossary ........................................ 88  
-Table 60: Reproduction commands by section .................................. 90  
-Table 61: Inference settings in each regime ................................. 94  
+Table 58: Interface pLDDT of a design and of its own permutations, by measured outcome ... 74  
+Table 59: Separating measured binders, with and without the scramble control ... 75  
+Table 60: Project phases and schedule ....................................... 86  
+Table 61: Abbreviations and glossary ........................................ 92  
+Table 62: Reproduction commands by section .................................. 94  
+Table 63: Inference settings in each regime ................................. 98  
 
 <div class="page-break"></div>
 
@@ -3025,6 +3028,108 @@ as one dataset makes the table above appear to contradict its own source.
 
 <div class="page-break"></div>
 
+### 7.19 The Scramble Control Against Measured Binding, and Where It Stops Working
+
+The scramble control is this work's central methodological contribution. Section
+7.4 showed that a confidence score can rank a peptide above an unrelated decoy
+while being blind to whether its residues are in the right order, and every
+result since is reported against a candidate's own permutations rather than as a
+raw score. Section 7.14 builds it into the screening tool as a requirement.
+
+It had never been tested against binding. A cognate pair in the panel counts as a
+positive because it was crystallised, not because anything was measured. Section
+7.18's release permits the direct test: designs that were synthesised, and whose
+binding two contract research organisations measured.
+
+#### 7.19.1 A prediction, registered before the folds
+
+The prediction was written into `src/scramble_wetlab.py` and committed before any
+fold ran, so that the outcome could not be rationalised afterwards. It is quoted
+here as it stands in the source:
+
+> These binders are 60 to 120 residue designed proteins, not the 5 to 25 residue
+> peptides of Section 7.4's panel. A permutation of a 100-residue protein does
+> not fold at all, so both binders and non-binders should receive an equally
+> ruined scramble, and the subtraction may add nothing.
+
+The analysis script was likewise committed before the folds finished, with a
+single pre-specified comparison: the within-target AUC of the raw readout against
+the AUC of the readout minus the candidate's own scrambles.
+
+#### 7.19.2 The scramble is ruined for both classes alike
+
+Thirty-eight designs across four targets — RBX1, PD-L1, TrkA and BHRF1 — each
+folded as delivered and against two permutations of itself, on DeCAF.
+
+**Table 58: Interface pLDDT of a design and of its own permutations, by measured outcome**
+
+| | n | design | its scrambles | margin |
+| :--- | ---: | ---: | ---: | ---: |
+| measured binders | 20 | 72.99 | 53.88 | **+19.11** |
+| measured non-binders | 18 | 71.15 | 53.22 | **+17.93** |
+
+The permutations lose about nineteen points of interface pLDDT whether the design
+binds or not, and the two margins are indistinguishable — Welch *p* = 0.751. The
+scramble is not acting as a control here; it is acting as a constant.
+
+#### 7.19.3 The pre-specified test
+
+**Table 59: Separating measured binders, with and without the scramble control**
+
+| Readout | within-target AUC |
+| :--- | ---: |
+| raw interface pLDDT | **0.672** |
+| design minus its own scrambles | 0.581 |
+| released ipSAE, for reference | 0.739 |
+
+| Comparison | Δ AUC | 95% CI |
+| :--- | ---: | :--- |
+| margin − raw | **−0.092** | [−0.170, +0.008] |
+
+The interval includes zero, so the honest statement is that **the scramble
+control does not add information about measured binding here** — not that it
+actively destroys it, though the point estimate is negative on every subset
+examined. The result was stable as folds accumulated: −0.056 at thirty designs,
+−0.092 at thirty-eight.
+
+#### 7.19.4 What this bounds
+
+This is a limit on the control's applicability, not a refutation of Sections 7.4
+to 7.13. The mechanism is the one predicted. A permutation of a fifteen-residue
+peptide is still a fifteen-residue peptide, plausibly able to occupy the same
+groove, so the comparison isolates order from composition — which is exactly what
+Section 7.4 needed to establish. A permutation of a hundred-residue designed
+protein is not a protein at all: it does not fold, so its low score reflects the
+destruction of a tertiary structure rather than the loss of a binding-competent
+arrangement, and that destruction is equally severe for a design that binds and
+one that does not.
+
+The recommendation therefore acquires a condition. **Use the scramble control
+where a permutation of the candidate remains a candidate.** For peptide screening
+— the case this dissertation is about — it does. For designed miniproteins it
+does not, and the raw readout is the better of the two.
+
+#### 7.19.5 Limitations
+
+Thirty-eight designs on four targets, folded once each on DeCAF at ten sampling
+steps. Section 7.16 measured that the sampling budget carries most of the
+available effect, so a full-settings repeat could change the magnitudes; it is
+unlikely to reverse a difference this consistent in sign, but that is an
+expectation and not a measurement.
+
+The run was stopped at 114 of 144 folds because the machine had exhausted memory
+— free and inactive pages fell to 0.6 GB of 17, and a batch that had been taking
+about eight minutes took eighteen. The ten designs not folded were the last of
+the sample and were not selected in any way that relates to the outcome.
+
+One observation is recorded without a claim attached: on these thirty-eight
+designs the released ipSAE (0.739) separates measured binders better than this
+work's interface pLDDT (0.672). Section 7.18 found the two indistinguishable
+across all 1,320 designs, so this is most likely the small sample here rather
+than a real ordering, and it is not the test this section pre-specified.
+
+<div class="page-break"></div>
+
 # 8. CONCLUSIONS AND RECOMMENDATIONS
 
 ## 8.1 Conclusions
@@ -3277,6 +3382,22 @@ whose paired interval excludes zero — **above the binder's whole-chain pLDDT b
 interface information rather than foldability alone therefore survives a test
 against binding that was actually measured.
 
+**Fifteenth, and it bounds this work's own central control: the scramble
+comparison carries no information about measured binding on designed proteins**
+(Section 7.19). Thirty-eight of Anthropic's designs were folded as delivered and
+against permutations of themselves. The permutations lose about nineteen points
+of interface pLDDT whether the design binds or not — +19.11 against +17.93,
+Welch p = 0.751 — and subtracting them moves within-target AUC from 0.672 to
+0.581, a change of −0.092 whose interval [−0.170, +0.008] includes zero. The
+prediction that this would happen was registered in the source before any fold
+ran, together with its mechanism: a permutation of a fifteen-residue peptide is
+still a plausible ligand, while a permutation of a hundred-residue designed
+protein does not fold at all, so its low score reflects a destroyed tertiary
+structure rather than a lost binding arrangement. The control is therefore sound
+for the case this dissertation concerns and unsound outside it, and the
+recommendation acquires the condition that a permutation of the candidate must
+remain a candidate.
+
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
 de-confounding base-model arm, mixed-effects estimation, a peptide-integrity
@@ -3313,7 +3434,15 @@ what it measures, and most published ones lack all six.
    its contact term is computed on unconverged geometry and favours scrambled
    peptides (Sections 7.6, 7.11). **pDockQ2 repairs it** by substituting a
    PAE-derived term, and is the second-best readout measured.
-2. **Never run a stock cofolding model far below its intended sampling budget,
+2. **Use the scramble control wherever a permutation of the candidate is still a
+   candidate, and not outside that.** On the peptide panels of Sections 7.4 to
+   7.13 it is what separates order sensitivity from composition, and Section 7.14
+   makes it a requirement of the screening tool. On 60-to-120-residue designed
+   proteins it carries nothing: a permutation does not fold, binders and
+   non-binders lose the same nineteen points, and subtracting it costs 0.092 AUC
+   against binding that was actually measured (Section 7.19). The condition is on
+   the candidate, not on the target.
+3. **Never run a stock cofolding model far below its intended sampling budget,
    and re-measure the budget before assuming it is unaffordable.** At 10 of an
    intended 200 steps the effect on the scramble control is three to seven times
    smaller in standardised terms and the backbone is 14% physically plausible
@@ -3323,26 +3452,26 @@ what it measures, and most published ones lack all six.
    practical difference is not marginal: interface pLDDT ranks the true binder
    first for 9 of 22 receptors at reduced settings and **17 of 22** at full,
    with within-receptor AUC rising from 0.640 to **0.943**.
-3. **If the budget genuinely is short, use a model distilled for it rather than
+4. **If the budget genuinely is short, use a model distilled for it rather than
    a stock model run short.** At ten sampling steps a stock model returns 14% physically
    plausible backbone bonds; a few-step-distilled model returns 96.2%
    (Section 7.11). Every geometry-derived readout — contacts, buried area,
    pDockQ, PAE-based metrics, any physics energy function — is meaningless on the
    former and works on the latter. This is the largest single quality difference
    measured in this work, and it costs nothing at inference.
-4. **Require the match in both directions before calling a hit.** Score each
+5. **Require the match in both directions before calling a hit.** Score each
    candidate against the target *and* against a small panel of off-targets, and
    keep only candidates whose best target is yours. Precision rises from 56% to
    88% and enrichment from 2.3x to 3.5x, discarding 87% of wrong calls against
    23% of right ones (Section 7.12). It costs five to ten times the folds and
    nothing in modelling, and it is the only intervention in this work that
    improved in every panel, readout and draw tested.
-5. **Split the benchmark on the model's training cutoff, and report both
+6. **Split the benchmark on the model's training cutoff, and report both
    halves.** This was the most consequential control in the project and the last
    one applied. Boltz-1 and AlphaFold3 both cut off at 2021-09-30. Without the
    split, a panel drawn from the PDB measures retrieval and prediction together
    and reports the sum as accuracy.
-6. **Report replicate-averaged confidence for per-receptor claims — and for
+7. **Report replicate-averaged confidence for per-receptor claims — and for
    any headline number.** Section 7.10.3 is the cautionary case: a single draw
    put the held-out interface-pLDDT effect at p = 0.089 and a second put it at
    p = 0.00008.
@@ -3353,11 +3482,14 @@ what it measures, and most published ones lack all six.
    evidence, 9 to 16 replicate folds per complex are required before a
    per-receptor ranking is meaningful. Practitioners ranking binders on a single
    AlphaFold or Boltz run should treat those rankings as provisional.
-7. **Always include a scramble control.** Composition and length alone reproduce
-   most of the apparent discrimination between a cognate and a decoy. Without a
+8. **Include a scramble control in any peptide benchmark — subject to
+   recommendation 2.** Composition and length alone reproduce most of the
+   apparent discrimination between a cognate and a decoy. Without a
    composition-matched control, a benchmark cannot distinguish binder
-   recognition from composition sensitivity.
-8. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
+   recognition from composition sensitivity. This is why the control is
+   necessary; recommendation 2 states where it is valid, which is wherever a
+   permutation of the candidate is itself a plausible candidate.
+9. **Audit what is bonded to the peptide, not just its sequence.** Seven of 25
    candidate complexes were PTM-dependent, and folding the canonical sequence
    makes those "positives" non-binding, which silently penalises the metric
    under test. An allowlist of known PTM codes is not sufficient — it passed a
@@ -3366,10 +3498,10 @@ what it measures, and most published ones lack all six.
    no list, and additionally catches glycosylation (9GRF) and peptides that are
    substantially synthetic (1NLO). Reject any peptide whose canonical sequence
    contains `X` (Section 7.10.1).
-9. **Do not treat operator-level memory savings as drop-in.** A substituted
+10. **Do not treat operator-level memory savings as drop-in.** A substituted
    operator should be validated against pretrained weights on real activations
    before its microbenchmark saving is claimed.
-10. **Deploy on GPU before extending the biological claims.** The replicate
+11. **Deploy on GPU before extending the biological claims.** The replicate
    folding required by recommendation 6 is a 1,200–2,100 fold workload for this
    panel, which is not a CPU-scale task.
 
@@ -3381,7 +3513,7 @@ what it measures, and most published ones lack all six.
 
 # 9. FUTURE PLAN
 
-**Table 58: Project phases and schedule**
+**Table 60: Project phases and schedule**
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -3464,7 +3596,7 @@ want more receptors rather than more analysis, and both are throughput problems
 
 # APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
-**Table 59: Abbreviations and glossary**
+**Table 61: Abbreviations and glossary**
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -3507,7 +3639,7 @@ recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
 
-**Table 60: Reproduction commands by section**
+**Table 62: Reproduction commands by section**
 
 | Result | Section | Command |
 | :--- | :---: | :--- |
@@ -3546,6 +3678,7 @@ below identify the entry points.
 | Settings decomposition analysis | 7.16 | `python src/settings_decomposition.py` |
 | Operator benchmark and equivalence check | 7.17 | `python src/kernel_bench.py --op adaln` |
 | Validation against measured binding | 7.18 | `python src/anthropic_validation.py` |
+| Scramble control against measured binding | 7.19 | `python src/scramble_wetlab.py` then `python src/scramble_wetlab_analysis.py` |
 | CoreAI surrogate export | 4 | `python src/convert_surrogate_coreai.py` — **needs the CoreAI SDK** |
 | CoreAI dynamic-shape latency (Table 4) | 4 | `python src/benchmark_boltz_coreai.py` — **needs the CoreAI SDK** |
 | MINT sequence-model baseline | 7.11 | `python src/mint_baseline.py` |
@@ -3575,7 +3708,7 @@ load-bearing, because Section 7.13 measures the difference between them and find
 it accounts for a factor of three to seven in the standardised effect. No figure
 should be read without knowing which regime produced it.
 
-**Table 61: Inference settings in each regime**
+**Table 63: Inference settings in each regime**
 
 | Setting | Reduced regime | Full regime | Boltz default |
 | :--- | :---: | :---: | :---: |
