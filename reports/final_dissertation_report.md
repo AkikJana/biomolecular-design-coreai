@@ -109,38 +109,24 @@ this kind possible at all.
 
 **Abstract:**
 
-This dissertation investigates whether inference-efficiency techniques drawn
-from large language models can make all-atom biomolecular structure prediction
-and binder screening practical on edge hardware. A framework, Boltz-Fast, was
-implemented on the open Boltz model: latent key-value caching, sequence
-parallelism, a low-rank pair representation, classifier-free-guidance
-distillation, and a neural coordinate refiner, all executing device-agnostically
-on Apple Silicon. Component microbenchmarks showed large savings. The work then
-tested those components against pretrained checkpoints and experimentally
-determined structures rather than synthetic tensors, and two central claims did
-not survive. The low-rank pair representation cannot be recovered from released
-weights at any rank that saves memory. Interface confidence responds largely to
-peptide composition rather than to binding, and a single unseeded fold does not
-reproduce its own ranking. Each negative result is supported by controls, held-out splits, power analysis
-and replication. Re-scoring the same structures then recovered a positive
-result: interface pLDDT separates a binder from its own scramble where ipTM
-cannot, at 8.6 times the effect-to-noise ratio. A second panel of receptors
-released after the model's training cutoff then bounded that recovery — over
-five independent draws both readouts retain only about half their effect on
-complexes the model was not trained on, so a benchmark figure quoted without
-stating which regime it was measured in is roughly a factor of two optimistic.
-Auditing the predicted coordinates themselves explains much of the rest: at the
-reduced sampling used throughout, only 14% of backbone bonds are physically
-plausible against 96% for a model distilled for that step budget, and every
-geometry-derived readout fails on the former and works on the latter. Folding
-the panel at the model's intended settings then bounds the negative results
-themselves: the cognate-versus-scramble effect is three to seven times larger in
-standardised terms, so the conclusions above hold for a model run at a tenth of
-its sampling budget and understate what it does when run properly. The efficiency
-finding survives that correction and is strengthened by it — a model distilled
-for ten steps recovers most of the full-settings signal at a twentieth of the
-cost.
-
+This dissertation asks whether inference-efficiency techniques drawn from large
+language models can make all-atom structure prediction and peptide binder
+screening practical on edge hardware. Boltz-Fast implements latent key-value
+caching, a low-rank pair representation, classifier-free-guidance distillation
+and a neural coordinate refiner, executing device-agnostically on Apple Silicon.
+Tested against pretrained checkpoints and experimental structures rather than
+synthetic tensors, two central claims did not survive: the low-rank pair
+representation is unreachable from released weights at any rank that saves
+memory, and interface confidence responds to peptide composition rather than
+binding. Re-scoring recovered a positive result — interface pLDDT separates a
+binder from its own scramble where ipTM cannot. Three controls then bounded it.
+Complexes released after the training cutoff retain about a third of the
+standardised effect. Reduced sampling suppressed every effect three- to
+sevenfold, and decomposing the settings shows sampling steps carry that loss
+while alignment depth and recycling carry none. Scored against binding measured
+in a wet laboratory on 1,320 designs no model had seen, the readout reaches AUC
+0.626 where the in-training panel gives 0.943. The findings are delivered as a
+screening tool enforcing the controls they depend on.
 &nbsp;
 
 <div class="signature-block">
