@@ -179,47 +179,47 @@ ABSTRACT SHEET .............................................................. iv
 2. MODULES IN BOLTZ-FAST ..................................................... 4  
 3. FUNCTIONAL BLOCK DIAGRAM & METHODOLOGY .................................... 7  
 4. MAJOR TECHNICAL SPECIFICATIONS & BENCHMARKS ............................... 8  
-5. DESIGN CONSIDERATIONS .................................................... 12  
-6. VERIFICATION & TESTING (M1 & M6) ......................................... 13  
-&nbsp;&nbsp;&nbsp;&nbsp;6.1 Subsequent Hardening of the Suite ....................................... 13  
-7. MEASURED RESULTS VS PRETRAINED WEIGHTS ................................... 15  
-&nbsp;&nbsp;&nbsp;&nbsp;7.1 Low-Rank Pair Representation on Pretrained Weights ...................... 15  
-&nbsp;&nbsp;&nbsp;&nbsp;7.2 Interface Confidence Does Not Rank Peptide Binders ...................... 16  
-&nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 16  
-&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding — at 10 Sampling Steps ... 17  
-&nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 18  
-&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards — On Structures the Model Has Seen ... 20  
-&nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
-&nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 27  
-&nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 30  
-&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 35  
-&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 42  
-&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 45  
-&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 49  
-&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 53  
-&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 58  
-&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 61  
-&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 66  
-&nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 69  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 73  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 73  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 78  
-9. FUTURE PLAN .............................................................. 81  
-10. REFERENCES .............................................................. 85  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 87  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 89  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 94  
+5. DESIGN CONSIDERATIONS .................................................... 13  
+6. VERIFICATION & TESTING (M1 & M6) ......................................... 14  
+&nbsp;&nbsp;&nbsp;&nbsp;6.1 Subsequent Hardening of the Suite ....................................... 14  
+7. MEASURED RESULTS VS PRETRAINED WEIGHTS ................................... 16  
+&nbsp;&nbsp;&nbsp;&nbsp;7.1 Low-Rank Pair Representation on Pretrained Weights ...................... 16  
+&nbsp;&nbsp;&nbsp;&nbsp;7.2 Interface Confidence Does Not Rank Peptide Binders ...................... 17  
+&nbsp;&nbsp;&nbsp;&nbsp;7.3 Boltz-2 Comparison and a Correction to the Benchmark .................... 17  
+&nbsp;&nbsp;&nbsp;&nbsp;7.4 Powered Run: ipTM Tracks Composition, Not Binding — at 10 Sampling Steps ... 18  
+&nbsp;&nbsp;&nbsp;&nbsp;7.5 Measurement Reproducibility ............................................. 19  
+&nbsp;&nbsp;&nbsp;&nbsp;7.6 Interface pLDDT Recovers What ipTM Discards — On Structures the Model Has Seen ... 21  
+&nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 25  
+&nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 28  
+&nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 31  
+&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 36  
+&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 43  
+&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 46  
+&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 50  
+&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 54  
+&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 59  
+&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 62  
+&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 67  
+&nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 70  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 74  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 74  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 79  
+9. FUTURE PLAN .............................................................. 82  
+10. REFERENCES .............................................................. 86  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 88  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 90  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 95  
 
 &nbsp;
 
 ## LIST OF FIGURES
 
 Figure 1: Core Modules in Boltz-Fast ......................................... 4  
-Figure 2: C-alpha Backbone 3D Coordinate Plot ................................ 9  
-Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 10  
-Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 11  
-Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 14  
-Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 22  
+Figure 2: C-alpha Backbone 3D Coordinate Plot ............................... 10  
+Figure 3: Ray-Traced Protein Ribbon Model Rendering ......................... 11  
+Figure 4: ANE-Accelerated 3D Insulin Backbone Visualization ................. 12  
+Figure 5: Post-Diffusion Neural Coordinate Refinement Comparison ............ 15  
+Figure 6: ipTM and Interface pLDDT on the Scramble Control .................. 23  
 
 &nbsp;
 
@@ -229,63 +229,63 @@ Table 1: Computational Complexity & Scaling Comparison ....................... 8
 Table 2: Speculative Flow Matching Grid Sweep Data ........................... 8  
 Table 3: Low-Rank Pair Representation Performance Scaling (Rank r=16, D_pair=128) ... 8  
 Table 4: Dynamic Shape Latency Benchmarks on Apple Silicon ................... 9  
-Table 5: Low-rank OPM — three experiments and their held-out error at rank 32 ... 15  
-Table 6: Boltz-1 and Boltz-2 mean ipTM by class on the identical 66 pairs ... 16  
-Table 7: Mean ipTM by class on the powered 22-receptor panel ................ 18  
-Table 8: Interface readouts on the scramble control ......................... 20  
-Table 9: Scramble-control effect against run-to-run spread .................. 21  
-Table 10: Which side of the interface carries the interface-pLDDT signal .... 24  
-Table 11: Binding-site controls for the receptor-side signal ................ 25  
-Table 12: The three arms of the few-step distillation comparison ............ 27  
-Table 13: Order sensitivity across the three arms — cognate minus its own scramble ... 27  
-Table 14: Receptor specificity across the three arms — cognate ranked against its own decoys ... 27  
-Table 15: De-confounding — effect with suspect panel members removed ........ 28  
-Table 16: Rank test against a mixed model with receptor as a random effect ... 30  
-Table 17: Variance decomposition, and the ceiling it implies ................ 30  
-Table 18: Run-to-run spread, DeCAF against Boltz-2 .......................... 31  
-Table 19: Signal-to-noise with borrowed and with measured noise ............. 31  
-Table 20: Ensembling on measured binding, against the better member of each pair ... 33  
-Table 21: Panel members whose folded pair was not what was crystallised ..... 35  
-Table 22: In-training against held-out — scramble control ................... 36  
-Table 23: In-training against held-out — receptor specificity ............... 36  
-Table 24: Mixed-model interaction, raw and within-receptor z ................ 37  
-Table 25: Scramble control across five independent draws .................... 37  
-Table 26: Receptor specificity across five independent draws ................ 38  
-Table 27: The contamination penalty at full settings, against the in-training panel folded identically ... 39  
-Table 28: Backbone geometry at ten sampling steps ........................... 42  
-Table 29: Physics rescoring against the confidence readouts ................. 43  
-Table 30: A sequence model's zero-shot AUC, for scale ....................... 44  
-Table 31: Reciprocal matching, each direction separately .................... 45  
-Table 32: Precision and calls retained under the reciprocal filter .......... 45  
-Table 33: Binding-site correctness against the crystal ...................... 46  
-Table 34: Pose reproducibility between independent draws .................... 47  
-Table 35: The reciprocal filter at reduced and at full settings ............. 48  
-Table 36: The reduced and full inference regimes ............................ 49  
-Table 37: Scramble control at reduced and full settings ..................... 49  
-Table 38: Receptor specificity at reduced and full settings ................. 50  
-Table 39: Absolute confidence at reduced and full settings .................. 51  
-Table 40: Backbone geometry by arm .......................................... 51  
-Table 41: Fixed and marginal cost of a fold ................................. 53  
-Table 42: Measured screen times, cold and cached ............................ 54  
-Table 43: The same three candidates against two targets ..................... 55  
-Table 44: MDM2 at full sampling, with a designed binder added ............... 55  
-Table 45: c-Crk SH3, where the scramble control saturates ................... 55  
-Table 46: Single readouts and the search winner ............................. 58  
-Table 47: Best-of-search on labels permuted within receptor ................. 59  
-Table 48: The search winner on the held-out panel ........................... 59  
-Table 49: The five settings arms ............................................ 61  
-Table 50: Per-knob decomposition of the settings effect ..................... 61  
-Table 51: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50 ... 63  
-Table 52: Cost per fold against standardised effect ......................... 64  
-Table 53: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 66  
-Table 54: Candidate rewrites of the diffusion loop's inner operators ........ 67  
-Table 55: Ten co-folding predictors scored against measured binding, by ipSAE ... 69  
-Table 56: This work's readouts on Anthropic's designs, scored against measured binding ... 70  
-Table 57: Paired differences, 2,000 bootstrap resamples over targets ........ 71  
-Table 58: Project phases and schedule ....................................... 81  
-Table 59: Abbreviations and glossary ........................................ 87  
-Table 60: Reproduction commands by section .................................. 89  
-Table 61: Inference settings in each regime ................................. 93  
+Table 5: Low-rank OPM — three experiments and their held-out error at rank 32 ... 16  
+Table 6: Boltz-1 and Boltz-2 mean ipTM by class on the identical 66 pairs ... 17  
+Table 7: Mean ipTM by class on the powered 22-receptor panel ................ 19  
+Table 8: Interface readouts on the scramble control ......................... 21  
+Table 9: Scramble-control effect against run-to-run spread .................. 22  
+Table 10: Which side of the interface carries the interface-pLDDT signal .... 25  
+Table 11: Binding-site controls for the receptor-side signal ................ 26  
+Table 12: The three arms of the few-step distillation comparison ............ 28  
+Table 13: Order sensitivity across the three arms — cognate minus its own scramble ... 28  
+Table 14: Receptor specificity across the three arms — cognate ranked against its own decoys ... 28  
+Table 15: De-confounding — effect with suspect panel members removed ........ 29  
+Table 16: Rank test against a mixed model with receptor as a random effect ... 31  
+Table 17: Variance decomposition, and the ceiling it implies ................ 31  
+Table 18: Run-to-run spread, DeCAF against Boltz-2 .......................... 32  
+Table 19: Signal-to-noise with borrowed and with measured noise ............. 32  
+Table 20: Ensembling on measured binding, against the better member of each pair ... 34  
+Table 21: Panel members whose folded pair was not what was crystallised ..... 36  
+Table 22: In-training against held-out — scramble control ................... 37  
+Table 23: In-training against held-out — receptor specificity ............... 37  
+Table 24: Mixed-model interaction, raw and within-receptor z ................ 38  
+Table 25: Scramble control across five independent draws .................... 38  
+Table 26: Receptor specificity across five independent draws ................ 39  
+Table 27: The contamination penalty at full settings, against the in-training panel folded identically ... 40  
+Table 28: Backbone geometry at ten sampling steps ........................... 43  
+Table 29: Physics rescoring against the confidence readouts ................. 44  
+Table 30: A sequence model's zero-shot AUC, for scale ....................... 45  
+Table 31: Reciprocal matching, each direction separately .................... 46  
+Table 32: Precision and calls retained under the reciprocal filter .......... 46  
+Table 33: Binding-site correctness against the crystal ...................... 47  
+Table 34: Pose reproducibility between independent draws .................... 48  
+Table 35: The reciprocal filter at reduced and at full settings ............. 49  
+Table 36: The reduced and full inference regimes ............................ 50  
+Table 37: Scramble control at reduced and full settings ..................... 50  
+Table 38: Receptor specificity at reduced and full settings ................. 51  
+Table 39: Absolute confidence at reduced and full settings .................. 52  
+Table 40: Backbone geometry by arm .......................................... 52  
+Table 41: Fixed and marginal cost of a fold ................................. 54  
+Table 42: Measured screen times, cold and cached ............................ 55  
+Table 43: The same three candidates against two targets ..................... 56  
+Table 44: MDM2 at full sampling, with a designed binder added ............... 56  
+Table 45: c-Crk SH3, where the scramble control saturates ................... 56  
+Table 46: Single readouts and the search winner ............................. 59  
+Table 47: Best-of-search on labels permuted within receptor ................. 60  
+Table 48: The search winner on the held-out panel ........................... 60  
+Table 49: The five settings arms ............................................ 62  
+Table 50: Per-knob decomposition of the settings effect ..................... 62  
+Table 51: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50 ... 64  
+Table 52: Cost per fold against standardised effect ......................... 65  
+Table 53: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 67  
+Table 54: Candidate rewrites of the diffusion loop's inner operators ........ 68  
+Table 55: Ten co-folding predictors scored against measured binding, by ipSAE ... 70  
+Table 56: This work's readouts on Anthropic's designs, scored against measured binding ... 71  
+Table 57: Paired differences, 2,000 bootstrap resamples over targets ........ 72  
+Table 58: Project phases and schedule ....................................... 82  
+Table 59: Abbreviations and glossary ........................................ 88  
+Table 60: Reproduction commands by section .................................. 90  
+Table 61: Inference settings in each regime ................................. 94  
 
 <div class="page-break"></div>
 
@@ -576,6 +576,22 @@ Surrogate models exported to Apple CoreAI runtimes execute dynamically on the ma
 | **Insulin Monomer** | 50 | Small Target (Hemoglobin) | 153 | 6.31 ms | `(1, 50, 3)` | **No** |
 | **Insulin Monomer** | 50 | Large Target (Receptor) | 1300 | 31.29 ms | `(1, 50, 3)` | **No** |
 | **Hemoglobin Frag** | 90 | Large Target (Receptor) | 1300 | 36.58 ms | `(1, 90, 3)` | **No** |
+
+**What produced this table, and what it does not cover.** These latencies were
+measured with the CoreAI SDK — `coreai.runtime`, `coreai_torch` and `coreai_opt`,
+which are distinct from Apple's Core ML and its `coremltools` — through
+`src/benchmark_boltz_coreai.py` and `src/convert_surrogate_coreai.py`. That SDK
+is not present in the environment the rest of this report was produced in, so
+Table 4 is the one measurement here that cannot be re-run alongside the others;
+Appendix B lists the scripts and says so.
+
+The model measured is the **affinity surrogate**, not Boltz. Every folding result
+in Section 7 runs Boltz or DeCAF under PyTorch on the Metal (MPS) backend, which
+produces no CoreAI artifact and does not touch the Neural Engine. The two paths
+share no weights, and a latency here says nothing about the cost of a fold —
+Section 7.13 measures that separately at 106 to 109 seconds. Section 7.17
+measures where that time goes.
+
 
 ![C-alpha Backbone 3D Coordinate Plot](assets/backbone_3d_plot.png)
 
@@ -3483,7 +3499,10 @@ want more receptors rather than more analysis, and both are throughput problems
 # APPENDIX B — REPRODUCTION OF THE REPORTED RESULTS
 
 Every measurement in Section 7 is reproducible from the accompanying
-repository. Each experiment writes a provenance manifest under `results/real/`
+repository. The one exception in this report lies outside Section 7: Table 4's
+CoreAI latencies require the CoreAI SDK, which is not installed in the
+environment used for everything else, and its two scripts are marked accordingly
+below. Each experiment writes a provenance manifest under `results/real/`
 recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
@@ -3527,6 +3546,8 @@ below identify the entry points.
 | Settings decomposition analysis | 7.16 | `python src/settings_decomposition.py` |
 | Operator benchmark and equivalence check | 7.17 | `python src/kernel_bench.py --op adaln` |
 | Validation against measured binding | 7.18 | `python src/anthropic_validation.py` |
+| CoreAI surrogate export | 4 | `python src/convert_surrogate_coreai.py` — **needs the CoreAI SDK** |
+| CoreAI dynamic-shape latency (Table 4) | 4 | `python src/benchmark_boltz_coreai.py` — **needs the CoreAI SDK** |
 | MINT sequence-model baseline | 7.11 | `python src/mint_baseline.py` |
 | Protein-language-model baseline | 7.11 | `python src/plm_baseline.py` |
 | Verification suite | 6 | `python -m pytest -q` |
