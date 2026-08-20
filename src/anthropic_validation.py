@@ -167,7 +167,7 @@ def main():
     ip = next((r for r in rows if r["predictor"] == "iface_plddt"), None)
     if ip:
         bz = next(r for r in rows if r["predictor"] == "boltz2")
-        print(f"\n  this work's readout vs the released score, same structures:")
+        print("\n  this work's readout vs the released score, same structures:")
         print(f"    interface pLDDT  AUC {ip['within_auc']:.3f}  AP {ip['macro_ap']:.3f}")
         print(f"    ipSAE (Boltz-2)  AUC {bz['within_auc']:.3f}  AP {bz['macro_ap']:.3f}")
 

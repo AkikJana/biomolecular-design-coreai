@@ -31,7 +31,6 @@ Usage:
 """
 
 import argparse
-import statistics
 import time
 
 import torch
