@@ -198,16 +198,17 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 48  
 &nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 52  
 &nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 57  
-&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth .......... 60  
-&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 64  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 67  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 67  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 71  
-9. FUTURE PLAN .............................................................. 75  
-10. REFERENCES .............................................................. 79  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 81  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 83  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 88  
+&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 60  
+&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 65  
+&nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 68  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 71  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 71  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 75  
+9. FUTURE PLAN .............................................................. 79  
+10. REFERENCES .............................................................. 83  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 85  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 87  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 92  
 
 &nbsp;
 
@@ -273,13 +274,15 @@ Table 46: Best-of-search on labels permuted within receptor ................. 58
 Table 47: The search winner on the held-out panel ........................... 58  
 Table 48: The five settings arms ............................................ 60  
 Table 49: Per-knob decomposition of the settings effect ..................... 60  
-Table 50: Cost per fold against standardised effect ......................... 62  
-Table 51: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 64  
-Table 52: Candidate rewrites of the diffusion loop's inner operators ........ 65  
-Table 53: Project phases and schedule ....................................... 75  
-Table 54: Abbreviations and glossary ........................................ 81  
-Table 55: Reproduction commands by section .................................. 83  
-Table 56: Inference settings in each regime ................................. 86  
+Table 50: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50 ... 62  
+Table 51: Cost per fold against standardised effect ......................... 63  
+Table 52: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 65  
+Table 53: Candidate rewrites of the diffusion loop's inner operators ........ 66  
+Table 54: Ten co-folding predictors scored against measured binding, by ipSAE ... 68  
+Table 55: Project phases and schedule ....................................... 79  
+Table 56: Abbreviations and glossary ........................................ 85  
+Table 57: Reproduction commands by section .................................. 87  
+Table 58: Inference settings in each regime ................................. 90  
 
 <div class="page-break"></div>
 
@@ -401,8 +404,9 @@ against pretrained weights, which contains the substantive findings of this
 work, and closes with the screening tool those findings were built into
 (Section 7.14), an automated search that fails to improve on them (Section
 7.15), a decomposition of which inference setting carried the headline result
-(Section 7.16), and operator-level optimisation of the inference path under an
-exact equivalence oracle (Section 7.17). Section 8 draws conclusions and recommendations, and Section 9 sets
+(Section 7.16), operator-level optimisation of the inference path under an
+exact equivalence oracle (Section 7.17), and a check of the readouts against
+binding measured in a wet lab (Section 7.18). Section 8 draws conclusions and recommendations, and Section 9 sets
 out the remaining plan.
 
 <div class="page-break"></div>
@@ -2494,7 +2498,7 @@ does admit an exact oracle.
 
 <div class="page-break"></div>
 
-### 7.16 Which Setting Carried It: Sampling Steps, Not Alignment Depth
+### 7.16 Which Setting Carried It, and for Which Test
 
 Section 7.13 raised three settings at once — sampling steps 10 → 200, recycling
 1 → 3, alignment depth 32 → full — and measured a three- to sevenfold larger
@@ -2529,7 +2533,7 @@ Each arm ran the scramble control — 22 cognates against their 44 permutations,
 A knob's *share* is its standardised gain over the reduced baseline divided by
 the full arm's gain over the same baseline.
 
-#### 7.16.2 Sampling steps carry it; the other two carry none of it
+#### 7.16.2 On order sensitivity, sampling steps carry it and the other two carry none
 
 **Table 49: Per-knob decomposition of the settings effect**
 
@@ -2564,7 +2568,60 @@ negative: each arm sits marginally *below* the reduced baseline in standardised
 terms on all three readouts. This is Section 7.11's prediction confirmed by
 direct test rather than inferred from a coordinate audit.
 
-#### 7.16.3 The three settings are synergistic, not independent
+This conclusion is about order sensitivity only. Section 7.16.3 runs the same
+decomposition on the ranking test and alignment depth does not behave the same
+way there.
+
+#### 7.16.3 The ranking test does not decompose the same way
+
+Section 7.16.2 measured order sensitivity. Ranking a cognate against its own
+decoys is the test Section 7.13.2b calls the practical conclusion of this work,
+and it needs decoys, so each arm was extended from 66 folds to the full 132.
+
+**Table 50: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50**
+
+| Arm | ipTM: rank / first / AUC | Interface pLDDT | Receptor side |
+| :--- | :--- | :--- | :--- |
+| reduced | 1.86 / 11 of 22 / 0.712 | 1.91 / 9 / 0.697 | 2.05 / 8 / 0.652 |
+| **sampling** | 1.82 / **12** / 0.727 | 1.73 / **13** / 0.758 | 1.73 / **11** / 0.758 |
+| **alignment** | **1.55 / 14 / 0.818** | 1.77 / 8 / 0.742 | 2.27 / 5 / 0.576 |
+| recycling | 2.14 / 9 / 0.621 | 2.36 / 7 / 0.545 | 2.68 / 4 / **0.439** |
+| full | 1.41 / 15 / 0.864 | 1.27 / 17 / 0.909 | 1.27 / 17 / 0.909 |
+
+Two knobs behave as Section 7.16.2 predicts and one does not.
+
+**Sampling steps help both tests.** Top-1 rises on all three readouts (11 → 12,
+9 → 13, 8 → 11) and so does the AUC. This is the only knob that improves every
+measure of both tests, and it is the knob Section 7.11's geometry result pointed
+to.
+
+**Recycling harms both.** It was already negative on the scramble control; on the
+ranking test it is worse than doing nothing, dropping top-1 on all three readouts
+and taking the receptor side to **AUC 0.439 — below chance**. Three recycling
+passes without a converged sampler are actively misleading.
+
+**Alignment depth splits the two tests, and this was not expected.** It carries a
+*negative* share of the scramble-control gain on every readout, yet on ipTM it
+gives the best single-knob ranking in the table: 14 of 22 first and AUC 0.818,
+against the sampling arm's 12 and 0.727 and close to the full arm's 15 and 0.864.
+On interface pLDDT it is roughly neutral, and on the receptor side it is harmful.
+
+The reading that fits is that the two tests ask different questions of the
+alignment. A deeper alignment tells the model more about the *receptor* — its
+family, its conserved surfaces — which helps decide which of several peptides
+belongs to it, and does nothing for whether a given peptide's residues are in the
+right order, because the peptide is folded without an alignment of its own. That
+is consistent with the effect being strongest on ipTM, a whole-complex measure,
+and absent on the receptor side.
+
+That explanation is post hoc and rests on one draw of one arm. Section 7.10.3
+retracted two claims of exactly this shape — a readout-specific ordering that
+looked clean until another draw was taken — so it is recorded as an observation
+to be replicated, not a result. What is safe to say is narrower: **the two tests
+disagree about alignment depth**, so Section 7.16.5's expectation that the
+ranking result would decompose like the scramble control was wrong.
+
+#### 7.16.4 The three settings are synergistic, not independent
 
 The single-knob shares sum to 41% (ipTM), 55% (interface pLDDT) and 25%
 (receptor side) — well short of the 100% that exact additivity would give. The
@@ -2578,13 +2635,13 @@ yet placing atoms at plausible bond lengths. It is the same explanation Section
 7.11 offered for four readout failures, and it predicts exactly this pattern —
 one knob that must move first, and two that only pay once it has.
 
-#### 7.16.4 The recommendation, revised
+#### 7.16.5 The recommendation, revised
 
 Section 7.13 concluded that the reduced regime was suppressing the signal and
 that the intended settings should be used. That is correct but more expensive
 than it needs to be. Measured per fold on this hardware:
 
-**Table 50: Cost per fold against standardised effect**
+**Table 51: Cost per fold against standardised effect**
 
 | Arm | cost per fold | standardised *d* (interface pLDDT) |
 | :--- | ---: | ---: |
@@ -2602,23 +2659,21 @@ buys nothing at all until sampling has converged.
 This is the form of result an efficiency dissertation should be reporting, and
 Section 7.13 could not state it because it moved all three knobs at once.
 
-#### 7.16.5 Limitations
+#### 7.16.6 Limitations
 
 Each arm is a single draw of 66 folds. The effects are large — interface pLDDT's
 *d* moves 0.28 → 1.13 — and the ordering is unambiguous across all three
 readouts, but Section 7.5's warning stands and the share percentages should be
 treated as approximate rather than exact.
 
-The scramble control was run and the rank test was not: 66 folds per arm covers
-cognates and their permutations, not the decoys a per-target ranking needs. The
-decomposition therefore applies to order sensitivity, which is what Section
-7.13's suppression figure measures. Whether the practical ranking result of
-Section 7.13.2b decomposes the same way is untested, though the shared mechanism
-makes it likely.
+Each arm was later extended to the full 132 folds so that the ranking test could
+be decomposed too, and the expectation stated here — that it would decompose like
+the scramble control, given the shared mechanism — proved wrong for alignment
+depth. Section 7.16.3 reports it.
 
 Only single-knob arms were folded. The pairwise arms that would locate the
 interaction precisely — sampling with recycling, sampling with full alignment —
-were not run, so Section 7.16.3 establishes that the settings interact without
+were not run, so Section 7.16.4 establishes that the settings interact without
 apportioning the interaction between them.
 
 <div class="page-break"></div>
@@ -2648,7 +2703,7 @@ investigation.
 Combining the exact call counts with per-call costs measured properly, by
 amortising over queued iterations, gives shares that mean something:
 
-**Table 51: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency**
+**Table 52: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency**
 
 | Operator | calls per fold | ms per call | total | share of a 78.5 s fold |
 | :--- | ---: | ---: | ---: | ---: |
@@ -2685,7 +2740,7 @@ operation, on the reference's own weights so that any difference in output is a
 bug rather than a different model. Each is checked against the reference on five
 random draws before being timed:
 
-**Table 52: Candidate rewrites of the diffusion loop's inner operators**
+**Table 53: Candidate rewrites of the diffusion loop's inner operators**
 
 | Operator | rewrite | ms | speedup | max abs. difference |
 | :--- | :--- | ---: | ---: | ---: |
@@ -2749,6 +2804,102 @@ this space would be safe in a way the readout search was not, because every
 candidate faces an exact oracle rather than a 22-receptor estimate — a wrong
 answer cannot survive verification. The search was not run; the harness that
 would make it safe is the contribution here.
+
+<div class="page-break"></div>
+
+### 7.18 The Readouts Against Binding That Was Actually Measured
+
+Every result in Sections 7.1 to 7.17 is scored against a proxy. A cognate pair
+taken from the PDB counts as a positive and a peptide borrowed from another
+receptor counts as a negative, and no molecule in this work has ever been
+synthesised. Section 7.10 spends its length on the consequence — whether a model
+trained on those very complexes is predicting or retrieving — and Section 7.14.6
+concedes that the screening tool's hit rate is unmeasured for the same reason.
+
+Anthropic's autonomous binder-design study [25] removes both limitations at
+once. It released 1,320 *de novo* designs against 15 targets with binding
+measured by two independent contract research organisations, together with
+co-folding scores from ten predictors. The designs did not exist when any of
+those models were trained, so contamination is unavailable as an explanation, and
+the labels are binding rather than a stand-in for it. Boltz-2 is among the ten,
+which makes one row directly comparable to this work's own arm.
+
+#### 7.18.1 What the comparison is, and what it is not
+
+The released confidence score is ipSAE — the readout Section 7.11.4 examined —
+and not interface pLDDT, which is this work's headline. The positives are
+synthesised binders rather than crystallised cognate pairs, and the panels share
+no targets. This is therefore **not the same measurement made twice**, and the
+numbers below should not be read as a reproduction of anything in Section 7.13.
+
+What the two share is the question: does a cofolding confidence score rank real
+binders above non-binders for the same target?
+
+#### 7.18.2 Every predictor lands far below this work's in-training figures
+
+Scored within target and pooled, over 1,320 designs of which 354 bound, a base
+rate of 26.8%:
+
+**Table 54: Ten co-folding predictors scored against measured binding, by ipSAE**
+
+| Predictor | within-target AUC | macro-AP | 95% CI on AP |
+| :--- | ---: | ---: | :--- |
+| OpenDDE | 0.633 | 0.532 | [0.42, 0.66] |
+| Protenix v2 | 0.621 | 0.524 | [0.41, 0.65] |
+| Chai-1 | 0.664 | 0.512 | [0.41, 0.61] |
+| RoseTTAFold3 | 0.671 | 0.509 | [0.40, 0.62] |
+| AlphaFold3 / OpenFold3 weights | 0.627 | 0.508 | [0.38, 0.64] |
+| OpenFold3 | 0.667 | 0.505 | [0.40, 0.62] |
+| ESMFold2-Fast | 0.635 | 0.471 | [0.36, 0.58] |
+| ESMFold2 | 0.651 | 0.462 | [0.35, 0.57] |
+| AlphaFold-Multimer v3 | 0.634 | 0.453 | [0.34, 0.56] |
+| **Boltz-2** (this work's model) | **0.628** | **0.436** | [0.34, 0.53] |
+| *chance* | *0.500* | *0.268* | |
+
+Every predictor beats chance and none approaches the figures this work reports on
+its own panel. The spread across ten independently developed models is narrow —
+AUC 0.62 to 0.67 — which suggests the ceiling belongs to the task rather than to
+any one model.
+
+#### 7.18.3 The ordering is Section 7.10's argument, from outside
+
+| | within-target AUC |
+| :--- | ---: |
+| this work, in-training, full settings (Section 7.13) | 0.909 – 0.943 |
+| this work, held out, full settings (Section 7.10.6) | 0.682 – 0.803 |
+| **measured binding, Boltz-2 ipSAE** | **0.628** |
+
+Section 7.10 argued that a benchmark quoted without stating whether the complexes
+were in training overstates a screen by about a factor of two, and Section 7.10.6
+sharpened that to roughly a third of the standardised effect surviving. This is
+the same conclusion reached from outside the dissertation, on different molecules
+and a different readout: **the held-out figure is much closer to the wet-lab
+figure than the headline is, and is still above it.**
+
+The honest reading of Section 7.13's AUC 0.943 is therefore that it is the value
+of the readout on the panel it was measured on, and that a screen against a novel
+target should expect something closer to 0.63 — not because the model is worse
+than reported, but because the reported number was never a measurement of that
+situation.
+
+#### 7.18.4 Limitations
+
+The score compared is ipSAE and not interface pLDDT, so this validates the
+readout family rather than this work's specific recommendation. Computing
+interface pLDDT on the released structures would close that gap and was not done
+here.
+
+Their designs are single-chain *de novo* binders against structured targets;
+this work's are short natural peptides, several of them disordered in isolation.
+The two tasks are related but not the same, and nothing here establishes that a
+peptide screen behaves like a binder screen.
+
+One further caution, recorded because misreading it nearly produced a false
+claim in this section. The headline filtering figures in [25] — macro-AP 0.62 and
+0.61 for their models against 0.55 for AlphaFold3 — are computed on the Overath
+et al. dataset of 3,532 designs against 13 targets, and **not** on the 1,320
+designs used above. The two sets of numbers are not comparable, and reading them
+as one dataset makes the table above appear to contradict its own source.
 
 <div class="page-break"></div>
 
@@ -2982,6 +3133,20 @@ and the conditioning tensor is not loop-invariant across sampling steps — hois
 it would have been worth seconds a fold and would have silently changed every
 prediction in this work.
 
+**Fourteenth, and it is the strongest external check this work has: scored
+against binding that was actually measured, the readout family lands far below
+every figure reported here** (Section 7.18). Anthropic released 1,320 de novo
+designs with binding measured by two independent CROs and co-folding scores from
+ten predictors. On those designs ipSAE reaches within-target AUC 0.62 to 0.67
+across all ten, with Boltz-2 — the model used here — at 0.628, against a 26.8%
+base rate. Set beside this work's own 0.909 to 0.943 in-training and 0.682 to
+0.803 held out, the ordering is Section 7.10's argument arrived at from outside,
+on different molecules and a different readout. The held-out figure is much
+closer to the wet-lab figure than the headline is, and still above it. The
+practical consequence is that Section 7.13's AUC 0.943 should be read as the
+value of the readout on the panel it was measured on, and a screen against a
+novel target should expect something nearer 0.63.
+
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
 de-confounding base-model arm, mixed-effects estimation, a peptide-integrity
@@ -3082,7 +3247,7 @@ what it measures, and most published ones lack all six.
 
 # 9. FUTURE PLAN
 
-**Table 53: Project phases and schedule**
+**Table 55: Project phases and schedule**
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -3165,7 +3330,7 @@ want more receptors rather than more analysis, and both are throughput problems
 
 # APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
-**Table 54: Abbreviations and glossary**
+**Table 56: Abbreviations and glossary**
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -3205,7 +3370,7 @@ recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
 
-**Table 55: Reproduction commands by section**
+**Table 57: Reproduction commands by section**
 
 | Result | Section | Command |
 | :--- | :---: | :--- |
@@ -3242,6 +3407,7 @@ below identify the entry points.
 | Settings decomposition, one knob at a time | 7.16 | `bash src/queue_settings_decomposition.sh` |
 | Settings decomposition analysis | 7.16 | `python src/settings_decomposition.py` |
 | Operator benchmark and equivalence check | 7.17 | `python src/kernel_bench.py --op adaln` |
+| Validation against measured binding | 7.18 | `python src/anthropic_validation.py` |
 | MINT sequence-model baseline | 7.11 | `python src/mint_baseline.py` |
 | Protein-language-model baseline | 7.11 | `python src/plm_baseline.py` |
 | Verification suite | 6 | `python -m pytest -q` |
@@ -3269,7 +3435,7 @@ load-bearing, because Section 7.13 measures the difference between them and find
 it accounts for a factor of three to seven in the standardised effect. No figure
 should be read without knowing which regime produced it.
 
-**Table 56: Inference settings in each regime**
+**Table 58: Inference settings in each regime**
 
 | Setting | Reduced regime | Full regime | Boltz default |
 | :--- | :---: | :---: | :---: |
