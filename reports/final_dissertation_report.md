@@ -1358,7 +1358,22 @@ three draws take within-receptor AUC from 0.616 to 0.735, a gain of +0.119 with
 a bootstrap interval of [+0.010, +0.226]. It is the only intervention tested in
 this work whose interval excludes zero — against +0.017 for a cross-model
 ensemble, −0.033 for physics rescoring, and −0.13 for combining thirteen
-readouts. Which statistic is used barely matters: mean, median and best-of-three
+readouts.
+
+**The ensembling figure needs qualifying, and the qualification matters.** The
+three arms ensembled here are Boltz-2, Boltz-1 and DeCAF, and DeCAF is distilled
+*from* Boltz-1 (Section 7.8). Two of the three therefore share weights and all
+three share an architecture, so the +0.017 measures what averaging highly
+correlated predictors buys, which is close to nothing by construction. It is not
+evidence about ensembling across genuinely different models. Anthropic's
+autonomous binder-design study reports the contrasting case: a per-target
+z-scored ensemble of Protenix v2, ESMFold2 and ESMFold2-Fast — three unrelated
+architectures — reaches macro-average-precision 0.66 against 0.62 for the best of
+them alone and 0.55 for AlphaFold3, a gain whose interval excludes zero
+[25]. The supportable claim from this work is therefore narrower than
+"ensembling does not help": **ensembling within one model lineage does not
+help**, and the cross-architecture case is untested here and reported positive
+elsewhere. Which statistic is used barely matters: mean, median and best-of-three
 differ by less than the bootstrap spread, and penalising draw-to-draw
 disagreement actively hurts (0.735 to 0.676), because decoys are *more* stable
 across draws than cognates.
@@ -3143,6 +3158,7 @@ want more receptors rather than more analysis, and both are throughput problems
 22. Dauparas, J., Anishchenko, I., Bennett, N. et al., "Robust Deep Learning-Based Protein Sequence Design Using ProteinMPNN," *Science*, Vol. 378, No. 6615, 2022, pp. 49–56.
 23. Scarpellini, G., Shprints, R., Holderrieth, P. et al., "Few-step Cofolding with All-Atom Flow Maps," *arXiv preprint* arXiv:2606.08375, 2026.
 24. Dupont, E., Eisenberger, M., Kozlovskii, B. et al., "Improving the Matrix Multiplication Exponent with Modern Optimization and AlphaEvolve," *arXiv preprint* arXiv:2608.16884, 2026.
+25. Claude Science and Shanehsazzadeh, A., "Autonomous de novo Protein Binder Design with Claude," Anthropic, 2026. Dataset: huggingface.co/datasets/Anthropic/claude-protein-binder-design.
 
 <div class="page-break"></div>
 
