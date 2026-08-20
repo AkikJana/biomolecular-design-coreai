@@ -192,23 +192,23 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.7 Localising the Interface-pLDDT Signal ................................... 24  
 &nbsp;&nbsp;&nbsp;&nbsp;7.8 Few-Step Distillation, and What It Reveals About the Negatives .......... 27  
 &nbsp;&nbsp;&nbsp;&nbsp;7.9 Variance Decomposition and the Reproducibility of the Few-Step Model .... 30  
-&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 34  
-&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 41  
-&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 44  
-&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 48  
-&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 52  
-&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 57  
-&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 60  
-&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 65  
-&nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 68  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 72  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 72  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 77  
-9. FUTURE PLAN .............................................................. 80  
-10. REFERENCES .............................................................. 84  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 86  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 88  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 93  
+&nbsp;&nbsp;&nbsp;&nbsp;7.10 Is the Panel Measuring Prediction or Retrieval? ........................ 35  
+&nbsp;&nbsp;&nbsp;&nbsp;7.11 Why the Readouts Behave As They Do: Backbone Convergence ............... 42  
+&nbsp;&nbsp;&nbsp;&nbsp;7.12 Reading the Panel as a Competition ..................................... 45  
+&nbsp;&nbsp;&nbsp;&nbsp;7.13 The Settings Confound, Resolved — and It Was Real ...................... 49  
+&nbsp;&nbsp;&nbsp;&nbsp;7.14 The Findings as a Tool ................................................. 53  
+&nbsp;&nbsp;&nbsp;&nbsp;7.15 An Automated Search Over Readouts, and What Its Controls Refuse ........ 58  
+&nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 61  
+&nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 66  
+&nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 69  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 73  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 73  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 78  
+9. FUTURE PLAN .............................................................. 81  
+10. REFERENCES .............................................................. 85  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 87  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 89  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 94  
 
 &nbsp;
 
@@ -244,47 +244,48 @@ Table 16: Rank test against a mixed model with receptor as a random effect ... 3
 Table 17: Variance decomposition, and the ceiling it implies ................ 30  
 Table 18: Run-to-run spread, DeCAF against Boltz-2 .......................... 31  
 Table 19: Signal-to-noise with borrowed and with measured noise ............. 31  
-Table 20: Panel members whose folded pair was not what was crystallised ..... 34  
-Table 21: In-training against held-out — scramble control ................... 35  
-Table 22: In-training against held-out — receptor specificity ............... 35  
-Table 23: Mixed-model interaction, raw and within-receptor z ................ 36  
-Table 24: Scramble control across five independent draws .................... 36  
-Table 25: Receptor specificity across five independent draws ................ 37  
-Table 26: The contamination penalty at full settings, against the in-training panel folded identically ... 38  
-Table 27: Backbone geometry at ten sampling steps ........................... 41  
-Table 28: Physics rescoring against the confidence readouts ................. 42  
-Table 29: A sequence model's zero-shot AUC, for scale ....................... 43  
-Table 30: Reciprocal matching, each direction separately .................... 44  
-Table 31: Precision and calls retained under the reciprocal filter .......... 44  
-Table 32: Binding-site correctness against the crystal ...................... 45  
-Table 33: Pose reproducibility between independent draws .................... 46  
-Table 34: The reciprocal filter at reduced and at full settings ............. 47  
-Table 35: The reduced and full inference regimes ............................ 48  
-Table 36: Scramble control at reduced and full settings ..................... 48  
-Table 37: Receptor specificity at reduced and full settings ................. 49  
-Table 38: Absolute confidence at reduced and full settings .................. 49  
-Table 39: Backbone geometry by arm .......................................... 50  
-Table 40: Fixed and marginal cost of a fold ................................. 52  
-Table 41: Measured screen times, cold and cached ............................ 53  
-Table 42: The same three candidates against two targets ..................... 54  
-Table 43: MDM2 at full sampling, with a designed binder added ............... 54  
-Table 44: c-Crk SH3, where the scramble control saturates ................... 54  
-Table 45: Single readouts and the search winner ............................. 57  
-Table 46: Best-of-search on labels permuted within receptor ................. 58  
-Table 47: The search winner on the held-out panel ........................... 58  
-Table 48: The five settings arms ............................................ 60  
-Table 49: Per-knob decomposition of the settings effect ..................... 60  
-Table 50: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50 ... 62  
-Table 51: Cost per fold against standardised effect ......................... 63  
-Table 52: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 65  
-Table 53: Candidate rewrites of the diffusion loop's inner operators ........ 66  
-Table 54: Ten co-folding predictors scored against measured binding, by ipSAE ... 68  
-Table 55: This work's readouts on Anthropic's designs, scored against measured binding ... 69  
-Table 56: Paired differences, 2,000 bootstrap resamples over targets ........ 70  
-Table 57: Project phases and schedule ....................................... 80  
-Table 58: Abbreviations and glossary ........................................ 86  
-Table 59: Reproduction commands by section .................................. 88  
-Table 60: Inference settings in each regime ................................. 91  
+Table 20: Ensembling on measured binding, against the better member of each pair ... 33  
+Table 21: Panel members whose folded pair was not what was crystallised ..... 35  
+Table 22: In-training against held-out — scramble control ................... 36  
+Table 23: In-training against held-out — receptor specificity ............... 36  
+Table 24: Mixed-model interaction, raw and within-receptor z ................ 37  
+Table 25: Scramble control across five independent draws .................... 37  
+Table 26: Receptor specificity across five independent draws ................ 38  
+Table 27: The contamination penalty at full settings, against the in-training panel folded identically ... 39  
+Table 28: Backbone geometry at ten sampling steps ........................... 42  
+Table 29: Physics rescoring against the confidence readouts ................. 43  
+Table 30: A sequence model's zero-shot AUC, for scale ....................... 44  
+Table 31: Reciprocal matching, each direction separately .................... 45  
+Table 32: Precision and calls retained under the reciprocal filter .......... 45  
+Table 33: Binding-site correctness against the crystal ...................... 46  
+Table 34: Pose reproducibility between independent draws .................... 47  
+Table 35: The reciprocal filter at reduced and at full settings ............. 48  
+Table 36: The reduced and full inference regimes ............................ 49  
+Table 37: Scramble control at reduced and full settings ..................... 49  
+Table 38: Receptor specificity at reduced and full settings ................. 50  
+Table 39: Absolute confidence at reduced and full settings .................. 51  
+Table 40: Backbone geometry by arm .......................................... 51  
+Table 41: Fixed and marginal cost of a fold ................................. 53  
+Table 42: Measured screen times, cold and cached ............................ 54  
+Table 43: The same three candidates against two targets ..................... 55  
+Table 44: MDM2 at full sampling, with a designed binder added ............... 55  
+Table 45: c-Crk SH3, where the scramble control saturates ................... 55  
+Table 46: Single readouts and the search winner ............................. 58  
+Table 47: Best-of-search on labels permuted within receptor ................. 59  
+Table 48: The search winner on the held-out panel ........................... 59  
+Table 49: The five settings arms ............................................ 61  
+Table 50: Per-knob decomposition of the settings effect ..................... 61  
+Table 51: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50 ... 63  
+Table 52: Cost per fold against standardised effect ......................... 64  
+Table 53: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency ... 66  
+Table 54: Candidate rewrites of the diffusion loop's inner operators ........ 67  
+Table 55: Ten co-folding predictors scored against measured binding, by ipSAE ... 69  
+Table 56: This work's readouts on Anthropic's designs, scored against measured binding ... 70  
+Table 57: Paired differences, 2,000 bootstrap resamples over targets ........ 71  
+Table 58: Project phases and schedule ....................................... 81  
+Table 59: Abbreviations and glossary ........................................ 87  
+Table 60: Reproduction commands by section .................................. 89  
+Table 61: Inference settings in each regime ................................. 93  
 
 <div class="page-break"></div>
 
@@ -1366,23 +1367,56 @@ this work whose interval excludes zero — against +0.017 for a cross-model
 ensemble, −0.033 for physics rescoring, and −0.13 for combining thirteen
 readouts.
 
-**The ensembling figure needs qualifying, and the qualification matters.** The
-three arms ensembled here are Boltz-2, Boltz-1 and DeCAF, and DeCAF is distilled
-*from* Boltz-1 (Section 7.8). Two of the three therefore share weights and all
-three share an architecture, so the +0.017 measures what averaging highly
-correlated predictors buys, which is close to nothing by construction. It is not
-evidence about ensembling across genuinely different models. Anthropic's
-autonomous binder-design study reports the contrasting case: a per-target
-z-scored ensemble of Protenix v2, ESMFold2 and ESMFold2-Fast — three unrelated
-architectures — reaches macro-average-precision 0.66 against 0.62 for the best of
-them alone and 0.55 for AlphaFold3, a gain whose interval excludes zero
-[25]. The supportable claim from this work is therefore narrower than
-"ensembling does not help": **ensembling within one model lineage does not
-help**, and the cross-architecture case is untested here and reported positive
-elsewhere. Which statistic is used barely matters: mean, median and best-of-three
-differ by less than the bootstrap spread, and penalising draw-to-draw
-disagreement actively hurts (0.735 to 0.676), because decoys are *more* stable
-across draws than cognates.
+**The ensembling figure needs qualifying, and the first qualification offered
+here was wrong.** The three arms ensembled are Boltz-2, Boltz-1 and DeCAF, and
+DeCAF is distilled *from* Boltz-1 (Section 7.8), so two share weights and all
+three share an architecture. That was originally read as the explanation:
+averaging correlated predictors buys nothing, and ensembling across genuinely
+different architectures would do better. The data to test that assertion arrived
+later and does not support it.
+
+Anthropic released ipSAE from ten independently developed predictors on the same
+1,320 designs whose binding was measured (Section 7.18), which permits the
+comparison directly. Scores are z-scored within target and averaged, and
+differences are bootstrapped paired over targets.
+
+**Table 20: Ensembling on measured binding, against the better member of each pair**
+
+| Ensemble | Spearman ρ between members | AP gap between members | Δ macro-AP | 95% CI |
+| :--- | ---: | ---: | ---: | :--- |
+| ESMFold2 + ESMFold2-Fast *(same lineage)* | 0.764 | 0.008 | **+0.016** | **[+0.005, +0.026]** |
+| OpenFold3 + AlphaFold3/OF3 *(same lineage)* | 0.696 | 0.004 | **+0.029** | **[+0.015, +0.044]** |
+| ESMFold2 + RoseTTAFold3 | 0.48 avg | 0.047 | +0.026 | [−0.006, +0.053] |
+| OpenFold3 + ESMFold2 | 0.48 avg | 0.042 | +0.019 | [−0.004, +0.043] |
+| Boltz-2 + Protenix v2 | 0.48 avg | 0.087 | −0.063 | [−0.135, +0.021] |
+| all ten predictors (against the best single) | — | — | **+0.067** | **[+0.043, +0.092]** |
+
+The lineage claim is half right and its direction is backwards. Same-lineage
+pairs are indeed far more correlated — ρ 0.76 and 0.70 against 0.48 averaged over
+the other 43 pairs — but they are the pairs whose ensembles **help**, not the
+ones that fail.
+
+What separates the ensembles that work is not correlation but **how closely the
+two members perform**. The two pairs whose intervals exclude zero differ by 0.008
+and 0.004 in macro-AP; the three that fail differ by 0.042 to 0.087. Averaging
+two predictors of near-equal quality is variance reduction and reliably buys a
+little. Averaging a strong predictor with a weaker one drags it toward the
+weaker, and the pair containing the weakest model of the ten is the only ensemble
+here with a negative point estimate. Lineage predicts this only because models of
+one lineage perform similarly.
+
+That reading also reconciles the result with the rest of this section: averaging
+two near-identical predictors is replicate averaging under another name, and
+replicate averaging is the one intervention in this work whose interval excludes
+zero.
+
+The +0.017 measured here is therefore not evidence that ensembling fails. It is
+what averaging three models of unequal quality — Section 7.8 measures DeCAF above
+Boltz-1 and Boltz-2 weakest in this regime — is expected to buy. **Ensembling
+does help, and at ten models it is worth +0.067 [+0.043, +0.092] over the best
+single predictor**, which is the largest gain any intervention in this work has
+produced. It was not tested here because this work had three related models
+available and not ten unrelated ones.
 
 #### 7.9.5 Limitations
 
@@ -1415,7 +1449,7 @@ RCSB FASTA returns canonical sequence, and returns `X` for any component that is
 not one of the twenty amino acids. Neither is visible downstream: the FASTA
 parses, the fold succeeds, the confidence scores look ordinary.
 
-**Table 20: Panel members whose folded pair was not what was crystallised**
+**Table 21: Panel members whose folded pair was not what was crystallised**
 
 | PDB | folded as | actually crystallised |
 | :--- | :--- | :--- |
@@ -1466,7 +1500,7 @@ DeCAF at the same 10 sampling steps and 1 recycling step.
 **These numbers are the mean of five independent draws**, for a reason recorded
 in 7.10.3: the first draw alone was misleading, and so was the second.
 
-**Table 21: In-training against held-out — scramble control**
+**Table 22: In-training against held-out — scramble control**
 
 | Metric | in-training (16 receptors) | held-out (22 receptors) |
 | :--- | ---: | ---: |
@@ -1476,7 +1510,7 @@ in 7.10.3: the first draw alone was misleading, and so was the second.
 
 Cognate ranked against its own decoys, chance 2.50:
 
-**Table 22: In-training against held-out — receptor specificity**
+**Table 23: In-training against held-out — receptor specificity**
 
 | Metric | in-training | held-out |
 | :--- | ---: | ---: |
@@ -1491,7 +1525,7 @@ Comparing two p-values is not a test. A mixed model with receptor as a random
 effect gives the interaction directly, fitted on raw scores and on scores
 z-scored within receptor so the answer does not depend on units:
 
-**Table 23: Mixed-model interaction, raw and within-receptor z**
+**Table 24: Mixed-model interaction, raw and within-receptor z**
 
 | Metric | raw | within-receptor z |
 | :--- | ---: | ---: |
@@ -1526,7 +1560,7 @@ unseeded, so re-running the identical panel at identical settings gives an
 independent draw. Five were run, and the first two each produced a conclusion
 that a later draw withdrew.
 
-**Table 24: Scramble control across five independent draws**
+**Table 25: Scramble control across five independent draws**
 
 | Metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -1539,7 +1573,7 @@ reach significance (p = 0.089 against 6e-4 to 8e-5 for the other four). Read
 alone it said the effect *collapses* held out; five draws say it weakens to 44%
 of its in-training value and remains significant at p = 0.0001.
 
-**Table 25: Receptor specificity across five independent draws**
+**Table 26: Receptor specificity across five independent draws**
 
 | Metric | draw 1 | draw 2 | draw 3 | draw 4 | draw 5 | mean |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -1622,7 +1656,7 @@ recycling passes and undiminished alignment depth, on stock Boltz-1: the same
 model and settings as Section 7.13's full arm, so that the only quantity varying
 between the two is whether the model has seen the complex.
 
-**Table 26: The contamination penalty at full settings, against the in-training panel folded identically**
+**Table 27: The contamination penalty at full settings, against the in-training panel folded identically**
 
 | Readout | in-training | held out | *p* held out | effect retained | Cohen's *d* retained |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -1707,7 +1741,7 @@ structures at all.
 A peptide bond fixes consecutive alpha-carbons at 3.80 Å. Measuring every
 consecutive CA–CA distance across the 132 Boltz-2 folds of Section 7.4:
 
-**Table 27: Backbone geometry at ten sampling steps**
+**Table 28: Backbone geometry at ten sampling steps**
 
 | | Boltz-2 at 10 steps | DeCAF at 10 steps |
 | :--- | ---: | ---: |
@@ -1765,7 +1799,7 @@ With DeCAF's 96%-physical backbones an energy function has something to read,
 which is the direction the recent literature takes to exceed confidence-metric
 performance. Scored on 69 folds across 12 held-out receptors:
 
-**Table 28: Physics rescoring against the confidence readouts**
+**Table 29: Physics rescoring against the confidence readouts**
 
 | Readout | cognate − scramble | mean rank (chance 2.50) | AUC within |
 | :--- | ---: | ---: | ---: |
@@ -1792,7 +1826,7 @@ MINT — ESM-2 650M with cross-chain attention, trained on 96 million
 protein-protein interactions from STRING — provides a zero-shot interaction
 probability with nothing fitted from this panel:
 
-**Table 29: A sequence model's zero-shot AUC, for scale**
+**Table 30: A sequence model's zero-shot AUC, for scale**
 
 | Score | within-receptor AUC |
 | :--- | ---: |
@@ -1843,7 +1877,7 @@ that borrowed it as a decoy. That direction asks *for this peptide, is its own
 receptor the best of the targets it was tried against?*, and it works at least
 as well:
 
-**Table 30: Reciprocal matching, each direction separately**
+**Table 31: Reciprocal matching, each direction separately**
 
 | direction | mean rank | chance | p |
 | :--- | ---: | ---: | ---: |
@@ -1854,7 +1888,7 @@ Requiring **both** is the binding analogue of reciprocal best hits in homology
 search. Measured across both panels, both readouts and all five draws — twelve
 combinations in total:
 
-**Table 31: Precision and calls retained under the reciprocal filter**
+**Table 32: Precision and calls retained under the reciprocal filter**
 
 | | one-directional | reciprocal |
 | :--- | ---: | ---: |
@@ -1896,7 +1930,7 @@ peptide, so for any prediction one can ask what fraction of its contacts fall
 inside that known site. This is information from outside the model entirely.
 Measured on 120 folds across 20 held-out receptors:
 
-**Table 32: Binding-site correctness against the crystal**
+**Table 33: Binding-site correctness against the crystal**
 
 | class | site precision | site recall |
 | :--- | ---: | ---: |
@@ -1915,7 +1949,7 @@ peptide belongs in it.
 find, so independent draws should agree; a non-binder should scatter. Folding
 the panel twice with structures retained and superposing on the receptor:
 
-**Table 33: Pose reproducibility between independent draws**
+**Table 34: Pose reproducibility between independent draws**
 
 | class | peptide RMSD between draws | receptor RMSD |
 | :--- | ---: | ---: |
@@ -1950,7 +1984,7 @@ reciprocal filter buys precision by discarding calls, and at full settings plain
 one-directional precision is already high, so there may be less for it to buy.
 The folds exist, so the question is a re-analysis rather than a run.
 
-**Table 34: The reciprocal filter at reduced and at full settings**
+**Table 35: The reciprocal filter at reduced and at full settings**
 
 | Panel | Readout | one-directional | reciprocal | permutation *p* |
 | :--- | :--- | ---: | ---: | ---: |
@@ -2002,7 +2036,7 @@ The same panel, the same model (stock Boltz-1), the same device (MPS), with only
 the settings changed. The reduced arm already existed from Section 7.8, so model
 and device are held constant by construction:
 
-**Table 35: The reduced and full inference regimes**
+**Table 36: The reduced and full inference regimes**
 
 | | sampling steps | recycling | MSA depth |
 | :--- | ---: | ---: | ---: |
@@ -2015,7 +2049,7 @@ cognate against a permutation of itself, composition and length held equal.
 
 #### 7.13.2 The signal was suppressed by a factor of three to seven
 
-**Table 36: Scramble control at reduced and full settings**
+**Table 37: Scramble control at reduced and full settings**
 
 | Metric | reduced | full | Cohen's *d* | within-receptor z |
 | :--- | ---: | ---: | :--- | ---: |
@@ -2042,7 +2076,7 @@ The scramble control asks whether a readout notices sequence order. Ranking a
 cognate against its own decoys asks the question a screen actually asks, and it
 moves further:
 
-**Table 37: Receptor specificity at reduced and full settings**
+**Table 38: Receptor specificity at reduced and full settings**
 
 | Metric | reduced rank | full rank | reduced first | **full first** | reduced AUC | **full AUC** |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -2058,9 +2092,15 @@ For comparison, the best figure anywhere else in this dissertation is DeCAF at
 ten steps on the in-training panel: rank 1.73, 13 of 22 first, AUC 0.807
 (Sections 7.8, 7.12). Full-settings stock Boltz-1 exceeds it on every measure.
 It also exceeds the AUC 0.90 that a recent nanobody benchmark reaches with a
-model ensemble plus physics-based rescoring — the direction Section 7.12
-identified as the only credible route past this work's numbers, and which turned
-out to be unnecessary.
+model ensemble plus physics-based rescoring. That comparison should not be
+pressed, for two reasons established after this section was written. It sets an
+in-training figure against someone else's benchmark, and Section 7.18 measures
+the same readout at 0.626 against binding that was actually measured. And
+Section 7.9.4 finds that ensembling ten independently developed predictors is
+worth +0.067 macro-AP over the best single one — the largest gain any
+intervention in this work produced. Ensembling is not unnecessary; it was
+untested here because three related models were available and not ten unrelated
+ones.
 
 **This is the practical conclusion of the dissertation, and it is positive.**
 Sections 7.2 to 7.12 measure a model run at a twentieth of its sampling budget
@@ -2073,7 +2113,7 @@ not of the method.
 
 Absolute confidence rises enormously alongside the effect:
 
-**Table 38: Absolute confidence at reduced and full settings**
+**Table 39: Absolute confidence at reduced and full settings**
 
 | | reduced | full |
 | :--- | ---: | ---: |
@@ -2083,7 +2123,7 @@ Absolute confidence rises enormously alongside the effect:
 And the backbones become physical. Measuring every consecutive CA–CA distance
 against the 3.80 Å a peptide bond fixes:
 
-**Table 39: Backbone geometry by arm**
+**Table 40: Backbone geometry by arm**
 
 | Arm | median CA–CA | physically plausible | broken (> 5 Å) |
 | :--- | ---: | ---: | ---: |
@@ -2198,7 +2238,7 @@ should have been rejected; refusing is the corrected behaviour.
 Almost all of a screen is fixed cost. Timing one fold against a batch of four
 separates the two components:
 
-**Table 40: Fixed and marginal cost of a fold**
+**Table 41: Fixed and marginal cost of a fold**
 
 | folds in one call | wall time | implied |
 | ---: | ---: | :--- |
@@ -2230,7 +2270,7 @@ permutations than by re-folding a few of them. Folds per candidate fall from
 `(1 + s) × r` to `r + s`, a third fewer at the defaults, with a better-sampled
 null.
 
-**Table 41: Measured screen times, cold and cached**
+**Table 42: Measured screen times, cold and cached**
 
 | screen | folds | time |
 | :--- | ---: | ---: |
@@ -2255,7 +2295,7 @@ proline-rich `PPPALPPKKR` for the c-Crk SH3 domain — and each list was run
 unchanged against MDM2 and against PDZ3, at fast settings, two replicates and
 three scrambles.
 
-**Table 42: The same three candidates against two targets**
+**Table 43: The same three candidates against two targets**
 
 | candidate | MDM2 *t* | MDM2 *p* | PDZ3 *t* | PDZ3 *p* | cognate of |
 | :--- | ---: | ---: | ---: | ---: | :--- |
@@ -2273,7 +2313,7 @@ reproduces the ordering more cleanly. At 200 sampling steps, three recycling
 passes and full alignment depth, with five scrambles, the pooled scramble spread
 falls from 5.36 to 2.65 and the separation widens:
 
-**Table 43: MDM2 at full sampling, with a designed binder added**
+**Table 44: MDM2 at full sampling, with a designed binder added**
 
 | candidate | *t* | *p* | |
 | :--- | ---: | ---: | :--- |
@@ -2294,7 +2334,7 @@ than discovered afterwards. The cognate `PPPALPPKKR` does not separate from its
 own scrambles at fast settings (*t* = +0.27, p = 0.40) and places second behind a
 peptide for a different target. Raising the settings does not rescue it:
 
-**Table 44: c-Crk SH3, where the scramble control saturates**
+**Table 45: c-Crk SH3, where the scramble control saturates**
 
 | candidate | *t* | *p* |
 | :--- | ---: | ---: |
@@ -2400,7 +2440,7 @@ five of them has seen most of what it needs to place the sixth.
 
 #### 7.15.2 What it found
 
-**Table 45: Single readouts and the search winner**
+**Table 46: Single readouts and the search winner**
 
 | Readout | within-receptor AUC |
 | :--- | ---: |
@@ -2424,7 +2464,7 @@ receptor — the cognate label moved to a random fold of the same receptor, whic
 preserves the design exactly and destroys only the association being measured.
 Over 200 permutations:
 
-**Table 46: Best-of-search on labels permuted within receptor**
+**Table 47: Best-of-search on labels permuted within receptor**
 
 | | AUC |
 | :--- | ---: |
@@ -2445,7 +2485,7 @@ is *larger* than the +0.018 actually observed. The observed improvement sits at
 time to the full-settings held-out folds of Section 7.10, with nothing selected
 on them. It reverses:
 
-**Table 47: The search winner on the held-out panel**
+**Table 48: The search winner on the held-out panel**
 
 | Readout | held-out AUC |
 | :--- | ---: |
@@ -2520,7 +2560,7 @@ depth should carry little of it.
 Five cells, all stock Boltz-1 on MPS, differing only in settings. The two
 endpoints already existed; the three middle arms were folded for this section.
 
-**Table 48: The five settings arms**
+**Table 49: The five settings arms**
 
 | Arm | sampling | recycling | MSA depth | source |
 | :--- | ---: | ---: | :--- | :--- |
@@ -2537,7 +2577,7 @@ the full arm's gain over the same baseline.
 
 #### 7.16.2 On order sensitivity, sampling steps carry it and the other two carry none
 
-**Table 49: Per-knob decomposition of the settings effect**
+**Table 50: Per-knob decomposition of the settings effect**
 
 | Arm | cognate − scramble | *p* | Cohen's *d* | share of the full gain |
 | :--- | ---: | ---: | ---: | ---: |
@@ -2580,7 +2620,7 @@ Section 7.16.2 measured order sensitivity. Ranking a cognate against its own
 decoys is the test Section 7.13.2b calls the practical conclusion of this work,
 and it needs decoys, so each arm was extended from 66 folds to the full 132.
 
-**Table 50: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50**
+**Table 51: Receptor specificity by arm — cognate ranked against its own decoys, chance 2.50**
 
 | Arm | ipTM: rank / first / AUC | Interface pLDDT | Receptor side |
 | :--- | :--- | :--- | :--- |
@@ -2643,7 +2683,7 @@ Section 7.13 concluded that the reduced regime was suppressing the signal and
 that the intended settings should be used. That is correct but more expensive
 than it needs to be. Measured per fold on this hardware:
 
-**Table 51: Cost per fold against standardised effect**
+**Table 52: Cost per fold against standardised effect**
 
 | Arm | cost per fold | standardised *d* (interface pLDDT) |
 | :--- | ---: | ---: |
@@ -2705,7 +2745,7 @@ investigation.
 Combining the exact call counts with per-call costs measured properly, by
 amortising over queued iterations, gives shares that mean something:
 
-**Table 52: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency**
+**Table 53: Cost of the diffusion loop's three inner operators, from exact call counts and amortised per-call latency**
 
 | Operator | calls per fold | ms per call | total | share of a 78.5 s fold |
 | :--- | ---: | ---: | ---: | ---: |
@@ -2742,7 +2782,7 @@ operation, on the reference's own weights so that any difference in output is a
 bug rather than a different model. Each is checked against the reference on five
 random draws before being timed:
 
-**Table 53: Candidate rewrites of the diffusion loop's inner operators**
+**Table 54: Candidate rewrites of the diffusion loop's inner operators**
 
 | Operator | rewrite | ms | speedup | max abs. difference |
 | :--- | :--- | ---: | ---: | ---: |
@@ -2843,7 +2883,7 @@ binders above non-binders for the same target?
 Scored within target and pooled, over 1,320 designs of which 354 bound, a base
 rate of 26.8%:
 
-**Table 54: Ten co-folding predictors scored against measured binding, by ipSAE**
+**Table 55: Ten co-folding predictors scored against measured binding, by ipSAE**
 
 | Predictor | within-target AUC | macro-AP | 95% CI on AP |
 | :--- | ---: | ---: | :--- |
@@ -2882,7 +2922,7 @@ would have measured the target against itself. The binder chain is identified by
 matching the released binder length instead, with every other chain pooled as the
 target. All 1,320 designs scored; none was skipped.
 
-**Table 55: This work's readouts on Anthropic's designs, scored against measured binding**
+**Table 56: This work's readouts on Anthropic's designs, scored against measured binding**
 
 | Readout | within-target AUC | macro-AP |
 | :--- | ---: | ---: |
@@ -2896,7 +2936,7 @@ Comparing overlapping intervals is not a test of a difference, and these scores
 come from the same designs and the same structures, so the comparisons are
 paired: targets are resampled and both scores recomputed on each resample.
 
-**Table 56: Paired differences, 2,000 bootstrap resamples over targets**
+**Table 57: Paired differences, 2,000 bootstrap resamples over targets**
 
 | Comparison | Δ macro-AP | 95% CI | Δ AUC | 95% CI |
 | :--- | ---: | :--- | ---: | :--- |
@@ -3120,9 +3160,11 @@ ranking a cognate against its own decoys, which is what a screen does —
 interface pLDDT at full settings places the true binder **first for 17 of 22
 receptors, 77% top-1, at a within-receptor AUC of 0.943**, against 0.640 at
 reduced settings. That exceeds every figure elsewhere in this work, including
-DeCAF's 0.807, and exceeds the AUC 0.90 a recent nanobody benchmark reaches with
-model ensembling plus physics rescoring — the direction Section 7.12 identified
-as the only credible route past these numbers, and which proves unnecessary.
+DeCAF's 0.807, and the AUC 0.90 a recent nanobody benchmark reaches with model
+ensembling plus physics rescoring. Both comparisons are between an in-training
+figure and an external one, and Section 7.18 puts the same readout at 0.626
+against measured binding, so neither should be read as this method overtaking
+those.
 Sections 7.2 to 7.12 conclude that cofolding confidence is a weak screening
 signal; at the model's intended settings, on the same panel, it ranks the true
 binder first three times in four.
@@ -3323,7 +3365,7 @@ what it measures, and most published ones lack all six.
 
 # 9. FUTURE PLAN
 
-**Table 57: Project phases and schedule**
+**Table 58: Project phases and schedule**
 
 | Sl No | Phases | Start Date - End Date | Work to be done | Status |
 | :---: | :--- | :--- | :--- | :---: |
@@ -3406,7 +3448,7 @@ want more receptors rather than more analysis, and both are throughput problems
 
 # APPENDIX A — ABBREVIATIONS AND GLOSSARY
 
-**Table 58: Abbreviations and glossary**
+**Table 59: Abbreviations and glossary**
 
 | Abbreviation | Full Form |
 | :--- | :--- |
@@ -3446,7 +3488,7 @@ recording the code revision, seed, device, inference settings, exact command and
 input checksums. Source code is not reproduced in this report; the commands
 below identify the entry points.
 
-**Table 59: Reproduction commands by section**
+**Table 60: Reproduction commands by section**
 
 | Result | Section | Command |
 | :--- | :---: | :--- |
@@ -3480,6 +3522,7 @@ below identify the entry points.
 | Held-out panel at full settings | 7.10, 7.15 | `python src/heldout_panel.py --base boltz1 --sampling-steps 200 --recycling-steps 3 --msa-depth 0 --run-tag _full` |
 | Held-out vs in-training, both settings | 7.10 | `python src/heldout_at_full.py` |
 | Automated readout search | 7.15 | `python src/readout_search.py --n-null 200` |
+| Ensembling on measured binding | 7.9 | `python src/ensemble_wetlab.py` |
 | Settings decomposition, one knob at a time | 7.16 | `bash src/queue_settings_decomposition.sh` |
 | Settings decomposition analysis | 7.16 | `python src/settings_decomposition.py` |
 | Operator benchmark and equivalence check | 7.17 | `python src/kernel_bench.py --op adaln` |
@@ -3511,7 +3554,7 @@ load-bearing, because Section 7.13 measures the difference between them and find
 it accounts for a factor of three to seven in the standardised effect. No figure
 should be read without knowing which regime produced it.
 
-**Table 60: Inference settings in each regime**
+**Table 61: Inference settings in each regime**
 
 | Setting | Reduced regime | Full regime | Boltz default |
 | :--- | :---: | :---: | :---: |
