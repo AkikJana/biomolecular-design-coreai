@@ -187,15 +187,15 @@ ABSTRACT SHEET .............................................................. iv
 &nbsp;&nbsp;&nbsp;&nbsp;7.16 Which Setting Carried It, and for Which Test ........................... 62  
 &nbsp;&nbsp;&nbsp;&nbsp;7.17 Operator-Level Optimisation Under an Exact Oracle ...................... 67  
 &nbsp;&nbsp;&nbsp;&nbsp;7.18 The Readouts Against Binding That Was Actually Measured ................ 70  
-&nbsp;&nbsp;&nbsp;&nbsp;7.19 The Scramble Control Against Measured Binding, and Where It Stops Working ... 74  
-8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 77  
-&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 77  
-&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 82  
-9. FUTURE PLAN .............................................................. 86  
-10. REFERENCES .............................................................. 90  
-APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 92  
-APPENDIX B — REPRODUCTION OF RESULTS ........................................ 94  
-CHECKLIST OF ITEMS FOR THE FINAL REPORT ..................................... 99  
+&nbsp;&nbsp;&nbsp;&nbsp;7.19 The Scramble Control Against Measured Binding, and Where It Stops Working ... 75  
+8. CONCLUSIONS AND RECOMMENDATIONS .......................................... 78  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1 Conclusions ............................................................. 78  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2 Recommendations ......................................................... 83  
+9. FUTURE PLAN .............................................................. 87  
+10. REFERENCES .............................................................. 91  
+APPENDIX A — ABBREVIATIONS AND GLOSSARY ..................................... 93  
+APPENDIX B — REPRODUCTION OF RESULTS ........................................ 95  
+CHECKLIST OF ITEMS FOR THE FINAL REPORT .................................... 100  
 
 &nbsp;
 
@@ -269,12 +269,12 @@ Table 54: Candidate rewrites of the diffusion loop's inner operators ........ 68
 Table 55: Ten co-folding predictors scored against measured binding, by ipSAE ... 70  
 Table 56: This work's readouts on Anthropic's designs, scored against measured binding ... 71  
 Table 57: Paired differences, 2,000 bootstrap resamples over targets ........ 72  
-Table 58: Interface pLDDT of a design and of its own permutations, by measured outcome ... 74  
-Table 59: Separating measured binders, with and without the scramble control ... 75  
-Table 60: Project phases and schedule ....................................... 86  
-Table 61: Abbreviations and glossary ........................................ 92  
-Table 62: Reproduction commands by section .................................. 94  
-Table 63: Inference settings in each regime ................................. 98  
+Table 58: Interface pLDDT of a design and of its own permutations, by measured outcome ... 75  
+Table 59: Separating measured binders, with and without the scramble control ... 76  
+Table 60: Project phases and schedule ....................................... 87  
+Table 61: Abbreviations and glossary ........................................ 93  
+Table 62: Reproduction commands by section .................................. 95  
+Table 63: Inference settings in each regime ................................. 99  
 
 <div class="page-break"></div>
 
@@ -2973,11 +2973,23 @@ to 0.67 band they all occupy.
 
 #### 7.18.4 The ordering is Section 7.10's argument, from outside
 
-| | within-target AUC |
+| | within-group AUC |
 | :--- | ---: |
-| this work, in-training, full settings (Section 7.13) | 0.909 – 0.943 |
-| this work, held out, full settings (Section 7.10.6) | 0.682 – 0.803 |
+| this work, in-training, full settings (Section 7.13) | 0.908 – 0.943 |
+| this work, held out, full settings (Section 7.10.6) | 0.683 – 0.758 |
 | **measured binding, Boltz-2 ipSAE** | **0.628** |
+
+**All three rows use one convention**, which an earlier version of this table did
+not. Scores are z-standardised within group — receptor for this work's panels,
+target for the designs — and pooled into a single ROC, with the cognate as the
+positive class and every other candidate folded against that receptor, decoys and
+scrambles alike, as the negative class. The held-out row previously quoted
+0.682 – 0.803, which is the same folds scored by a different statistic
+(P(cognate outranks a decoy of its own receptor), scrambles excluded), so the two
+rows were not comparable. Recomputed on the common convention and averaged over
+the two full-settings draws, held out is 0.683 – 0.758. The correction moves the
+held-out figure *closer* to the wet-lab figure and so strengthens the argument
+below rather than weakening it.
 
 Section 7.10 argued that a benchmark quoted without stating whether the complexes
 were in training overstates a screen by about a factor of two, and Section 7.10.6
@@ -3354,8 +3366,9 @@ every figure reported here** (Section 7.18). Anthropic released 1,320 de novo
 designs with binding measured by two independent CROs and co-folding scores from
 ten predictors. On those designs ipSAE reaches within-target AUC 0.62 to 0.67
 across all ten, with Boltz-2 — the model used here — at 0.628, against a 26.8%
-base rate. Set beside this work's own 0.909 to 0.943 in-training and 0.682 to
-0.803 held out, the ordering is Section 7.10's argument arrived at from outside,
+base rate. Set beside this work's own 0.908 to 0.943 in-training and 0.683 to
+0.758 held out, on the common convention of Section 7.18.4, the ordering is
+Section 7.10's argument arrived at from outside,
 on different molecules and a different readout. The held-out figure is much
 closer to the wet-lab figure than the headline is, and still above it. The
 practical consequence is that Section 7.13's AUC 0.943 should be read as the
