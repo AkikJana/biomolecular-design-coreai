@@ -3398,6 +3398,35 @@ for the case this dissertation concerns and unsound outside it, and the
 recommendation acquires the condition that a permutation of the candidate must
 remain a candidate.
 
+**A method emerged from being wrong, and it is worth naming.** Section 7.10 was
+written three times and two of its claims were withdrawn, because each was formed
+after the numbers were seen and the next draw disagreed. Everything attempted
+afterwards was pre-specified instead, and the practice appears four times in this
+work:
+
+*   Section 7.15 built the null before reading the search's winner — the entire
+    search re-run on permuted labels — and that null refused a +0.018 AUC gain
+    that would otherwise have been reported as an improvement on this
+    dissertation's headline readout.
+*   Section 7.16's analysis script was written and dry-run while the arms were
+    still folding, so the decomposition could not be chosen to suit them. It was
+    the guard that caught a partial arm being scored at AUC 0.917.
+*   Section 7.17's benchmark refuses a candidate rewrite before timing it: the
+    oracle runs first, and speed is only measured on implementations already
+    proven equivalent.
+*   Section 7.19's prediction — that a permutation of a designed protein carries
+    no information because it does not fold — was committed to source before a
+    single fold ran, together with the single comparison that would test it. The
+    prediction proved right, which is precisely why registering it mattered:
+    stated afterwards it would have been indistinguishable from a rationalisation.
+
+The order matters more than the rigour. Each of these could have been done after
+the fact and would have produced the same arithmetic and a weaker claim. What
+pre-specification buys is not accuracy but the ability to be refused — and in
+this work it refused an ensembling mechanism, a readout combination, a target
+cropping strategy and a per-arm score, each of which had looked correct when it
+was proposed.
+
 The substantive contribution is that this was measurable at all. Six independent
 controls were applied — a composition-matched scramble, replicate folds, a
 de-confounding base-model arm, mixed-effects estimation, a peptide-integrity
