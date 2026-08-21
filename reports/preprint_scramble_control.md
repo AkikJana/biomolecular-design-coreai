@@ -11,32 +11,31 @@ Correspondence: akik.e.aj@gmail.com
 ## Abstract
 
 Confidence scores from cofolding models — ipTM, interface pLDDT, pDockQ and their
-relatives — are widely used to rank candidate binders before synthesis. Such
-rankings are usually validated against decoys: unrelated sequences that share
-neither composition nor length with the candidate. We show that this comparison
-is too weak to identify what the score responds to. On a 22-receptor
-peptide–protein panel we scored each cognate peptide against decoys and against
-permutations of itself, which hold amino-acid composition and length exactly
-fixed and destroy only sequence order. ipTM ranked cognates above decoys
-(mean rank 2.00 against a chance value of 2.50, p = 0.034) while failing to
-separate a cognate from its own permutation (+0.013, 95% CI [−0.019, +0.044]);
-permutations in fact outscored decoys (AUC 0.632, p = 0.0096). Of six interface
-readouts tested on identical structures, only interface pLDDT passed the
-permutation control, at 8.6 times ipTM's effect-to-noise ratio. Three further
-controls each changed a conclusion: replicate folding (single unseeded folds do
-not reproduce their own ranking), a training-cutoff split (only 38–40% of the
-standardised effect survives on complexes released after the cutoff), and
-sampling budget (reducing sampling steps from 200 to 10 suppresses every effect
-threefold to sevenfold, and a per-knob decomposition attributes 56–69% of the
-gain to sampling steps alone, with alignment depth and recycling contributing
-none). Against 1,320 designed miniproteins with binding measured by two contract
-research organisations, the same readout reached within-target AUC 0.626, where
-the in-training panel gave 0.943. On those designed proteins the permutation
-control itself carried no information (ΔAUC −0.092, 95% CI [−0.170, +0.008]),
-because permuting a 100-residue protein destroys folding for binders and
-non-binders alike. We therefore recommend the control where a permutation of the
-candidate remains a plausible candidate, and give the measured boundary of that
-condition.
+relatives — are widely used to rank candidate binders before synthesis. On 1,320
+designed miniproteins whose binding was measured by two independent contract
+research organisations, and which postdate every model's training data, nine
+published readouts span within-group AUC 0.621–0.671 and macro-AP 0.453–0.532
+against a 0.268 base rate: every confidence interval covers or nearly covers
+chance. Our own recommended readout reaches AUC 0.626 and macro-AP 0.436 on those
+designs, where our structure-derived panel gives 0.943. This paper explains that gap with six
+controls, each of which overturned a result that had looked solid without it. A
+composition-matched permutation control — scoring a cognate peptide against
+permutations of itself, which fix amino-acid composition and length and destroy
+only order — shows that ipTM ranks cognates above unrelated decoys (mean rank
+2.00 against chance 2.50, p = 0.034) while failing to separate a cognate from its
+own permutation (+0.013, 95% CI [−0.019, +0.044]); permutations in fact outscore
+decoys (AUC 0.632, p = 0.0096). Of six interface readouts on identical
+structures, only interface pLDDT passes, at 8.6 times ipTM's effect-to-noise
+ratio. Replicate folding shows single unseeded folds do not reproduce their own
+ranking, which forced two retractions in our own work. A training-cutoff split
+leaves 38–40% of the standardised effect. Reducing sampling steps from 200 to 10
+suppresses every effect threefold to sevenfold, and a per-knob decomposition
+attributes 56–69% of the recoverable gain to sampling steps alone, with alignment
+depth and recycling contributing none. Finally we bound the control itself: on
+60–120 residue designed proteins it carries no information (ΔAUC −0.092, 95% CI
+[−0.170, +0.008]), because permuting a folded protein destroys binders and
+non-binders alike. Use it where a permutation of the candidate remains a
+candidate.
 
 **Keywords:** protein structure prediction, cofolding, confidence metrics,
 benchmarking, negative controls, peptide binders, data contamination
@@ -68,20 +67,87 @@ idea of a permutation null but the systematic application of one to cofolding
 confidence metrics, together with a measurement of the conditions under which it
 is informative and the conditions under which it is not.
 
-We report six controls applied to a peptide-binder screening panel. Each was
+We begin from the outside. A recently released dataset of designed miniproteins
+whose binding was measured experimentally [6] permits the comparison a
+structure-derived panel cannot make: how a confidence readout performs against
+binding somebody actually observed, on designs that postdate every model's
+training data. Every readout scored on it, ours included, lands close to chance
+(§2.1) — far below what benchmarks of these same readouts report.
+
+The rest of the paper accounts for that gap. We apply six controls to a
+peptide-binder screening panel of our own, and each removes part of it: the
+permutation control (§2.2), the choice of readout (§2.3), replicate folding
+(§2.4), a training-cutoff split (§2.5), and the sampling budget (§2.6). Each was
 capable of overturning a result, and each did. We report the negative results in
-full, including two conclusions of our own that the controls forced us to
-retract. Finally, we test the readouts and the control itself against a
-recently released dataset of designed miniproteins whose binding was measured
-experimentally [6], which permits the comparison that a structure-derived panel
-cannot make: how a confidence readout performs against binding somebody actually
-observed, on designs that postdate every model's training data.
+full, including two conclusions of our own that the controls forced us to retract.
+Finally we bound the first control by testing it against measured binding as well
+(§2.7), and find a regime where it carries nothing.
 
 ---
 
 ## 2. Results
 
-### 2.1 A composition-matched control separates two hypotheses that decoys conflate
+### 2.1 Against binding that was actually measured, no readout is far above chance
+
+We begin with the check that does not depend on any panel we built. Benchmarks of
+cofolding confidence almost always score a cognate pair that was *crystallised*,
+which is evidence that two molecules can be co-ordered in a lattice, not a
+measurement of binding. A recently released dataset [6] permits the direct test:
+1,320 designed miniproteins across 15 targets, with binding measured by two
+independent contract research organisations, and with designs postdating every
+model's training data. 354 (26.8%) bind.
+
+We recomputed interface pLDDT exactly as described in §4 from the Boltz-2 structures
+released with that dataset. One implementation detail mattered: five targets are
+oligomeric, so taking the first two chains as receptor and binder would have
+measured a target against itself. The binder chain was identified by matching the
+released binder length, with every other chain pooled as the target. All 1,320
+designs scored.
+
+**Table 1. Readouts against measured binding, and against structure-derived panels.**
+
+| Setting | within-group AUC | macro-AP |
+| :--- | ---: | ---: |
+| Interface pLDDT, measured binding | 0.626 | 0.436 |
+| ipSAE, same structures | 0.628 | 0.436 |
+| chance | 0.500 | 0.268 |
+| — for scale, same AUC convention (§2.5, §2.6) — | | |
+| this work, in-training panel, full settings | 0.908–0.943 | — |
+| this work, held-out panel, full settings | 0.683–0.758 | — |
+
+All AUCs in this table use one convention: scores are z-standardised within
+group — receptor for our panels, target for the designs — and pooled into a
+single ROC. The held-out row is the mean of two independent full-settings draws.
+
+The two lower rows are established in §2.5 and §2.6 and are quoted here only to
+set the scale. These are not the same measurement: the panels differ, the
+positives differ (a cognate crystal pair against a synthesised binder), and the
+readouts differ in part. What they share is the question, and the ordering answers it. A readout
+scored on complexes the model was trained on reads far higher than the same
+family of readout scored against binding that was actually measured. The
+contamination penalty of §2.5, measured internally on a training-cutoff split,
+appears again from outside.
+
+For context, nine other predictors scored on the same designs span within-target
+AUC 0.621–0.671 and macro-AP 0.453–0.532. No structure-prediction confidence
+readout in this comparison, ours included, is close to its own benchmark figures.
+
+![No confidence readout is far above chance on binding that was actually measured](assets/fig_wetlab.png)
+
+<p class="figcap"><b>Figure 1.</b> (a) macro-AP against measured binding for
+every predictor scored on the release, with 95% confidence intervals; the dashed
+rule is the base rate. Red bars are this work's readouts. Every interval covers
+or nearly covers chance. (b) The same readout family across three regimes on one
+AUC convention. The descent from a training-adjacent panel to measured binding is
+about 0.28–0.32 AUC, and the held-out panel sits between the two. Panels differ
+in molecules and in what counts as a positive, so (b) supports an ordering rather
+than a numerical correction.</p>
+
+### 2.2 A composition-matched control separates two hypotheses that decoys conflate
+
+The gap in §2.1 — 0.943 on a structure-derived panel against 0.626 on measured
+binding — is the thing the rest of this paper explains. Sections 2.2 to 2.6 apply
+six controls to a panel of our own, and each one removes part of that gap.
 
 We assembled a panel of 22 receptors (132 complexes) from the Protein Data Bank
 [10], filtered to remove post-translationally modified residues, expression tags,
@@ -100,7 +166,7 @@ Read alone, this is a positive result.
 
 The permutation control contradicts the binding interpretation of it.
 
-**Table 1. Mean ipTM by class on the 22-receptor panel (10 sampling steps).**
+**Table 2. Mean ipTM by class on the 22-receptor panel (10 sampling steps).**
 
 | class | n | mean ipTM |
 | :--- | ---: | ---: |
@@ -124,15 +190,15 @@ adjustment and is compositional rather than positional.
 Reporting only the decoy comparison would have produced a positive headline that
 the experiment's own control contradicts.
 
-### 2.2 Of six interface readouts on identical structures, one passes
+### 2.3 Of six interface readouts on identical structures, one passes
 
-The finding in §2.1 indicts ipTM, not the predicted structures. We re-scored the
+The finding in §2.2 indicts ipTM, not the predicted structures. We re-scored the
 same 132 structures with six interface measures, so that the comparison between
 readouts is free of folding variance by construction. Contacts use an 8 Å
 CB–CB criterion (CA for glycine); pDockQ follows Bryant et al. [7]; buried area
 is Shrake–Rupley.
 
-**Table 2. Interface readouts on the permutation control.**
+**Table 3. Interface readouts on the permutation control.**
 
 | Metric | cognate | scrambled | decoy | cognate vs own scramble | mean rank | chance |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -153,7 +219,7 @@ structures, from p = 0.797 to p = 0.00026.
 
 ![Only interface pLDDT separates a binder from its own scramble](assets/fig_metric_comparison.png)
 
-<p class="figcap"><b>Figure 1.</b> ipTM (left) and interface pLDDT (right) by
+<p class="figcap"><b>Figure 2.</b> ipTM (left) and interface pLDDT (right) by
 class on the 22-receptor panel. Boxes span the interquartile range; the bracket
 gives the paired test of a cognate against its own scramble. ipTM places
 cognates above decoys while failing to distinguish them from permutations of
@@ -164,18 +230,18 @@ peptide length: at 10 sampling steps only 14% of backbone bonds in these
 structures fall within physically plausible bounds, against 96% for a
 few-step-distilled model [9], and on converged structures the contact ordering
 reverses to the sensible direction (cognates 61.4, permutations 51.8). Every
-contact-derived row of Table 2 should be read as describing point clouds rather
+contact-derived row of Table 3 should be read as describing point clouds rather
 than complexes. The ipTM and interface-pLDDT rows are unaffected, both being read
 from the confidence head rather than from coordinates.
 
-### 2.3 Single folds do not reproduce their own ranking
+### 2.4 Single folds do not reproduce their own ranking
 
 Boltz's sampler seed defaults to unset, so each reported score is one draw from a
 distribution whose width is not reported. We folded a subset 96 times to measure
 that width, then compared each readout's effect on the permutation control
 against its own run-to-run spread.
 
-**Table 3. Permutation-control effect against run-to-run spread.**
+**Table 4. Permutation-control effect against run-to-run spread.**
 
 | Metric | effect | run-to-run SD | effect / noise |
 | :--- | ---: | ---: | ---: |
@@ -194,7 +260,7 @@ conclusions we had drawn from single-draw comparisons did not survive replicatio
 and were retracted. A benchmark that folds each candidate once is reporting a
 sample of size one from a distribution wide enough to reverse its ordering.
 
-### 2.4 A training-cutoff split removes about two thirds of the standardised effect
+### 2.5 A training-cutoff split removes about two thirds of the standardised effect
 
 Panels drawn from the PDB overlap the training data of every model trained on the
 PDB. We assembled a second panel of 22 receptors released after the model's
@@ -204,7 +270,7 @@ were then folded at the model's intended settings (200 sampling steps, 3
 recycling passes, undiminished alignment depth), so that the only quantity
 varying between them is whether the model has seen the complex.
 
-**Table 4. The contamination penalty at full settings.**
+**Table 5. The contamination penalty at full settings.**
 
 | Readout | in-training | held out | *p* held out | effect retained | Cohen's *d* retained |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -221,7 +287,7 @@ retention.
 
 ![Sampling budget sets the effect size; training exposure sets how much survives](assets/fig_contamination.png)
 
-<p class="figcap"><b>Figure 2.</b> Cohen's <i>d</i> on the scramble control
+<p class="figcap"><b>Figure 3.</b> Cohen's <i>d</i> on the scramble control
 across the full 2×2 of training exposure and sampling budget, for three
 readouts. Raising the sampling budget multiplies the in-training effect by 1.7
 to 1.9 (left to right, blue bars); withholding the complex from training removes
@@ -230,14 +296,14 @@ and three quarters at reduced settings, where the estimate is itself unstable.
 Percentages give the standardised retention held out. Dotted rules mark Cohen's conventional
 small/medium/large thresholds.</p>
 
-### 2.5 Sampling budget confounds every comparison above
+### 2.6 Sampling budget confounds every comparison above
 
-The measurements in §2.1–2.3 were taken at 10 sampling steps of an intended 200,
+The measurements in §2.2–2.3 were taken at 10 sampling steps of an intended 200,
 a reduction adopted for throughput on consumer hardware. We folded the same panel
 on the same model and device at full settings to measure what that reduction had
 cost.
 
-**Table 5. Permutation control at reduced and full settings.**
+**Table 6. Permutation control at reduced and full settings.**
 
 | Metric | reduced | full | Cohen's *d* | within-receptor z |
 | :--- | ---: | ---: | :--- | ---: |
@@ -252,17 +318,17 @@ outliers. Two readouts change verdict outright: interface pLDDT from p = 0.067 t
 p < 10⁻⁵, and the receptor side from p = 0.428 — no evidence at all — to
 p < 10⁻⁵.
 
-This has a direct bearing on §2.1. ipTM's indifference to sequence order is a
+This has a direct bearing on §2.2. ipTM's indifference to sequence order is a
 property of the reduced sampling regime at least as much as of the metric: at 200
 steps the same model on the same panel separates a cognate from its own
 permutation at *d* = 1.25. The claim that survives is the narrower one — **ipTM
 is indifferent to sequence order when the sampler has not converged** — which
-§2.2 identifies as the regime in which the predicted backbone is 14% physically
+§2.3 identifies as the regime in which the predicted backbone is 14% physically
 plausible.
 
 To locate the cost we moved each setting alone from the reduced baseline.
 
-**Table 6. Per-knob decomposition, order-sensitivity test.**
+**Table 7. Per-knob decomposition, order-sensitivity test.**
 
 | Arm | interface pLDDT | *p* | Cohen's *d* | share of full gain |
 | :--- | ---: | ---: | ---: | ---: |
@@ -281,59 +347,6 @@ than independent, and no single-knob budget reproduces the full result.
 
 The practical recommendation is specific: under a compute constraint, spend it on
 sampling steps and reduce alignment depth and recycling first.
-
-### 2.6 Against measured binding, the readout reaches 0.626
-
-Every result above scores a cognate pair that was crystallised, not one whose
-binding was measured. A recently released dataset [6] permits the direct test:
-1,320 designed miniproteins across 15 targets, with binding measured by two
-independent contract research organisations, and with designs postdating every
-model's training data. 354 (26.8%) bind.
-
-We recomputed interface pLDDT exactly as in §2.2 from the Boltz-2 structures
-released with that dataset. One implementation detail mattered: five targets are
-oligomeric, so taking the first two chains as receptor and binder would have
-measured a target against itself. The binder chain was identified by matching the
-released binder length, with every other chain pooled as the target. All 1,320
-designs scored.
-
-**Table 7. Readouts against measured binding, and against structure-derived panels.**
-
-| Setting | within-group AUC | macro-AP |
-| :--- | ---: | ---: |
-| Interface pLDDT, measured binding | 0.626 | 0.436 |
-| ipSAE, same structures | 0.628 | 0.436 |
-| chance | 0.500 | 0.268 |
-| — for scale, same AUC convention — | | |
-| this work, in-training panel, full settings | 0.908–0.943 | — |
-| this work, held-out panel, full settings | 0.683–0.758 | — |
-
-All AUCs in this table use one convention: scores are z-standardised within
-group — receptor for our panels, target for the designs — and pooled into a
-single ROC. The held-out row is the mean of two independent full-settings draws.
-
-These are not the same measurement: the panels differ, the positives differ (a
-cognate crystal pair against a synthesised binder), and the readouts differ in
-part. What they share is the question, and the ordering answers it. A readout
-scored on complexes the model was trained on reads far higher than the same
-family of readout scored against binding that was actually measured. The
-contamination penalty of §2.4, measured internally on a training-cutoff split,
-appears again from outside.
-
-For context, nine other predictors scored on the same designs span within-target
-AUC 0.621–0.671 and macro-AP 0.453–0.532. No structure-prediction confidence
-readout in this comparison, ours included, is close to its own benchmark figures.
-
-![No confidence readout is far above chance on binding that was actually measured](assets/fig_wetlab.png)
-
-<p class="figcap"><b>Figure 3.</b> (a) macro-AP against measured binding for
-every predictor scored on the release, with 95% confidence intervals; the dashed
-rule is the base rate. Red bars are this work's readouts. Every interval covers
-or nearly covers chance. (b) The same readout family across three regimes on one
-AUC convention. The descent from a training-adjacent panel to measured binding is
-about 0.28–0.32 AUC, and the held-out panel sits between the two. Panels differ
-in molecules and in what counts as a positive, so (b) supports an ordering rather
-than a numerical correction.</p>
 
 ### 2.7 Where the control stops working
 
@@ -422,9 +435,9 @@ one case where we could measure both.
 training-cutoff split, 38 designs in the boundary test — and were folded on a
 single consumer machine (Apple M-series, 17 GB unified memory), which constrained
 both panel size and replication depth. The boundary test in §2.7 was folded at 10
-sampling steps, and §2.5 establishes that a full-settings repeat could change its
+sampling steps, and §2.6 establishes that a full-settings repeat could change its
 magnitudes, though a difference this consistent in sign is unlikely to reverse.
-The external comparison in §2.6 differs from our internal panels in panel,
+The external comparison in §2.1 differs from our internal panels in panel,
 positives and readout simultaneously, so it supports an ordering rather than a
 numerical correction. Interface pLDDT is read from the same confidence head as
 ipTM, making it a better readout of one model rather than an independent second
@@ -477,7 +490,7 @@ z-standardised within receptor before pooling, so that between-receptor offsets
 do not contribute to the curve; the positive class is the cognate and the
 negative class is every other candidate folded against that receptor, decoys and
 permutations alike. The same convention, with target substituted for receptor,
-is applied to the designed-miniprotein comparison, so that the AUCs in Table 7
+is applied to the designed-miniprotein comparison, so that the AUCs in Table 1
 are on one scale. Where a candidate's own permutation set is small,
 the null standard deviation is pooled across candidates and the resulting ratio
 is treated as a *t* statistic on the pooled degrees of freedom, not as a *z*.
