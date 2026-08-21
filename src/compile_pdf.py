@@ -186,7 +186,7 @@ graph TD
         body {{
             font-family: "Times New Roman", Times, serif;
             font-size: 11pt;
-            line-height: 1.5;
+            line-height: 2.0;
             color: #111111;
             margin: 0;
             padding: 0;
