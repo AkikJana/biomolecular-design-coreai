@@ -226,8 +226,8 @@ def main():
                           f"knobs do separately, so they are not independent "
                           f"contributions")
                 elif tot > 125:
-                    print(f"    sub-additive: the knobs overlap, each "
-                          f"recovering gain the others also recover")
+                    print("    sub-additive: the knobs overlap, each "
+                          "recovering gain the others also recover")
             else:
                 # additivity is a statement about all three knobs; one arm's
                 # share is not evidence for or against it
