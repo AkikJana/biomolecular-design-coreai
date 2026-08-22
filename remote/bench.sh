@@ -10,7 +10,7 @@ cd "$REPO"; set -a; . ./.remote_env; set +a
 N="${N:-6}"
 echo "timing $N folds at full settings (200 steps, 3 recycles, full MSA)…"
 START=$(date +%s)
-$PY src/settings_confound.py \
+BOLTZ_NO_KERNELS=1 $PY src/settings_confound.py \
     --batch-size "$N" --sampling-steps 200 --recycling-steps 3 --msa-depth 0 \
     --run-tag bench --labels cognate --per-fold-budget 1800 --min-free-gib 4
 END=$(date +%s)

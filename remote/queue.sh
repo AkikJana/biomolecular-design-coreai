@@ -10,12 +10,12 @@ BATCH="${BATCH:-12}"
 log() { echo "[$(date +%H:%M:%S)] $*"; }
 
 log "1/2 expanded panel, full settings"
-$PY src/settings_confound.py \
+BOLTZ_NO_KERNELS=1 $PY src/settings_confound.py \
     --batch-size "$BATCH" --sampling-steps 200 --recycling-steps 3 --msa-depth 0 \
     --run-tag expanded --per-fold-budget 1800 --min-free-gib 4
 
 log "2/2 held-out panel, full settings, third draw"
-$PY src/heldout_panel.py \
+BOLTZ_NO_KERNELS=1 $PY src/heldout_panel.py \
     --batch-size "$BATCH" --sampling-steps 200 --recycling-steps 3 --msa-depth 0 \
     --base boltz1 --run-tag full3
 

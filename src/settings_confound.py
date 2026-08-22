@@ -87,6 +87,13 @@ def fold(inputs, out, sampling, recycling, msa_depth, per_fold_budget=300):
            # this way. Loading in-process removes the fork entirely, and the
            # data pipeline is not the bottleneck at 200 sampling steps.
            "--num_workers", "0", "--preprocessing-threads", "1"]
+    # Boltz's fused triangle-attention kernels need cuequivariance_ops_torch,
+    # a separate CUDA-only wheel. It was never a dependency here because the
+    # MPS path does not use those kernels at all, so a CUDA host hits an
+    # ImportError at call time rather than install time. This lets such a
+    # host fall back to the PyTorch implementation instead of requiring it.
+    if os.environ.get("BOLTZ_NO_KERNELS"):
+        cmd.append("--no_kernels")
     if msa_depth is not None:
         cmd += ["--subsample_msa", "--num_subsampled_msa", str(msa_depth),
                 "--max_msa_seqs", str(msa_depth)]

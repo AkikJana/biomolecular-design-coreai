@@ -25,6 +25,15 @@ ssh -p $GPU_PORT $GPU_HOST 'cd BiomolecularDesign && nohup bash remote/queue.sh 
 remote/sync.sh down
 ```
 
+## Measured, on a RunPod RTX 4090
+
+**26 seconds per fold** at full settings (200 sampling steps, 3 recycling passes,
+undiminished MSA), with MSAs served from the synced cache. 354 folds is about
+2.6 GPU-hours, roughly $1 at $0.40/hr.
+
+For scale: the same complex takes minutes on Apple Silicon at *reduced* settings,
+and Chai-1 on CPU took 2h47m for one 66-residue complex.
+
 ## Notes
 
 **Spot instances are fine.** The runners skip folds already scored, so re-running
@@ -37,4 +46,18 @@ converged models. Use `down --all` deliberately, and only if something needs
 coordinates — PoseBusters on converged structures is the one good reason.
 
 **Provisioning reuses the image's torch** when it is CUDA-enabled, because a
-pip-resolved torch frequently mismatches the host driver.
+pip-resolved torch frequently mismatches the host driver. Installing Boltz's
+optional CUDA kernels unpinned dragged torch 2.13 (CUDA 13) over 2.8.0+cu128 and
+broke torch against a 12.8 driver, so `WITH_KERNELS=1` installs them `--no-deps`
+and reverts if torch moves.
+
+**Kernels are off by default.** Boltz's fused triangle attention needs
+`cuequivariance_ops_torch`, which is not a dependency of this project because the
+MPS path never uses it. On CUDA it fails at *call* time rather than import time,
+so static checks all pass and every fold still dies. `--no_kernels` uses the
+PyTorch implementation instead, and 26 s/fold is fast enough that the kernels are
+not worth the dependency risk.
+
+**Provisioning ends with a smoke fold.** Every static check passed on a box that
+could not fold anything; thirty seconds of actually folding is the only check
+that meant something.
