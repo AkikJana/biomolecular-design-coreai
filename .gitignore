@@ -87,3 +87,6 @@ biomolecular_design/
 weights/*
 !weights/.gitkeep
 !weights/README.md
+
+# PoseBusters scratch: extracted peptide chains, regenerated on each run
+/.pb_work/
