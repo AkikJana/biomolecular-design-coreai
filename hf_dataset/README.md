@@ -150,6 +150,17 @@ that receptor negative.
 
 CC BY 4.0.
 
-Panel receptors are derived from the Protein Data Bank. Boltz-1 and Boltz-2 are
-MIT-licensed and are not redistributed here; this dataset contains scores
-computed from their outputs, not model weights.
+Panel receptors are derived from the Protein Data Bank.
+
+**No model weights are redistributed here, and none of the models is ours.** This
+dataset contains scores computed from their outputs:
+
+- **Boltz-1 / Boltz-2** — MIT-licensed (Wohlwend et al. 2024; Passaro et al. 2025)
+- **Chai-1** — the `chai1_full` arm (Chai Discovery team, 2024)
+- **DeCAF** — the few-step distilled arm, from Scarpellini et al.,
+  *Few-step cofolding with all-atom flow maps*, arXiv:2606.08375
+
+The designed-miniprotein comparison referenced in the boundary result uses the
+per-design release of *Autonomous de novo protein binder design with Claude*
+(CC BY 4.0), which is cited per its own `CITATION.cff` and is not redistributed
+here.
