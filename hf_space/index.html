@@ -1,0 +1,195 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Scramble-control scorer</title>
+<style>
+:root{--bg:#fbfbfd;--fg:#14202e;--mut:#5b6b7d;--line:#dce3ea;--acc:#0E8F9A;--warn:#8A5200;--bad:#C62828}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
+     background:var(--bg);color:var(--fg)}
+.wrap{max-width:860px;margin:0 auto;padding:40px 22px 90px}
+h1{font-size:30px;line-height:1.2;margin:0 0 6px}
+h2{font-size:19px;margin:34px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.lede{color:var(--mut);margin:0 0 22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin:18px 0}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input[type=text],input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--line);
+     border-radius:8px;font:inherit;font-family:ui-monospace,Menlo,monospace}
+input[type=file]{width:100%;font:inherit;font-size:14px}
+button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:11px 20px;
+     font:inherit;font-weight:600;cursor:pointer;margin-top:16px}
+button:hover{filter:brightness(1.08)}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:15px}
+td,th{border:1px solid var(--line);padding:7px 11px;text-align:left}
+th{background:#f2f6f9}
+td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,Menlo,monospace;background:#eef3f7;padding:1px 5px;border-radius:4px}
+.note{border-left:3px solid var(--warn);background:#fff9f0;padding:10px 14px;margin:14px 0;
+     font-size:14.5px;color:#4a3a22}
+.bad{border-left-color:var(--bad);background:#fdf2f2;color:#5a2020}
+.ok{border-left-color:var(--acc);background:#eefafb;color:#134a4f}
+.big{font-size:26px;font-weight:700}
+footer{margin-top:44px;font-size:14px;color:var(--mut)}
+a{color:var(--acc)}
+</style>
+<div class="wrap">
+<h1>Scramble-control scorer</h1>
+<p class="lede">A cofolding confidence score that ranks a peptide above an unrelated
+decoy may be responding to amino-acid <b>composition</b> rather than to binding.
+Scoring a candidate against permutations of <i>itself</i> holds composition and
+length fixed and varies only residue order.</p>
+
+<div class="note">Everything here runs in your browser. No structure is uploaded
+anywhere, and nothing is folded — folding needs a GPU. Bring predicted complexes
+with pLDDT in the B-factor column; Boltz, Chai-1 and AlphaFold all write it there.</div>
+
+<h2>1. Generate the permutations to fold</h2>
+<div class="card">
+  <label for="seq">Peptide sequence</label>
+  <input id="seq" type="text" placeholder="SQETFSDLWKLLPEN" value="SQETFSDLWKLLPEN">
+  <label for="n">How many permutations</label>
+  <input id="n" type="number" min="1" max="5" value="2">
+  <button onclick="genScrambles()">Generate</button>
+  <div id="scr"></div>
+</div>
+
+<h2>2. Score the folded structures</h2>
+<div class="card">
+  <label for="cand">Candidate complex (.pdb)</label>
+  <input id="cand" type="file" accept=".pdb,.cif,.txt">
+  <label for="perms">The same candidate, permuted (2–3 files)</label>
+  <input id="perms" type="file" accept=".pdb,.cif,.txt" multiple>
+  <button onclick="scoreAll()">Score</button>
+  <div id="out"></div>
+</div>
+
+<footer>
+Readout is the paper's: 8 Å between representative atoms, CB where present and CA
+otherwise, mean CA pLDDT over the contacting residues of both sides. Panels and
+per-fold scores:
+<a href="https://huggingface.co/datasets/AkikJana/scramble-control-panels">scramble-control-panels</a>
+— 2,456 folds, 16 inference arms, 75 receptors.
+</footer>
+</div>
+
+<script>
+// ---- deterministic RNG seeded from the sequence, so a peptide always gets the
+// same null. Matches the intent of the Python implementation (sha1-seeded).
+function seedFrom(s){let h=2166136261>>>0;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+function genScrambles(){
+  const seq=document.getElementById('seq').value.replace(/\s+/g,'').toUpperCase();
+  const n=Math.max(1,Math.min(5,+document.getElementById('n').value||2));
+  const el=document.getElementById('scr');
+  if(!seq){el.innerHTML='<div class="note bad">Enter a sequence.</div>';return}
+  if(seq.length>40){el.innerHTML='<div class="note bad">'+seq.length+' residues. The control '+
+    'is calibrated for short peptides — see the boundary note below.</div>';return}
+  const rnd=mulberry(seedFrom(seq)),seen=new Set([seq]),out=[];
+  for(let t=0;t<n*60&&out.length<n;t++){
+    const c=seq.split('');
+    for(let i=c.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[c[i],c[j]]=[c[j],c[i]]}
+    const s=c.join('');if(!seen.has(s)){seen.add(s);out.push(s)}
+  }
+  if(!out.length){el.innerHTML='<div class="note bad">Too little variety to permute.</div>';return}
+  el.innerHTML='<p style="margin-top:16px">Same composition, same length, order destroyed. '+
+    'Seeded from the sequence, so this list is reproducible.</p><table><tr><th>#</th><th>sequence</th></tr>'+
+    out.map((s,i)=>'<tr><td>'+(i+1)+'</td><td><code>'+s+'</code></td></tr>').join('')+'</table>';
+}
+
+// ---- PDB parsing: fixed-column ATOM records
+function parsePDB(text){
+  const chains={};
+  for(const line of text.split('\n')){
+    if(!line.startsWith('ATOM')&&!line.startsWith('HETATM'))continue;
+    const atom=line.slice(12,16).trim(),res=line.slice(17,20).trim(),ch=line.slice(21,22),
+          seq=line.slice(22,27).trim(),
+          x=parseFloat(line.slice(30,38)),y=parseFloat(line.slice(38,46)),
+          z=parseFloat(line.slice(46,54)),b=parseFloat(line.slice(60,66));
+    if(!isFinite(x)||!isFinite(y)||!isFinite(z))continue;
+    chains[ch]=chains[ch]||{};
+    const key=seq;
+    chains[ch][key]=chains[ch][key]||{res:res,atoms:{}};
+    chains[ch][key].atoms[atom]={x,y,z,b:isFinite(b)?b:null};
+  }
+  return chains;
+}
+function rep(r){return r.atoms['CB']||r.atoms['CA']||null}
+
+function ifacePlddt(text){
+  const ch=parsePDB(text),names=Object.keys(ch);
+  if(names.length<2)return{err:'needs at least two chains (receptor + peptide)'};
+  names.sort((a,b)=>Object.keys(ch[a]).length-Object.keys(ch[b]).length);
+  const pep=ch[names[0]],rec=ch[names[names.length-1]];
+  const pk=Object.keys(pep),rk=Object.keys(rec);
+  const pi=new Set(),ri=new Set();
+  for(const a of pk){const ra=rep(pep[a]);if(!ra)continue;
+    for(const b of rk){const rb=rep(rec[b]);if(!rb)continue;
+      const dx=ra.x-rb.x,dy=ra.y-rb.y,dz=ra.z-rb.z;
+      if(dx*dx+dy*dy+dz*dz<=64){pi.add(a);ri.add(b)}}}
+  if(!pi.size||!ri.size)return{err:'no residue pair within 8 Å — chains are not in contact'};
+  const vals=[],rvals=[];
+  for(const a of pi){const ca=pep[a].atoms['CA'];if(ca&&ca.b!==null)vals.push(ca.b)}
+  for(const b of ri){const ca=rec[b].atoms['CA'];if(ca&&ca.b!==null){vals.push(ca.b);rvals.push(ca.b)}}
+  if(!vals.length)return{err:'no CA B-factors — pLDDT must be in the B-factor column'};
+  const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+  return{iface:mean(vals),rec:rvals.length?mean(rvals):null,
+         pepLen:pk.length,recLen:rk.length,nPep:pi.size,nRec:ri.size};
+}
+
+function readFile(f){return new Promise(r=>{const fr=new FileReader();
+  fr.onload=e=>r(e.target.result);fr.readAsText(f)})}
+
+async function scoreAll(){
+  const out=document.getElementById('out');
+  const cf=document.getElementById('cand').files[0];
+  if(!cf){out.innerHTML='<div class="note bad">Upload the candidate structure first.</div>';return}
+  out.innerHTML='<p style="margin-top:16px;color:#5b6b7d">Scoring…</p>';
+  const c=ifacePlddt(await readFile(cf));
+  if(c.err){out.innerHTML='<div class="note bad">Candidate: '+c.err+'</div>';return}
+  let h='<h3 style="margin-top:22px">Candidate</h3><table>'+
+    '<tr><td>interface pLDDT</td><td><b>'+c.iface.toFixed(2)+'</b></td></tr>'+
+    (c.rec!==null?'<tr><td>receptor side</td><td>'+c.rec.toFixed(2)+'</td></tr>':'')+
+    '<tr><td>peptide length</td><td>'+c.pepLen+'</td></tr>'+
+    '<tr><td>interface residues</td><td>'+c.nPep+' peptide / '+c.nRec+' receptor</td></tr></table>';
+
+  const pfs=document.getElementById('perms').files;
+  if(!pfs.length){
+    h+='<div class="note">A raw interface pLDDT is <b>not</b> evidence that a candidate '+
+       'binds. On the paper\'s panel ipTM ranked cognates above unrelated decoys while '+
+       'failing to distinguish them from permutations of themselves — the score was '+
+       'tracking composition. Fold two or three permutations and add them above; the '+
+       '<b>margin</b> is the number worth reading.</div>';
+    out.innerHTML=h;return;
+  }
+  const vals=[];let firstErr=null;
+  for(const f of pfs){const r=ifacePlddt(await readFile(f));
+    if(r.err){firstErr=firstErr||r.err}else{vals.push(r.iface)}}
+  if(!vals.length){out.innerHTML=h+'<div class="note bad">No permutation scored: '+firstErr+'</div>';return}
+  const mean=vals.reduce((s,v)=>s+v,0)/vals.length;
+  const margin=c.iface-mean;
+  const sd=vals.length>1?Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/(vals.length-1)):null;
+  h+='<h3 style="margin-top:26px">Against its own permutations</h3><table>'+
+     '<tr><td>permutations scored</td><td>'+vals.length+'</td></tr>'+
+     '<tr><td>their mean interface pLDDT</td><td>'+mean.toFixed(2)+'</td></tr>'+
+     (sd!==null?'<tr><td>their spread (SD)</td><td>'+sd.toFixed(2)+'</td></tr>':'')+
+     '<tr><td><b>margin</b></td><td class="big">'+(margin>=0?'+':'')+margin.toFixed(2)+'</td></tr></table>';
+  h+= margin>0
+    ? '<div class="note ok">The candidate beats its own permutations by '+margin.toFixed(2)+
+      '. That is the comparison a decoy set cannot make: composition and length are held '+
+      'fixed, so only residue order differs.</div>'
+    : '<div class="note bad">The candidate does <b>not</b> beat its own permutations ('+
+      margin.toFixed(2)+'). On this readout the score is not responding to sequence order — '+
+      'which is what separates a binder from a bag of the same amino acids.</div>';
+  h+='<div class="note"><b>A margin is not a p-value.</b> With two or three permutations the '+
+     'null\'s spread is barely estimated. The paper pools that null across candidates and '+
+     'treats the ratio as a <i>t</i> on pooled degrees of freedom; a single margin read alone '+
+     'overstates its own reliability.</div>';
+  h+='<div class="note"><b>Where this control does not apply.</b> On 60–120 residue designed '+
+     'proteins a permutation does not fold at all, so binders and non-binders lose the same '+
+     '~19 points and the subtraction carries nothing (ΔAUC −0.104, 95% CI [−0.330, +0.071], '+
+     '48 designs with binding measured by two CROs). Use it where a permutation of the '+
+     'candidate is still a plausible candidate.</div>';
+  out.innerHTML=h;
+}
+</script>

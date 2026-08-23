@@ -39,7 +39,7 @@ Weaker in Chai than in Boltz, and the claim should say so.
 
 **Section 7.11's mechanism, externally confirmed.** PoseBusters on converged
 structures: 354/354 peptides are a single connected fragment, median 1. At ten
-sampling steps it was 0/144, median 41 fragments.
+sampling steps it was 0/144, median 40.5 fragments.
 
 **Section 7.19 at full settings.** Its limitations section called a full-settings
 repeat "an expectation and not a measurement". It is now a measurement, on 48

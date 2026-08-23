@@ -23,6 +23,7 @@ Usage:
 
 import argparse
 import json
+import statistics
 import warnings
 from pathlib import Path
 
@@ -102,7 +103,10 @@ def main():
                       "bonds": m.GetNumBonds() if m else None,
                       "fragments": len(Chem.GetMolFrags(m)) if m else None})
     intact = sum(1 for f in frags if f["fragments"] == 1)
-    med_frag = sorted(f["fragments"] for f in frags if f["fragments"])[len(frags) // 2]
+    # statistics.median, not sorted()[n//2]: for even n the latter returns the
+    # upper of the two middle values, which is not a median. It reported 41
+    # where the median is 40.5.
+    med_frag = statistics.median([f["fragments"] for f in frags if f["fragments"]])
     print(f"connectivity: {intact}/{len(frags)} peptides are a single fragment; "
           f"median {med_frag} fragments")
 

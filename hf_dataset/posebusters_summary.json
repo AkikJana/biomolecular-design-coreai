@@ -87,7 +87,7 @@
   "connectivity": {
     "single_fragment": 0,
     "n": 144,
-    "median_fragments": 41
+    "median_fragments": 40.5
   },
   "peptide_len_min": 5,
   "peptide_len_max": 23

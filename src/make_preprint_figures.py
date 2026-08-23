@@ -203,6 +203,134 @@ def fig_wetlab():
     return "fig_wetlab.png"
 
 
+
+
+GPU = REPO_ROOT / "results" / "gpu_run_2026-08-23"
+
+
+def _margins(recs, col="iface_plddt"):
+    """Per-receptor cognate-minus-own-scramble margin."""
+    import pandas as pd
+    df = pd.DataFrame(recs)
+    df = df[df["label"].isin(["cognate", "scrambled"])]
+    p = df.pivot_table(index="receptor_id", columns="label", values=col).dropna()
+    return (p["cognate"] - p["scrambled"]), p
+
+
+def fig_robustness():
+    """Does the control survive a bigger panel and a different model?
+
+    These are the two questions a reader asks first, and until this figure they
+    were answerable only from tables.
+    """
+    from heldout_at_full import paired_d
+
+    p22 = _need(GPU / "settings_confoundexpanded.json")["per_fold"]
+    p59 = _need(GPU / "panel59_readouts.json")["per_fold"]
+    chai = [r for r in _need(GPU / "chai_arm.json")
+            if r["label"] in ("cognate", "scrambled")]
+
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(10.6, 4.3),
+                                  gridspec_kw={"width_ratios": [1.05, 1]})
+
+    # (a) effect size shrinks as the panel grows
+    reads = [("iptm", "ipTM"), ("iface_plddt", "interface\npLDDT"),
+             ("receptor_side", "receptor\nside")]
+    x = np.arange(len(reads))
+    w = 0.36
+    d22 = [paired_d(p22, k) for k, _ in reads]
+    d59 = [paired_d(p59, k) for k, _ in reads]
+    ax.bar(x - w / 2, d22, w, label="22 receptors", color=BLUE)
+    ax.bar(x + w / 2, d59, w, label="59 receptors", color=TEAL)
+    for xi, (a, b) in enumerate(zip(d22, d59)):
+        ax.annotate("", xy=(xi + w / 2, b + 0.04), xytext=(xi - w / 2, a + 0.04),
+                    arrowprops=dict(arrowstyle="->", color=RED, lw=1.3,
+                                    connectionstyle="arc3,rad=-0.25"))
+        ax.text(xi, max(a, b) + 0.22, f"−{(1 - b / a) * 100:.0f}%", ha="center",
+                fontsize=9, color=RED, fontweight="bold")
+    for y, lab in ((0.5, "medium"), (0.8, "large")):
+        ax.axhline(y, color=GREY, lw=0.7, ls=":", zorder=0)
+        ax.text(len(reads) - 0.45, y + 0.02, lab, fontsize=7, color=GREY, ha="right")
+    ax.set_xticks(x); ax.set_xticklabels([l for _, l in reads], fontsize=9)
+    ax.set_ylabel("Cohen's $d$, cognate vs own scramble")
+    ax.set_ylim(0, 2.0)
+    ax.legend(frameon=False, fontsize=9, loc="upper left")
+    ax.set_title("(a) the effect shrinks on a larger panel", fontsize=11)
+    ax.grid(axis="y", alpha=0.25, lw=0.5); ax.set_axisbelow(True)
+
+    # (b) the same control under a second model family
+    mb, _ = _margins(p22)
+    mc, _ = _margins(chai)
+    parts = ax2.violinplot([mb.values, mc.values], showextrema=False, widths=0.75)
+    for body, c in zip(parts["bodies"], (BLUE, GREEN)):
+        body.set_facecolor(c); body.set_alpha(0.30)
+    for i, (v, c) in enumerate(((mb, BLUE), (mc, GREEN)), start=1):
+        ax2.scatter(np.random.default_rng(0).normal(i, 0.045, len(v)), v,
+                    s=26, color=c, zorder=3, edgecolor="white", linewidth=0.6)
+        ax2.hlines(v.mean(), i - 0.28, i + 0.28, color=c, lw=2.4, zorder=4)
+    ax2.axhline(0, color=RED, lw=1.3, ls="--")
+    ax2.text(2.44, 0.6, "no order\nsensitivity", fontsize=8, color=RED,
+             ha="right", va="bottom", linespacing=1.2)
+    ax2.set_xticks([1, 2])
+    ax2.set_xticklabels([f"Boltz-1\n$d$={paired_d(p22,'iface_plddt'):.2f}, "
+                         f"{int((mb>0).sum())}/{len(mb)}",
+                         f"Chai-1\n$d$={paired_d(chai,'iface_plddt'):.2f}, "
+                         f"{int((mc>0).sum())}/{len(mc)}"], fontsize=9)
+    ax2.set_ylabel("interface pLDDT, cognate − own scramble")
+    ax2.set_title("(b) and survives a second model family", fontsize=11)
+    ax2.grid(axis="y", alpha=0.25, lw=0.5); ax2.set_axisbelow(True)
+
+    fig.suptitle("The control holds where it was not developed — at 2.7× the panel "
+                 "and on another model",
+                 fontsize=12.5, fontweight="bold", y=0.99)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+    fig.savefig(OUT / "fig_robustness.png")
+    plt.close(fig)
+    return "fig_robustness.png"
+
+
+def fig_connectivity():
+    """Sampling budget decides whether a backbone is a chain at all."""
+    import statistics
+    red = _need(REPO_ROOT / "artifacts" / "posebusters.json")["per_structure"]
+    con = _need(GPU / "posebusters_converged.json")["per_structure"]
+    fr = [e["fragments"] for e in red if e.get("fragments")]
+    fc = [e["fragments"] for e in con if e.get("fragments")]
+
+    # One shared axis would hide the reduced arm entirely: 354 structures pile
+    # into a single bar at x=1 while 144 spread thinly across 0-100. Separate
+    # panels on a shared x let both distributions be read.
+    fig, (a1, a2) = plt.subplots(2, 1, figsize=(7.6, 4.6), sharex=True,
+                                 gridspec_kw={"height_ratios": [1, 1], "hspace": 0.18})
+    bins = np.arange(0, max(fr + fc) + 4, 3)
+    a1.hist(fc, bins=bins, color=TEAL, alpha=0.9)
+    a2.hist(fr, bins=bins, color=AMBER, alpha=0.9)
+    for ax, vals, lab, col in ((a1, fc, "200 sampling steps", TEAL),
+                               (a2, fr, "10 sampling steps", AMBER)):
+        med = statistics.median(vals)
+        intact = sum(1 for v in vals if v == 1)
+        ax.axvline(1, color=NAVY, lw=1.4, ls="--")
+        ax.text(0.975, 0.86, f"{lab}  (n={len(vals)})", transform=ax.transAxes,
+                ha="right", fontsize=10, color=col, fontweight="bold")
+        ax.text(0.975, 0.66,
+                f"median {med:g} fragments   ·   {intact}/{len(vals)} intact",
+                transform=ax.transAxes, ha="right", fontsize=9, color=NAVY)
+        ax.grid(axis="y", alpha=0.25, lw=0.5)
+        ax.set_axisbelow(True)
+    a1.annotate("1 = an intact chain", xy=(1, a1.get_ylim()[1] * 0.45),
+                xytext=(14, a1.get_ylim()[1] * 0.55), fontsize=9, color=NAVY,
+                fontweight="bold",
+                arrowprops=dict(arrowstyle="->", color=NAVY, lw=1.2))
+    a2.set_xlabel("connected fragments per peptide (RDKit)")
+    a1.set_ylabel("structures")
+    a2.set_ylabel("structures")
+    a1.set_title("Ten sampling steps do not return a connected backbone")
+    fig.tight_layout()
+    fig.savefig(OUT / "fig_connectivity.png")
+    plt.close(fig)
+    return "fig_connectivity.png"
+
+
 if __name__ == "__main__":
-    for fn in (fig_contamination, fig_wetlab):
+    for fn in (fig_contamination, fig_wetlab, fig_robustness, fig_connectivity):
         print(f"  wrote {fn()}")

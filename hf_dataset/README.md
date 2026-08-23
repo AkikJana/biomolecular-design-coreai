@@ -10,8 +10,27 @@ tags:
   - negative-controls
   - peptide-binders
 configs:
-  - config_name: default
+  - config_name: folds
     data_files: folds.csv
+    default: true
+  - config_name: panels
+    data_files: panels.csv
+  - config_name: sequences
+    data_files: sequences.csv
+  - config_name: posebusters_reduced
+    data_files: posebusters_reduced.csv
+  - config_name: posebusters_converged
+    data_files: posebusters_converged.csv
+  - config_name: arm_boltz2_reduced
+    data_files: scores/boltz2_reduced.csv
+  - config_name: arm_boltz1_full
+    data_files: scores/boltz1_full.csv
+  - config_name: arm_panel59_full
+    data_files: scores/panel59_full.csv
+  - config_name: arm_panel59_reduced
+    data_files: scores/panel59_reduced.csv
+  - config_name: arm_chai1_full
+    data_files: scores/chai1_full.csv
 ---
 
 # Scramble-control panels for cofolding confidence metrics
@@ -124,7 +143,7 @@ that receptor negative.
   reports 0% pass on the *converged* set while RDKit's own `GetMolFrags` returns
   one fragment for the identical molecule. **Use the fragment counts and nothing
   else.** They are unambiguous: at 10 sampling steps 0 of 144 peptides is a
-  single connected fragment (median 41); at 200 steps it is 354 of 354
+  single connected fragment (median 40.5); at 200 steps it is 354 of 354
   (median 1).
 
 ## Licence

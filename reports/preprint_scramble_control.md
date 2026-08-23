@@ -14,31 +14,28 @@ Confidence scores from cofolding models — ipTM, interface pLDDT, pDockQ and th
 relatives — are widely used to rank candidate binders before synthesis. On 1,320
 designed miniproteins whose binding was measured by two independent contract
 research organisations, and which postdate every model's training data, nine
-published readouts span within-group AUC 0.621–0.671 and macro-AP 0.453–0.532
-against a 0.268 base rate: every confidence interval covers or nearly covers
-chance. Our own recommended readout reaches AUC 0.626 and macro-AP 0.436 on those
-designs, where our structure-derived panel gives 0.943. This paper explains that gap with six
-controls, each of which overturned a result that had looked solid without it. A
-composition-matched permutation control — scoring a cognate peptide against
-permutations of itself, which fix amino-acid composition and length and destroy
-only order — shows that ipTM ranks cognates above unrelated decoys (mean rank
-2.00 against chance 2.50, p = 0.034) while failing to separate a cognate from its
-own permutation (+0.013, 95% CI [−0.019, +0.044]); permutations in fact outscore
-decoys (AUC 0.632, p = 0.0096). Of six interface readouts on identical
-structures, only interface pLDDT passes, at 8.6 times ipTM's effect-to-noise
-ratio. Replicate folding shows single unseeded folds do not reproduce their own
-ranking, which forced two retractions in our own work. A training-cutoff split
-leaves 38–40% of the standardised effect. Reducing sampling steps from 200 to 10
-suppresses every effect threefold to sevenfold, and a per-knob decomposition
-attributes 56–69% of the recoverable gain to sampling steps alone, with alignment
-depth and recycling contributing none. Extending the panel to 59 receptors, the effect
-survives (p = 5.3 × 10⁻¹² on 50 of 59) with every effect size 20–50% smaller,
-so our original panel was a favourable draw. Under Chai-1, an independent model
+published readouts span within-group AUC 0.621–0.671 against a 0.268 base rate:
+every confidence interval covers or nearly covers chance. Our own recommended
+readout reaches AUC 0.626 there, where our structure-derived panel gives 0.943.
+This paper explains that gap with six controls, each of which overturned a result
+that had looked solid without it. A composition-matched permutation control —
+scoring a cognate peptide against permutations of itself, which fix amino-acid
+composition and length and destroy only order — shows that ipTM ranks cognates
+above unrelated decoys (mean rank 2.00 against chance 2.50) while failing to
+separate a cognate from its own permutation; permutations in fact outscore decoys.
+Of six interface readouts on identical structures, only interface pLDDT passes.
+Replicate folding shows single unseeded folds do not reproduce their own ranking,
+which forced two retractions in our own work. A training-cutoff split leaves
+38–40% of the standardised effect. Reducing sampling from 200 steps to 10
+suppresses every effect threefold to sevenfold, and at ten steps the predicted
+peptide backbone is not a connected chain at all. We then test the controls where
+they were not developed. On a panel 2.7 times larger the effect survives
+(p = 5.3 × 10⁻¹² on 50 of 59 receptors) with every effect size 20–50% smaller, so
+our original panel was a favourable draw. Under Chai-1, an independent model
 family scored with the same readout code, a cognate beats its own permutation on
-20 of 21 receptors (p = 1.8 × 10⁻⁴, *d* = 0.90): the order sensitivity is a
-property of cofolding confidence, not of one model. Finally we bound the control
-itself: on 60–120 residue designed proteins it carries no information at reduced
-or converged settings (ΔAUC −0.104, 95% CI [−0.330, +0.071]), because permuting a
+20 of 21 receptors: order sensitivity is a property of cofolding confidence, not
+of one model. Finally we bound the control itself — on 60–120 residue designed
+proteins it carries no information at either sampling budget, because permuting a
 folded protein destroys binders and non-binders alike. Use it where a permutation
 of the candidate remains a candidate.
 
@@ -249,12 +246,19 @@ peptide chain is treated as the molecule under test.
 | :--- | ---: | ---: |
 | structures | 144 | 354 |
 | peptides that are a single connected fragment | **0 (0%)** | **354 (100%)** |
-| median fragments per peptide | **41** | **1** |
+| median fragments per peptide | **40.5** | **1** |
 
 At ten steps the backbone is not connected at all — a fifteen-residue peptide
 comes back as roughly forty disjoint pieces — and at two hundred it is a single
 chain in every structure. This is the physical form of the objection, in the
 field's own vocabulary rather than ours.
+
+![Ten sampling steps do not return a connected backbone](assets/fig_connectivity.png)
+
+<p class="figcap"><b>Figure 3.</b> Connected fragments per peptide, by sampling
+budget, on a shared axis. At two hundred steps every peptide is a single chain;
+at ten, none is, and the distribution centres near forty pieces. A fifteen-residue
+peptide is not returned as a peptide.</p>
 
 One caution about that suite, because it would otherwise be misread. PoseBusters
 is built for small molecules, and three of its checks are **vacuous** on a
@@ -323,7 +327,7 @@ retention.
 
 ![Sampling budget sets the effect size; training exposure sets how much survives](assets/fig_contamination.png)
 
-<p class="figcap"><b>Figure 3.</b> Cohen's <i>d</i> on the scramble control
+<p class="figcap"><b>Figure 4.</b> Cohen's <i>d</i> on the scramble control
 across the full 2×2 of training exposure and sampling budget, for three
 readouts. Raising the sampling budget multiplies the in-training effect by 1.7
 to 1.9 (left to right, blue bars); withholding the complex from training removes
@@ -519,6 +523,15 @@ Chai-1 does not run on Apple Silicon — the pair representation's broadcast
 outer-product matmul has no Metal implementation, and on CPU a single 66-residue
 complex took 2 h 47 min — so this arm required a CUDA device.
 
+![The control holds at 2.7x the panel and on another model](assets/fig_robustness.png)
+
+<p class="figcap"><b>Figure 5.</b> The control tested where it was not developed.
+(a) Cohen's <i>d</i> at 22 and 59 receptors: the effect survives on every readout
+and shrinks on every readout, most severely on the receptor side. (b) Per-receptor
+margins under both model families; each point is one receptor, the bar is the
+mean, and the dashed line is the no-order-sensitivity null. Chai-1 gives a smaller
+margin than Boltz-1 and clears zero on 20 of 21 receptors.</p>
+
 ---
 
 ## 3. Discussion
@@ -659,7 +672,16 @@ was run; both are quoted verbatim in §2.7 as they stand in the repository histo
 
 ## 5. Data and code availability
 
-Analysis code, panel construction scripts, and the screening tool are available
+Panels, per-fold scores and the structural-validity runs are published as a
+dataset: **`AkikJana/scramble-control-panels`** — 2,456 folds across 16 inference
+arms, 75 receptors and two model families, with the sequences as folded. Every
+figure in this paper is recomputable from those tables alone.
+
+The control can be run in a browser on any predicted complex at
+**`AkikJana/scramble-control-scorer`**, which generates the permutations to fold
+and scores a candidate against them using the implementation described in §4.
+
+Analysis code, panel construction scripts and the screening tool are available
 at the repository accompanying this work. The designed-miniprotein dataset is
 released by [6] under CC BY 4.0 and is cited as specified in its `CITATION.cff`;
 we redistribute none of it. Predicted structures generated in this study, the
