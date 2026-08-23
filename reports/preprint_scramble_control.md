@@ -28,13 +28,16 @@ Replicate folding shows single unseeded folds do not reproduce their own ranking
 which forced two retractions in our own work. A training-cutoff split leaves
 38–40% of the standardised effect. Reducing sampling from 200 steps to 10
 suppresses every effect threefold to sevenfold, and at ten steps the predicted
-peptide backbone is not a connected chain at all. We then test the controls where
+peptide backbone is not a connected chain at all; a full factorial over the three
+inference settings shows alignment depth matters only once the sampler has
+converged, and recycling not at all. We then test the controls where
 they were not developed. On a panel 2.7 times larger the effect survives
 (p = 5.3 × 10⁻¹² on 50 of 59 receptors) with every effect size 20–50% smaller, so
 our original panel was a favourable draw. Under Chai-1, an independent model
 family scored with the same readout code, a cognate beats its own permutation on
-20 of 21 receptors: order sensitivity is a property of cofolding confidence, not
-of one model. Finally we bound the control itself — on 60–120 residue designed
+20 of 21 receptors, and the ranking test transfers almost exactly (top-1 76%
+against 77%): order sensitivity is a property of cofolding confidence, not of one
+model. Finally we bound the control itself — on 60–120 residue designed
 proteins it carries no information at either sampling budget, because permuting a
 folded protein destroys binders and non-binders alike. Use it where a permutation
 of the candidate remains a candidate.
@@ -366,27 +369,59 @@ is indifferent to sequence order when the sampler has not converged** — which
 §2.3 identifies as the regime in which the predicted backbone is 14% physically
 plausible.
 
-To locate the cost we moved each setting alone from the reduced baseline.
+To locate the cost we folded the full factorial: each setting alone, each pair,
+and both endpoints — eight cells over the same 22 receptors, 1,056 folds.
 
-**Table 8. Per-knob decomposition, order-sensitivity test.**
+**Table 8. The full factorial, order-sensitivity test on interface pLDDT.**
 
-| Arm | interface pLDDT | *p* | Cohen's *d* | share of full gain |
-| :--- | ---: | ---: | ---: | ---: |
-| reduced | +1.54 | 0.067 | 0.28 | — |
-| **sampling** | **+8.82** | **2.5e-09** | **1.13** | **69%** |
-| alignment | +0.83 | 0.243 | 0.18 | −8% |
-| recycling | +1.40 | 0.157 | 0.22 | −5% |
-| full | +11.85 | 7.1e-13 | 1.52 | 100% |
+| Arm | steps / recycles / MSA | effect | Cohen's *d* | share of full gain |
+| :--- | :--- | ---: | ---: | ---: |
+| reduced | 10 / 1 / 32 | +1.54 | 0.28 | — |
+| **sampling** | 200 / 1 / 32 | **+8.82** | **1.13** | **69%** |
+| alignment | 10 / 1 / full | +0.83 | 0.18 | −8% |
+| recycling | 10 / 3 / 32 | +1.40 | 0.22 | −5% |
+| samp + recyc | 200 / 3 / 32 | +9.32 | 1.05 | 62% |
+| **samp + align** | 200 / 1 / full | **+12.43** | **1.46** | **96%** |
+| recyc + align | 10 / 3 / full | +1.84 | 0.30 | 1% |
+| full | 200 / 3 / full | +11.85 | 1.52 | 100% |
 
-Sampling steps alone carry **56% to 69%** of the standardised gain across the
-three readouts and take every one from marginal-or-nothing to p < 10⁻⁶.
-Alignment depth and recycling, moved alone, carry none of it: every share is
-negative, each arm sitting marginally below the reduced baseline in standardised
-terms. The shares sum above 100%, so the three settings are synergistic rather
-than independent, and no single-knob budget reproduces the full result.
+Sampling steps alone carry **69%** of the standardised gain and take the readout
+from marginal to p = 2.5 × 10⁻⁹. Moved alone, neither of the others carries any:
+both shares are negative, each arm sitting marginally *below* the reduced
+baseline.
 
-The practical recommendation is specific: under a compute constraint, spend it on
-sampling steps and reduce alignment depth and recycling first.
+**The pairs show that reading is incomplete.** An earlier version of this work
+stopped at the single-knob arms and concluded that alignment depth does not
+matter. It does — but only in company. Combined with sampling it reaches
+*d* = 1.46, which is 96% of the full effect from two knobs rather than three, and
+the interaction is genuinely positive:
+
+**Table 9. Each pair against the sum of its two single knobs, standardised.**
+
+| pair | observed gain | additive prediction | interaction | |
+| :--- | ---: | ---: | ---: | :--- |
+| sampling + recycling | +0.77 | +0.78 | **−0.01** | additive |
+| **sampling + alignment** | **+1.18** | +0.74 | **+0.44** | **synergy** |
+| recycling + alignment | +0.01 | −0.17 | +0.19 | weak synergy |
+
+Deep alignments do nothing while the sampler has not converged and contribute
+substantially once it has. That is a coherent mechanism rather than a share: the
+coevolutionary signal in a deep alignment can only express itself through a
+pair representation the sampler has actually resolved, which §2.3 shows it has
+not at ten steps.
+
+Recycling is the knob that is genuinely inert. Its interaction with sampling is
+**−0.01** — additive to two decimal places — and `sampling + recycling` slightly
+*underperforms* sampling alone (1.05 against 1.13), which is within the
+draw-to-draw noise of §2.4 and should be read as "no effect" rather than as harm.
+
+**The practical recommendation, revised.** Under a compute constraint, spend first
+on sampling steps and second on alignment depth; recycling passes are the ones to
+drop. At 200 sampling steps, one recycling pass and undiminished alignment,
+`sampling + alignment` recovers 96% of the full effect while skipping two
+recycling passes over every fold. An earlier version of this recommendation said
+to cut alignment depth first, on the strength of the single-knob arm alone; the
+factorial shows that to be wrong.
 
 ### 2.7 Where the control stops working
 
@@ -401,7 +436,7 @@ registered a prediction in source, committed before any fold ran:
 Thirty-eight designs across four targets (RBX1, PD-L1, TrkA, BHRF1) were folded
 as delivered and against two permutations of each.
 
-**Table 9. Interface pLDDT of a design and of its own permutations, by measured outcome.**
+**Table 10. Interface pLDDT of a design and of its own permutations, by measured outcome.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -426,7 +461,7 @@ at converged settings and we simply could not see it. We therefore repeated the
 experiment at 200 sampling steps and 3 recycling passes, on the full 48 designs
 rather than the 38 the first attempt reached.
 
-**Table 10. The same experiment at converged settings, 48 designs.**
+**Table 11. The same experiment at converged settings, 48 designs.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -462,7 +497,7 @@ post-translational modification (43), receptor redundancy (20), or a peptide too
 close to one already accepted (20). The combined 59 receptors were folded together
 in one run at converged settings, so nothing is merged across hardware or dates.
 
-**Table 11. The permutation control at 22 and 59 receptors, folded identically.**
+**Table 12. The permutation control at 22 and 59 receptors, folded identically.**
 
 | readout | n = 22 | n = 59 | *d* at 22 | *d* at 59 | receptors where cognate wins |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -497,7 +532,7 @@ permutations — under Chai-1 [14], and scored the output with the identical
 interface-pLDDT implementation used throughout this paper. The readout code is
 shared, so the model is the only thing that varies.
 
-**Table 12. The permutation control under two independent models.**
+**Table 13. The permutation control under two independent models.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -514,7 +549,33 @@ as well**, on 20 of 21 receptors. The order sensitivity is therefore a property 
 the readout family rather than of one model's confidence head.
 
 It is weaker in Chai-1 — *d* = 0.90 against 1.43 — and the claim should say so.
-What replicates is the direction and the significance, not the magnitude. Note
+What replicates is the direction and the significance, not the magnitude.
+
+**The ranking test, however, replicates almost exactly.** Ranking a cognate
+against its own decoys is the question a screen actually asks, and on it the two
+models are indistinguishable:
+
+**Table 14. Ranking a cognate against its own decoys, under two model families.**
+
+| | Chai-1 | Boltz-1 |
+| :--- | ---: | ---: |
+| receptors | 21 | 22 |
+| mean rank (chance 2.50) | **1.38** | 1.41 |
+| cognate ranked first | 16 / 21 | 17 / 22 |
+| top-1 accuracy | **76%** | 77% |
+| P(cognate > a decoy of its own receptor) | **0.873** | 0.864 |
+| within-group AUC | 0.872 | 0.914 |
+
+Top-1 accuracy differs by one percentage point and mean rank by 0.03. On the
+measure a practitioner would actually use to pick candidates for synthesis, the
+choice between these two models does not matter.
+
+That asymmetry is worth stating rather than smoothing: **the ranking test
+transfers between model families almost perfectly, and the permutation control
+transfers in direction but at 60% of the effect size.** The two tests are asking
+different questions — one about a candidate against its competitors, the other
+about a candidate against itself — and the second is the more model-dependent of
+them. Note
 also that Chai-1's interface pLDDT sits near 95 where Boltz-1's sits near 90 on
 the same complexes, so the two models are differently calibrated and only the
 standardised comparison is meaningful; the raw margins are not comparable.
@@ -572,8 +633,11 @@ compute forbids replication, the reported effect should be compared against a
 run-to-run standard deviation measured once and quoted.
 
 **State the sampling budget, and prefer it to other economies.** Reduced sampling
-suppressed every effect here threefold to sevenfold, and carried 56–69% of the
-recoverable gain by itself while alignment depth and recycling carried none.
+suppressed every effect here threefold to sevenfold, and carried 69% of the
+recoverable gain by itself. The full factorial refines what to do with the rest:
+alignment depth contributes nothing alone but interacts positively with sampling
+(+0.44), so the ordering is sampling first, alignment second, and recycling —
+whose interaction is −0.01 — is the pass to drop.
 Benchmarks run at reduced settings for throughput are measuring the sampler as
 much as the model, and results obtained under them — including several of ours —
 are lower bounds rather than estimates.
@@ -587,14 +651,18 @@ panel and 0.626 against measured binding is the size of that divergence in the
 one case where we could measure both.
 
 **Limitations.** The main panel is now 59 receptors, but the training-cutoff split
-of §2.5 still rests on 22 a side and has not been extended to match. The boundary
+of §2.5 still rests on 22 a side and has not been extended to match. The factorial
+of §2.6 is complete for interface pLDDT on the in-training panel at one draw per
+cell; the interactions it reports are of the same order as §2.4's run-to-run
+spread, so the sign of the sampling-alignment synergy is better supported than its
+magnitude. The boundary
 test covers 48 designs across four targets, and has now been run at both reduced
 and converged settings with the same answer, which retires the sampling-budget
 caveat that stood in an earlier version of this work. The second-model arm of §2.9
-covers 21 receptors and the permutation control only: we did not fold Chai-1's
-decoys, so the ranking test remains Boltz-only, and Chai-1's interface pLDDT is
-calibrated differently enough that only standardised effects compare across the
-two. The external comparison in §2.1 differs from our internal panels in panel,
+covers 21 receptors and now carries both the permutation control and the ranking
+test, but a single model beyond Boltz: whether a third family behaves like either
+is untested. Chai-1's interface pLDDT is calibrated differently enough that only
+standardised effects compare across the two. The external comparison in §2.1 differs from our internal panels in panel,
 positives and readout simultaneously, so it supports an ordering rather than a
 numerical correction. Interface pLDDT is read from the same confidence head as
 ipTM, making it a better readout of one model rather than an independent second
