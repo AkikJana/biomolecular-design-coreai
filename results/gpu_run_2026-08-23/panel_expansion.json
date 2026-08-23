@@ -1,0 +1,298 @@
+[
+  {
+    "pdb_id": "4Z2O",
+    "receptor_len": 134,
+    "peptide_len": 12,
+    "peptide": "SVATVSESLLTE",
+    "receptor_name": "Avidin family",
+    "peptide_name": "Hoef-peptide"
+  },
+  {
+    "pdb_id": "3JQL",
+    "receptor_len": 119,
+    "peptide_len": 6,
+    "peptide": "KLVFFA",
+    "receptor_name": "Acidic phospholipase A2 3 (Fragment)",
+    "peptide_name": "Amyloid Beta Peptide"
+  },
+  {
+    "pdb_id": "3RM1",
+    "receptor_len": 92,
+    "peptide_len": 9,
+    "peptide": "TKIDWNKIL",
+    "receptor_name": "Protein S100-B",
+    "peptide_name": "F-actin-capping protein subunit alpha-2"
+  },
+  {
+    "pdb_id": "1MFG",
+    "receptor_len": 95,
+    "peptide_len": 9,
+    "peptide": "EYLGLDVPV",
+    "receptor_name": "Erb-B2 INTERACTING PROTEIN",
+    "peptide_name": "Erb-B2 carboxyl-terminal fragment"
+  },
+  {
+    "pdb_id": "2DF6",
+    "receptor_len": 59,
+    "peptide_len": 18,
+    "peptide": "PPVIAPRPEHTKSIYTRS",
+    "receptor_name": "Rho guanine nucleotide exchange factor 7",
+    "peptide_name": "18-mer from PAK2"
+  },
+  {
+    "pdb_id": "2IZX",
+    "receptor_len": 41,
+    "peptide_len": 18,
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "receptor_name": "CAMP-DEPENDENT PROTEIN KINASE TYPE II-AL",
+    "peptide_name": "AKAP-IS"
+  },
+  {
+    "pdb_id": "2PV1",
+    "receptor_len": 103,
+    "peptide_len": 7,
+    "peptide": "WEYIPNV",
+    "receptor_name": "Chaperone surA",
+    "peptide_name": "Glycosyl transferase, group 1"
+  },
+  {
+    "pdb_id": "3LNY",
+    "receptor_len": 96,
+    "peptide_len": 6,
+    "peptide": "EQVSAV",
+    "receptor_name": "Tyrosine-protein phosphatase non-recepto",
+    "peptide_name": "Rap guanine nucleotide exchange factor 6"
+  },
+  {
+    "pdb_id": "5E0L",
+    "receptor_len": 89,
+    "peptide_len": 14,
+    "peptide": "SYRKAIDAATQTEE",
+    "receptor_name": "Dynein light chain 1, cytoplasmic",
+    "peptide_name": "Protein Chica peptide"
+  },
+  {
+    "pdb_id": "6Y9Q",
+    "receptor_len": 105,
+    "peptide_len": 17,
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "receptor_name": "Whirlin",
+    "peptide_name": "Taperin"
+  },
+  {
+    "pdb_id": "5XHZ",
+    "receptor_len": 66,
+    "peptide_len": 11,
+    "peptide": "RPVPMKRHIFR",
+    "receptor_name": "SH3 domain-containing kinase-binding pro",
+    "peptide_name": "Arf-GAP with Rho-GAP domain, ANK repeat "
+  },
+  {
+    "pdb_id": "3BFQ",
+    "receptor_len": 132,
+    "peptide_len": 15,
+    "peptide": "ADSTITIRGYVRDNR",
+    "receptor_name": "Protein fimG",
+    "peptide_name": "Protein fimF"
+  },
+  {
+    "pdb_id": "1OBX",
+    "receptor_len": 79,
+    "peptide_len": 8,
+    "peptide": "ETLEDSVF",
+    "receptor_name": "SYNTENIN 1",
+    "peptide_name": "INTERLEUKIN 5 RECEPTOR ALPHA"
+  },
+  {
+    "pdb_id": "3VQG",
+    "receptor_len": 94,
+    "peptide_len": 9,
+    "peptide": "YKVRNVTLV",
+    "receptor_name": "E3 ubiquitin-protein ligase LNX",
+    "peptide_name": "C-terminal peptide from Immunoglobulin s"
+  },
+  {
+    "pdb_id": "3SO6",
+    "receptor_len": 137,
+    "peptide_len": 14,
+    "peptide": "NSINFDNPVYQKTT",
+    "receptor_name": "LDL receptor adaptor protein",
+    "peptide_name": "Low-density lipoprotein receptor"
+  },
+  {
+    "pdb_id": "4M5S",
+    "receptor_len": 87,
+    "peptide_len": 10,
+    "peptide": "GERTIPITRE",
+    "receptor_name": "Alpha-crystallin B chain",
+    "peptide_name": "Alpha-crystallin B chain"
+  },
+  {
+    "pdb_id": "3FDO",
+    "receptor_len": 90,
+    "peptide_len": 12,
+    "peptide": "LTFEHYWAQLTS",
+    "receptor_name": "Protein Mdm4",
+    "peptide_name": "Synthetic high affinity peptide"
+  },
+  {
+    "pdb_id": "3KUJ",
+    "receptor_len": 88,
+    "peptide_len": 15,
+    "peptide": "FVPNVHAAEFVPSFL",
+    "receptor_name": "Polyadenylate-binding protein 1",
+    "peptide_name": "GSPT1 protein"
+  },
+  {
+    "pdb_id": "3ASL",
+    "receptor_len": 70,
+    "peptide_len": 11,
+    "peptide": "ARTKQTARKST",
+    "receptor_name": "E3 ubiquitin-protein ligase UHRF1",
+    "peptide_name": "Histone H3.3"
+  },
+  {
+    "pdb_id": "1UTI",
+    "receptor_len": 58,
+    "peptide_len": 16,
+    "peptide": "GQPPLVPPRKEKMRGK",
+    "receptor_name": "GRB2-RELATED ADAPTOR PROTEIN 2",
+    "peptide_name": "MITOGEN-ACTIVATED PROTEIN KINASE KINASE "
+  },
+  {
+    "pdb_id": "6E5X",
+    "receptor_len": 127,
+    "peptide_len": 15,
+    "peptide": "PVFVPVPPPPLYPPP",
+    "receptor_name": "Minor nucleoprotein VP30",
+    "peptide_name": "E3 ubiquitin-protein ligase RBBP6"
+  },
+  {
+    "pdb_id": "4WSF",
+    "receptor_len": 122,
+    "peptide_len": 19,
+    "peptide": "PDESSADVVFKKPLAPAPR",
+    "receptor_name": "Serine/threonine-protein phosphatase 4 r",
+    "peptide_name": "Cenp-C"
+  },
+  {
+    "pdb_id": "6EZI",
+    "receptor_len": 89,
+    "peptide_len": 10,
+    "peptide": "IKLETKKTKL",
+    "receptor_name": "Na(+)/H(+) exchange regulatory cofactor ",
+    "peptide_name": "Solute carrier family 15 member 2"
+  },
+  {
+    "pdb_id": "6R8I",
+    "receptor_len": 118,
+    "peptide_len": 19,
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "receptor_name": "Serine/threonine-protein phosphatase 4 r",
+    "peptide_name": "SER-LEU-PRO-PHE-THR-PHE-LYS-VAL-PRO-ALA-"
+  },
+  {
+    "pdb_id": "5D94",
+    "receptor_len": 130,
+    "peptide_len": 13,
+    "peptide": "DDAVFDIITDEEL",
+    "receptor_name": "Microtubule-associated proteins 1A/1B li",
+    "peptide_name": "Peptide from FYVE and coiled-coil domain"
+  },
+  {
+    "pdb_id": "6JUE",
+    "receptor_len": 110,
+    "peptide_len": 10,
+    "peptide": "LEEDGTIITL",
+    "receptor_name": "Partitioning defective 3 homolog",
+    "peptide_name": "THR-ILE-ILE-THR-LEU"
+  },
+  {
+    "pdb_id": "1UHE",
+    "receptor_len": 97,
+    "peptide_len": 24,
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "receptor_name": "Aspartate 1-decarboxylase alpha chain",
+    "peptide_name": "Aspartate 1-decarboxylase beta chain"
+  },
+  {
+    "pdb_id": "5WOU",
+    "receptor_len": 100,
+    "peptide_len": 8,
+    "peptide": "LPSFETAL",
+    "receptor_name": "Protein lap4",
+    "peptide_name": "GUK-holder, isoform A"
+  },
+  {
+    "pdb_id": "3NJJ",
+    "receptor_len": 119,
+    "peptide_len": 9,
+    "peptide": "PQIINRPQN",
+    "receptor_name": "Peptidase",
+    "peptide_name": "Peptidase"
+  },
+  {
+    "pdb_id": "2VWF",
+    "receptor_len": 58,
+    "peptide_len": 15,
+    "peptide": "IQPPPVNRNLKPDRK",
+    "receptor_name": "GROWTH FACTOR RECEPTOR-BOUND PROTEIN 2",
+    "peptide_name": "GRB2-ASSOCIATED-BINDING PROTEIN 2"
+  },
+  {
+    "pdb_id": "6L0W",
+    "receptor_len": 63,
+    "peptide_len": 16,
+    "peptide": "GPKWVKTDSDFIVLEI",
+    "receptor_name": "RLD2",
+    "peptide_name": "NGR2"
+  },
+  {
+    "pdb_id": "8T33",
+    "receptor_len": 119,
+    "peptide_len": 15,
+    "peptide": "GSEVDGWLIIDLPDS",
+    "receptor_name": "Gamma-aminobutyric acid receptor-associa",
+    "peptide_name": "Tumor protein p53-inducible nuclear prot"
+  },
+  {
+    "pdb_id": "2DS8",
+    "receptor_len": 51,
+    "peptide_len": 8,
+    "peptide": "APALRVVK",
+    "receptor_name": "ATP-dependent Clp protease ATP-binding s",
+    "peptide_name": "SspB-tail peptide"
+  },
+  {
+    "pdb_id": "2EEO",
+    "receptor_len": 95,
+    "peptide_len": 24,
+    "peptide": "MKRVMFHAKIHRATVTQADLHYVG",
+    "receptor_name": "Aspartate 1-decarboxylase",
+    "peptide_name": "Aspartate 1-decarboxylase"
+  },
+  {
+    "pdb_id": "6GPZ",
+    "receptor_len": 63,
+    "peptide_len": 15,
+    "peptide": "MADKPQTRSQYRNKQ",
+    "receptor_name": "Cell cycle protein GpsB",
+    "peptide_name": "LmPBPA1"
+  },
+  {
+    "pdb_id": "8TGF",
+    "receptor_len": 125,
+    "peptide_len": 11,
+    "peptide": "STWEILADDDD",
+    "receptor_name": "Protein lgg-1",
+    "peptide_name": "Ectopic P granules protein 5"
+  },
+  {
+    "pdb_id": "2X6M",
+    "receptor_len": 126,
+    "peptide_len": 9,
+    "peptide": "GYQDYEPEA",
+    "receptor_name": "HEAVY CHAIN VARIABLE DOMAIN FROM DROMEDA",
+    "peptide_name": "ALPHA-SYNUCLEIN PEPTIDE"
+  }
+]

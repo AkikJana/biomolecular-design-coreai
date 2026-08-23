@@ -33,6 +33,7 @@ import gemmi  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ART = REPO_ROOT / "artifacts"
 DEFAULT_GLOB = "pdb_binders_b2_n22/**/predictions/**/*.pdb"
+BATCH_ONLY = "batch_"
 
 
 def peptide_chain(path, work):
@@ -64,7 +65,13 @@ def main():
 
     from posebusters import PoseBusters
 
-    paths = sorted(ART.glob(args.glob))[: args.limit]
+    paths = sorted(ART.glob(args.glob))
+    # msa_fetch probes are 5-step throwaways folded only to trigger an
+    # alignment download; scoring them as if they were benchmark structures
+    # would report the wrong regime entirely.
+    if "batch" not in args.glob:
+        paths = [p for p in paths if BATCH_ONLY in str(p)]
+    paths = paths[: args.limit]
     if not paths:
         raise SystemExit(f"no structures matched {args.glob}")
     print(f"structures : {len(paths)}")

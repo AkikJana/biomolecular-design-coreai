@@ -26,6 +26,7 @@ Usage:
 
 import argparse
 import random
+import os
 import subprocess
 import sys
 import time
@@ -88,18 +89,33 @@ def write_inputs(input_dir: Path, target: str, binders, use_msa: bool = False):
 
 
 def run_boltz(input_dir: Path, out_dir: Path, recycling: int, sampling: int, model: str,
-              use_msa: bool = False, max_msa_seqs: int = None):
-    """Fold every input. Returns (results_dir, wall_clock_seconds)."""
+              use_msa: bool = False, max_msa_seqs: int = None,
+              accelerator: str = None):
+    """Fold every input. Returns (results_dir, wall_clock_seconds).
+
+    `accelerator` defaults to CPU, which is what every benchmark in this project
+    used on Apple Silicon. On a CUDA host that default silently folds on CPU --
+    12 cores at 100% and the GPU untouched -- so set BOLTZ_ACCELERATOR=gpu, or
+    pass it, when there is a card worth using.
+    """
+    accelerator = accelerator or os.environ.get("BOLTZ_ACCELERATOR", "cpu")
     cmd = [
         sys.executable, "-m", "boltz.main", "predict", str(input_dir),
         "--out_dir", str(out_dir),
         "--model", model,
-        "--accelerator", "cpu",
+        "--accelerator", accelerator,
         "--recycling_steps", str(recycling),
         "--sampling_steps", str(sampling),
         "--output_format", "pdb",
         "--override",
     ]
+    # Same reason as settings_confound: Boltz's fused triangle-attention kernels
+    # are CUDA-only and were never a dependency here, because the MPS path does
+    # not use them. On a CUDA host they reject a CPU tensor outright --
+    # "Expected a cuda device, but got: cpu" -- which kills this MSA probe and
+    # degrades every receptor to single-sequence folding without failing the run.
+    if os.environ.get("BOLTZ_NO_KERNELS"):
+        cmd.append("--no_kernels")
     if use_msa:
         cmd.append("--use_msa_server")
     if max_msa_seqs:

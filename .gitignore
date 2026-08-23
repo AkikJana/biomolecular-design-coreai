@@ -90,3 +90,8 @@ weights/*
 
 # PoseBusters scratch: extracted peptide chains, regenerated on each run
 /.pb_work/
+
+# Results committed deliberately: the JSON under results/ is the measured
+# output a reader needs to check a claim, not the multi-GB prediction cache
+# that /artifacts/ holds. Small, and worth keeping under version control.
+!results/**/*.json

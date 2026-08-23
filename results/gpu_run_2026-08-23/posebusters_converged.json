@@ -1,0 +1,2574 @@
+{
+  "n_structures": 354,
+  "source_glob": "panel59/batch_*/**/predictions/**/*.pdb",
+  "checks": [
+    {
+      "check": "all_atoms_connected",
+      "pass_rate": 0.0,
+      "n_pass": 0,
+      "n": 354
+    },
+    {
+      "check": "internal_steric_clash",
+      "pass_rate": 0.0,
+      "n_pass": 0,
+      "n": 354
+    },
+    {
+      "check": "mol_pred_loaded",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "sanitization",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "inchi_convertible",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "no_radicals",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "bond_lengths",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "bond_angles",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "aromatic_ring_flatness",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "non-aromatic_ring_non-flatness",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "double_bond_flatness",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    },
+    {
+      "check": "internal_energy",
+      "pass_rate": 100.0,
+      "n_pass": 354,
+      "n": 354
+    }
+  ],
+  "all_pass_rate": 0.0,
+  "vacuous_checks": [
+    "aromatic_ring_flatness",
+    "bond_angles",
+    "bond_lengths",
+    "double_bond_flatness",
+    "internal_energy",
+    "non-aromatic_ring_non-flatness"
+  ],
+  "connectivity": {
+    "single_fragment": 354,
+    "n": 354,
+    "median_fragments": 1
+  },
+  "per_structure": [
+    {
+      "file": "pair_000_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_001_B.pdb",
+      "residues": 24,
+      "atoms": 196,
+      "bonds": 203,
+      "fragments": 1
+    },
+    {
+      "file": "pair_002_B.pdb",
+      "residues": 9,
+      "atoms": 70,
+      "bonds": 71,
+      "fragments": 1
+    },
+    {
+      "file": "pair_003_B.pdb",
+      "residues": 8,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_004_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_005_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_006_B.pdb",
+      "residues": 10,
+      "atoms": 77,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_007_B.pdb",
+      "residues": 6,
+      "atoms": 51,
+      "bonds": 52,
+      "fragments": 1
+    },
+    {
+      "file": "pair_008_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_009_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_010_B.pdb",
+      "residues": 10,
+      "atoms": 77,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_011_B.pdb",
+      "residues": 10,
+      "atoms": 77,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_012_B.pdb",
+      "residues": 5,
+      "atoms": 38,
+      "bonds": 37,
+      "fragments": 1
+    },
+    {
+      "file": "pair_013_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_014_B.pdb",
+      "residues": 15,
+      "atoms": 128,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_015_B.pdb",
+      "residues": 12,
+      "atoms": 92,
+      "bonds": 102,
+      "fragments": 1
+    },
+    {
+      "file": "pair_016_B.pdb",
+      "residues": 5,
+      "atoms": 38,
+      "bonds": 37,
+      "fragments": 1
+    },
+    {
+      "file": "pair_017_B.pdb",
+      "residues": 5,
+      "atoms": 38,
+      "bonds": 37,
+      "fragments": 1
+    },
+    {
+      "file": "pair_018_B.pdb",
+      "residues": 10,
+      "atoms": 80,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_019_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_020_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_021_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 121,
+      "fragments": 1
+    },
+    {
+      "file": "pair_022_B.pdb",
+      "residues": 10,
+      "atoms": 80,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_023_B.pdb",
+      "residues": 10,
+      "atoms": 80,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_024_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_025_B.pdb",
+      "residues": 13,
+      "atoms": 91,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_026_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_027_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_028_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_029_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_030_B.pdb",
+      "residues": 12,
+      "atoms": 92,
+      "bonds": 105,
+      "fragments": 1
+    },
+    {
+      "file": "pair_031_B.pdb",
+      "residues": 8,
+      "atoms": 65,
+      "bonds": 65,
+      "fragments": 1
+    },
+    {
+      "file": "pair_032_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 135,
+      "fragments": 1
+    },
+    {
+      "file": "pair_033_B.pdb",
+      "residues": 10,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_034_B.pdb",
+      "residues": 12,
+      "atoms": 92,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_035_B.pdb",
+      "residues": 12,
+      "atoms": 92,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_036_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 89,
+      "fragments": 1
+    },
+    {
+      "file": "pair_037_B.pdb",
+      "residues": 9,
+      "atoms": 79,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_038_B.pdb",
+      "residues": 15,
+      "atoms": 124,
+      "bonds": 127,
+      "fragments": 1
+    },
+    {
+      "file": "pair_039_B.pdb",
+      "residues": 11,
+      "atoms": 83,
+      "bonds": 87,
+      "fragments": 1
+    },
+    {
+      "file": "pair_040_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 89,
+      "fragments": 1
+    },
+    {
+      "file": "pair_041_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 89,
+      "fragments": 1
+    },
+    {
+      "file": "pair_042_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_043_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_044_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_045_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_046_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_047_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_048_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 83,
+      "fragments": 1
+    },
+    {
+      "file": "pair_049_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_050_B.pdb",
+      "residues": 23,
+      "atoms": 191,
+      "bonds": 192,
+      "fragments": 1
+    },
+    {
+      "file": "pair_051_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_052_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 83,
+      "fragments": 1
+    },
+    {
+      "file": "pair_053_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 83,
+      "fragments": 1
+    },
+    {
+      "file": "pair_054_B.pdb",
+      "residues": 11,
+      "atoms": 69,
+      "bonds": 78,
+      "fragments": 1
+    },
+    {
+      "file": "pair_055_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_056_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_057_B.pdb",
+      "residues": 12,
+      "atoms": 96,
+      "bonds": 97,
+      "fragments": 1
+    },
+    {
+      "file": "pair_058_B.pdb",
+      "residues": 11,
+      "atoms": 69,
+      "bonds": 72,
+      "fragments": 1
+    },
+    {
+      "file": "pair_059_B.pdb",
+      "residues": 11,
+      "atoms": 69,
+      "bonds": 80,
+      "fragments": 1
+    },
+    {
+      "file": "pair_060_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 66,
+      "fragments": 1
+    },
+    {
+      "file": "pair_061_B.pdb",
+      "residues": 14,
+      "atoms": 110,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_062_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_063_B.pdb",
+      "residues": 12,
+      "atoms": 92,
+      "bonds": 103,
+      "fragments": 1
+    },
+    {
+      "file": "pair_064_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 66,
+      "fragments": 1
+    },
+    {
+      "file": "pair_065_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 72,
+      "fragments": 1
+    },
+    {
+      "file": "pair_066_B.pdb",
+      "residues": 11,
+      "atoms": 83,
+      "bonds": 87,
+      "fragments": 1
+    },
+    {
+      "file": "pair_067_B.pdb",
+      "residues": 9,
+      "atoms": 70,
+      "bonds": 71,
+      "fragments": 1
+    },
+    {
+      "file": "pair_068_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 200,
+      "fragments": 1
+    },
+    {
+      "file": "pair_069_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_070_B.pdb",
+      "residues": 11,
+      "atoms": 83,
+      "bonds": 87,
+      "fragments": 1
+    },
+    {
+      "file": "pair_071_B.pdb",
+      "residues": 11,
+      "atoms": 83,
+      "bonds": 87,
+      "fragments": 1
+    },
+    {
+      "file": "pair_072_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_073_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 67,
+      "fragments": 1
+    },
+    {
+      "file": "pair_074_B.pdb",
+      "residues": 6,
+      "atoms": 43,
+      "bonds": 42,
+      "fragments": 1
+    },
+    {
+      "file": "pair_075_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_076_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_077_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_078_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_079_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_080_B.pdb",
+      "residues": 6,
+      "atoms": 46,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_081_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_082_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_083_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_084_B.pdb",
+      "residues": 12,
+      "atoms": 96,
+      "bonds": 97,
+      "fragments": 1
+    },
+    {
+      "file": "pair_085_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 89,
+      "fragments": 1
+    },
+    {
+      "file": "pair_086_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 132,
+      "fragments": 1
+    },
+    {
+      "file": "pair_087_B.pdb",
+      "residues": 24,
+      "atoms": 196,
+      "bonds": 211,
+      "fragments": 1
+    },
+    {
+      "file": "pair_088_B.pdb",
+      "residues": 12,
+      "atoms": 96,
+      "bonds": 97,
+      "fragments": 1
+    },
+    {
+      "file": "pair_089_B.pdb",
+      "residues": 12,
+      "atoms": 96,
+      "bonds": 97,
+      "fragments": 1
+    },
+    {
+      "file": "pair_090_B.pdb",
+      "residues": 12,
+      "atoms": 102,
+      "bonds": 105,
+      "fragments": 1
+    },
+    {
+      "file": "pair_091_B.pdb",
+      "residues": 24,
+      "atoms": 196,
+      "bonds": 203,
+      "fragments": 1
+    },
+    {
+      "file": "pair_092_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_093_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_094_B.pdb",
+      "residues": 12,
+      "atoms": 102,
+      "bonds": 106,
+      "fragments": 1
+    },
+    {
+      "file": "pair_095_B.pdb",
+      "residues": 12,
+      "atoms": 102,
+      "bonds": 105,
+      "fragments": 1
+    },
+    {
+      "file": "pair_096_B.pdb",
+      "residues": 10,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_097_B.pdb",
+      "residues": 5,
+      "atoms": 38,
+      "bonds": 37,
+      "fragments": 1
+    },
+    {
+      "file": "pair_098_B.pdb",
+      "residues": 8,
+      "atoms": 72,
+      "bonds": 73,
+      "fragments": 1
+    },
+    {
+      "file": "pair_099_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 66,
+      "fragments": 1
+    },
+    {
+      "file": "pair_100_B.pdb",
+      "residues": 10,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_101_B.pdb",
+      "residues": 10,
+      "atoms": 61,
+      "bonds": 63,
+      "fragments": 1
+    },
+    {
+      "file": "pair_102_B.pdb",
+      "residues": 23,
+      "atoms": 191,
+      "bonds": 192,
+      "fragments": 1
+    },
+    {
+      "file": "pair_103_B.pdb",
+      "residues": 6,
+      "atoms": 46,
+      "bonds": 50,
+      "fragments": 1
+    },
+    {
+      "file": "pair_104_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_105_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 89,
+      "fragments": 1
+    },
+    {
+      "file": "pair_106_B.pdb",
+      "residues": 23,
+      "atoms": 191,
+      "bonds": 192,
+      "fragments": 1
+    },
+    {
+      "file": "pair_107_B.pdb",
+      "residues": 23,
+      "atoms": 191,
+      "bonds": 194,
+      "fragments": 1
+    },
+    {
+      "file": "pair_108_B.pdb",
+      "residues": 8,
+      "atoms": 72,
+      "bonds": 73,
+      "fragments": 1
+    },
+    {
+      "file": "pair_109_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_110_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_111_B.pdb",
+      "residues": 6,
+      "atoms": 51,
+      "bonds": 52,
+      "fragments": 1
+    },
+    {
+      "file": "pair_112_B.pdb",
+      "residues": 8,
+      "atoms": 72,
+      "bonds": 73,
+      "fragments": 1
+    },
+    {
+      "file": "pair_113_B.pdb",
+      "residues": 8,
+      "atoms": 72,
+      "bonds": 73,
+      "fragments": 1
+    },
+    {
+      "file": "pair_114_B.pdb",
+      "residues": 13,
+      "atoms": 91,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_115_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 133,
+      "fragments": 1
+    },
+    {
+      "file": "pair_116_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_117_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_118_B.pdb",
+      "residues": 13,
+      "atoms": 91,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_119_B.pdb",
+      "residues": 13,
+      "atoms": 91,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_120_B.pdb",
+      "residues": 6,
+      "atoms": 46,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_121_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_122_B.pdb",
+      "residues": 12,
+      "atoms": 85,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_123_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_124_B.pdb",
+      "residues": 6,
+      "atoms": 46,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_125_B.pdb",
+      "residues": 6,
+      "atoms": 46,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_126_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_127_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_128_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 133,
+      "fragments": 1
+    },
+    {
+      "file": "pair_129_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_130_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_131_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_132_B.pdb",
+      "residues": 12,
+      "atoms": 85,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_133_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 77,
+      "fragments": 1
+    },
+    {
+      "file": "pair_134_B.pdb",
+      "residues": 8,
+      "atoms": 61,
+      "bonds": 63,
+      "fragments": 1
+    },
+    {
+      "file": "pair_135_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_136_B.pdb",
+      "residues": 12,
+      "atoms": 85,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_137_B.pdb",
+      "residues": 12,
+      "atoms": 85,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_138_B.pdb",
+      "residues": 6,
+      "atoms": 51,
+      "bonds": 52,
+      "fragments": 1
+    },
+    {
+      "file": "pair_139_B.pdb",
+      "residues": 9,
+      "atoms": 70,
+      "bonds": 71,
+      "fragments": 1
+    },
+    {
+      "file": "pair_140_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 133,
+      "fragments": 1
+    },
+    {
+      "file": "pair_141_B.pdb",
+      "residues": 10,
+      "atoms": 80,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_142_B.pdb",
+      "residues": 6,
+      "atoms": 51,
+      "bonds": 52,
+      "fragments": 1
+    },
+    {
+      "file": "pair_143_B.pdb",
+      "residues": 6,
+      "atoms": 51,
+      "bonds": 52,
+      "fragments": 1
+    },
+    {
+      "file": "pair_144_B.pdb",
+      "residues": 9,
+      "atoms": 79,
+      "bonds": 80,
+      "fragments": 1
+    },
+    {
+      "file": "pair_145_B.pdb",
+      "residues": 11,
+      "atoms": 100,
+      "bonds": 103,
+      "fragments": 1
+    },
+    {
+      "file": "pair_146_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_147_B.pdb",
+      "residues": 15,
+      "atoms": 128,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_148_B.pdb",
+      "residues": 9,
+      "atoms": 79,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_149_B.pdb",
+      "residues": 9,
+      "atoms": 79,
+      "bonds": 80,
+      "fragments": 1
+    },
+    {
+      "file": "pair_150_B.pdb",
+      "residues": 9,
+      "atoms": 70,
+      "bonds": 71,
+      "fragments": 1
+    },
+    {
+      "file": "pair_151_B.pdb",
+      "residues": 15,
+      "atoms": 119,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_152_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_153_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 83,
+      "fragments": 1
+    },
+    {
+      "file": "pair_154_B.pdb",
+      "residues": 9,
+      "atoms": 70,
+      "bonds": 71,
+      "fragments": 1
+    },
+    {
+      "file": "pair_155_B.pdb",
+      "residues": 9,
+      "atoms": 70,
+      "bonds": 71,
+      "fragments": 1
+    },
+    {
+      "file": "pair_156_B.pdb",
+      "residues": 18,
+      "atoms": 144,
+      "bonds": 149,
+      "fragments": 1
+    },
+    {
+      "file": "pair_157_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_158_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_159_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_160_B.pdb",
+      "residues": 18,
+      "atoms": 144,
+      "bonds": 150,
+      "fragments": 1
+    },
+    {
+      "file": "pair_161_B.pdb",
+      "residues": 18,
+      "atoms": 144,
+      "bonds": 149,
+      "fragments": 1
+    },
+    {
+      "file": "pair_162_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_163_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_164_B.pdb",
+      "residues": 11,
+      "atoms": 69,
+      "bonds": 79,
+      "fragments": 1
+    },
+    {
+      "file": "pair_165_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_166_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_167_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_168_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_169_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_170_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_171_B.pdb",
+      "residues": 19,
+      "atoms": 142,
+      "bonds": 146,
+      "fragments": 1
+    },
+    {
+      "file": "pair_172_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_173_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_174_B.pdb",
+      "residues": 6,
+      "atoms": 43,
+      "bonds": 42,
+      "fragments": 1
+    },
+    {
+      "file": "pair_175_B.pdb",
+      "residues": 14,
+      "atoms": 110,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_176_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_177_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_178_B.pdb",
+      "residues": 6,
+      "atoms": 43,
+      "bonds": 42,
+      "fragments": 1
+    },
+    {
+      "file": "pair_179_B.pdb",
+      "residues": 6,
+      "atoms": 43,
+      "bonds": 42,
+      "fragments": 1
+    },
+    {
+      "file": "pair_180_B.pdb",
+      "residues": 14,
+      "atoms": 110,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_181_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_182_B.pdb",
+      "residues": 14,
+      "atoms": 115,
+      "bonds": 117,
+      "fragments": 1
+    },
+    {
+      "file": "pair_183_B.pdb",
+      "residues": 16,
+      "atoms": 126,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_184_B.pdb",
+      "residues": 14,
+      "atoms": 110,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_185_B.pdb",
+      "residues": 14,
+      "atoms": 110,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_186_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_187_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_188_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 60,
+      "fragments": 1
+    },
+    {
+      "file": "pair_189_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 83,
+      "fragments": 1
+    },
+    {
+      "file": "pair_190_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_191_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_192_B.pdb",
+      "residues": 11,
+      "atoms": 100,
+      "bonds": 103,
+      "fragments": 1
+    },
+    {
+      "file": "pair_193_B.pdb",
+      "residues": 14,
+      "atoms": 115,
+      "bonds": 117,
+      "fragments": 1
+    },
+    {
+      "file": "pair_194_B.pdb",
+      "residues": 15,
+      "atoms": 119,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_195_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_196_B.pdb",
+      "residues": 11,
+      "atoms": 100,
+      "bonds": 103,
+      "fragments": 1
+    },
+    {
+      "file": "pair_197_B.pdb",
+      "residues": 11,
+      "atoms": 100,
+      "bonds": 103,
+      "fragments": 1
+    },
+    {
+      "file": "pair_198_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 122,
+      "fragments": 1
+    },
+    {
+      "file": "pair_199_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_200_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_201_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_202_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 121,
+      "fragments": 1
+    },
+    {
+      "file": "pair_203_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 122,
+      "fragments": 1
+    },
+    {
+      "file": "pair_204_B.pdb",
+      "residues": 8,
+      "atoms": 65,
+      "bonds": 65,
+      "fragments": 1
+    },
+    {
+      "file": "pair_205_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 122,
+      "fragments": 1
+    },
+    {
+      "file": "pair_206_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_207_B.pdb",
+      "residues": 12,
+      "atoms": 106,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_208_B.pdb",
+      "residues": 8,
+      "atoms": 65,
+      "bonds": 66,
+      "fragments": 1
+    },
+    {
+      "file": "pair_209_B.pdb",
+      "residues": 8,
+      "atoms": 65,
+      "bonds": 65,
+      "fragments": 1
+    },
+    {
+      "file": "pair_210_B.pdb",
+      "residues": 9,
+      "atoms": 76,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_211_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_212_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 154,
+      "fragments": 1
+    },
+    {
+      "file": "pair_213_B.pdb",
+      "residues": 15,
+      "atoms": 128,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_214_B.pdb",
+      "residues": 9,
+      "atoms": 76,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_215_B.pdb",
+      "residues": 9,
+      "atoms": 76,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_216_B.pdb",
+      "residues": 14,
+      "atoms": 115,
+      "bonds": 117,
+      "fragments": 1
+    },
+    {
+      "file": "pair_217_B.pdb",
+      "residues": 8,
+      "atoms": 72,
+      "bonds": 73,
+      "fragments": 1
+    },
+    {
+      "file": "pair_218_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_219_B.pdb",
+      "residues": 6,
+      "atoms": 51,
+      "bonds": 52,
+      "fragments": 1
+    },
+    {
+      "file": "pair_220_B.pdb",
+      "residues": 14,
+      "atoms": 115,
+      "bonds": 117,
+      "fragments": 1
+    },
+    {
+      "file": "pair_221_B.pdb",
+      "residues": 14,
+      "atoms": 115,
+      "bonds": 117,
+      "fragments": 1
+    },
+    {
+      "file": "pair_222_B.pdb",
+      "residues": 10,
+      "atoms": 81,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_223_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_224_B.pdb",
+      "residues": 13,
+      "atoms": 91,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_225_B.pdb",
+      "residues": 11,
+      "atoms": 69,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_226_B.pdb",
+      "residues": 10,
+      "atoms": 81,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_227_B.pdb",
+      "residues": 10,
+      "atoms": 81,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_228_B.pdb",
+      "residues": 12,
+      "atoms": 106,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_229_B.pdb",
+      "residues": 10,
+      "atoms": 76,
+      "bonds": 75,
+      "fragments": 1
+    },
+    {
+      "file": "pair_230_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 77,
+      "fragments": 1
+    },
+    {
+      "file": "pair_231_B.pdb",
+      "residues": 12,
+      "atoms": 96,
+      "bonds": 97,
+      "fragments": 1
+    },
+    {
+      "file": "pair_232_B.pdb",
+      "residues": 12,
+      "atoms": 106,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_233_B.pdb",
+      "residues": 12,
+      "atoms": 106,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_234_B.pdb",
+      "residues": 15,
+      "atoms": 119,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_235_B.pdb",
+      "residues": 11,
+      "atoms": 83,
+      "bonds": 87,
+      "fragments": 1
+    },
+    {
+      "file": "pair_236_B.pdb",
+      "residues": 7,
+      "atoms": 65,
+      "bonds": 68,
+      "fragments": 1
+    },
+    {
+      "file": "pair_237_B.pdb",
+      "residues": 12,
+      "atoms": 85,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_238_B.pdb",
+      "residues": 15,
+      "atoms": 119,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_239_B.pdb",
+      "residues": 15,
+      "atoms": 119,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_240_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_241_B.pdb",
+      "residues": 6,
+      "atoms": 43,
+      "bonds": 42,
+      "fragments": 1
+    },
+    {
+      "file": "pair_242_B.pdb",
+      "residues": 10,
+      "atoms": 80,
+      "bonds": 84,
+      "fragments": 1
+    },
+    {
+      "file": "pair_243_B.pdb",
+      "residues": 16,
+      "atoms": 126,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_244_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_245_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_246_B.pdb",
+      "residues": 16,
+      "atoms": 126,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_247_B.pdb",
+      "residues": 15,
+      "atoms": 124,
+      "bonds": 127,
+      "fragments": 1
+    },
+    {
+      "file": "pair_248_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_249_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_250_B.pdb",
+      "residues": 16,
+      "atoms": 126,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_251_B.pdb",
+      "residues": 16,
+      "atoms": 126,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_252_B.pdb",
+      "residues": 15,
+      "atoms": 115,
+      "bonds": 125,
+      "fragments": 1
+    },
+    {
+      "file": "pair_253_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_254_B.pdb",
+      "residues": 10,
+      "atoms": 76,
+      "bonds": 75,
+      "fragments": 1
+    },
+    {
+      "file": "pair_255_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_256_B.pdb",
+      "residues": 15,
+      "atoms": 115,
+      "bonds": 125,
+      "fragments": 1
+    },
+    {
+      "file": "pair_257_B.pdb",
+      "residues": 15,
+      "atoms": 115,
+      "bonds": 125,
+      "fragments": 1
+    },
+    {
+      "file": "pair_258_B.pdb",
+      "residues": 19,
+      "atoms": 142,
+      "bonds": 146,
+      "fragments": 1
+    },
+    {
+      "file": "pair_259_B.pdb",
+      "residues": 18,
+      "atoms": 144,
+      "bonds": 149,
+      "fragments": 1
+    },
+    {
+      "file": "pair_260_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_261_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 116,
+      "fragments": 1
+    },
+    {
+      "file": "pair_262_B.pdb",
+      "residues": 19,
+      "atoms": 142,
+      "bonds": 146,
+      "fragments": 1
+    },
+    {
+      "file": "pair_263_B.pdb",
+      "residues": 19,
+      "atoms": 142,
+      "bonds": 146,
+      "fragments": 1
+    },
+    {
+      "file": "pair_264_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_265_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_266_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_267_B.pdb",
+      "residues": 15,
+      "atoms": 115,
+      "bonds": 125,
+      "fragments": 1
+    },
+    {
+      "file": "pair_268_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_269_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_270_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_271_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_272_B.pdb",
+      "residues": 15,
+      "atoms": 121,
+      "bonds": 121,
+      "fragments": 1
+    },
+    {
+      "file": "pair_273_B.pdb",
+      "residues": 13,
+      "atoms": 91,
+      "bonds": 96,
+      "fragments": 1
+    },
+    {
+      "file": "pair_274_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 160,
+      "fragments": 1
+    },
+    {
+      "file": "pair_275_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_276_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_277_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_278_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_279_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 77,
+      "fragments": 1
+    },
+    {
+      "file": "pair_280_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_281_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_282_B.pdb",
+      "residues": 10,
+      "atoms": 76,
+      "bonds": 75,
+      "fragments": 1
+    },
+    {
+      "file": "pair_283_B.pdb",
+      "residues": 15,
+      "atoms": 113,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_284_B.pdb",
+      "residues": 6,
+      "atoms": 46,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_285_B.pdb",
+      "residues": 15,
+      "atoms": 124,
+      "bonds": 127,
+      "fragments": 1
+    },
+    {
+      "file": "pair_286_B.pdb",
+      "residues": 10,
+      "atoms": 76,
+      "bonds": 75,
+      "fragments": 1
+    },
+    {
+      "file": "pair_287_B.pdb",
+      "residues": 10,
+      "atoms": 76,
+      "bonds": 75,
+      "fragments": 1
+    },
+    {
+      "file": "pair_288_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_289_B.pdb",
+      "residues": 13,
+      "atoms": 104,
+      "bonds": 104,
+      "fragments": 1
+    },
+    {
+      "file": "pair_290_B.pdb",
+      "residues": 11,
+      "atoms": 86,
+      "bonds": 85,
+      "fragments": 1
+    },
+    {
+      "file": "pair_291_B.pdb",
+      "residues": 11,
+      "atoms": 69,
+      "bonds": 73,
+      "fragments": 1
+    },
+    {
+      "file": "pair_292_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_293_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_294_B.pdb",
+      "residues": 8,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_295_B.pdb",
+      "residues": 12,
+      "atoms": 102,
+      "bonds": 105,
+      "fragments": 1
+    },
+    {
+      "file": "pair_296_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_297_B.pdb",
+      "residues": 15,
+      "atoms": 113,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_298_B.pdb",
+      "residues": 8,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_299_B.pdb",
+      "residues": 8,
+      "atoms": 61,
+      "bonds": 62,
+      "fragments": 1
+    },
+    {
+      "file": "pair_300_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_301_B.pdb",
+      "residues": 15,
+      "atoms": 119,
+      "bonds": 124,
+      "fragments": 1
+    },
+    {
+      "file": "pair_302_B.pdb",
+      "residues": 12,
+      "atoms": 106,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_303_B.pdb",
+      "residues": 5,
+      "atoms": 38,
+      "bonds": 37,
+      "fragments": 1
+    },
+    {
+      "file": "pair_304_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_305_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_306_B.pdb",
+      "residues": 15,
+      "atoms": 124,
+      "bonds": 127,
+      "fragments": 1
+    },
+    {
+      "file": "pair_307_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 66,
+      "fragments": 1
+    },
+    {
+      "file": "pair_308_B.pdb",
+      "residues": 10,
+      "atoms": 76,
+      "bonds": 75,
+      "fragments": 1
+    },
+    {
+      "file": "pair_309_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_310_B.pdb",
+      "residues": 15,
+      "atoms": 124,
+      "bonds": 127,
+      "fragments": 1
+    },
+    {
+      "file": "pair_311_B.pdb",
+      "residues": 15,
+      "atoms": 124,
+      "bonds": 127,
+      "fragments": 1
+    },
+    {
+      "file": "pair_312_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 133,
+      "fragments": 1
+    },
+    {
+      "file": "pair_313_B.pdb",
+      "residues": 19,
+      "atoms": 142,
+      "bonds": 146,
+      "fragments": 1
+    },
+    {
+      "file": "pair_314_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 201,
+      "fragments": 1
+    },
+    {
+      "file": "pair_315_B.pdb",
+      "residues": 15,
+      "atoms": 112,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_316_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 142,
+      "fragments": 1
+    },
+    {
+      "file": "pair_317_B.pdb",
+      "residues": 16,
+      "atoms": 130,
+      "bonds": 135,
+      "fragments": 1
+    },
+    {
+      "file": "pair_318_B.pdb",
+      "residues": 15,
+      "atoms": 113,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_319_B.pdb",
+      "residues": 12,
+      "atoms": 106,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_320_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_321_B.pdb",
+      "residues": 9,
+      "atoms": 65,
+      "bonds": 66,
+      "fragments": 1
+    },
+    {
+      "file": "pair_322_B.pdb",
+      "residues": 15,
+      "atoms": 113,
+      "bonds": 115,
+      "fragments": 1
+    },
+    {
+      "file": "pair_323_B.pdb",
+      "residues": 15,
+      "atoms": 113,
+      "bonds": 116,
+      "fragments": 1
+    },
+    {
+      "file": "pair_324_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_325_B.pdb",
+      "residues": 24,
+      "atoms": 195,
+      "bonds": 198,
+      "fragments": 1
+    },
+    {
+      "file": "pair_326_B.pdb",
+      "residues": 18,
+      "atoms": 145,
+      "bonds": 145,
+      "fragments": 1
+    },
+    {
+      "file": "pair_327_B.pdb",
+      "residues": 23,
+      "atoms": 191,
+      "bonds": 192,
+      "fragments": 1
+    },
+    {
+      "file": "pair_328_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_329_B.pdb",
+      "residues": 8,
+      "atoms": 59,
+      "bonds": 59,
+      "fragments": 1
+    },
+    {
+      "file": "pair_330_B.pdb",
+      "residues": 24,
+      "atoms": 196,
+      "bonds": 200,
+      "fragments": 1
+    },
+    {
+      "file": "pair_331_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 76,
+      "fragments": 1
+    },
+    {
+      "file": "pair_332_B.pdb",
+      "residues": 15,
+      "atoms": 115,
+      "bonds": 125,
+      "fragments": 1
+    },
+    {
+      "file": "pair_333_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 82,
+      "fragments": 1
+    },
+    {
+      "file": "pair_334_B.pdb",
+      "residues": 24,
+      "atoms": 196,
+      "bonds": 203,
+      "fragments": 1
+    },
+    {
+      "file": "pair_335_B.pdb",
+      "residues": 24,
+      "atoms": 196,
+      "bonds": 208,
+      "fragments": 1
+    },
+    {
+      "file": "pair_336_B.pdb",
+      "residues": 15,
+      "atoms": 128,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_337_B.pdb",
+      "residues": 10,
+      "atoms": 77,
+      "bonds": 81,
+      "fragments": 1
+    },
+    {
+      "file": "pair_338_B.pdb",
+      "residues": 17,
+      "atoms": 129,
+      "bonds": 131,
+      "fragments": 1
+    },
+    {
+      "file": "pair_339_B.pdb",
+      "residues": 15,
+      "atoms": 127,
+      "bonds": 130,
+      "fragments": 1
+    },
+    {
+      "file": "pair_340_B.pdb",
+      "residues": 15,
+      "atoms": 128,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_341_B.pdb",
+      "residues": 15,
+      "atoms": 128,
+      "bonds": 129,
+      "fragments": 1
+    },
+    {
+      "file": "pair_342_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_343_B.pdb",
+      "residues": 6,
+      "atoms": 49,
+      "bonds": 48,
+      "fragments": 1
+    },
+    {
+      "file": "pair_344_B.pdb",
+      "residues": 19,
+      "atoms": 147,
+      "bonds": 157,
+      "fragments": 1
+    },
+    {
+      "file": "pair_345_B.pdb",
+      "residues": 6,
+      "atoms": 55,
+      "bonds": 56,
+      "fragments": 1
+    },
+    {
+      "file": "pair_346_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_347_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 95,
+      "fragments": 1
+    },
+    {
+      "file": "pair_348_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 77,
+      "fragments": 1
+    },
+    {
+      "file": "pair_349_B.pdb",
+      "residues": 11,
+      "atoms": 89,
+      "bonds": 90,
+      "fragments": 1
+    },
+    {
+      "file": "pair_350_B.pdb",
+      "residues": 10,
+      "atoms": 83,
+      "bonds": 83,
+      "fragments": 1
+    },
+    {
+      "file": "pair_351_B.pdb",
+      "residues": 14,
+      "atoms": 110,
+      "bonds": 110,
+      "fragments": 1
+    },
+    {
+      "file": "pair_352_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 77,
+      "fragments": 1
+    },
+    {
+      "file": "pair_353_B.pdb",
+      "residues": 9,
+      "atoms": 75,
+      "bonds": 77,
+      "fragments": 1
+    }
+  ],
+  "peptide_len_min": 5,
+  "peptide_len_max": 24
+}

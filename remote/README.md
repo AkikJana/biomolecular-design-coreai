@@ -21,9 +21,15 @@ ssh -p $GPU_PORT $GPU_HOST 'bash BiomolecularDesign/remote/bench.sh'
 fold and projects the total; every cost estimate before that number is a guess.
 
 ```bash
-ssh -p $GPU_PORT $GPU_HOST 'cd BiomolecularDesign && nohup bash remote/queue.sh > queue.log 2>&1 &'
+ssh -p $GPU_PORT $GPU_HOST 'cd BiomolecularDesign && setsid nohup bash remote/queue.sh >> queue.log 2>&1 </dev/null & disown'
 remote/sync.sh down
 ```
+
+`setsid` matters. Plain `nohup` inside an `ssh` command is not enough: when the
+ssh session closes, the remote shell dies and its process group is signalled,
+taking the run with it. That killed a run silently at 108 of 132 folds -- the log
+simply stopped after a completed batch, with no error and no OOM. `setsid` puts
+the run in its own session so it survives the disconnect.
 
 ## Measured, on a RunPod RTX 4090
 
