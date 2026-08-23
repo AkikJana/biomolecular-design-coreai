@@ -1,0 +1,3188 @@
+[
+  {
+    "receptor_id": "1YCR",
+    "receptor": "SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCSNDLLGDLFGVPSFSVKEHRKIYTMIYRNLVVVNQQESSDSGTSVSEN",
+    "peptide": "SQETFSDLWKLLPEN",
+    "label": "cognate",
+    "peptide_from": "1YCR",
+    "name": "pair_000",
+    "score": 0.8647233843803406
+  },
+  {
+    "receptor_id": "1YCR",
+    "receptor": "SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCSNDLLGDLFGVPSFSVKEHRKIYTMIYRNLVVVNQQESSDSGTSVSEN",
+    "peptide": "MKRVMFHAKIHRATVTQADLHYVG",
+    "label": "decoy",
+    "peptide_from": "2EEO",
+    "name": "pair_001",
+    "score": 0.2646096348762512
+  },
+  {
+    "receptor_id": "1YCR",
+    "receptor": "SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCSNDLLGDLFGVPSFSVKEHRKIYTMIYRNLVVVNQQESSDSGTSVSEN",
+    "peptide": "EYLGLDVPV",
+    "label": "decoy",
+    "peptide_from": "1MFG",
+    "name": "pair_002",
+    "score": 0.46234458684921265
+  },
+  {
+    "receptor_id": "1YCR",
+    "receptor": "SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCSNDLLGDLFGVPSFSVKEHRKIYTMIYRNLVVVNQQESSDSGTSVSEN",
+    "peptide": "LPSFETAL",
+    "label": "decoy",
+    "peptide_from": "5WOU",
+    "name": "pair_003",
+    "score": 0.8274434208869934
+  },
+  {
+    "receptor_id": "1YCR",
+    "receptor": "SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCSNDLLGDLFGVPSFSVKEHRKIYTMIYRNLVVVNQQESSDSGTSVSEN",
+    "peptide": "LPSQKETLELWFSDN",
+    "label": "scrambled",
+    "peptide_from": "1YCR",
+    "name": "pair_004",
+    "score": 0.41607651114463806
+  },
+  {
+    "receptor_id": "1YCR",
+    "receptor": "SQIPASEQETLVRPKPLLLKLLKSVGAQKDTYTMKEVLFYLGQYIMTKRLYDEKQQHIVYCSNDLLGDLFGVPSFSVKEHRKIYTMIYRNLVVVNQQESSDSGTSVSEN",
+    "peptide": "TLLDSSLEWNKQPEF",
+    "label": "scrambled",
+    "peptide_from": "1YCR",
+    "name": "pair_005",
+    "score": 0.5203924775123596
+  },
+  {
+    "receptor_id": "1CKA",
+    "receptor": "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY",
+    "peptide": "PPPALPPKKR",
+    "label": "cognate",
+    "peptide_from": "1CKA",
+    "name": "pair_006",
+    "score": 0.912234365940094
+  },
+  {
+    "receptor_id": "1CKA",
+    "receptor": "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY",
+    "peptide": "KLVFFA",
+    "label": "decoy",
+    "peptide_from": "3JQL",
+    "name": "pair_007",
+    "score": 0.7051114439964294
+  },
+  {
+    "receptor_id": "1CKA",
+    "receptor": "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY",
+    "peptide": "WEYIPNV",
+    "label": "decoy",
+    "peptide_from": "2PV1",
+    "name": "pair_008",
+    "score": 0.6720632910728455
+  },
+  {
+    "receptor_id": "1CKA",
+    "receptor": "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY",
+    "peptide": "KETAAAHFEQHHMDS",
+    "label": "decoy",
+    "peptide_from": "4O36",
+    "name": "pair_009",
+    "score": 0.7082947492599487
+  },
+  {
+    "receptor_id": "1CKA",
+    "receptor": "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY",
+    "peptide": "PPPPPLKKAR",
+    "label": "scrambled",
+    "peptide_from": "1CKA",
+    "name": "pair_010",
+    "score": 0.6723804473876953
+  },
+  {
+    "receptor_id": "1CKA",
+    "receptor": "AEYVRALFDFNGNDEEDLPFKKGDILRIRDKPEEQWWNAEDSEGKRGMIPVPYVEKY",
+    "peptide": "KPKRPALPPP",
+    "label": "scrambled",
+    "peptide_from": "1CKA",
+    "name": "pair_011",
+    "score": 0.3214482069015503
+  },
+  {
+    "receptor_id": "1BE9",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN",
+    "peptide": "KQTSV",
+    "label": "cognate",
+    "peptide_from": "1BE9",
+    "name": "pair_012",
+    "score": 0.9873507022857666
+  },
+  {
+    "receptor_id": "1BE9",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "decoy",
+    "peptide_from": "5D94",
+    "name": "pair_013",
+    "score": 0.43297573924064636
+  },
+  {
+    "receptor_id": "1BE9",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN",
+    "peptide": "MADKPQTRSQYRNKQ",
+    "label": "decoy",
+    "peptide_from": "6GPZ",
+    "name": "pair_014",
+    "score": 0.3718196451663971
+  },
+  {
+    "receptor_id": "1BE9",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN",
+    "peptide": "XVPPPVPPRRRX",
+    "label": "decoy",
+    "peptide_from": "2GBQ",
+    "name": "pair_015",
+    "score": 0.18703565001487732
+  },
+  {
+    "receptor_id": "1BE9",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN",
+    "peptide": "STKVQ",
+    "label": "scrambled",
+    "peptide_from": "1BE9",
+    "name": "pair_016",
+    "score": 0.6325612664222717
+  },
+  {
+    "receptor_id": "1BE9",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIIGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVNSSGRIVTN",
+    "peptide": "QTKSV",
+    "label": "scrambled",
+    "peptide_from": "1BE9",
+    "name": "pair_017",
+    "score": 0.776954710483551
+  },
+  {
+    "receptor_id": "1SEM",
+    "receptor": "ETKFVQALFDFNPQESGELAFKRGDVITLINKDDPNWWEGQLNNRRGIFPSNYVCPYN",
+    "peptide": "XPPPVPPRRR",
+    "label": "cognate",
+    "peptide_from": "1SEM",
+    "name": "pair_018",
+    "score": 0.8991249799728394
+  },
+  {
+    "receptor_id": "1SEM",
+    "receptor": "ETKFVQALFDFNPQESGELAFKRGDVITLINKDDPNWWEGQLNNRRGIFPSNYVCPYN",
+    "peptide": "KETAAAHFEQHHMDS",
+    "label": "decoy",
+    "peptide_from": "4O36",
+    "name": "pair_019",
+    "score": 0.7086683511734009
+  },
+  {
+    "receptor_id": "1SEM",
+    "receptor": "ETKFVQALFDFNPQESGELAFKRGDVITLINKDDPNWWEGQLNNRRGIFPSNYVCPYN",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_020",
+    "score": 0.6202352643013
+  },
+  {
+    "receptor_id": "1SEM",
+    "receptor": "ETKFVQALFDFNPQESGELAFKRGDVITLINKDDPNWWEGQLNNRRGIFPSNYVCPYN",
+    "peptide": "ADSTITIRGYVRDNR",
+    "label": "decoy",
+    "peptide_from": "3BFQ",
+    "name": "pair_021",
+    "score": 0.2952582836151123
+  },
+  {
+    "receptor_id": "1SEM",
+    "receptor": "ETKFVQALFDFNPQESGELAFKRGDVITLINKDDPNWWEGQLNNRRGIFPSNYVCPYN",
+    "peptide": "RPPPXPRVPR",
+    "label": "scrambled",
+    "peptide_from": "1SEM",
+    "name": "pair_022",
+    "score": 0.2676292657852173
+  },
+  {
+    "receptor_id": "1SEM",
+    "receptor": "ETKFVQALFDFNPQESGELAFKRGDVITLINKDDPNWWEGQLNNRRGIFPSNYVCPYN",
+    "peptide": "PPPPRXPVRR",
+    "label": "scrambled",
+    "peptide_from": "1SEM",
+    "name": "pair_023",
+    "score": 0.3575492799282074
+  },
+  {
+    "receptor_id": "1ELW",
+    "receptor": "MEQVNELKEKGNKALSVGNIDDALQCYSEAIKLDPHNHVLYSNRSAAYAKKGDYQKAYEDGCKTVDLKPDWGKGYSRKAAALEFLNRFEEAKRTYEEGLKHEANNPQLKEGLQNMEAR",
+    "peptide": "GPTIEEVD",
+    "label": "cognate",
+    "peptide_from": "1ELW",
+    "name": "pair_024",
+    "score": 0.9730725288391113
+  },
+  {
+    "receptor_id": "1ELW",
+    "receptor": "MEQVNELKEKGNKALSVGNIDDALQCYSEAIKLDPHNHVLYSNRSAAYAKKGDYQKAYEDGCKTVDLKPDWGKGYSRKAAALEFLNRFEEAKRTYEEGLKHEANNPQLKEGLQNMEAR",
+    "peptide": "GPGSEPPPKPPRS",
+    "label": "decoy",
+    "peptide_from": "8HLO",
+    "name": "pair_025",
+    "score": 0.35193654894828796
+  },
+  {
+    "receptor_id": "1ELW",
+    "receptor": "MEQVNELKEKGNKALSVGNIDDALQCYSEAIKLDPHNHVLYSNRSAAYAKKGDYQKAYEDGCKTVDLKPDWGKGYSRKAAALEFLNRFEEAKRTYEEGLKHEANNPQLKEGLQNMEAR",
+    "peptide": "DQLIDL",
+    "label": "decoy",
+    "peptide_from": "9F6S",
+    "name": "pair_026",
+    "score": 0.6061373353004456
+  },
+  {
+    "receptor_id": "1ELW",
+    "receptor": "MEQVNELKEKGNKALSVGNIDDALQCYSEAIKLDPHNHVLYSNRSAAYAKKGDYQKAYEDGCKTVDLKPDWGKGYSRKAAALEFLNRFEEAKRTYEEGLKHEANNPQLKEGLQNMEAR",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_027",
+    "score": 0.2441295087337494
+  },
+  {
+    "receptor_id": "1ELW",
+    "receptor": "MEQVNELKEKGNKALSVGNIDDALQCYSEAIKLDPHNHVLYSNRSAAYAKKGDYQKAYEDGCKTVDLKPDWGKGYSRKAAALEFLNRFEEAKRTYEEGLKHEANNPQLKEGLQNMEAR",
+    "peptide": "PEVIDEGT",
+    "label": "scrambled",
+    "peptide_from": "1ELW",
+    "name": "pair_028",
+    "score": 0.536258339881897
+  },
+  {
+    "receptor_id": "1ELW",
+    "receptor": "MEQVNELKEKGNKALSVGNIDDALQCYSEAIKLDPHNHVLYSNRSAAYAKKGDYQKAYEDGCKTVDLKPDWGKGYSRKAAALEFLNRFEEAKRTYEEGLKHEANNPQLKEGLQNMEAR",
+    "peptide": "EVDIEGPT",
+    "label": "scrambled",
+    "peptide_from": "1ELW",
+    "name": "pair_029",
+    "score": 0.3198029100894928
+  },
+  {
+    "receptor_id": "2GBQ",
+    "receptor": "GSRRASVGSMEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPEFIVTD",
+    "peptide": "XVPPPVPPRRRX",
+    "label": "cognate",
+    "peptide_from": "2GBQ",
+    "name": "pair_030",
+    "score": 0.8295345306396484
+  },
+  {
+    "receptor_id": "2GBQ",
+    "receptor": "GSRRASVGSMEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPEFIVTD",
+    "peptide": "ETLEDSVF",
+    "label": "decoy",
+    "peptide_from": "1OBX",
+    "name": "pair_031",
+    "score": 0.1824517399072647
+  },
+  {
+    "receptor_id": "2GBQ",
+    "receptor": "GSRRASVGSMEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPEFIVTD",
+    "peptide": "GPKWVKTDSDFIVLEI",
+    "label": "decoy",
+    "peptide_from": "6L0W",
+    "name": "pair_032",
+    "score": 0.21073514223098755
+  },
+  {
+    "receptor_id": "2GBQ",
+    "receptor": "GSRRASVGSMEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPEFIVTD",
+    "peptide": "AASTTTPAPA",
+    "label": "decoy",
+    "peptide_from": "9GRF",
+    "name": "pair_033",
+    "score": 0.45329880714416504
+  },
+  {
+    "receptor_id": "2GBQ",
+    "receptor": "GSRRASVGSMEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPEFIVTD",
+    "peptide": "PVVXPRXPPRRP",
+    "label": "scrambled",
+    "peptide_from": "2GBQ",
+    "name": "pair_034",
+    "score": 0.5247982144355774
+  },
+  {
+    "receptor_id": "2GBQ",
+    "receptor": "GSRRASVGSMEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPEFIVTD",
+    "peptide": "VXPPPRXRPVRP",
+    "label": "scrambled",
+    "peptide_from": "2GBQ",
+    "name": "pair_035",
+    "score": 0.49497905373573303
+  },
+  {
+    "receptor_id": "1D4T",
+    "receptor": "MDAVAVYHGKISRETGEKLLLATGLDGSYLLRDSESVPGVYCLCVLYHGYIYTYRVSQTETGSWSAETAPGVHKRYFRKIKNLISAFQKPDQGIVIPLQYPVEK",
+    "peptide": "KSLTIYAQVQK",
+    "label": "cognate",
+    "peptide_from": "1D4T",
+    "name": "pair_036",
+    "score": 0.646466851234436
+  },
+  {
+    "receptor_id": "1D4T",
+    "receptor": "MDAVAVYHGKISRETGEKLLLATGLDGSYLLRDSESVPGVYCLCVLYHGYIYTYRVSQTETGSWSAETAPGVHKRYFRKIKNLISAFQKPDQGIVIPLQYPVEK",
+    "peptide": "TKIDWNKIL",
+    "label": "decoy",
+    "peptide_from": "3RM1",
+    "name": "pair_037",
+    "score": 0.5821411609649658
+  },
+  {
+    "receptor_id": "1D4T",
+    "receptor": "MDAVAVYHGKISRETGEKLLLATGLDGSYLLRDSESVPGVYCLCVLYHGYIYTYRVSQTETGSWSAETAPGVHKRYFRKIKNLISAFQKPDQGIVIPLQYPVEK",
+    "peptide": "IQPPPVNRNLKPDRK",
+    "label": "decoy",
+    "peptide_from": "2VWF",
+    "name": "pair_038",
+    "score": 0.2429373860359192
+  },
+  {
+    "receptor_id": "1D4T",
+    "receptor": "MDAVAVYHGKISRETGEKLLLATGLDGSYLLRDSESVPGVYCLCVLYHGYIYTYRVSQTETGSWSAETAPGVHKRYFRKIKNLISAFQKPDQGIVIPLQYPVEK",
+    "peptide": "ELAPPKPPLPE",
+    "label": "decoy",
+    "peptide_from": "4LN2",
+    "name": "pair_039",
+    "score": 0.6510413885116577
+  },
+  {
+    "receptor_id": "1D4T",
+    "receptor": "MDAVAVYHGKISRETGEKLLLATGLDGSYLLRDSESVPGVYCLCVLYHGYIYTYRVSQTETGSWSAETAPGVHKRYFRKIKNLISAFQKPDQGIVIPLQYPVEK",
+    "peptide": "ITLVKQQSKAY",
+    "label": "scrambled",
+    "peptide_from": "1D4T",
+    "name": "pair_040",
+    "score": 0.23888519406318665
+  },
+  {
+    "receptor_id": "1D4T",
+    "receptor": "MDAVAVYHGKISRETGEKLLLATGLDGSYLLRDSESVPGVYCLCVLYHGYIYTYRVSQTETGSWSAETAPGVHKRYFRKIKNLISAFQKPDQGIVIPLQYPVEK",
+    "peptide": "QIAYLKVQTSK",
+    "label": "scrambled",
+    "peptide_from": "1D4T",
+    "name": "pair_041",
+    "score": 0.2532309293746948
+  },
+  {
+    "receptor_id": "1TP5",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVDSSGRIVTD",
+    "peptide": "KKETWV",
+    "label": "cognate",
+    "peptide_from": "1TP5",
+    "name": "pair_042",
+    "score": 0.9675556421279907
+  },
+  {
+    "receptor_id": "1TP5",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVDSSGRIVTD",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_043",
+    "score": 0.2428770810365677
+  },
+  {
+    "receptor_id": "1TP5",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVDSSGRIVTD",
+    "peptide": "DQLIDL",
+    "label": "decoy",
+    "peptide_from": "9F6S",
+    "name": "pair_044",
+    "score": 0.287468820810318
+  },
+  {
+    "receptor_id": "1TP5",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVDSSGRIVTD",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "decoy",
+    "peptide_from": "5D94",
+    "name": "pair_045",
+    "score": 0.256479948759079
+  },
+  {
+    "receptor_id": "1TP5",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVDSSGRIVTD",
+    "peptide": "WVEKTK",
+    "label": "scrambled",
+    "peptide_from": "1TP5",
+    "name": "pair_046",
+    "score": 0.37768444418907166
+  },
+  {
+    "receptor_id": "1TP5",
+    "receptor": "GSPEFLGEEDIPREPRRIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYKPEEYSRFEANSRVDSSGRIVTD",
+    "peptide": "KWETKV",
+    "label": "scrambled",
+    "peptide_from": "1TP5",
+    "name": "pair_047",
+    "score": 0.9849735498428345
+  },
+  {
+    "receptor_id": "2FNT",
+    "receptor": "PQITLWKRPLVTIRIGGQLKEALLNTGADDTVLEEMNLPGKWKPKMIGGIGGFIKVRQYDQIPVEICGHKAIGTVLVGPTPANIIGRNLLTQIGCTLNF",
+    "peptide": "RQVNFLGKIN",
+    "label": "cognate",
+    "peptide_from": "2FNT",
+    "name": "pair_048",
+    "score": 0.18070639669895172
+  },
+  {
+    "receptor_id": "2FNT",
+    "receptor": "PQITLWKRPLVTIRIGGQLKEALLNTGADDTVLEEMNLPGKWKPKMIGGIGGFIKVRQYDQIPVEICGHKAIGTVLVGPTPANIIGRNLLTQIGCTLNF",
+    "peptide": "APALRVVK",
+    "label": "decoy",
+    "peptide_from": "2DS8",
+    "name": "pair_049",
+    "score": 0.21042008697986603
+  },
+  {
+    "receptor_id": "2FNT",
+    "receptor": "PQITLWKRPLVTIRIGGQLKEALLNTGADDTVLEEMNLPGKWKPKMIGGIGGFIKVRQYDQIPVEICGHKAIGTVLVGPTPANIIGRNLLTQIGCTLNF",
+    "peptide": "TSASEDIDFDDLSRRFEELKKKT",
+    "label": "decoy",
+    "peptide_from": "7S7J",
+    "name": "pair_050",
+    "score": 0.33088526129722595
+  },
+  {
+    "receptor_id": "2FNT",
+    "receptor": "PQITLWKRPLVTIRIGGQLKEALLNTGADDTVLEEMNLPGKWKPKMIGGIGGFIKVRQYDQIPVEICGHKAIGTVLVGPTPANIIGRNLLTQIGCTLNF",
+    "peptide": "GPTIEEVD",
+    "label": "decoy",
+    "peptide_from": "1ELW",
+    "name": "pair_051",
+    "score": 0.10957105457782745
+  },
+  {
+    "receptor_id": "2FNT",
+    "receptor": "PQITLWKRPLVTIRIGGQLKEALLNTGADDTVLEEMNLPGKWKPKMIGGIGGFIKVRQYDQIPVEICGHKAIGTVLVGPTPANIIGRNLLTQIGCTLNF",
+    "peptide": "LKGRINVFQN",
+    "label": "scrambled",
+    "peptide_from": "2FNT",
+    "name": "pair_052",
+    "score": 0.27930358052253723
+  },
+  {
+    "receptor_id": "2FNT",
+    "receptor": "PQITLWKRPLVTIRIGGQLKEALLNTGADDTVLEEMNLPGKWKPKMIGGIGGFIKVRQYDQIPVEICGHKAIGTVLVGPTPANIIGRNLLTQIGCTLNF",
+    "peptide": "KNFNLVIGQR",
+    "label": "scrambled",
+    "peptide_from": "2FNT",
+    "name": "pair_053",
+    "score": 0.29473385214805603
+  },
+  {
+    "receptor_id": "1NLO",
+    "receptor": "GSHMGGVTTFVALYDYESRTETDLSFKKGERLQIVNNTEGDWWLAHSLTTGQTGYIPSNYVAPS",
+    "peptide": "XXXXPLPPLPX",
+    "label": "cognate",
+    "peptide_from": "1NLO",
+    "name": "pair_054",
+    "score": 0.32031700015068054
+  },
+  {
+    "receptor_id": "1NLO",
+    "receptor": "GSHMGGVTTFVALYDYESRTETDLSFKKGERLQIVNNTEGDWWLAHSLTTGQTGYIPSNYVAPS",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "decoy",
+    "peptide_from": "6R8I",
+    "name": "pair_055",
+    "score": 0.2944801151752472
+  },
+  {
+    "receptor_id": "1NLO",
+    "receptor": "GSHMGGVTTFVALYDYESRTETDLSFKKGERLQIVNNTEGDWWLAHSLTTGQTGYIPSNYVAPS",
+    "peptide": "IKLETKKTKL",
+    "label": "decoy",
+    "peptide_from": "6EZI",
+    "name": "pair_056",
+    "score": 0.21079429984092712
+  },
+  {
+    "receptor_id": "1NLO",
+    "receptor": "GSHMGGVTTFVALYDYESRTETDLSFKKGERLQIVNNTEGDWWLAHSLTTGQTGYIPSNYVAPS",
+    "peptide": "EEAEFVEVEPEA",
+    "label": "decoy",
+    "peptide_from": "6YOO",
+    "name": "pair_057",
+    "score": 0.33957183361053467
+  },
+  {
+    "receptor_id": "1NLO",
+    "receptor": "GSHMGGVTTFVALYDYESRTETDLSFKKGERLQIVNNTEGDWWLAHSLTTGQTGYIPSNYVAPS",
+    "peptide": "XPPXXLPLPXX",
+    "label": "scrambled",
+    "peptide_from": "1NLO",
+    "name": "pair_058",
+    "score": 0.7287958860397339
+  },
+  {
+    "receptor_id": "1NLO",
+    "receptor": "GSHMGGVTTFVALYDYESRTETDLSFKKGERLQIVNNTEGDWWLAHSLTTGQTGYIPSNYVAPS",
+    "peptide": "XPXLXXLPPPX",
+    "label": "scrambled",
+    "peptide_from": "1NLO",
+    "name": "pair_059",
+    "score": 0.22188600897789001
+  },
+  {
+    "receptor_id": "1OAI",
+    "receptor": "PTLSPEQQEMLQAFSTQSGMNLEWSQKCLQDNNWDYTRSAQAFTHLKAKGEIPEVAFMK",
+    "peptide": "DSGFSFGSK",
+    "label": "cognate",
+    "peptide_from": "1OAI",
+    "name": "pair_060",
+    "score": 0.7602710127830505
+  },
+  {
+    "receptor_id": "1OAI",
+    "receptor": "PTLSPEQQEMLQAFSTQSGMNLEWSQKCLQDNNWDYTRSAQAFTHLKAKGEIPEVAFMK",
+    "peptide": "SYRKAIDAATQTEE",
+    "label": "decoy",
+    "peptide_from": "5E0L",
+    "name": "pair_061",
+    "score": 0.29898160696029663
+  },
+  {
+    "receptor_id": "1OAI",
+    "receptor": "PTLSPEQQEMLQAFSTQSGMNLEWSQKCLQDNNWDYTRSAQAFTHLKAKGEIPEVAFMK",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_062",
+    "score": 0.2643318176269531
+  },
+  {
+    "receptor_id": "1OAI",
+    "receptor": "PTLSPEQQEMLQAFSTQSGMNLEWSQKCLQDNNWDYTRSAQAFTHLKAKGEIPEVAFMK",
+    "peptide": "XVPPPVPPRRRX",
+    "label": "decoy",
+    "peptide_from": "2GBQ",
+    "name": "pair_063",
+    "score": 0.48680752515792847
+  },
+  {
+    "receptor_id": "1OAI",
+    "receptor": "PTLSPEQQEMLQAFSTQSGMNLEWSQKCLQDNNWDYTRSAQAFTHLKAKGEIPEVAFMK",
+    "peptide": "SKFGSGSDF",
+    "label": "scrambled",
+    "peptide_from": "1OAI",
+    "name": "pair_064",
+    "score": 0.20277069509029388
+  },
+  {
+    "receptor_id": "1OAI",
+    "receptor": "PTLSPEQQEMLQAFSTQSGMNLEWSQKCLQDNNWDYTRSAQAFTHLKAKGEIPEVAFMK",
+    "peptide": "DFGSGSKFS",
+    "label": "scrambled",
+    "peptide_from": "1OAI",
+    "name": "pair_065",
+    "score": 0.4714086055755615
+  },
+  {
+    "receptor_id": "4LN2",
+    "receptor": "QHMVLEYGEAIAKFNFNGDTQVEMSFRKGERITLLRQVDENWYEGRIPGTSRQGIFPITYVDVIKRPL",
+    "peptide": "ELAPPKPPLPE",
+    "label": "cognate",
+    "peptide_from": "4LN2",
+    "name": "pair_066",
+    "score": 0.906630277633667
+  },
+  {
+    "receptor_id": "4LN2",
+    "receptor": "QHMVLEYGEAIAKFNFNGDTQVEMSFRKGERITLLRQVDENWYEGRIPGTSRQGIFPITYVDVIKRPL",
+    "peptide": "EYLGLDVPV",
+    "label": "decoy",
+    "peptide_from": "1MFG",
+    "name": "pair_067",
+    "score": 0.1489623785018921
+  },
+  {
+    "receptor_id": "4LN2",
+    "receptor": "QHMVLEYGEAIAKFNFNGDTQVEMSFRKGERITLLRQVDENWYEGRIPGTSRQGIFPITYVDVIKRPL",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_068",
+    "score": 0.10190704464912415
+  },
+  {
+    "receptor_id": "4LN2",
+    "receptor": "QHMVLEYGEAIAKFNFNGDTQVEMSFRKGERITLLRQVDENWYEGRIPGTSRQGIFPITYVDVIKRPL",
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "label": "decoy",
+    "peptide_from": "2IZX",
+    "name": "pair_069",
+    "score": 0.3547923266887665
+  },
+  {
+    "receptor_id": "4LN2",
+    "receptor": "QHMVLEYGEAIAKFNFNGDTQVEMSFRKGERITLLRQVDENWYEGRIPGTSRQGIFPITYVDVIKRPL",
+    "peptide": "PPLPPAKPELE",
+    "label": "scrambled",
+    "peptide_from": "4LN2",
+    "name": "pair_070",
+    "score": 0.8287493586540222
+  },
+  {
+    "receptor_id": "4LN2",
+    "receptor": "QHMVLEYGEAIAKFNFNGDTQVEMSFRKGERITLLRQVDENWYEGRIPGTSRQGIFPITYVDVIKRPL",
+    "peptide": "LPALPKPEEPP",
+    "label": "scrambled",
+    "peptide_from": "4LN2",
+    "name": "pair_071",
+    "score": 0.21838906407356262
+  },
+  {
+    "receptor_id": "9F6S",
+    "receptor": "GPLGSMSNYSVSLVGPAPWGFRLQGGKDFNMPLTISSLKDGGKAAQANVRIGDVVLSIDGINAQGMTHLEAQNKIKGCTGSLNMTLQRAS",
+    "peptide": "DQLIDL",
+    "label": "cognate",
+    "peptide_from": "9F6S",
+    "name": "pair_072",
+    "score": 0.7627911567687988
+  },
+  {
+    "receptor_id": "9F6S",
+    "receptor": "GPLGSMSNYSVSLVGPAPWGFRLQGGKDFNMPLTISSLKDGGKAAQANVRIGDVVLSIDGINAQGMTHLEAQNKIKGCTGSLNMTLQRAS",
+    "peptide": "DSGFSFGSK",
+    "label": "decoy",
+    "peptide_from": "1OAI",
+    "name": "pair_073",
+    "score": 0.345831960439682
+  },
+  {
+    "receptor_id": "9F6S",
+    "receptor": "GPLGSMSNYSVSLVGPAPWGFRLQGGKDFNMPLTISSLKDGGKAAQANVRIGDVVLSIDGINAQGMTHLEAQNKIKGCTGSLNMTLQRAS",
+    "peptide": "EQVSAV",
+    "label": "decoy",
+    "peptide_from": "3LNY",
+    "name": "pair_074",
+    "score": 0.9358423948287964
+  },
+  {
+    "receptor_id": "9F6S",
+    "receptor": "GPLGSMSNYSVSLVGPAPWGFRLQGGKDFNMPLTISSLKDGGKAAQANVRIGDVVLSIDGINAQGMTHLEAQNKIKGCTGSLNMTLQRAS",
+    "peptide": "GPTIEEVD",
+    "label": "decoy",
+    "peptide_from": "1ELW",
+    "name": "pair_075",
+    "score": 0.474775105714798
+  },
+  {
+    "receptor_id": "9F6S",
+    "receptor": "GPLGSMSNYSVSLVGPAPWGFRLQGGKDFNMPLTISSLKDGGKAAQANVRIGDVVLSIDGINAQGMTHLEAQNKIKGCTGSLNMTLQRAS",
+    "peptide": "DDLIQL",
+    "label": "scrambled",
+    "peptide_from": "9F6S",
+    "name": "pair_076",
+    "score": 0.7420915365219116
+  },
+  {
+    "receptor_id": "9F6S",
+    "receptor": "GPLGSMSNYSVSLVGPAPWGFRLQGGKDFNMPLTISSLKDGGKAAQANVRIGDVVLSIDGINAQGMTHLEAQNKIKGCTGSLNMTLQRAS",
+    "peptide": "LQIDLD",
+    "label": "scrambled",
+    "peptide_from": "9F6S",
+    "name": "pair_077",
+    "score": 0.8003675937652588
+  },
+  {
+    "receptor_id": "8KDX",
+    "receptor": "SGTTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPVD",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "cognate",
+    "peptide_from": "8KDX",
+    "name": "pair_078",
+    "score": 0.20366959273815155
+  },
+  {
+    "receptor_id": "8KDX",
+    "receptor": "SGTTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPVD",
+    "peptide": "KETAAAHFEQHHMDS",
+    "label": "decoy",
+    "peptide_from": "4O36",
+    "name": "pair_079",
+    "score": 0.1932079941034317
+  },
+  {
+    "receptor_id": "8KDX",
+    "receptor": "SGTTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPVD",
+    "peptide": "AWVIPA",
+    "label": "decoy",
+    "peptide_from": "7OKL",
+    "name": "pair_080",
+    "score": 0.1806933581829071
+  },
+  {
+    "receptor_id": "8KDX",
+    "receptor": "SGTTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPVD",
+    "peptide": "APALRVVK",
+    "label": "decoy",
+    "peptide_from": "2DS8",
+    "name": "pair_081",
+    "score": 0.2757570445537567
+  },
+  {
+    "receptor_id": "8KDX",
+    "receptor": "SGTTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPVD",
+    "peptide": "PRPRTTTRSLSPPGS",
+    "label": "scrambled",
+    "peptide_from": "8KDX",
+    "name": "pair_082",
+    "score": 0.17164066433906555
+  },
+  {
+    "receptor_id": "8KDX",
+    "receptor": "SGTTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPVD",
+    "peptide": "SPTRPRTSSLTRPPG",
+    "label": "scrambled",
+    "peptide_from": "8KDX",
+    "name": "pair_083",
+    "score": 0.1330268383026123
+  },
+  {
+    "receptor_id": "6YOO",
+    "receptor": "GPTMGSMKFQYKEDHPFEYRKKEGEKIRKKYPDRVPVIVEKAPKARVPDLDKRKYLVPSDLTVGQFYFLIRKRIHLRPEDALFFFVNNTIPPTSATMGQLYEDNHEEDYFLYVAYSDESVYGK",
+    "peptide": "EEAEFVEVEPEA",
+    "label": "cognate",
+    "peptide_from": "6YOO",
+    "name": "pair_084",
+    "score": 0.9017841815948486
+  },
+  {
+    "receptor_id": "6YOO",
+    "receptor": "GPTMGSMKFQYKEDHPFEYRKKEGEKIRKKYPDRVPVIVEKAPKARVPDLDKRKYLVPSDLTVGQFYFLIRKRIHLRPEDALFFFVNNTIPPTSATMGQLYEDNHEEDYFLYVAYSDESVYGK",
+    "peptide": "KSLTIYAQVQK",
+    "label": "decoy",
+    "peptide_from": "1D4T",
+    "name": "pair_085",
+    "score": 0.7768388390541077
+  },
+  {
+    "receptor_id": "6YOO",
+    "receptor": "GPTMGSMKFQYKEDHPFEYRKKEGEKIRKKYPDRVPVIVEKAPKARVPDLDKRKYLVPSDLTVGQFYFLIRKRIHLRPEDALFFFVNNTIPPTSATMGQLYEDNHEEDYFLYVAYSDESVYGK",
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "label": "decoy",
+    "peptide_from": "6Y9Q",
+    "name": "pair_086",
+    "score": 0.5514496564865112
+  },
+  {
+    "receptor_id": "6YOO",
+    "receptor": "GPTMGSMKFQYKEDHPFEYRKKEGEKIRKKYPDRVPVIVEKAPKARVPDLDKRKYLVPSDLTVGQFYFLIRKRIHLRPEDALFFFVNNTIPPTSATMGQLYEDNHEEDYFLYVAYSDESVYGK",
+    "peptide": "MKRVMFHAKIHRATVTQADLHYVG",
+    "label": "decoy",
+    "peptide_from": "2EEO",
+    "name": "pair_087",
+    "score": 0.7116769552230835
+  },
+  {
+    "receptor_id": "6YOO",
+    "receptor": "GPTMGSMKFQYKEDHPFEYRKKEGEKIRKKYPDRVPVIVEKAPKARVPDLDKRKYLVPSDLTVGQFYFLIRKRIHLRPEDALFFFVNNTIPPTSATMGQLYEDNHEEDYFLYVAYSDESVYGK",
+    "peptide": "VAVPAEEFEEEE",
+    "label": "scrambled",
+    "peptide_from": "6YOO",
+    "name": "pair_088",
+    "score": 0.3136371970176697
+  },
+  {
+    "receptor_id": "6YOO",
+    "receptor": "GPTMGSMKFQYKEDHPFEYRKKEGEKIRKKYPDRVPVIVEKAPKARVPDLDKRKYLVPSDLTVGQFYFLIRKRIHLRPEDALFFFVNNTIPPTSATMGQLYEDNHEEDYFLYVAYSDESVYGK",
+    "peptide": "EEVPEAVEEFAE",
+    "label": "scrambled",
+    "peptide_from": "6YOO",
+    "name": "pair_089",
+    "score": 0.3530910313129425
+  },
+  {
+    "receptor_id": "3DS4",
+    "receptor": "SPTSILDIRQGPKEPFRDYVDRFYKTLRAEQASQEVKNWMTETLLVQNANPDCKTILKALGPGATSEEMMTACQGVGGPGHKARVL",
+    "peptide": "ITFEDLLDYYGP",
+    "label": "cognate",
+    "peptide_from": "3DS4",
+    "name": "pair_090",
+    "score": 0.9352934956550598
+  },
+  {
+    "receptor_id": "3DS4",
+    "receptor": "SPTSILDIRQGPKEPFRDYVDRFYKTLRAEQASQEVKNWMTETLLVQNANPDCKTILKALGPGATSEEMMTACQGVGGPGHKARVL",
+    "peptide": "MKRVMFHAKIHRATVTQADLHYVG",
+    "label": "decoy",
+    "peptide_from": "2EEO",
+    "name": "pair_091",
+    "score": 0.13147448003292084
+  },
+  {
+    "receptor_id": "3DS4",
+    "receptor": "SPTSILDIRQGPKEPFRDYVDRFYKTLRAEQASQEVKNWMTETLLVQNANPDCKTILKALGPGATSEEMMTACQGVGGPGHKARVL",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_092",
+    "score": 0.2631002366542816
+  },
+  {
+    "receptor_id": "3DS4",
+    "receptor": "SPTSILDIRQGPKEPFRDYVDRFYKTLRAEQASQEVKNWMTETLLVQNANPDCKTILKALGPGATSEEMMTACQGVGGPGHKARVL",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "decoy",
+    "peptide_from": "6R8I",
+    "name": "pair_093",
+    "score": 0.15180400013923645
+  },
+  {
+    "receptor_id": "3DS4",
+    "receptor": "SPTSILDIRQGPKEPFRDYVDRFYKTLRAEQASQEVKNWMTETLLVQNANPDCKTILKALGPGATSEEMMTACQGVGGPGHKARVL",
+    "peptide": "IYELTDFLPDGY",
+    "label": "scrambled",
+    "peptide_from": "3DS4",
+    "name": "pair_094",
+    "score": 0.3576946556568146
+  },
+  {
+    "receptor_id": "3DS4",
+    "receptor": "SPTSILDIRQGPKEPFRDYVDRFYKTLRAEQASQEVKNWMTETLLVQNANPDCKTILKALGPGATSEEMMTACQGVGGPGHKARVL",
+    "peptide": "TYEDPLYLDGFI",
+    "label": "scrambled",
+    "peptide_from": "3DS4",
+    "name": "pair_095",
+    "score": 0.2816106081008911
+  },
+  {
+    "receptor_id": "9GRF",
+    "receptor": "GGGGALPAKENEGCIVSVNSGKRYCLPVGQRSGYSLPDWIVGQEVYVDSGAKAKVLLSDWDNLSYNRIGEFVGNVNPADMKKVKAWNGQYLDFSKPRSMRVVYK",
+    "peptide": "AASTTTPAPA",
+    "label": "cognate",
+    "peptide_from": "9GRF",
+    "name": "pair_096",
+    "score": 0.2580212652683258
+  },
+  {
+    "receptor_id": "9GRF",
+    "receptor": "GGGGALPAKENEGCIVSVNSGKRYCLPVGQRSGYSLPDWIVGQEVYVDSGAKAKVLLSDWDNLSYNRIGEFVGNVNPADMKKVKAWNGQYLDFSKPRSMRVVYK",
+    "peptide": "KQTSV",
+    "label": "decoy",
+    "peptide_from": "1BE9",
+    "name": "pair_097",
+    "score": 0.588066041469574
+  },
+  {
+    "receptor_id": "9GRF",
+    "receptor": "GGGGALPAKENEGCIVSVNSGKRYCLPVGQRSGYSLPDWIVGQEVYVDSGAKAKVLLSDWDNLSYNRIGEFVGNVNPADMKKVKAWNGQYLDFSKPRSMRVVYK",
+    "peptide": "QEEWETVM",
+    "label": "decoy",
+    "peptide_from": "4Z8J",
+    "name": "pair_098",
+    "score": 0.2050476372241974
+  },
+  {
+    "receptor_id": "9GRF",
+    "receptor": "GGGGALPAKENEGCIVSVNSGKRYCLPVGQRSGYSLPDWIVGQEVYVDSGAKAKVLLSDWDNLSYNRIGEFVGNVNPADMKKVKAWNGQYLDFSKPRSMRVVYK",
+    "peptide": "DSGFSFGSK",
+    "label": "decoy",
+    "peptide_from": "1OAI",
+    "name": "pair_099",
+    "score": 0.19469943642616272
+  },
+  {
+    "receptor_id": "9GRF",
+    "receptor": "GGGGALPAKENEGCIVSVNSGKRYCLPVGQRSGYSLPDWIVGQEVYVDSGAKAKVLLSDWDNLSYNRIGEFVGNVNPADMKKVKAWNGQYLDFSKPRSMRVVYK",
+    "peptide": "PAAAAPTTTS",
+    "label": "scrambled",
+    "peptide_from": "9GRF",
+    "name": "pair_100",
+    "score": 0.24405907094478607
+  },
+  {
+    "receptor_id": "9GRF",
+    "receptor": "GGGGALPAKENEGCIVSVNSGKRYCLPVGQRSGYSLPDWIVGQEVYVDSGAKAKVLLSDWDNLSYNRIGEFVGNVNPADMKKVKAWNGQYLDFSKPRSMRVVYK",
+    "peptide": "TAPSPAATAT",
+    "label": "scrambled",
+    "peptide_from": "9GRF",
+    "name": "pair_101",
+    "score": 0.2669179141521454
+  },
+  {
+    "receptor_id": "7S7J",
+    "receptor": "EAERVRVFHKQAFEYISIALRIDEDEKAGQKEQAVEWYKKGIEELEKGIAVIVTGQGEQCERARRLQAKMMTNLVMAKDRLQLL",
+    "peptide": "TSASEDIDFDDLSRRFEELKKKT",
+    "label": "cognate",
+    "peptide_from": "7S7J",
+    "name": "pair_102",
+    "score": 0.7382915616035461
+  },
+  {
+    "receptor_id": "7S7J",
+    "receptor": "EAERVRVFHKQAFEYISIALRIDEDEKAGQKEQAVEWYKKGIEELEKGIAVIVTGQGEQCERARRLQAKMMTNLVMAKDRLQLL",
+    "peptide": "AWVIPA",
+    "label": "decoy",
+    "peptide_from": "7OKL",
+    "name": "pair_103",
+    "score": 0.3285727798938751
+  },
+  {
+    "receptor_id": "7S7J",
+    "receptor": "EAERVRVFHKQAFEYISIALRIDEDEKAGQKEQAVEWYKKGIEELEKGIAVIVTGQGEQCERARRLQAKMMTNLVMAKDRLQLL",
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "label": "decoy",
+    "peptide_from": "2IZX",
+    "name": "pair_104",
+    "score": 0.2828117609024048
+  },
+  {
+    "receptor_id": "7S7J",
+    "receptor": "EAERVRVFHKQAFEYISIALRIDEDEKAGQKEQAVEWYKKGIEELEKGIAVIVTGQGEQCERARRLQAKMMTNLVMAKDRLQLL",
+    "peptide": "KSLTIYAQVQK",
+    "label": "decoy",
+    "peptide_from": "1D4T",
+    "name": "pair_105",
+    "score": 0.20308881998062134
+  },
+  {
+    "receptor_id": "7S7J",
+    "receptor": "EAERVRVFHKQAFEYISIALRIDEDEKAGQKEQAVEWYKKGIEELEKGIAVIVTGQGEQCERARRLQAKMMTNLVMAKDRLQLL",
+    "peptide": "RKSEDFRADETIDLSKTLDKFES",
+    "label": "scrambled",
+    "peptide_from": "7S7J",
+    "name": "pair_106",
+    "score": 0.24271062016487122
+  },
+  {
+    "receptor_id": "7S7J",
+    "receptor": "EAERVRVFHKQAFEYISIALRIDEDEKAGQKEQAVEWYKKGIEELEKGIAVIVTGQGEQCERARRLQAKMMTNLVMAKDRLQLL",
+    "peptide": "LDEDLKERFDKERFKSTSSDITA",
+    "label": "scrambled",
+    "peptide_from": "7S7J",
+    "name": "pair_107",
+    "score": 0.26974189281463623
+  },
+  {
+    "receptor_id": "4Z8J",
+    "receptor": "GSHGGSPRVVRIVKSESGYGFNVRGQVSEGGQLRSINGELYAPLQHVSAVLPGGAADRAGVRKGDRILEVNGVNVEGATHKQVVDLIRAGEKELILTVLSV",
+    "peptide": "QEEWETVM",
+    "label": "cognate",
+    "peptide_from": "4Z8J",
+    "name": "pair_108",
+    "score": 0.9734678864479065
+  },
+  {
+    "receptor_id": "4Z8J",
+    "receptor": "GSHGGSPRVVRIVKSESGYGFNVRGQVSEGGQLRSINGELYAPLQHVSAVLPGGAADRAGVRKGDRILEVNGVNVEGATHKQVVDLIRAGEKELILTVLSV",
+    "peptide": "WEYIPNV",
+    "label": "decoy",
+    "peptide_from": "2PV1",
+    "name": "pair_109",
+    "score": 0.418484628200531
+  },
+  {
+    "receptor_id": "4Z8J",
+    "receptor": "GSHGGSPRVVRIVKSESGYGFNVRGQVSEGGQLRSINGELYAPLQHVSAVLPGGAADRAGVRKGDRILEVNGVNVEGATHKQVVDLIRAGEKELILTVLSV",
+    "peptide": "DQLIDL",
+    "label": "decoy",
+    "peptide_from": "9F6S",
+    "name": "pair_110",
+    "score": 0.9396753311157227
+  },
+  {
+    "receptor_id": "4Z8J",
+    "receptor": "GSHGGSPRVVRIVKSESGYGFNVRGQVSEGGQLRSINGELYAPLQHVSAVLPGGAADRAGVRKGDRILEVNGVNVEGATHKQVVDLIRAGEKELILTVLSV",
+    "peptide": "KLVFFA",
+    "label": "decoy",
+    "peptide_from": "3JQL",
+    "name": "pair_111",
+    "score": 0.7508823275566101
+  },
+  {
+    "receptor_id": "4Z8J",
+    "receptor": "GSHGGSPRVVRIVKSESGYGFNVRGQVSEGGQLRSINGELYAPLQHVSAVLPGGAADRAGVRKGDRILEVNGVNVEGATHKQVVDLIRAGEKELILTVLSV",
+    "peptide": "MEEWVTQE",
+    "label": "scrambled",
+    "peptide_from": "4Z8J",
+    "name": "pair_112",
+    "score": 0.4054637551307678
+  },
+  {
+    "receptor_id": "4Z8J",
+    "receptor": "GSHGGSPRVVRIVKSESGYGFNVRGQVSEGGQLRSINGELYAPLQHVSAVLPGGAADRAGVRKGDRILEVNGVNVEGATHKQVVDLIRAGEKELILTVLSV",
+    "peptide": "TQEMEVWE",
+    "label": "scrambled",
+    "peptide_from": "4Z8J",
+    "name": "pair_113",
+    "score": 0.8078276515007019
+  },
+  {
+    "receptor_id": "8HLO",
+    "receptor": "GPGSEFVRRVKTIYDCQADNDDELTFIEGEVIIVTGEEDQEWWIGHIEGQPERKGVFPVSFVHILSD",
+    "peptide": "GPGSEPPPKPPRS",
+    "label": "cognate",
+    "peptide_from": "8HLO",
+    "name": "pair_114",
+    "score": 0.8454037308692932
+  },
+  {
+    "receptor_id": "8HLO",
+    "receptor": "GPGSEFVRRVKTIYDCQADNDDELTFIEGEVIIVTGEEDQEWWIGHIEGQPERKGVFPVSFVHILSD",
+    "peptide": "GPKWVKTDSDFIVLEI",
+    "label": "decoy",
+    "peptide_from": "6L0W",
+    "name": "pair_115",
+    "score": 0.20566456019878387
+  },
+  {
+    "receptor_id": "8HLO",
+    "receptor": "GPGSEFVRRVKTIYDCQADNDDELTFIEGEVIIVTGEEDQEWWIGHIEGQPERKGVFPVSFVHILSD",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_116",
+    "score": 0.6103864312171936
+  },
+  {
+    "receptor_id": "8HLO",
+    "receptor": "GPGSEFVRRVKTIYDCQADNDDELTFIEGEVIIVTGEEDQEWWIGHIEGQPERKGVFPVSFVHILSD",
+    "peptide": "ARTKQTARKST",
+    "label": "decoy",
+    "peptide_from": "3ASL",
+    "name": "pair_117",
+    "score": 0.593671441078186
+  },
+  {
+    "receptor_id": "8HLO",
+    "receptor": "GPGSEFVRRVKTIYDCQADNDDELTFIEGEVIIVTGEEDQEWWIGHIEGQPERKGVFPVSFVHILSD",
+    "peptide": "SPKPGREPPPSPG",
+    "label": "scrambled",
+    "peptide_from": "8HLO",
+    "name": "pair_118",
+    "score": 0.4083678126335144
+  },
+  {
+    "receptor_id": "8HLO",
+    "receptor": "GPGSEFVRRVKTIYDCQADNDDELTFIEGEVIIVTGEEDQEWWIGHIEGQPERKGVFPVSFVHILSD",
+    "peptide": "EGGPPSRPPKPSP",
+    "label": "scrambled",
+    "peptide_from": "8HLO",
+    "name": "pair_119",
+    "score": 0.508731484413147
+  },
+  {
+    "receptor_id": "7OKL",
+    "receptor": "GPGADSCIQFTRHASDVLLNLNRLRSRDILTDVVIVVSREQFRAHKTVLMACSGLFYSIFTDQLKCNLSVINLDPEINPEGFCILLDFMYTSRLNLREGNIMAVMATAMYLQMEHVVDTCRKFIKASE",
+    "peptide": "AWVIPA",
+    "label": "cognate",
+    "peptide_from": "7OKL",
+    "name": "pair_120",
+    "score": 0.26209574937820435
+  },
+  {
+    "receptor_id": "7OKL",
+    "receptor": "GPGADSCIQFTRHASDVLLNLNRLRSRDILTDVVIVVSREQFRAHKTVLMACSGLFYSIFTDQLKCNLSVINLDPEINPEGFCILLDFMYTSRLNLREGNIMAVMATAMYLQMEHVVDTCRKFIKASE",
+    "peptide": "SQETFSDLWKLLPEN",
+    "label": "decoy",
+    "peptide_from": "1YCR",
+    "name": "pair_121",
+    "score": 0.052481457591056824
+  },
+  {
+    "receptor_id": "7OKL",
+    "receptor": "GPGADSCIQFTRHASDVLLNLNRLRSRDILTDVVIVVSREQFRAHKTVLMACSGLFYSIFTDQLKCNLSVINLDPEINPEGFCILLDFMYTSRLNLREGNIMAVMATAMYLQMEHVVDTCRKFIKASE",
+    "peptide": "SVATVSESLLTE",
+    "label": "decoy",
+    "peptide_from": "4Z2O",
+    "name": "pair_122",
+    "score": 0.21361377835273743
+  },
+  {
+    "receptor_id": "7OKL",
+    "receptor": "GPGADSCIQFTRHASDVLLNLNRLRSRDILTDVVIVVSREQFRAHKTVLMACSGLFYSIFTDQLKCNLSVINLDPEINPEGFCILLDFMYTSRLNLREGNIMAVMATAMYLQMEHVVDTCRKFIKASE",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "decoy",
+    "peptide_from": "5D94",
+    "name": "pair_123",
+    "score": 0.15119187533855438
+  },
+  {
+    "receptor_id": "7OKL",
+    "receptor": "GPGADSCIQFTRHASDVLLNLNRLRSRDILTDVVIVVSREQFRAHKTVLMACSGLFYSIFTDQLKCNLSVINLDPEINPEGFCILLDFMYTSRLNLREGNIMAVMATAMYLQMEHVVDTCRKFIKASE",
+    "peptide": "WIAPVA",
+    "label": "scrambled",
+    "peptide_from": "7OKL",
+    "name": "pair_124",
+    "score": 0.07564109563827515
+  },
+  {
+    "receptor_id": "7OKL",
+    "receptor": "GPGADSCIQFTRHASDVLLNLNRLRSRDILTDVVIVVSREQFRAHKTVLMACSGLFYSIFTDQLKCNLSVINLDPEINPEGFCILLDFMYTSRLNLREGNIMAVMATAMYLQMEHVVDTCRKFIKASE",
+    "peptide": "AAIWPV",
+    "label": "scrambled",
+    "peptide_from": "7OKL",
+    "name": "pair_125",
+    "score": 0.1329648494720459
+  },
+  {
+    "receptor_id": "4O36",
+    "receptor": "SSSNYCNQMMKSRNLTKDRCKPVNTFVHESLADVQAVCSQKNVACKNGQTNCYQSYSTMSITDCRETGSSKYPNCAYKTTQANKHIIVACEGNPYVPVHFDASV",
+    "peptide": "KETAAAHFEQHHMDS",
+    "label": "cognate",
+    "peptide_from": "4O36",
+    "name": "pair_126",
+    "score": 0.13010933995246887
+  },
+  {
+    "receptor_id": "4O36",
+    "receptor": "SSSNYCNQMMKSRNLTKDRCKPVNTFVHESLADVQAVCSQKNVACKNGQTNCYQSYSTMSITDCRETGSSKYPNCAYKTTQANKHIIVACEGNPYVPVHFDASV",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "decoy",
+    "peptide_from": "5D94",
+    "name": "pair_127",
+    "score": 0.230804443359375
+  },
+  {
+    "receptor_id": "4O36",
+    "receptor": "SSSNYCNQMMKSRNLTKDRCKPVNTFVHESLADVQAVCSQKNVACKNGQTNCYQSYSTMSITDCRETGSSKYPNCAYKTTQANKHIIVACEGNPYVPVHFDASV",
+    "peptide": "GPKWVKTDSDFIVLEI",
+    "label": "decoy",
+    "peptide_from": "6L0W",
+    "name": "pair_128",
+    "score": 0.15161359310150146
+  },
+  {
+    "receptor_id": "4O36",
+    "receptor": "SSSNYCNQMMKSRNLTKDRCKPVNTFVHESLADVQAVCSQKNVACKNGQTNCYQSYSTMSITDCRETGSSKYPNCAYKTTQANKHIIVACEGNPYVPVHFDASV",
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "label": "decoy",
+    "peptide_from": "6Y9Q",
+    "name": "pair_129",
+    "score": 0.18160656094551086
+  },
+  {
+    "receptor_id": "4O36",
+    "receptor": "SSSNYCNQMMKSRNLTKDRCKPVNTFVHESLADVQAVCSQKNVACKNGQTNCYQSYSTMSITDCRETGSSKYPNCAYKTTQANKHIIVACEGNPYVPVHFDASV",
+    "peptide": "AAQHHFHTADKESME",
+    "label": "scrambled",
+    "peptide_from": "4O36",
+    "name": "pair_130",
+    "score": 0.10363518446683884
+  },
+  {
+    "receptor_id": "4O36",
+    "receptor": "SSSNYCNQMMKSRNLTKDRCKPVNTFVHESLADVQAVCSQKNVACKNGQTNCYQSYSTMSITDCRETGSSKYPNCAYKTTQANKHIIVACEGNPYVPVHFDASV",
+    "peptide": "AEDSQHAKHEAFHTM",
+    "label": "scrambled",
+    "peptide_from": "4O36",
+    "name": "pair_131",
+    "score": 0.15027399361133575
+  },
+  {
+    "receptor_id": "4Z2O",
+    "receptor": "FADDHAMSPDMKLLAGASNWVNQSGSVAQFVFTPSPTQPQTYEVSGNYINNAQGTGCKGTPYPLSGAYYSGNQIISFSVVWSNASANCQSATGWTGYFDFSGSQAVLKTDWNLAFYSGSTPAIQQGQDDFMQSV",
+    "peptide": "SVATVSESLLTE",
+    "label": "cognate",
+    "peptide_from": "4Z2O",
+    "name": "pair_132",
+    "score": 0.2905399203300476
+  },
+  {
+    "receptor_id": "4Z2O",
+    "receptor": "FADDHAMSPDMKLLAGASNWVNQSGSVAQFVFTPSPTQPQTYEVSGNYINNAQGTGCKGTPYPLSGAYYSGNQIISFSVVWSNASANCQSATGWTGYFDFSGSQAVLKTDWNLAFYSGSTPAIQQGQDDFMQSV",
+    "peptide": "GYQDYEPEA",
+    "label": "decoy",
+    "peptide_from": "2X6M",
+    "name": "pair_133",
+    "score": 0.2710605561733246
+  },
+  {
+    "receptor_id": "4Z2O",
+    "receptor": "FADDHAMSPDMKLLAGASNWVNQSGSVAQFVFTPSPTQPQTYEVSGNYINNAQGTGCKGTPYPLSGAYYSGNQIISFSVVWSNASANCQSATGWTGYFDFSGSQAVLKTDWNLAFYSGSTPAIQQGQDDFMQSV",
+    "peptide": "LPSFETAL",
+    "label": "decoy",
+    "peptide_from": "5WOU",
+    "name": "pair_134",
+    "score": 0.6984372138977051
+  },
+  {
+    "receptor_id": "4Z2O",
+    "receptor": "FADDHAMSPDMKLLAGASNWVNQSGSVAQFVFTPSPTQPQTYEVSGNYINNAQGTGCKGTPYPLSGAYYSGNQIISFSVVWSNASANCQSATGWTGYFDFSGSQAVLKTDWNLAFYSGSTPAIQQGQDDFMQSV",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_135",
+    "score": 0.19977766275405884
+  },
+  {
+    "receptor_id": "4Z2O",
+    "receptor": "FADDHAMSPDMKLLAGASNWVNQSGSVAQFVFTPSPTQPQTYEVSGNYINNAQGTGCKGTPYPLSGAYYSGNQIISFSVVWSNASANCQSATGWTGYFDFSGSQAVLKTDWNLAFYSGSTPAIQQGQDDFMQSV",
+    "peptide": "SASVETTSELLV",
+    "label": "scrambled",
+    "peptide_from": "4Z2O",
+    "name": "pair_136",
+    "score": 0.4986637532711029
+  },
+  {
+    "receptor_id": "4Z2O",
+    "receptor": "FADDHAMSPDMKLLAGASNWVNQSGSVAQFVFTPSPTQPQTYEVSGNYINNAQGTGCKGTPYPLSGAYYSGNQIISFSVVWSNASANCQSATGWTGYFDFSGSQAVLKTDWNLAFYSGSTPAIQQGQDDFMQSV",
+    "peptide": "SSVETSTLLVAE",
+    "label": "scrambled",
+    "peptide_from": "4Z2O",
+    "name": "pair_137",
+    "score": 0.15437109768390656
+  },
+  {
+    "receptor_id": "3JQL",
+    "receptor": "NLYQFKNMIQCTVPSRSWADFADYGCYCGKGGSGTPVDDLDRCCQTHDNCYNEAENISGCRPYFKTYSYECTQGTLTCKGDNNACAASVCDCDRLAAICFAGAPYNDANYNIDLKARCN",
+    "peptide": "KLVFFA",
+    "label": "cognate",
+    "peptide_from": "3JQL",
+    "name": "pair_138",
+    "score": 0.6332813501358032
+  },
+  {
+    "receptor_id": "3JQL",
+    "receptor": "NLYQFKNMIQCTVPSRSWADFADYGCYCGKGGSGTPVDDLDRCCQTHDNCYNEAENISGCRPYFKTYSYECTQGTLTCKGDNNACAASVCDCDRLAAICFAGAPYNDANYNIDLKARCN",
+    "peptide": "EYLGLDVPV",
+    "label": "decoy",
+    "peptide_from": "1MFG",
+    "name": "pair_139",
+    "score": 0.44064009189605713
+  },
+  {
+    "receptor_id": "3JQL",
+    "receptor": "NLYQFKNMIQCTVPSRSWADFADYGCYCGKGGSGTPVDDLDRCCQTHDNCYNEAENISGCRPYFKTYSYECTQGTLTCKGDNNACAASVCDCDRLAAICFAGAPYNDANYNIDLKARCN",
+    "peptide": "GPKWVKTDSDFIVLEI",
+    "label": "decoy",
+    "peptide_from": "6L0W",
+    "name": "pair_140",
+    "score": 0.25998643040657043
+  },
+  {
+    "receptor_id": "3JQL",
+    "receptor": "NLYQFKNMIQCTVPSRSWADFADYGCYCGKGGSGTPVDDLDRCCQTHDNCYNEAENISGCRPYFKTYSYECTQGTLTCKGDNNACAASVCDCDRLAAICFAGAPYNDANYNIDLKARCN",
+    "peptide": "XPPPVPPRRR",
+    "label": "decoy",
+    "peptide_from": "1SEM",
+    "name": "pair_141",
+    "score": 0.4813900291919708
+  },
+  {
+    "receptor_id": "3JQL",
+    "receptor": "NLYQFKNMIQCTVPSRSWADFADYGCYCGKGGSGTPVDDLDRCCQTHDNCYNEAENISGCRPYFKTYSYECTQGTLTCKGDNNACAASVCDCDRLAAICFAGAPYNDANYNIDLKARCN",
+    "peptide": "KVFFAL",
+    "label": "scrambled",
+    "peptide_from": "3JQL",
+    "name": "pair_142",
+    "score": 0.5976130366325378
+  },
+  {
+    "receptor_id": "3JQL",
+    "receptor": "NLYQFKNMIQCTVPSRSWADFADYGCYCGKGGSGTPVDDLDRCCQTHDNCYNEAENISGCRPYFKTYSYECTQGTLTCKGDNNACAASVCDCDRLAAICFAGAPYNDANYNIDLKARCN",
+    "peptide": "VFLFAK",
+    "label": "scrambled",
+    "peptide_from": "3JQL",
+    "name": "pair_143",
+    "score": 0.5218368768692017
+  },
+  {
+    "receptor_id": "3RM1",
+    "receptor": "MSELEKAVVALIDVFHQYSGREGDKHKLKKSELKELINNELSHFLEEIKEQEVVDKVMETLDSNGDGECDFQEFMAFVAMITTACHEFFEHE",
+    "peptide": "TKIDWNKIL",
+    "label": "cognate",
+    "peptide_from": "3RM1",
+    "name": "pair_144",
+    "score": 0.8156845569610596
+  },
+  {
+    "receptor_id": "3RM1",
+    "receptor": "MSELEKAVVALIDVFHQYSGREGDKHKLKKSELKELINNELSHFLEEIKEQEVVDKVMETLDSNGDGECDFQEFMAFVAMITTACHEFFEHE",
+    "peptide": "RPVPMKRHIFR",
+    "label": "decoy",
+    "peptide_from": "5XHZ",
+    "name": "pair_145",
+    "score": 0.7313650250434875
+  },
+  {
+    "receptor_id": "3RM1",
+    "receptor": "MSELEKAVVALIDVFHQYSGREGDKHKLKKSELKELINNELSHFLEEIKEQEVVDKVMETLDSNGDGECDFQEFMAFVAMITTACHEFFEHE",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_146",
+    "score": 0.4228915870189667
+  },
+  {
+    "receptor_id": "3RM1",
+    "receptor": "MSELEKAVVALIDVFHQYSGREGDKHKLKKSELKELINNELSHFLEEIKEQEVVDKVMETLDSNGDGECDFQEFMAFVAMITTACHEFFEHE",
+    "peptide": "MADKPQTRSQYRNKQ",
+    "label": "decoy",
+    "peptide_from": "6GPZ",
+    "name": "pair_147",
+    "score": 0.12143969535827637
+  },
+  {
+    "receptor_id": "3RM1",
+    "receptor": "MSELEKAVVALIDVFHQYSGREGDKHKLKKSELKELINNELSHFLEEIKEQEVVDKVMETLDSNGDGECDFQEFMAFVAMITTACHEFFEHE",
+    "peptide": "WLNTDIKIK",
+    "label": "scrambled",
+    "peptide_from": "3RM1",
+    "name": "pair_148",
+    "score": 0.7702599763870239
+  },
+  {
+    "receptor_id": "3RM1",
+    "receptor": "MSELEKAVVALIDVFHQYSGREGDKHKLKKSELKELINNELSHFLEEIKEQEVVDKVMETLDSNGDGECDFQEFMAFVAMITTACHEFFEHE",
+    "peptide": "WINKDLTIK",
+    "label": "scrambled",
+    "peptide_from": "3RM1",
+    "name": "pair_149",
+    "score": 0.6566354632377625
+  },
+  {
+    "receptor_id": "1MFG",
+    "receptor": "GSMEIRVRVEKDPELGFSISGGVGGRGNPFRPDDDGIFVTRVQPEGPASKLLQPGDKIIQANGYSFINIEHGQAVSLLKTFQNTVELIIVREVSS",
+    "peptide": "EYLGLDVPV",
+    "label": "cognate",
+    "peptide_from": "1MFG",
+    "name": "pair_150",
+    "score": 0.17711681127548218
+  },
+  {
+    "receptor_id": "1MFG",
+    "receptor": "GSMEIRVRVEKDPELGFSISGGVGGRGNPFRPDDDGIFVTRVQPEGPASKLLQPGDKIIQANGYSFINIEHGQAVSLLKTFQNTVELIIVREVSS",
+    "peptide": "FVPNVHAAEFVPSFL",
+    "label": "decoy",
+    "peptide_from": "3KUJ",
+    "name": "pair_151",
+    "score": 0.14280889928340912
+  },
+  {
+    "receptor_id": "1MFG",
+    "receptor": "GSMEIRVRVEKDPELGFSISGGVGGRGNPFRPDDDGIFVTRVQPEGPASKLLQPGDKIIQANGYSFINIEHGQAVSLLKTFQNTVELIIVREVSS",
+    "peptide": "ARTKQTARKST",
+    "label": "decoy",
+    "peptide_from": "3ASL",
+    "name": "pair_152",
+    "score": 0.14104539155960083
+  },
+  {
+    "receptor_id": "1MFG",
+    "receptor": "GSMEIRVRVEKDPELGFSISGGVGGRGNPFRPDDDGIFVTRVQPEGPASKLLQPGDKIIQANGYSFINIEHGQAVSLLKTFQNTVELIIVREVSS",
+    "peptide": "RQVNFLGKIN",
+    "label": "decoy",
+    "peptide_from": "2FNT",
+    "name": "pair_153",
+    "score": 0.18143437802791595
+  },
+  {
+    "receptor_id": "1MFG",
+    "receptor": "GSMEIRVRVEKDPELGFSISGGVGGRGNPFRPDDDGIFVTRVQPEGPASKLLQPGDKIIQANGYSFINIEHGQAVSLLKTFQNTVELIIVREVSS",
+    "peptide": "EVGPLLVYD",
+    "label": "scrambled",
+    "peptide_from": "1MFG",
+    "name": "pair_154",
+    "score": 0.1366119682788849
+  },
+  {
+    "receptor_id": "1MFG",
+    "receptor": "GSMEIRVRVEKDPELGFSISGGVGGRGNPFRPDDDGIFVTRVQPEGPASKLLQPGDKIIQANGYSFINIEHGQAVSLLKTFQNTVELIIVREVSS",
+    "peptide": "VPVLGDLEY",
+    "label": "scrambled",
+    "peptide_from": "1MFG",
+    "name": "pair_155",
+    "score": 0.23460516333580017
+  },
+  {
+    "receptor_id": "2DF6",
+    "receptor": "GPLGSVVRAKFNFQQTNEDELSFSKGDVIHVTRVEEGGWWEGTHNGRTGWFPSNYVREI",
+    "peptide": "PPVIAPRPEHTKSIYTRS",
+    "label": "cognate",
+    "peptide_from": "2DF6",
+    "name": "pair_156",
+    "score": 0.766158401966095
+  },
+  {
+    "receptor_id": "2DF6",
+    "receptor": "GPLGSVVRAKFNFQQTNEDELSFSKGDVIHVTRVEEGGWWEGTHNGRTGWFPSNYVREI",
+    "peptide": "IKLETKKTKL",
+    "label": "decoy",
+    "peptide_from": "6EZI",
+    "name": "pair_157",
+    "score": 0.16171474754810333
+  },
+  {
+    "receptor_id": "2DF6",
+    "receptor": "GPLGSVVRAKFNFQQTNEDELSFSKGDVIHVTRVEEGGWWEGTHNGRTGWFPSNYVREI",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "decoy",
+    "peptide_from": "5D94",
+    "name": "pair_158",
+    "score": 0.07809469848871231
+  },
+  {
+    "receptor_id": "2DF6",
+    "receptor": "GPLGSVVRAKFNFQQTNEDELSFSKGDVIHVTRVEEGGWWEGTHNGRTGWFPSNYVREI",
+    "peptide": "ARTKQTARKST",
+    "label": "decoy",
+    "peptide_from": "3ASL",
+    "name": "pair_159",
+    "score": 0.198988139629364
+  },
+  {
+    "receptor_id": "2DF6",
+    "receptor": "GPLGSVVRAKFNFQQTNEDELSFSKGDVIHVTRVEEGGWWEGTHNGRTGWFPSNYVREI",
+    "peptide": "IYPVPSRPIEPTKRTSAH",
+    "label": "scrambled",
+    "peptide_from": "2DF6",
+    "name": "pair_160",
+    "score": 0.6172580122947693
+  },
+  {
+    "receptor_id": "2DF6",
+    "receptor": "GPLGSVVRAKFNFQQTNEDELSFSKGDVIHVTRVEEGGWWEGTHNGRTGWFPSNYVREI",
+    "peptide": "RTRSSPTHIEIAPPYPVK",
+    "label": "scrambled",
+    "peptide_from": "2DF6",
+    "name": "pair_161",
+    "score": 0.6730912923812866
+  },
+  {
+    "receptor_id": "2IZX",
+    "receptor": "IQIPPGLTELLQGYTVEVLRQQPPDLVEFAVEYFTRLREAR",
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "label": "cognate",
+    "peptide_from": "2IZX",
+    "name": "pair_162",
+    "score": 0.5075405836105347
+  },
+  {
+    "receptor_id": "2IZX",
+    "receptor": "IQIPPGLTELLQGYTVEVLRQQPPDLVEFAVEYFTRLREAR",
+    "peptide": "KKETWV",
+    "label": "decoy",
+    "peptide_from": "1TP5",
+    "name": "pair_163",
+    "score": 0.09359531104564667
+  },
+  {
+    "receptor_id": "2IZX",
+    "receptor": "IQIPPGLTELLQGYTVEVLRQQPPDLVEFAVEYFTRLREAR",
+    "peptide": "XXXXPLPPLPX",
+    "label": "decoy",
+    "peptide_from": "1NLO",
+    "name": "pair_164",
+    "score": 0.12395849823951721
+  },
+  {
+    "receptor_id": "2IZX",
+    "receptor": "IQIPPGLTELLQGYTVEVLRQQPPDLVEFAVEYFTRLREAR",
+    "peptide": "WEYIPNV",
+    "label": "decoy",
+    "peptide_from": "2PV1",
+    "name": "pair_165",
+    "score": 0.1439591348171234
+  },
+  {
+    "receptor_id": "2IZX",
+    "receptor": "IQIPPGLTELLQGYTVEVLRQQPPDLVEFAVEYFTRLREAR",
+    "peptide": "LDAIVQANQQAQKIKYEI",
+    "label": "scrambled",
+    "peptide_from": "2IZX",
+    "name": "pair_166",
+    "score": 0.27294573187828064
+  },
+  {
+    "receptor_id": "2IZX",
+    "receptor": "IQIPPGLTELLQGYTVEVLRQQPPDLVEFAVEYFTRLREAR",
+    "peptide": "VYLQIQKAQDIQAAIKNE",
+    "label": "scrambled",
+    "peptide_from": "2IZX",
+    "name": "pair_167",
+    "score": 0.12352529913187027
+  },
+  {
+    "receptor_id": "2PV1",
+    "receptor": "TELNLSHILIPLPENPTSDQVNEAESQARAIVDQARNGADFGKLAIAHSADQQALNGGQMGWGRIQELPGIFAQALSTAKKGDIVGPIRSGVGFHILKVNDLR",
+    "peptide": "WEYIPNV",
+    "label": "cognate",
+    "peptide_from": "2PV1",
+    "name": "pair_168",
+    "score": 0.9709327220916748
+  },
+  {
+    "receptor_id": "2PV1",
+    "receptor": "TELNLSHILIPLPENPTSDQVNEAESQARAIVDQARNGADFGKLAIAHSADQQALNGGQMGWGRIQELPGIFAQALSTAKKGDIVGPIRSGVGFHILKVNDLR",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_169",
+    "score": 0.16368085145950317
+  },
+  {
+    "receptor_id": "2PV1",
+    "receptor": "TELNLSHILIPLPENPTSDQVNEAESQARAIVDQARNGADFGKLAIAHSADQQALNGGQMGWGRIQELPGIFAQALSTAKKGDIVGPIRSGVGFHILKVNDLR",
+    "peptide": "SQETFSDLWKLLPEN",
+    "label": "decoy",
+    "peptide_from": "1YCR",
+    "name": "pair_170",
+    "score": 0.6826450824737549
+  },
+  {
+    "receptor_id": "2PV1",
+    "receptor": "TELNLSHILIPLPENPTSDQVNEAESQARAIVDQARNGADFGKLAIAHSADQQALNGGQMGWGRIQELPGIFAQALSTAKKGDIVGPIRSGVGFHILKVNDLR",
+    "peptide": "PDESSADVVFKKPLAPAPR",
+    "label": "decoy",
+    "peptide_from": "4WSF",
+    "name": "pair_171",
+    "score": 0.2775700092315674
+  },
+  {
+    "receptor_id": "2PV1",
+    "receptor": "TELNLSHILIPLPENPTSDQVNEAESQARAIVDQARNGADFGKLAIAHSADQQALNGGQMGWGRIQELPGIFAQALSTAKKGDIVGPIRSGVGFHILKVNDLR",
+    "peptide": "IYEPWVN",
+    "label": "scrambled",
+    "peptide_from": "2PV1",
+    "name": "pair_172",
+    "score": 0.7263357639312744
+  },
+  {
+    "receptor_id": "2PV1",
+    "receptor": "TELNLSHILIPLPENPTSDQVNEAESQARAIVDQARNGADFGKLAIAHSADQQALNGGQMGWGRIQELPGIFAQALSTAKKGDIVGPIRSGVGFHILKVNDLR",
+    "peptide": "IYVEPWN",
+    "label": "scrambled",
+    "peptide_from": "2PV1",
+    "name": "pair_173",
+    "score": 0.6340389251708984
+  },
+  {
+    "receptor_id": "3LNY",
+    "receptor": "PKPGDIFEVELAKNDNSLGISVTGGVNTSVRHGGIYVKAVIPQGAAESDGRIHKGDRVLAVNGVSLEGATHKQAVETLRNTGQVVHLLLEKGQSPT",
+    "peptide": "EQVSAV",
+    "label": "cognate",
+    "peptide_from": "3LNY",
+    "name": "pair_174",
+    "score": 0.44661837816238403
+  },
+  {
+    "receptor_id": "3LNY",
+    "receptor": "PKPGDIFEVELAKNDNSLGISVTGGVNTSVRHGGIYVKAVIPQGAAESDGRIHKGDRVLAVNGVSLEGATHKQAVETLRNTGQVVHLLLEKGQSPT",
+    "peptide": "SYRKAIDAATQTEE",
+    "label": "decoy",
+    "peptide_from": "5E0L",
+    "name": "pair_175",
+    "score": 0.13834086060523987
+  },
+  {
+    "receptor_id": "3LNY",
+    "receptor": "PKPGDIFEVELAKNDNSLGISVTGGVNTSVRHGGIYVKAVIPQGAAESDGRIHKGDRVLAVNGVSLEGATHKQAVETLRNTGQVVHLLLEKGQSPT",
+    "peptide": "KKETWV",
+    "label": "decoy",
+    "peptide_from": "1TP5",
+    "name": "pair_176",
+    "score": 0.37779080867767334
+  },
+  {
+    "receptor_id": "3LNY",
+    "receptor": "PKPGDIFEVELAKNDNSLGISVTGGVNTSVRHGGIYVKAVIPQGAAESDGRIHKGDRVLAVNGVSLEGATHKQAVETLRNTGQVVHLLLEKGQSPT",
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "label": "decoy",
+    "peptide_from": "6Y9Q",
+    "name": "pair_177",
+    "score": 0.21925663948059082
+  },
+  {
+    "receptor_id": "3LNY",
+    "receptor": "PKPGDIFEVELAKNDNSLGISVTGGVNTSVRHGGIYVKAVIPQGAAESDGRIHKGDRVLAVNGVSLEGATHKQAVETLRNTGQVVHLLLEKGQSPT",
+    "peptide": "SAEQVV",
+    "label": "scrambled",
+    "peptide_from": "3LNY",
+    "name": "pair_178",
+    "score": 0.36015433073043823
+  },
+  {
+    "receptor_id": "3LNY",
+    "receptor": "PKPGDIFEVELAKNDNSLGISVTGGVNTSVRHGGIYVKAVIPQGAAESDGRIHKGDRVLAVNGVSLEGATHKQAVETLRNTGQVVHLLLEKGQSPT",
+    "peptide": "EAQSVV",
+    "label": "scrambled",
+    "peptide_from": "3LNY",
+    "name": "pair_179",
+    "score": 0.5711012482643127
+  },
+  {
+    "receptor_id": "5E0L",
+    "receptor": "MSDRKAVIKNADMSEEMQQDAVDCATQALEKYNIEKDIAAYIKKEFDKKYNPTWHCIVGRNFGSYVTHETRHFIYFYLGQVAILLFKSG",
+    "peptide": "SYRKAIDAATQTEE",
+    "label": "cognate",
+    "peptide_from": "5E0L",
+    "name": "pair_180",
+    "score": 0.2121260017156601
+  },
+  {
+    "receptor_id": "5E0L",
+    "receptor": "MSDRKAVIKNADMSEEMQQDAVDCATQALEKYNIEKDIAAYIKKEFDKKYNPTWHCIVGRNFGSYVTHETRHFIYFYLGQVAILLFKSG",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_181",
+    "score": 0.4966396391391754
+  },
+  {
+    "receptor_id": "5E0L",
+    "receptor": "MSDRKAVIKNADMSEEMQQDAVDCATQALEKYNIEKDIAAYIKKEFDKKYNPTWHCIVGRNFGSYVTHETRHFIYFYLGQVAILLFKSG",
+    "peptide": "NSINFDNPVYQKTT",
+    "label": "decoy",
+    "peptide_from": "3SO6",
+    "name": "pair_182",
+    "score": 0.1946272850036621
+  },
+  {
+    "receptor_id": "5E0L",
+    "receptor": "MSDRKAVIKNADMSEEMQQDAVDCATQALEKYNIEKDIAAYIKKEFDKKYNPTWHCIVGRNFGSYVTHETRHFIYFYLGQVAILLFKSG",
+    "peptide": "GQPPLVPPRKEKMRGK",
+    "label": "decoy",
+    "peptide_from": "1UTI",
+    "name": "pair_183",
+    "score": 0.13955280184745789
+  },
+  {
+    "receptor_id": "5E0L",
+    "receptor": "MSDRKAVIKNADMSEEMQQDAVDCATQALEKYNIEKDIAAYIKKEFDKKYNPTWHCIVGRNFGSYVTHETRHFIYFYLGQVAILLFKSG",
+    "peptide": "EESADKTAAQYTRI",
+    "label": "scrambled",
+    "peptide_from": "5E0L",
+    "name": "pair_184",
+    "score": 0.14735354483127594
+  },
+  {
+    "receptor_id": "5E0L",
+    "receptor": "MSDRKAVIKNADMSEEMQQDAVDCATQALEKYNIEKDIAAYIKKEFDKKYNPTWHCIVGRNFGSYVTHETRHFIYFYLGQVAILLFKSG",
+    "peptide": "QTTAYSEDIAREKA",
+    "label": "scrambled",
+    "peptide_from": "5E0L",
+    "name": "pair_185",
+    "score": 0.1886337250471115
+  },
+  {
+    "receptor_id": "6Y9Q",
+    "receptor": "GAMGSTSLEPTSTLVRVRKSAATLGIAIEGGANTRQPLPRIVTIQRGGSAHNCGQLKVGHVILEVNGQTLRGKEHKEAARIIAEAFKTKERDYIDFLVTEFNVML",
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "label": "cognate",
+    "peptide_from": "6Y9Q",
+    "name": "pair_186",
+    "score": 0.12801165878772736
+  },
+  {
+    "receptor_id": "6Y9Q",
+    "receptor": "GAMGSTSLEPTSTLVRVRKSAATLGIAIEGGANTRQPLPRIVTIQRGGSAHNCGQLKVGHVILEVNGQTLRGKEHKEAARIIAEAFKTKERDYIDFLVTEFNVML",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "decoy",
+    "peptide_from": "6R8I",
+    "name": "pair_187",
+    "score": 0.1278497725725174
+  },
+  {
+    "receptor_id": "6Y9Q",
+    "receptor": "GAMGSTSLEPTSTLVRVRKSAATLGIAIEGGANTRQPLPRIVTIQRGGSAHNCGQLKVGHVILEVNGQTLRGKEHKEAARIIAEAFKTKERDYIDFLVTEFNVML",
+    "peptide": "GPTIEEVD",
+    "label": "decoy",
+    "peptide_from": "1ELW",
+    "name": "pair_188",
+    "score": 0.13502509891986847
+  },
+  {
+    "receptor_id": "6Y9Q",
+    "receptor": "GAMGSTSLEPTSTLVRVRKSAATLGIAIEGGANTRQPLPRIVTIQRGGSAHNCGQLKVGHVILEVNGQTLRGKEHKEAARIIAEAFKTKERDYIDFLVTEFNVML",
+    "peptide": "RQVNFLGKIN",
+    "label": "decoy",
+    "peptide_from": "2FNT",
+    "name": "pair_189",
+    "score": 0.46113860607147217
+  },
+  {
+    "receptor_id": "6Y9Q",
+    "receptor": "GAMGSTSLEPTSTLVRVRKSAATLGIAIEGGANTRQPLPRIVTIQRGGSAHNCGQLKVGHVILEVNGQTLRGKEHKEAARIIAEAFKTKERDYIDFLVTEFNVML",
+    "peptide": "DDAEVLGFTQPPSIEVE",
+    "label": "scrambled",
+    "peptide_from": "6Y9Q",
+    "name": "pair_190",
+    "score": 0.13409166038036346
+  },
+  {
+    "receptor_id": "6Y9Q",
+    "receptor": "GAMGSTSLEPTSTLVRVRKSAATLGIAIEGGANTRQPLPRIVTIQRGGSAHNCGQLKVGHVILEVNGQTLRGKEHKEAARIIAEAFKTKERDYIDFLVTEFNVML",
+    "peptide": "PPDELAVTQVDFSIGEE",
+    "label": "scrambled",
+    "peptide_from": "6Y9Q",
+    "name": "pair_191",
+    "score": 0.1552836149930954
+  },
+  {
+    "receptor_id": "5XHZ",
+    "receptor": "GPGSEFRRRRRCQVAFSYLPQNDDELELKVGDIIEVVGEVEEGWWEGVLNGKTGMFPSNFIKELSG",
+    "peptide": "RPVPMKRHIFR",
+    "label": "cognate",
+    "peptide_from": "5XHZ",
+    "name": "pair_192",
+    "score": 0.9366129636764526
+  },
+  {
+    "receptor_id": "5XHZ",
+    "receptor": "GPGSEFRRRRRCQVAFSYLPQNDDELELKVGDIIEVVGEVEEGWWEGVLNGKTGMFPSNFIKELSG",
+    "peptide": "NSINFDNPVYQKTT",
+    "label": "decoy",
+    "peptide_from": "3SO6",
+    "name": "pair_193",
+    "score": 0.23297934234142303
+  },
+  {
+    "receptor_id": "5XHZ",
+    "receptor": "GPGSEFRRRRRCQVAFSYLPQNDDELELKVGDIIEVVGEVEEGWWEGVLNGKTGMFPSNFIKELSG",
+    "peptide": "FVPNVHAAEFVPSFL",
+    "label": "decoy",
+    "peptide_from": "3KUJ",
+    "name": "pair_194",
+    "score": 0.21940435469150543
+  },
+  {
+    "receptor_id": "5XHZ",
+    "receptor": "GPGSEFRRRRRCQVAFSYLPQNDDELELKVGDIIEVVGEVEEGWWEGVLNGKTGMFPSNFIKELSG",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "decoy",
+    "peptide_from": "6R8I",
+    "name": "pair_195",
+    "score": 0.19110462069511414
+  },
+  {
+    "receptor_id": "5XHZ",
+    "receptor": "GPGSEFRRRRRCQVAFSYLPQNDDELELKVGDIIEVVGEVEEGWWEGVLNGKTGMFPSNFIKELSG",
+    "peptide": "FMRPKPIRRHV",
+    "label": "scrambled",
+    "peptide_from": "5XHZ",
+    "name": "pair_196",
+    "score": 0.4586845338344574
+  },
+  {
+    "receptor_id": "5XHZ",
+    "receptor": "GPGSEFRRRRRCQVAFSYLPQNDDELELKVGDIIEVVGEVEEGWWEGVLNGKTGMFPSNFIKELSG",
+    "peptide": "FPMRRHPRVIK",
+    "label": "scrambled",
+    "peptide_from": "5XHZ",
+    "name": "pair_197",
+    "score": 0.35897278785705566
+  },
+  {
+    "receptor_id": "3BFQ",
+    "receptor": "AKPCTVSTTNATVDLGDLYSFSLMSAGAASAWHDVALELTNCPVGTSRVTASFSGAADSTGYYKNQGTAQNIQLELQDDSGNTLNTGATKTVQVDDSSQSAHFPLQVRALTVNGGATQGTIQAVISITYTYS",
+    "peptide": "ADSTITIRGYVRDNR",
+    "label": "cognate",
+    "peptide_from": "3BFQ",
+    "name": "pair_198",
+    "score": 0.6969005465507507
+  },
+  {
+    "receptor_id": "3BFQ",
+    "receptor": "AKPCTVSTTNATVDLGDLYSFSLMSAGAASAWHDVALELTNCPVGTSRVTASFSGAADSTGYYKNQGTAQNIQLELQDDSGNTLNTGATKTVQVDDSSQSAHFPLQVRALTVNGGATQGTIQAVISITYTYS",
+    "peptide": "SQETFSDLWKLLPEN",
+    "label": "decoy",
+    "peptide_from": "1YCR",
+    "name": "pair_199",
+    "score": 0.4089255630970001
+  },
+  {
+    "receptor_id": "3BFQ",
+    "receptor": "AKPCTVSTTNATVDLGDLYSFSLMSAGAASAWHDVALELTNCPVGTSRVTASFSGAADSTGYYKNQGTAQNIQLELQDDSGNTLNTGATKTVQVDDSSQSAHFPLQVRALTVNGGATQGTIQAVISITYTYS",
+    "peptide": "APALRVVK",
+    "label": "decoy",
+    "peptide_from": "2DS8",
+    "name": "pair_200",
+    "score": 0.33586806058883667
+  },
+  {
+    "receptor_id": "3BFQ",
+    "receptor": "AKPCTVSTTNATVDLGDLYSFSLMSAGAASAWHDVALELTNCPVGTSRVTASFSGAADSTGYYKNQGTAQNIQLELQDDSGNTLNTGATKTVQVDDSSQSAHFPLQVRALTVNGGATQGTIQAVISITYTYS",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "decoy",
+    "peptide_from": "6R8I",
+    "name": "pair_201",
+    "score": 0.16358298063278198
+  },
+  {
+    "receptor_id": "3BFQ",
+    "receptor": "AKPCTVSTTNATVDLGDLYSFSLMSAGAASAWHDVALELTNCPVGTSRVTASFSGAADSTGYYKNQGTAQNIQLELQDDSGNTLNTGATKTVQVDDSSQSAHFPLQVRALTVNGGATQGTIQAVISITYTYS",
+    "peptide": "RTSVGIDNDITARYR",
+    "label": "scrambled",
+    "peptide_from": "3BFQ",
+    "name": "pair_202",
+    "score": 0.5731920599937439
+  },
+  {
+    "receptor_id": "3BFQ",
+    "receptor": "AKPCTVSTTNATVDLGDLYSFSLMSAGAASAWHDVALELTNCPVGTSRVTASFSGAADSTGYYKNQGTAQNIQLELQDDSGNTLNTGATKTVQVDDSSQSAHFPLQVRALTVNGGATQGTIQAVISITYTYS",
+    "peptide": "RTRNYSDAIIGTRVD",
+    "label": "scrambled",
+    "peptide_from": "3BFQ",
+    "name": "pair_203",
+    "score": 0.5161934494972229
+  },
+  {
+    "receptor_id": "1OBX",
+    "receptor": "GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIM",
+    "peptide": "ETLEDSVF",
+    "label": "cognate",
+    "peptide_from": "1OBX",
+    "name": "pair_204",
+    "score": 0.8598126769065857
+  },
+  {
+    "receptor_id": "1OBX",
+    "receptor": "GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIM",
+    "peptide": "ADSTITIRGYVRDNR",
+    "label": "decoy",
+    "peptide_from": "3BFQ",
+    "name": "pair_205",
+    "score": 0.17409951984882355
+  },
+  {
+    "receptor_id": "1OBX",
+    "receptor": "GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIM",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_206",
+    "score": 0.2275601029396057
+  },
+  {
+    "receptor_id": "1OBX",
+    "receptor": "GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIM",
+    "peptide": "LTFEHYWAQLTS",
+    "label": "decoy",
+    "peptide_from": "3FDO",
+    "name": "pair_207",
+    "score": 0.225016251206398
+  },
+  {
+    "receptor_id": "1OBX",
+    "receptor": "GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIM",
+    "peptide": "FSTDLEEV",
+    "label": "scrambled",
+    "peptide_from": "1OBX",
+    "name": "pair_208",
+    "score": 0.3493744134902954
+  },
+  {
+    "receptor_id": "1OBX",
+    "receptor": "GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIM",
+    "peptide": "SFEDLVET",
+    "label": "scrambled",
+    "peptide_from": "1OBX",
+    "name": "pair_209",
+    "score": 0.6974789500236511
+  },
+  {
+    "receptor_id": "3VQG",
+    "receptor": "GPLGSDHDDSFHVILNKSSPEEQLGIKLVRRVDEPGVFIFNVLNGGVADRHGQLEENDRVLAINGHDLRFGSPESAAHLIQASERRVHLVVSRQ",
+    "peptide": "YKVRNVTLV",
+    "label": "cognate",
+    "peptide_from": "3VQG",
+    "name": "pair_210",
+    "score": 0.8959940671920776
+  },
+  {
+    "receptor_id": "3VQG",
+    "receptor": "GPLGSDHDDSFHVILNKSSPEEQLGIKLVRRVDEPGVFIFNVLNGGVADRHGQLEENDRVLAINGHDLRFGSPESAAHLIQASERRVHLVVSRQ",
+    "peptide": "KKETWV",
+    "label": "decoy",
+    "peptide_from": "1TP5",
+    "name": "pair_211",
+    "score": 0.8437650203704834
+  },
+  {
+    "receptor_id": "3VQG",
+    "receptor": "GPLGSDHDDSFHVILNKSSPEEQLGIKLVRRVDEPGVFIFNVLNGGVADRHGQLEENDRVLAINGHDLRFGSPESAAHLIQASERRVHLVVSRQ",
+    "peptide": "ADSTITIRGYVRDNR",
+    "label": "decoy",
+    "peptide_from": "3BFQ",
+    "name": "pair_212",
+    "score": 0.16028480231761932
+  },
+  {
+    "receptor_id": "3VQG",
+    "receptor": "GPLGSDHDDSFHVILNKSSPEEQLGIKLVRRVDEPGVFIFNVLNGGVADRHGQLEENDRVLAINGHDLRFGSPESAAHLIQASERRVHLVVSRQ",
+    "peptide": "MADKPQTRSQYRNKQ",
+    "label": "decoy",
+    "peptide_from": "6GPZ",
+    "name": "pair_213",
+    "score": 0.4822264611721039
+  },
+  {
+    "receptor_id": "3VQG",
+    "receptor": "GPLGSDHDDSFHVILNKSSPEEQLGIKLVRRVDEPGVFIFNVLNGGVADRHGQLEENDRVLAINGHDLRFGSPESAAHLIQASERRVHLVVSRQ",
+    "peptide": "KTVNLVYVR",
+    "label": "scrambled",
+    "peptide_from": "3VQG",
+    "name": "pair_214",
+    "score": 0.2376357614994049
+  },
+  {
+    "receptor_id": "3VQG",
+    "receptor": "GPLGSDHDDSFHVILNKSSPEEQLGIKLVRRVDEPGVFIFNVLNGGVADRHGQLEENDRVLAINGHDLRFGSPESAAHLIQASERRVHLVVSRQ",
+    "peptide": "VKVTLYNRV",
+    "label": "scrambled",
+    "peptide_from": "3VQG",
+    "name": "pair_215",
+    "score": 0.7322810292243958
+  },
+  {
+    "receptor_id": "3SO6",
+    "receptor": "MEGMVFSLKYLGMTLVERPKGEELSAAAVKRIVATAKASGKKLQKVTLKVSPRGIILTDSLTSQLIENVSIYRISYCTADKMHDKVFAYIAQSQQNESLECHAFLCTKRKVAQAVTLTVAQAFKVAFEFWQVSLVPR",
+    "peptide": "NSINFDNPVYQKTT",
+    "label": "cognate",
+    "peptide_from": "3SO6",
+    "name": "pair_216",
+    "score": 0.5061848759651184
+  },
+  {
+    "receptor_id": "3SO6",
+    "receptor": "MEGMVFSLKYLGMTLVERPKGEELSAAAVKRIVATAKASGKKLQKVTLKVSPRGIILTDSLTSQLIENVSIYRISYCTADKMHDKVFAYIAQSQQNESLECHAFLCTKRKVAQAVTLTVAQAFKVAFEFWQVSLVPR",
+    "peptide": "QEEWETVM",
+    "label": "decoy",
+    "peptide_from": "4Z8J",
+    "name": "pair_217",
+    "score": 0.5913292765617371
+  },
+  {
+    "receptor_id": "3SO6",
+    "receptor": "MEGMVFSLKYLGMTLVERPKGEELSAAAVKRIVATAKASGKKLQKVTLKVSPRGIILTDSLTSQLIENVSIYRISYCTADKMHDKVFAYIAQSQQNESLECHAFLCTKRKVAQAVTLTVAQAFKVAFEFWQVSLVPR",
+    "peptide": "WEYIPNV",
+    "label": "decoy",
+    "peptide_from": "2PV1",
+    "name": "pair_218",
+    "score": 0.3748076260089874
+  },
+  {
+    "receptor_id": "3SO6",
+    "receptor": "MEGMVFSLKYLGMTLVERPKGEELSAAAVKRIVATAKASGKKLQKVTLKVSPRGIILTDSLTSQLIENVSIYRISYCTADKMHDKVFAYIAQSQQNESLECHAFLCTKRKVAQAVTLTVAQAFKVAFEFWQVSLVPR",
+    "peptide": "KLVFFA",
+    "label": "decoy",
+    "peptide_from": "3JQL",
+    "name": "pair_219",
+    "score": 0.2524125874042511
+  },
+  {
+    "receptor_id": "3SO6",
+    "receptor": "MEGMVFSLKYLGMTLVERPKGEELSAAAVKRIVATAKASGKKLQKVTLKVSPRGIILTDSLTSQLIENVSIYRISYCTADKMHDKVFAYIAQSQQNESLECHAFLCTKRKVAQAVTLTVAQAFKVAFEFWQVSLVPR",
+    "peptide": "NDTVPFNNTSKIQY",
+    "label": "scrambled",
+    "peptide_from": "3SO6",
+    "name": "pair_220",
+    "score": 0.371250718832016
+  },
+  {
+    "receptor_id": "3SO6",
+    "receptor": "MEGMVFSLKYLGMTLVERPKGEELSAAAVKRIVATAKASGKKLQKVTLKVSPRGIILTDSLTSQLIENVSIYRISYCTADKMHDKVFAYIAQSQQNESLECHAFLCTKRKVAQAVTLTVAQAFKVAFEFWQVSLVPR",
+    "peptide": "SNTYIFTVKNNPQD",
+    "label": "scrambled",
+    "peptide_from": "3SO6",
+    "name": "pair_221",
+    "score": 0.17476046085357666
+  },
+  {
+    "receptor_id": "4M5S",
+    "receptor": "GMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVS",
+    "peptide": "GERTIPITRE",
+    "label": "cognate",
+    "peptide_from": "4M5S",
+    "name": "pair_222",
+    "score": 0.8743605613708496
+  },
+  {
+    "receptor_id": "4M5S",
+    "receptor": "GMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVS",
+    "peptide": "WEYIPNV",
+    "label": "decoy",
+    "peptide_from": "2PV1",
+    "name": "pair_223",
+    "score": 0.31985071301460266
+  },
+  {
+    "receptor_id": "4M5S",
+    "receptor": "GMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVS",
+    "peptide": "GPGSEPPPKPPRS",
+    "label": "decoy",
+    "peptide_from": "8HLO",
+    "name": "pair_224",
+    "score": 0.17306457459926605
+  },
+  {
+    "receptor_id": "4M5S",
+    "receptor": "GMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVS",
+    "peptide": "XXXXPLPPLPX",
+    "label": "decoy",
+    "peptide_from": "1NLO",
+    "name": "pair_225",
+    "score": 0.19644685089588165
+  },
+  {
+    "receptor_id": "4M5S",
+    "receptor": "GMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVS",
+    "peptide": "EPIIERRTGT",
+    "label": "scrambled",
+    "peptide_from": "4M5S",
+    "name": "pair_226",
+    "score": 0.629645824432373
+  },
+  {
+    "receptor_id": "4M5S",
+    "receptor": "GMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVS",
+    "peptide": "TREIPTRGIE",
+    "label": "scrambled",
+    "peptide_from": "4M5S",
+    "name": "pair_227",
+    "score": 0.8850717544555664
+  },
+  {
+    "receptor_id": "3FDO",
+    "receptor": "IQINQVRPKLPLLKILHAAGAQGEMFTVKEVMHYLGQYIMVKQLYDQQEQHMVYCGGDLLGELLGRQSFSVKDPSPLYDMLRKNLVTLAT",
+    "peptide": "LTFEHYWAQLTS",
+    "label": "cognate",
+    "peptide_from": "3FDO",
+    "name": "pair_228",
+    "score": 0.9306638240814209
+  },
+  {
+    "receptor_id": "3FDO",
+    "receptor": "IQINQVRPKLPLLKILHAAGAQGEMFTVKEVMHYLGQYIMVKQLYDQQEQHMVYCGGDLLGELLGRQSFSVKDPSPLYDMLRKNLVTLAT",
+    "peptide": "LEEDGTIITL",
+    "label": "decoy",
+    "peptide_from": "6JUE",
+    "name": "pair_229",
+    "score": 0.7473701238632202
+  },
+  {
+    "receptor_id": "3FDO",
+    "receptor": "IQINQVRPKLPLLKILHAAGAQGEMFTVKEVMHYLGQYIMVKQLYDQQEQHMVYCGGDLLGELLGRQSFSVKDPSPLYDMLRKNLVTLAT",
+    "peptide": "GYQDYEPEA",
+    "label": "decoy",
+    "peptide_from": "2X6M",
+    "name": "pair_230",
+    "score": 0.4771711826324463
+  },
+  {
+    "receptor_id": "3FDO",
+    "receptor": "IQINQVRPKLPLLKILHAAGAQGEMFTVKEVMHYLGQYIMVKQLYDQQEQHMVYCGGDLLGELLGRQSFSVKDPSPLYDMLRKNLVTLAT",
+    "peptide": "EEAEFVEVEPEA",
+    "label": "decoy",
+    "peptide_from": "6YOO",
+    "name": "pair_231",
+    "score": 0.1838081032037735
+  },
+  {
+    "receptor_id": "3FDO",
+    "receptor": "IQINQVRPKLPLLKILHAAGAQGEMFTVKEVMHYLGQYIMVKQLYDQQEQHMVYCGGDLLGELLGRQSFSVKDPSPLYDMLRKNLVTLAT",
+    "peptide": "TALYSWQTEHLF",
+    "label": "scrambled",
+    "peptide_from": "3FDO",
+    "name": "pair_232",
+    "score": 0.5634440183639526
+  },
+  {
+    "receptor_id": "3FDO",
+    "receptor": "IQINQVRPKLPLLKILHAAGAQGEMFTVKEVMHYLGQYIMVKQLYDQQEQHMVYCGGDLLGELLGRQSFSVKDPSPLYDMLRKNLVTLAT",
+    "peptide": "LELQHTYAFSTW",
+    "label": "scrambled",
+    "peptide_from": "3FDO",
+    "name": "pair_233",
+    "score": 0.3227914869785309
+  },
+  {
+    "receptor_id": "3KUJ",
+    "receptor": "GPLGSPLTASMLASAPPQEQKQMLGERLFPLIQAMHPTLAGKITGMLLEIDNSELLHMLESPESLRSKVDEAVAVLQAHQAKEAAQKA",
+    "peptide": "FVPNVHAAEFVPSFL",
+    "label": "cognate",
+    "peptide_from": "3KUJ",
+    "name": "pair_234",
+    "score": 0.9165787696838379
+  },
+  {
+    "receptor_id": "3KUJ",
+    "receptor": "GPLGSPLTASMLASAPPQEQKQMLGERLFPLIQAMHPTLAGKITGMLLEIDNSELLHMLESPESLRSKVDEAVAVLQAHQAKEAAQKA",
+    "peptide": "ELAPPKPPLPE",
+    "label": "decoy",
+    "peptide_from": "4LN2",
+    "name": "pair_235",
+    "score": 0.3167276382446289
+  },
+  {
+    "receptor_id": "3KUJ",
+    "receptor": "GPLGSPLTASMLASAPPQEQKQMLGERLFPLIQAMHPTLAGKITGMLLEIDNSELLHMLESPESLRSKVDEAVAVLQAHQAKEAAQKA",
+    "peptide": "WEYIPNV",
+    "label": "decoy",
+    "peptide_from": "2PV1",
+    "name": "pair_236",
+    "score": 0.9141526222229004
+  },
+  {
+    "receptor_id": "3KUJ",
+    "receptor": "GPLGSPLTASMLASAPPQEQKQMLGERLFPLIQAMHPTLAGKITGMLLEIDNSELLHMLESPESLRSKVDEAVAVLQAHQAKEAAQKA",
+    "peptide": "SVATVSESLLTE",
+    "label": "decoy",
+    "peptide_from": "4Z2O",
+    "name": "pair_237",
+    "score": 0.26404306292533875
+  },
+  {
+    "receptor_id": "3KUJ",
+    "receptor": "GPLGSPLTASMLASAPPQEQKQMLGERLFPLIQAMHPTLAGKITGMLLEIDNSELLHMLESPESLRSKVDEAVAVLQAHQAKEAAQKA",
+    "peptide": "VPHEFVVPFNLAFAS",
+    "label": "scrambled",
+    "peptide_from": "3KUJ",
+    "name": "pair_238",
+    "score": 0.2654585838317871
+  },
+  {
+    "receptor_id": "3KUJ",
+    "receptor": "GPLGSPLTASMLASAPPQEQKQMLGERLFPLIQAMHPTLAGKITGMLLEIDNSELLHMLESPESLRSKVDEAVAVLQAHQAKEAAQKA",
+    "peptide": "PEFFALAVNSFHPVV",
+    "label": "scrambled",
+    "peptide_from": "3KUJ",
+    "name": "pair_239",
+    "score": 0.5127666592597961
+  },
+  {
+    "receptor_id": "3ASL",
+    "receptor": "SGPSCKHCKDDVNRLCRVCACHLCGGRQDPDKQLMCDECDMAFHIYCLDPPLSSVPSEDEWYCPECRNDA",
+    "peptide": "ARTKQTARKST",
+    "label": "cognate",
+    "peptide_from": "3ASL",
+    "name": "pair_240",
+    "score": 0.16227953135967255
+  },
+  {
+    "receptor_id": "3ASL",
+    "receptor": "SGPSCKHCKDDVNRLCRVCACHLCGGRQDPDKQLMCDECDMAFHIYCLDPPLSSVPSEDEWYCPECRNDA",
+    "peptide": "EQVSAV",
+    "label": "decoy",
+    "peptide_from": "3LNY",
+    "name": "pair_241",
+    "score": 0.1537366658449173
+  },
+  {
+    "receptor_id": "3ASL",
+    "receptor": "SGPSCKHCKDDVNRLCRVCACHLCGGRQDPDKQLMCDECDMAFHIYCLDPPLSSVPSEDEWYCPECRNDA",
+    "peptide": "XPPPVPPRRR",
+    "label": "decoy",
+    "peptide_from": "1SEM",
+    "name": "pair_242",
+    "score": 0.19083364307880402
+  },
+  {
+    "receptor_id": "3ASL",
+    "receptor": "SGPSCKHCKDDVNRLCRVCACHLCGGRQDPDKQLMCDECDMAFHIYCLDPPLSSVPSEDEWYCPECRNDA",
+    "peptide": "GQPPLVPPRKEKMRGK",
+    "label": "decoy",
+    "peptide_from": "1UTI",
+    "name": "pair_243",
+    "score": 0.13621476292610168
+  },
+  {
+    "receptor_id": "3ASL",
+    "receptor": "SGPSCKHCKDDVNRLCRVCACHLCGGRQDPDKQLMCDECDMAFHIYCLDPPLSSVPSEDEWYCPECRNDA",
+    "peptide": "ATQRSTKRATK",
+    "label": "scrambled",
+    "peptide_from": "3ASL",
+    "name": "pair_244",
+    "score": 0.1167166531085968
+  },
+  {
+    "receptor_id": "3ASL",
+    "receptor": "SGPSCKHCKDDVNRLCRVCACHLCGGRQDPDKQLMCDECDMAFHIYCLDPPLSSVPSEDEWYCPECRNDA",
+    "peptide": "RQKTAKRTSTA",
+    "label": "scrambled",
+    "peptide_from": "3ASL",
+    "name": "pair_245",
+    "score": 0.1925339698791504
+  },
+  {
+    "receptor_id": "1UTI",
+    "receptor": "VRWARALYDFEALEEDELGFRSGEVVEVLDSSNPSWWTGRLHNKLGLFPANYVAPMMR",
+    "peptide": "GQPPLVPPRKEKMRGK",
+    "label": "cognate",
+    "peptide_from": "1UTI",
+    "name": "pair_246",
+    "score": 0.8803700804710388
+  },
+  {
+    "receptor_id": "1UTI",
+    "receptor": "VRWARALYDFEALEEDELGFRSGEVVEVLDSSNPSWWTGRLHNKLGLFPANYVAPMMR",
+    "peptide": "IQPPPVNRNLKPDRK",
+    "label": "decoy",
+    "peptide_from": "2VWF",
+    "name": "pair_247",
+    "score": 0.8570311069488525
+  },
+  {
+    "receptor_id": "1UTI",
+    "receptor": "VRWARALYDFEALEEDELGFRSGEVVEVLDSSNPSWWTGRLHNKLGLFPANYVAPMMR",
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "label": "decoy",
+    "peptide_from": "2IZX",
+    "name": "pair_248",
+    "score": 0.1277773380279541
+  },
+  {
+    "receptor_id": "1UTI",
+    "receptor": "VRWARALYDFEALEEDELGFRSGEVVEVLDSSNPSWWTGRLHNKLGLFPANYVAPMMR",
+    "peptide": "IKLETKKTKL",
+    "label": "decoy",
+    "peptide_from": "6EZI",
+    "name": "pair_249",
+    "score": 0.37121960520744324
+  },
+  {
+    "receptor_id": "1UTI",
+    "receptor": "VRWARALYDFEALEEDELGFRSGEVVEVLDSSNPSWWTGRLHNKLGLFPANYVAPMMR",
+    "peptide": "MEGRPGLQVKKPRPKP",
+    "label": "scrambled",
+    "peptide_from": "1UTI",
+    "name": "pair_250",
+    "score": 0.1924448311328888
+  },
+  {
+    "receptor_id": "1UTI",
+    "receptor": "VRWARALYDFEALEEDELGFRSGEVVEVLDSSNPSWWTGRLHNKLGLFPANYVAPMMR",
+    "peptide": "KPKMPGPKQVPRRGLE",
+    "label": "scrambled",
+    "peptide_from": "1UTI",
+    "name": "pair_251",
+    "score": 0.2884567379951477
+  },
+  {
+    "receptor_id": "6E5X",
+    "receptor": "PKITLLTLIKTAEHWARQDIRTIEDSKLRALLTLCAVMTRKFSKSQLSLLCETHLRREGLGQDQAEPVLEVYQRLHSDKGGSFEAALWQQWDRQSLIMFITAFLNIALQLPCESSAVVVSGLRTLVP",
+    "peptide": "PVFVPVPPPPLYPPP",
+    "label": "cognate",
+    "peptide_from": "6E5X",
+    "name": "pair_252",
+    "score": 0.8110726475715637
+  },
+  {
+    "receptor_id": "6E5X",
+    "receptor": "PKITLLTLIKTAEHWARQDIRTIEDSKLRALLTLCAVMTRKFSKSQLSLLCETHLRREGLGQDQAEPVLEVYQRLHSDKGGSFEAALWQQWDRQSLIMFITAFLNIALQLPCESSAVVVSGLRTLVP",
+    "peptide": "IKLETKKTKL",
+    "label": "decoy",
+    "peptide_from": "6EZI",
+    "name": "pair_253",
+    "score": 0.3474041521549225
+  },
+  {
+    "receptor_id": "6E5X",
+    "receptor": "PKITLLTLIKTAEHWARQDIRTIEDSKLRALLTLCAVMTRKFSKSQLSLLCETHLRREGLGQDQAEPVLEVYQRLHSDKGGSFEAALWQQWDRQSLIMFITAFLNIALQLPCESSAVVVSGLRTLVP",
+    "peptide": "LEEDGTIITL",
+    "label": "decoy",
+    "peptide_from": "6JUE",
+    "name": "pair_254",
+    "score": 0.07598358392715454
+  },
+  {
+    "receptor_id": "6E5X",
+    "receptor": "PKITLLTLIKTAEHWARQDIRTIEDSKLRALLTLCAVMTRKFSKSQLSLLCETHLRREGLGQDQAEPVLEVYQRLHSDKGGSFEAALWQQWDRQSLIMFITAFLNIALQLPCESSAVVVSGLRTLVP",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_255",
+    "score": 0.3107786774635315
+  },
+  {
+    "receptor_id": "6E5X",
+    "receptor": "PKITLLTLIKTAEHWARQDIRTIEDSKLRALLTLCAVMTRKFSKSQLSLLCETHLRREGLGQDQAEPVLEVYQRLHSDKGGSFEAALWQQWDRQSLIMFITAFLNIALQLPCESSAVVVSGLRTLVP",
+    "peptide": "PVPYLFPVVPPPPPP",
+    "label": "scrambled",
+    "peptide_from": "6E5X",
+    "name": "pair_256",
+    "score": 0.8288228511810303
+  },
+  {
+    "receptor_id": "6E5X",
+    "receptor": "PKITLLTLIKTAEHWARQDIRTIEDSKLRALLTLCAVMTRKFSKSQLSLLCETHLRREGLGQDQAEPVLEVYQRLHSDKGGSFEAALWQQWDRQSLIMFITAFLNIALQLPCESSAVVVSGLRTLVP",
+    "peptide": "VFPVVLPPPPPPPYP",
+    "label": "scrambled",
+    "peptide_from": "6E5X",
+    "name": "pair_257",
+    "score": 0.5288797616958618
+  },
+  {
+    "receptor_id": "4WSF",
+    "receptor": "TTDTRRRVKLYALNAERQWDDRGTGHVSSTYVERLKGISLLVRAESDGSLLLESKIQPDTAYQKQQDTLIVWSEGDNFDLALSFQEKAGCDEIWEKICQVQGKDPSVEITQDIVEESEDERF",
+    "peptide": "PDESSADVVFKKPLAPAPR",
+    "label": "cognate",
+    "peptide_from": "4WSF",
+    "name": "pair_258",
+    "score": 0.230008065700531
+  },
+  {
+    "receptor_id": "4WSF",
+    "receptor": "TTDTRRRVKLYALNAERQWDDRGTGHVSSTYVERLKGISLLVRAESDGSLLLESKIQPDTAYQKQQDTLIVWSEGDNFDLALSFQEKAGCDEIWEKICQVQGKDPSVEITQDIVEESEDERF",
+    "peptide": "PPVIAPRPEHTKSIYTRS",
+    "label": "decoy",
+    "peptide_from": "2DF6",
+    "name": "pair_259",
+    "score": 0.5478284358978271
+  },
+  {
+    "receptor_id": "4WSF",
+    "receptor": "TTDTRRRVKLYALNAERQWDDRGTGHVSSTYVERLKGISLLVRAESDGSLLLESKIQPDTAYQKQQDTLIVWSEGDNFDLALSFQEKAGCDEIWEKICQVQGKDPSVEITQDIVEESEDERF",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_260",
+    "score": 0.28686365485191345
+  },
+  {
+    "receptor_id": "4WSF",
+    "receptor": "TTDTRRRVKLYALNAERQWDDRGTGHVSSTYVERLKGISLLVRAESDGSLLLESKIQPDTAYQKQQDTLIVWSEGDNFDLALSFQEKAGCDEIWEKICQVQGKDPSVEITQDIVEESEDERF",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_261",
+    "score": 0.4051448106765747
+  },
+  {
+    "receptor_id": "4WSF",
+    "receptor": "TTDTRRRVKLYALNAERQWDDRGTGHVSSTYVERLKGISLLVRAESDGSLLLESKIQPDTAYQKQQDTLIVWSEGDNFDLALSFQEKAGCDEIWEKICQVQGKDPSVEITQDIVEESEDERF",
+    "peptide": "DVKDRKFASAPVSPPPLEA",
+    "label": "scrambled",
+    "peptide_from": "4WSF",
+    "name": "pair_262",
+    "score": 0.5140216946601868
+  },
+  {
+    "receptor_id": "4WSF",
+    "receptor": "TTDTRRRVKLYALNAERQWDDRGTGHVSSTYVERLKGISLLVRAESDGSLLLESKIQPDTAYQKQQDTLIVWSEGDNFDLALSFQEKAGCDEIWEKICQVQGKDPSVEITQDIVEESEDERF",
+    "peptide": "EKRDLAVPDPSPSKVPAAF",
+    "label": "scrambled",
+    "peptide_from": "4WSF",
+    "name": "pair_263",
+    "score": 0.1925458163022995
+  },
+  {
+    "receptor_id": "6EZI",
+    "receptor": "SMHKPKLCRLAKGENGYGFHLNAIRGLPGSFIKEVQKGGPADLAGLEDEDVIIEVNGVNVLDEPYEKVVDRIQSSGKNVTLLVCGKKAY",
+    "peptide": "IKLETKKTKL",
+    "label": "cognate",
+    "peptide_from": "6EZI",
+    "name": "pair_264",
+    "score": 0.8924604654312134
+  },
+  {
+    "receptor_id": "6EZI",
+    "receptor": "SMHKPKLCRLAKGENGYGFHLNAIRGLPGSFIKEVQKGGPADLAGLEDEDVIIEVNGVNVLDEPYEKVVDRIQSSGKNVTLLVCGKKAY",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_265",
+    "score": 0.18333254754543304
+  },
+  {
+    "receptor_id": "6EZI",
+    "receptor": "SMHKPKLCRLAKGENGYGFHLNAIRGLPGSFIKEVQKGGPADLAGLEDEDVIIEVNGVNVLDEPYEKVVDRIQSSGKNVTLLVCGKKAY",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_266",
+    "score": 0.3255188763141632
+  },
+  {
+    "receptor_id": "6EZI",
+    "receptor": "SMHKPKLCRLAKGENGYGFHLNAIRGLPGSFIKEVQKGGPADLAGLEDEDVIIEVNGVNVLDEPYEKVVDRIQSSGKNVTLLVCGKKAY",
+    "peptide": "PVFVPVPPPPLYPPP",
+    "label": "decoy",
+    "peptide_from": "6E5X",
+    "name": "pair_267",
+    "score": 0.11155404150485992
+  },
+  {
+    "receptor_id": "6EZI",
+    "receptor": "SMHKPKLCRLAKGENGYGFHLNAIRGLPGSFIKEVQKGGPADLAGLEDEDVIIEVNGVNVLDEPYEKVVDRIQSSGKNVTLLVCGKKAY",
+    "peptide": "TKLEKLTKKI",
+    "label": "scrambled",
+    "peptide_from": "6EZI",
+    "name": "pair_268",
+    "score": 0.8835431933403015
+  },
+  {
+    "receptor_id": "6EZI",
+    "receptor": "SMHKPKLCRLAKGENGYGFHLNAIRGLPGSFIKEVQKGGPADLAGLEDEDVIIEVNGVNVLDEPYEKVVDRIQSSGKNVTLLVCGKKAY",
+    "peptide": "LTILTKKEKK",
+    "label": "scrambled",
+    "peptide_from": "6EZI",
+    "name": "pair_269",
+    "score": 0.1877075880765915
+  },
+  {
+    "receptor_id": "6R8I",
+    "receptor": "SMTDTRRRVKVYTLNEDRQWDDRGTGHVSSGYVERLKGMSLLVRAESDGSLLLESKINPNTAYQKQQDTLIVWSEAENYDLALSFQEKAGCDEIWEKICQVQGKDPSVDITQDLVDES",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "cognate",
+    "peptide_from": "6R8I",
+    "name": "pair_270",
+    "score": 0.544481635093689
+  },
+  {
+    "receptor_id": "6R8I",
+    "receptor": "SMTDTRRRVKVYTLNEDRQWDDRGTGHVSSGYVERLKGMSLLVRAESDGSLLLESKINPNTAYQKQQDTLIVWSEAENYDLALSFQEKAGCDEIWEKICQVQGKDPSVDITQDLVDES",
+    "peptide": "GPTIEEVD",
+    "label": "decoy",
+    "peptide_from": "1ELW",
+    "name": "pair_271",
+    "score": 0.30337807536125183
+  },
+  {
+    "receptor_id": "6R8I",
+    "receptor": "SMTDTRRRVKVYTLNEDRQWDDRGTGHVSSGYVERLKGMSLLVRAESDGSLLLESKINPNTAYQKQQDTLIVWSEAENYDLALSFQEKAGCDEIWEKICQVQGKDPSVDITQDLVDES",
+    "peptide": "ADSTITIRGYVRDNR",
+    "label": "decoy",
+    "peptide_from": "3BFQ",
+    "name": "pair_272",
+    "score": 0.2100270837545395
+  },
+  {
+    "receptor_id": "6R8I",
+    "receptor": "SMTDTRRRVKVYTLNEDRQWDDRGTGHVSSGYVERLKGMSLLVRAESDGSLLLESKINPNTAYQKQQDTLIVWSEAENYDLALSFQEKAGCDEIWEKICQVQGKDPSVDITQDLVDES",
+    "peptide": "GPGSEPPPKPPRS",
+    "label": "decoy",
+    "peptide_from": "8HLO",
+    "name": "pair_273",
+    "score": 0.33985209465026855
+  },
+  {
+    "receptor_id": "6R8I",
+    "receptor": "SMTDTRRRVKVYTLNEDRQWDDRGTGHVSSGYVERLKGMSLLVRAESDGSLLLESKINPNTAYQKQQDTLIVWSEAENYDLALSFQEKAGCDEIWEKICQVQGKDPSVDITQDLVDES",
+    "peptide": "KSFLWLPFSPSPPATPPVP",
+    "label": "scrambled",
+    "peptide_from": "6R8I",
+    "name": "pair_274",
+    "score": 0.2963836193084717
+  },
+  {
+    "receptor_id": "6R8I",
+    "receptor": "SMTDTRRRVKVYTLNEDRQWDDRGTGHVSSGYVERLKGMSLLVRAESDGSLLLESKINPNTAYQKQQDTLIVWSEAENYDLALSFQEKAGCDEIWEKICQVQGKDPSVDITQDLVDES",
+    "peptide": "WSPPPLKSPSAVLFPTPPF",
+    "label": "scrambled",
+    "peptide_from": "6R8I",
+    "name": "pair_275",
+    "score": 0.3452092111110687
+  },
+  {
+    "receptor_id": "5D94",
+    "receptor": "GPLGSMPSEKTFKQRRTFEQRVEDVRLIREQHPTKIPVIIERYKGEKQLPVLDKTKFLVPDHVNMSELIKIIRRRLQLNANQAFFLLVNGHSMVSVSTPISEVYESEKDEDGFLYMVYASQETFGMKLSV",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "cognate",
+    "peptide_from": "5D94",
+    "name": "pair_276",
+    "score": 0.9212773442268372
+  },
+  {
+    "receptor_id": "5D94",
+    "receptor": "GPLGSMPSEKTFKQRRTFEQRVEDVRLIREQHPTKIPVIIERYKGEKQLPVLDKTKFLVPDHVNMSELIKIIRRRLQLNANQAFFLLVNGHSMVSVSTPISEVYESEKDEDGFLYMVYASQETFGMKLSV",
+    "peptide": "ARTKQTARKST",
+    "label": "decoy",
+    "peptide_from": "3ASL",
+    "name": "pair_277",
+    "score": 0.17719191312789917
+  },
+  {
+    "receptor_id": "5D94",
+    "receptor": "GPLGSMPSEKTFKQRRTFEQRVEDVRLIREQHPTKIPVIIERYKGEKQLPVLDKTKFLVPDHVNMSELIKIIRRRLQLNANQAFFLLVNGHSMVSVSTPISEVYESEKDEDGFLYMVYASQETFGMKLSV",
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "label": "decoy",
+    "peptide_from": "6Y9Q",
+    "name": "pair_278",
+    "score": 0.2880321145057678
+  },
+  {
+    "receptor_id": "5D94",
+    "receptor": "GPLGSMPSEKTFKQRRTFEQRVEDVRLIREQHPTKIPVIIERYKGEKQLPVLDKTKFLVPDHVNMSELIKIIRRRLQLNANQAFFLLVNGHSMVSVSTPISEVYESEKDEDGFLYMVYASQETFGMKLSV",
+    "peptide": "GYQDYEPEA",
+    "label": "decoy",
+    "peptide_from": "2X6M",
+    "name": "pair_279",
+    "score": 0.34600022435188293
+  },
+  {
+    "receptor_id": "5D94",
+    "receptor": "GPLGSMPSEKTFKQRRTFEQRVEDVRLIREQHPTKIPVIIERYKGEKQLPVLDKTKFLVPDHVNMSELIKIIRRRLQLNANQAFFLLVNGHSMVSVSTPISEVYESEKDEDGFLYMVYASQETFGMKLSV",
+    "peptide": "IFELEAVIDTDDD",
+    "label": "scrambled",
+    "peptide_from": "5D94",
+    "name": "pair_280",
+    "score": 0.29855015873908997
+  },
+  {
+    "receptor_id": "5D94",
+    "receptor": "GPLGSMPSEKTFKQRRTFEQRVEDVRLIREQHPTKIPVIIERYKGEKQLPVLDKTKFLVPDHVNMSELIKIIRRRLQLNANQAFFLLVNGHSMVSVSTPISEVYESEKDEDGFLYMVYASQETFGMKLSV",
+    "peptide": "DDIVFLADDTEIE",
+    "label": "scrambled",
+    "peptide_from": "5D94",
+    "name": "pair_281",
+    "score": 0.4339509904384613
+  },
+  {
+    "receptor_id": "6JUE",
+    "receptor": "GPGSEFGTREFLTFEVPLNDSGSAGLGVSVKGNRSKENHADLGIFVKSIINGGAASKDGRLRVNDQLIAVNGESLLGKANQEAMETLRRSMSTEGNKRGMIQLIVARRIS",
+    "peptide": "LEEDGTIITL",
+    "label": "cognate",
+    "peptide_from": "6JUE",
+    "name": "pair_282",
+    "score": 0.4776439070701599
+  },
+  {
+    "receptor_id": "6JUE",
+    "receptor": "GPGSEFGTREFLTFEVPLNDSGSAGLGVSVKGNRSKENHADLGIFVKSIINGGAASKDGRLRVNDQLIAVNGESLLGKANQEAMETLRRSMSTEGNKRGMIQLIVARRIS",
+    "peptide": "GSEVDGWLIIDLPDS",
+    "label": "decoy",
+    "peptide_from": "8T33",
+    "name": "pair_283",
+    "score": 0.26864683628082275
+  },
+  {
+    "receptor_id": "6JUE",
+    "receptor": "GPGSEFGTREFLTFEVPLNDSGSAGLGVSVKGNRSKENHADLGIFVKSIINGGAASKDGRLRVNDQLIAVNGESLLGKANQEAMETLRRSMSTEGNKRGMIQLIVARRIS",
+    "peptide": "AWVIPA",
+    "label": "decoy",
+    "peptide_from": "7OKL",
+    "name": "pair_284",
+    "score": 0.352139949798584
+  },
+  {
+    "receptor_id": "6JUE",
+    "receptor": "GPGSEFGTREFLTFEVPLNDSGSAGLGVSVKGNRSKENHADLGIFVKSIINGGAASKDGRLRVNDQLIAVNGESLLGKANQEAMETLRRSMSTEGNKRGMIQLIVARRIS",
+    "peptide": "IQPPPVNRNLKPDRK",
+    "label": "decoy",
+    "peptide_from": "2VWF",
+    "name": "pair_285",
+    "score": 0.13661988079547882
+  },
+  {
+    "receptor_id": "6JUE",
+    "receptor": "GPGSEFGTREFLTFEVPLNDSGSAGLGVSVKGNRSKENHADLGIFVKSIINGGAASKDGRLRVNDQLIAVNGESLLGKANQEAMETLRRSMSTEGNKRGMIQLIVARRIS",
+    "peptide": "TLDTEIELIG",
+    "label": "scrambled",
+    "peptide_from": "6JUE",
+    "name": "pair_286",
+    "score": 0.29769283533096313
+  },
+  {
+    "receptor_id": "6JUE",
+    "receptor": "GPGSEFGTREFLTFEVPLNDSGSAGLGVSVKGNRSKENHADLGIFVKSIINGGAASKDGRLRVNDQLIAVNGESLLGKANQEAMETLRRSMSTEGNKRGMIQLIVARRIS",
+    "peptide": "TLILEEITGD",
+    "label": "scrambled",
+    "peptide_from": "6JUE",
+    "name": "pair_287",
+    "score": 0.6737909317016602
+  },
+  {
+    "receptor_id": "1UHE",
+    "receptor": "ITIDEDLAKLAKLREGMKVEIVDVNNGERFSTYVILGKKRGEICVNGAAARKVAIGDVVIILAYASMNEDEINAHKPSIVLVDEKNEILEKGLEHHH",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "cognate",
+    "peptide_from": "1UHE",
+    "name": "pair_288",
+    "score": 0.9145914316177368
+  },
+  {
+    "receptor_id": "1UHE",
+    "receptor": "ITIDEDLAKLAKLREGMKVEIVDVNNGERFSTYVILGKKRGEICVNGAAARKVAIGDVVIILAYASMNEDEINAHKPSIVLVDEKNEILEKGLEHHH",
+    "peptide": "DDAVFDIITDEEL",
+    "label": "decoy",
+    "peptide_from": "5D94",
+    "name": "pair_289",
+    "score": 0.31641072034835815
+  },
+  {
+    "receptor_id": "1UHE",
+    "receptor": "ITIDEDLAKLAKLREGMKVEIVDVNNGERFSTYVILGKKRGEICVNGAAARKVAIGDVVIILAYASMNEDEINAHKPSIVLVDEKNEILEKGLEHHH",
+    "peptide": "ARTKQTARKST",
+    "label": "decoy",
+    "peptide_from": "3ASL",
+    "name": "pair_290",
+    "score": 0.19154956936836243
+  },
+  {
+    "receptor_id": "1UHE",
+    "receptor": "ITIDEDLAKLAKLREGMKVEIVDVNNGERFSTYVILGKKRGEICVNGAAARKVAIGDVVIILAYASMNEDEINAHKPSIVLVDEKNEILEKGLEHHH",
+    "peptide": "XXXXPLPPLPX",
+    "label": "decoy",
+    "peptide_from": "1NLO",
+    "name": "pair_291",
+    "score": 0.26237165927886963
+  },
+  {
+    "receptor_id": "1UHE",
+    "receptor": "ITIDEDLAKLAKLREGMKVEIVDVNNGERFSTYVILGKKRGEICVNGAAARKVAIGDVVIILAYASMNEDEINAHKPSIVLVDEKNEILEKGLEHHH",
+    "peptide": "TAMKIIGFYAYDLHENLSITNTMR",
+    "label": "scrambled",
+    "peptide_from": "1UHE",
+    "name": "pair_292",
+    "score": 0.11816399544477463
+  },
+  {
+    "receptor_id": "1UHE",
+    "receptor": "ITIDEDLAKLAKLREGMKVEIVDVNNGERFSTYVILGKKRGEICVNGAAARKVAIGDVVIILAYASMNEDEINAHKPSIVLVDEKNEILEKGLEHHH",
+    "peptide": "DESGTRMAFYYTINLIKIMATHNL",
+    "label": "scrambled",
+    "peptide_from": "1UHE",
+    "name": "pair_293",
+    "score": 0.38798055052757263
+  },
+  {
+    "receptor_id": "5WOU",
+    "receptor": "GPLGSRLEQYEIHIERTAAGLGLSIAGGKGSTPFKGDDDGIFISRVTEAGPADLAGLKVGDKVIKVNGIVVVDADHYQAVQVLKACGAVLVLVVQREVTR",
+    "peptide": "LPSFETAL",
+    "label": "cognate",
+    "peptide_from": "5WOU",
+    "name": "pair_294",
+    "score": 0.5623249411582947
+  },
+  {
+    "receptor_id": "5WOU",
+    "receptor": "GPLGSRLEQYEIHIERTAAGLGLSIAGGKGSTPFKGDDDGIFISRVTEAGPADLAGLKVGDKVIKVNGIVVVDADHYQAVQVLKACGAVLVLVVQREVTR",
+    "peptide": "ITFEDLLDYYGP",
+    "label": "decoy",
+    "peptide_from": "3DS4",
+    "name": "pair_295",
+    "score": 0.26857638359069824
+  },
+  {
+    "receptor_id": "5WOU",
+    "receptor": "GPLGSRLEQYEIHIERTAAGLGLSIAGGKGSTPFKGDDDGIFISRVTEAGPADLAGLKVGDKVIKVNGIVVVDADHYQAVQVLKACGAVLVLVVQREVTR",
+    "peptide": "APALRVVK",
+    "label": "decoy",
+    "peptide_from": "2DS8",
+    "name": "pair_296",
+    "score": 0.3518897294998169
+  },
+  {
+    "receptor_id": "5WOU",
+    "receptor": "GPLGSRLEQYEIHIERTAAGLGLSIAGGKGSTPFKGDDDGIFISRVTEAGPADLAGLKVGDKVIKVNGIVVVDADHYQAVQVLKACGAVLVLVVQREVTR",
+    "peptide": "GSEVDGWLIIDLPDS",
+    "label": "decoy",
+    "peptide_from": "8T33",
+    "name": "pair_297",
+    "score": 0.245149627327919
+  },
+  {
+    "receptor_id": "5WOU",
+    "receptor": "GPLGSRLEQYEIHIERTAAGLGLSIAGGKGSTPFKGDDDGIFISRVTEAGPADLAGLKVGDKVIKVNGIVVVDADHYQAVQVLKACGAVLVLVVQREVTR",
+    "peptide": "FTLEALPS",
+    "label": "scrambled",
+    "peptide_from": "5WOU",
+    "name": "pair_298",
+    "score": 0.2655004560947418
+  },
+  {
+    "receptor_id": "5WOU",
+    "receptor": "GPLGSRLEQYEIHIERTAAGLGLSIAGGKGSTPFKGDDDGIFISRVTEAGPADLAGLKVGDKVIKVNGIVVVDADHYQAVQVLKACGAVLVLVVQREVTR",
+    "peptide": "PTSFLELA",
+    "label": "scrambled",
+    "peptide_from": "5WOU",
+    "name": "pair_299",
+    "score": 0.34579336643218994
+  },
+  {
+    "receptor_id": "3NJJ",
+    "receptor": "SNAMFAPQGLAQFIKVNVTLENGEPVFIYTDANGQVCQGDITVTQAGTITYLLNDQTLKGLKFVGVGFVTPFDGIIDAVTISSDGMLVQLVDLDKTPGTTKFQFVLSNTANTLLVLSAD",
+    "peptide": "PQIINRPQN",
+    "label": "cognate",
+    "peptide_from": "3NJJ",
+    "name": "pair_300",
+    "score": 0.25994059443473816
+  },
+  {
+    "receptor_id": "3NJJ",
+    "receptor": "SNAMFAPQGLAQFIKVNVTLENGEPVFIYTDANGQVCQGDITVTQAGTITYLLNDQTLKGLKFVGVGFVTPFDGIIDAVTISSDGMLVQLVDLDKTPGTTKFQFVLSNTANTLLVLSAD",
+    "peptide": "FVPNVHAAEFVPSFL",
+    "label": "decoy",
+    "peptide_from": "3KUJ",
+    "name": "pair_301",
+    "score": 0.18589836359024048
+  },
+  {
+    "receptor_id": "3NJJ",
+    "receptor": "SNAMFAPQGLAQFIKVNVTLENGEPVFIYTDANGQVCQGDITVTQAGTITYLLNDQTLKGLKFVGVGFVTPFDGIIDAVTISSDGMLVQLVDLDKTPGTTKFQFVLSNTANTLLVLSAD",
+    "peptide": "LTFEHYWAQLTS",
+    "label": "decoy",
+    "peptide_from": "3FDO",
+    "name": "pair_302",
+    "score": 0.29493626952171326
+  },
+  {
+    "receptor_id": "3NJJ",
+    "receptor": "SNAMFAPQGLAQFIKVNVTLENGEPVFIYTDANGQVCQGDITVTQAGTITYLLNDQTLKGLKFVGVGFVTPFDGIIDAVTISSDGMLVQLVDLDKTPGTTKFQFVLSNTANTLLVLSAD",
+    "peptide": "KQTSV",
+    "label": "decoy",
+    "peptide_from": "1BE9",
+    "name": "pair_303",
+    "score": 0.41579535603523254
+  },
+  {
+    "receptor_id": "3NJJ",
+    "receptor": "SNAMFAPQGLAQFIKVNVTLENGEPVFIYTDANGQVCQGDITVTQAGTITYLLNDQTLKGLKFVGVGFVTPFDGIIDAVTISSDGMLVQLVDLDKTPGTTKFQFVLSNTANTLLVLSAD",
+    "peptide": "QNIPIQPRN",
+    "label": "scrambled",
+    "peptide_from": "3NJJ",
+    "name": "pair_304",
+    "score": 0.1838519424200058
+  },
+  {
+    "receptor_id": "3NJJ",
+    "receptor": "SNAMFAPQGLAQFIKVNVTLENGEPVFIYTDANGQVCQGDITVTQAGTITYLLNDQTLKGLKFVGVGFVTPFDGIIDAVTISSDGMLVQLVDLDKTPGTTKFQFVLSNTANTLLVLSAD",
+    "peptide": "RNPINPIQQ",
+    "label": "scrambled",
+    "peptide_from": "3NJJ",
+    "name": "pair_305",
+    "score": 0.40875113010406494
+  },
+  {
+    "receptor_id": "2VWF",
+    "receptor": "GPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTAVN",
+    "peptide": "IQPPPVNRNLKPDRK",
+    "label": "cognate",
+    "peptide_from": "2VWF",
+    "name": "pair_306",
+    "score": 0.88538658618927
+  },
+  {
+    "receptor_id": "2VWF",
+    "receptor": "GPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTAVN",
+    "peptide": "DSGFSFGSK",
+    "label": "decoy",
+    "peptide_from": "1OAI",
+    "name": "pair_307",
+    "score": 0.1991729438304901
+  },
+  {
+    "receptor_id": "2VWF",
+    "receptor": "GPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTAVN",
+    "peptide": "LEEDGTIITL",
+    "label": "decoy",
+    "peptide_from": "6JUE",
+    "name": "pair_308",
+    "score": 0.14675648510456085
+  },
+  {
+    "receptor_id": "2VWF",
+    "receptor": "GPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTAVN",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_309",
+    "score": 0.1866588294506073
+  },
+  {
+    "receptor_id": "2VWF",
+    "receptor": "GPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTAVN",
+    "peptide": "QKRPLPPNDIKRPVN",
+    "label": "scrambled",
+    "peptide_from": "2VWF",
+    "name": "pair_310",
+    "score": 0.20184899866580963
+  },
+  {
+    "receptor_id": "2VWF",
+    "receptor": "GPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTAVN",
+    "peptide": "PDPLKPNIKVRQPNR",
+    "label": "scrambled",
+    "peptide_from": "2VWF",
+    "name": "pair_311",
+    "score": 0.1954609453678131
+  },
+  {
+    "receptor_id": "6L0W",
+    "receptor": "GPEKEWVEQDEPGVYITLTALAGGARDLKRVRFSRKRFSEIQAEQWWADNRGRMYEQYNVRMV",
+    "peptide": "GPKWVKTDSDFIVLEI",
+    "label": "cognate",
+    "peptide_from": "6L0W",
+    "name": "pair_312",
+    "score": 0.9394156336784363
+  },
+  {
+    "receptor_id": "6L0W",
+    "receptor": "GPEKEWVEQDEPGVYITLTALAGGARDLKRVRFSRKRFSEIQAEQWWADNRGRMYEQYNVRMV",
+    "peptide": "PDESSADVVFKKPLAPAPR",
+    "label": "decoy",
+    "peptide_from": "4WSF",
+    "name": "pair_313",
+    "score": 0.27017199993133545
+  },
+  {
+    "receptor_id": "6L0W",
+    "receptor": "GPEKEWVEQDEPGVYITLTALAGGARDLKRVRFSRKRFSEIQAEQWWADNRGRMYEQYNVRMV",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_314",
+    "score": 0.24400711059570312
+  },
+  {
+    "receptor_id": "6L0W",
+    "receptor": "GPEKEWVEQDEPGVYITLTALAGGARDLKRVRFSRKRFSEIQAEQWWADNRGRMYEQYNVRMV",
+    "peptide": "GSRSRTPSLPTPPTR",
+    "label": "decoy",
+    "peptide_from": "8KDX",
+    "name": "pair_315",
+    "score": 0.1264866292476654
+  },
+  {
+    "receptor_id": "6L0W",
+    "receptor": "GPEKEWVEQDEPGVYITLTALAGGARDLKRVRFSRKRFSEIQAEQWWADNRGRMYEQYNVRMV",
+    "peptide": "IDGKESVIKDPWVLTF",
+    "label": "scrambled",
+    "peptide_from": "6L0W",
+    "name": "pair_316",
+    "score": 0.20817041397094727
+  },
+  {
+    "receptor_id": "6L0W",
+    "receptor": "GPEKEWVEQDEPGVYITLTALAGGARDLKRVRFSRKRFSEIQAEQWWADNRGRMYEQYNVRMV",
+    "peptide": "IWPVDTSKKEVDGILF",
+    "label": "scrambled",
+    "peptide_from": "6L0W",
+    "name": "pair_317",
+    "score": 0.25785160064697266
+  },
+  {
+    "receptor_id": "8T33",
+    "receptor": "GSMKFVYKEEHPFEKRRSEGEKIRKKYPDRVPVIVEKAPKARIGDLDKKKYLVPSDLTVGQFYFLIRKRIHLRAEDALFFFVNNVIPPTSATMGQLYQEHHEEDFFLYIAYSDESVYGL",
+    "peptide": "GSEVDGWLIIDLPDS",
+    "label": "cognate",
+    "peptide_from": "8T33",
+    "name": "pair_318",
+    "score": 0.8983412981033325
+  },
+  {
+    "receptor_id": "8T33",
+    "receptor": "GSMKFVYKEEHPFEKRRSEGEKIRKKYPDRVPVIVEKAPKARIGDLDKKKYLVPSDLTVGQFYFLIRKRIHLRAEDALFFFVNNVIPPTSATMGQLYQEHHEEDFFLYIAYSDESVYGL",
+    "peptide": "LTFEHYWAQLTS",
+    "label": "decoy",
+    "peptide_from": "3FDO",
+    "name": "pair_319",
+    "score": 0.4272891879081726
+  },
+  {
+    "receptor_id": "8T33",
+    "receptor": "GSMKFVYKEEHPFEKRRSEGEKIRKKYPDRVPVIVEKAPKARIGDLDKKKYLVPSDLTVGQFYFLIRKRIHLRAEDALFFFVNNVIPPTSATMGQLYQEHHEEDFFLYIAYSDESVYGL",
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "label": "decoy",
+    "peptide_from": "2IZX",
+    "name": "pair_320",
+    "score": 0.21622397005558014
+  },
+  {
+    "receptor_id": "8T33",
+    "receptor": "GSMKFVYKEEHPFEKRRSEGEKIRKKYPDRVPVIVEKAPKARIGDLDKKKYLVPSDLTVGQFYFLIRKRIHLRAEDALFFFVNNVIPPTSATMGQLYQEHHEEDFFLYIAYSDESVYGL",
+    "peptide": "DSGFSFGSK",
+    "label": "decoy",
+    "peptide_from": "1OAI",
+    "name": "pair_321",
+    "score": 0.7247281074523926
+  },
+  {
+    "receptor_id": "8T33",
+    "receptor": "GSMKFVYKEEHPFEKRRSEGEKIRKKYPDRVPVIVEKAPKARIGDLDKKKYLVPSDLTVGQFYFLIRKRIHLRAEDALFFFVNNVIPPTSATMGQLYQEHHEEDFFLYIAYSDESVYGL",
+    "peptide": "SWDIVLDGDLSIEPG",
+    "label": "scrambled",
+    "peptide_from": "8T33",
+    "name": "pair_322",
+    "score": 0.8813092708587646
+  },
+  {
+    "receptor_id": "8T33",
+    "receptor": "GSMKFVYKEEHPFEKRRSEGEKIRKKYPDRVPVIVEKAPKARIGDLDKKKYLVPSDLTVGQFYFLIRKRIHLRAEDALFFFVNNVIPPTSATMGQLYQEHHEEDFFLYIAYSDESVYGL",
+    "peptide": "VLIGLPGSDDEDWIS",
+    "label": "scrambled",
+    "peptide_from": "8T33",
+    "name": "pair_323",
+    "score": 0.3226824402809143
+  },
+  {
+    "receptor_id": "2DS8",
+    "receptor": "TDKRKDGSGKLLYCSFCGKSQHEVRKLIAGPSVYICDECVDLCNDIIREEI",
+    "peptide": "APALRVVK",
+    "label": "cognate",
+    "peptide_from": "2DS8",
+    "name": "pair_324",
+    "score": 0.7560427784919739
+  },
+  {
+    "receptor_id": "2DS8",
+    "receptor": "TDKRKDGSGKLLYCSFCGKSQHEVRKLIAGPSVYICDECVDLCNDIIREEI",
+    "peptide": "MTFEMLYSKIHRATITDANLNYIG",
+    "label": "decoy",
+    "peptide_from": "1UHE",
+    "name": "pair_325",
+    "score": 0.3228941261768341
+  },
+  {
+    "receptor_id": "2DS8",
+    "receptor": "TDKRKDGSGKLLYCSFCGKSQHEVRKLIAGPSVYICDECVDLCNDIIREEI",
+    "peptide": "QIEYLAKQIVDNAIQQAK",
+    "label": "decoy",
+    "peptide_from": "2IZX",
+    "name": "pair_326",
+    "score": 0.3048062026500702
+  },
+  {
+    "receptor_id": "2DS8",
+    "receptor": "TDKRKDGSGKLLYCSFCGKSQHEVRKLIAGPSVYICDECVDLCNDIIREEI",
+    "peptide": "TSASEDIDFDDLSRRFEELKKKT",
+    "label": "decoy",
+    "peptide_from": "7S7J",
+    "name": "pair_327",
+    "score": 0.38248249888420105
+  },
+  {
+    "receptor_id": "2DS8",
+    "receptor": "TDKRKDGSGKLLYCSFCGKSQHEVRKLIAGPSVYICDECVDLCNDIIREEI",
+    "peptide": "VKPVLAAR",
+    "label": "scrambled",
+    "peptide_from": "2DS8",
+    "name": "pair_328",
+    "score": 0.10955475270748138
+  },
+  {
+    "receptor_id": "2DS8",
+    "receptor": "TDKRKDGSGKLLYCSFCGKSQHEVRKLIAGPSVYICDECVDLCNDIIREEI",
+    "peptide": "RAAVLKPV",
+    "label": "scrambled",
+    "peptide_from": "2DS8",
+    "name": "pair_329",
+    "score": 0.3087384104728699
+  },
+  {
+    "receptor_id": "2EEO",
+    "receptor": "VTVDQDLLDAAGILPFEQVDIYDITNGARLTTYALPGERGSGVIGINGAAAHLVKPGDLVILVAYGVFDEEEARNLKPTVVLVDERNRILEVRKG",
+    "peptide": "MKRVMFHAKIHRATVTQADLHYVG",
+    "label": "cognate",
+    "peptide_from": "2EEO",
+    "name": "pair_330",
+    "score": 0.9267870783805847
+  },
+  {
+    "receptor_id": "2EEO",
+    "receptor": "VTVDQDLLDAAGILPFEQVDIYDITNGARLTTYALPGERGSGVIGINGAAAHLVKPGDLVILVAYGVFDEEEARNLKPTVVLVDERNRILEVRKG",
+    "peptide": "PQIINRPQN",
+    "label": "decoy",
+    "peptide_from": "3NJJ",
+    "name": "pair_331",
+    "score": 0.2793520390987396
+  },
+  {
+    "receptor_id": "2EEO",
+    "receptor": "VTVDQDLLDAAGILPFEQVDIYDITNGARLTTYALPGERGSGVIGINGAAAHLVKPGDLVILVAYGVFDEEEARNLKPTVVLVDERNRILEVRKG",
+    "peptide": "PVFVPVPPPPLYPPP",
+    "label": "decoy",
+    "peptide_from": "6E5X",
+    "name": "pair_332",
+    "score": 0.16558940708637238
+  },
+  {
+    "receptor_id": "2EEO",
+    "receptor": "VTVDQDLLDAAGILPFEQVDIYDITNGARLTTYALPGERGSGVIGINGAAAHLVKPGDLVILVAYGVFDEEEARNLKPTVVLVDERNRILEVRKG",
+    "peptide": "IKLETKKTKL",
+    "label": "decoy",
+    "peptide_from": "6EZI",
+    "name": "pair_333",
+    "score": 0.27487194538116455
+  },
+  {
+    "receptor_id": "2EEO",
+    "receptor": "VTVDQDLLDAAGILPFEQVDIYDITNGARLTTYALPGERGSGVIGINGAAAHLVKPGDLVILVAYGVFDEEEARNLKPTVVLVDERNRILEVRKG",
+    "peptide": "VGYMLHITQHVHRKFMATAKVRAD",
+    "label": "scrambled",
+    "peptide_from": "2EEO",
+    "name": "pair_334",
+    "score": 0.6012290716171265
+  },
+  {
+    "receptor_id": "2EEO",
+    "receptor": "VTVDQDLLDAAGILPFEQVDIYDITNGARLTTYALPGERGSGVIGINGAAAHLVKPGDLVILVAYGVFDEEEARNLKPTVVLVDERNRILEVRKG",
+    "peptide": "IAMFGYAKMRHTKLVHVQHAVDRT",
+    "label": "scrambled",
+    "peptide_from": "2EEO",
+    "name": "pair_335",
+    "score": 0.25344225764274597
+  },
+  {
+    "receptor_id": "6GPZ",
+    "receptor": "GHMKVKLSAKEILEKEFKTGVRGYKQEDVDEFLDMIIKDYETFHQEIEELQQENLQLKKQLEE",
+    "peptide": "MADKPQTRSQYRNKQ",
+    "label": "cognate",
+    "peptide_from": "6GPZ",
+    "name": "pair_336",
+    "score": 0.14552909135818481
+  },
+  {
+    "receptor_id": "6GPZ",
+    "receptor": "GHMKVKLSAKEILEKEFKTGVRGYKQEDVDEFLDMIIKDYETFHQEIEELQQENLQLKKQLEE",
+    "peptide": "PPPALPPKKR",
+    "label": "decoy",
+    "peptide_from": "1CKA",
+    "name": "pair_337",
+    "score": 0.29385408759117126
+  },
+  {
+    "receptor_id": "6GPZ",
+    "receptor": "GHMKVKLSAKEILEKEFKTGVRGYKQEDVDEFLDMIIKDYETFHQEIEELQQENLQLKKQLEE",
+    "peptide": "GLPVTFIDEVDSEEAPQ",
+    "label": "decoy",
+    "peptide_from": "6Y9Q",
+    "name": "pair_338",
+    "score": 0.31534481048583984
+  },
+  {
+    "receptor_id": "6GPZ",
+    "receptor": "GHMKVKLSAKEILEKEFKTGVRGYKQEDVDEFLDMIIKDYETFHQEIEELQQENLQLKKQLEE",
+    "peptide": "SQETFSDLWKLLPEN",
+    "label": "decoy",
+    "peptide_from": "1YCR",
+    "name": "pair_339",
+    "score": 0.14108143746852875
+  },
+  {
+    "receptor_id": "6GPZ",
+    "receptor": "GHMKVKLSAKEILEKEFKTGVRGYKQEDVDEFLDMIIKDYETFHQEIEELQQENLQLKKQLEE",
+    "peptide": "RQSADQKMQYRTKPN",
+    "label": "scrambled",
+    "peptide_from": "6GPZ",
+    "name": "pair_340",
+    "score": 0.1297387331724167
+  },
+  {
+    "receptor_id": "6GPZ",
+    "receptor": "GHMKVKLSAKEILEKEFKTGVRGYKQEDVDEFLDMIIKDYETFHQEIEELQQENLQLKKQLEE",
+    "peptide": "AKRQQPYNDSRTMKQ",
+    "label": "scrambled",
+    "peptide_from": "6GPZ",
+    "name": "pair_341",
+    "score": 0.21187077462673187
+  },
+  {
+    "receptor_id": "8TGF",
+    "receptor": "GSMKWAYKEENNFEKRRAEGDKIRRKYPDRIPVIVEKAPKSKLHDLDKKKYLVPSDLTVGQFYFLIRKRIQLRPEDALFFFVNNVIPQTMTTMGQLYQDHHEEDLFLYIAYSDESVYGGEVEKKE",
+    "peptide": "STWEILADDDD",
+    "label": "cognate",
+    "peptide_from": "8TGF",
+    "name": "pair_342",
+    "score": 0.7423139810562134
+  },
+  {
+    "receptor_id": "8TGF",
+    "receptor": "GSMKWAYKEENNFEKRRAEGDKIRRKYPDRIPVIVEKAPKSKLHDLDKKKYLVPSDLTVGQFYFLIRKRIQLRPEDALFFFVNNVIPQTMTTMGQLYQDHHEEDLFLYIAYSDESVYGGEVEKKE",
+    "peptide": "DQLIDL",
+    "label": "decoy",
+    "peptide_from": "9F6S",
+    "name": "pair_343",
+    "score": 0.8705728650093079
+  },
+  {
+    "receptor_id": "8TGF",
+    "receptor": "GSMKWAYKEENNFEKRRAEGDKIRRKYPDRIPVIVEKAPKSKLHDLDKKKYLVPSDLTVGQFYFLIRKRIQLRPEDALFFFVNNVIPQTMTTMGQLYQDHHEEDLFLYIAYSDESVYGGEVEKKE",
+    "peptide": "SLPFTFKVPAPPPSLPPSW",
+    "label": "decoy",
+    "peptide_from": "6R8I",
+    "name": "pair_344",
+    "score": 0.19198933243751526
+  },
+  {
+    "receptor_id": "8TGF",
+    "receptor": "GSMKWAYKEENNFEKRRAEGDKIRRKYPDRIPVIVEKAPKSKLHDLDKKKYLVPSDLTVGQFYFLIRKRIQLRPEDALFFFVNNVIPQTMTTMGQLYQDHHEEDLFLYIAYSDESVYGGEVEKKE",
+    "peptide": "KKETWV",
+    "label": "decoy",
+    "peptide_from": "1TP5",
+    "name": "pair_345",
+    "score": 0.8200629949569702
+  },
+  {
+    "receptor_id": "8TGF",
+    "receptor": "GSMKWAYKEENNFEKRRAEGDKIRRKYPDRIPVIVEKAPKSKLHDLDKKKYLVPSDLTVGQFYFLIRKRIQLRPEDALFFFVNNVIPQTMTTMGQLYQDHHEEDLFLYIAYSDESVYGGEVEKKE",
+    "peptide": "ITLEADWSDDD",
+    "label": "scrambled",
+    "peptide_from": "8TGF",
+    "name": "pair_346",
+    "score": 0.40343934297561646
+  },
+  {
+    "receptor_id": "8TGF",
+    "receptor": "GSMKWAYKEENNFEKRRAEGDKIRRKYPDRIPVIVEKAPKSKLHDLDKKKYLVPSDLTVGQFYFLIRKRIQLRPEDALFFFVNNVIPQTMTTMGQLYQDHHEEDLFLYIAYSDESVYGGEVEKKE",
+    "peptide": "TLESIDDDDWA",
+    "label": "scrambled",
+    "peptide_from": "8TGF",
+    "name": "pair_347",
+    "score": 0.30765143036842346
+  },
+  {
+    "receptor_id": "2X6M",
+    "receptor": "GQLVESGGGSVQAGGSLRLSCAASGIDSSSYCMGWFRQRPGKEREGVARINGLGGVKTAYADSVKDRFTISRDNAENTVYLQMNSLKPEDTAIYYCAAKFSPGYCGGSWSNFGYWGQGTQVTVSSH",
+    "peptide": "GYQDYEPEA",
+    "label": "cognate",
+    "peptide_from": "2X6M",
+    "name": "pair_348",
+    "score": 0.24347221851348877
+  },
+  {
+    "receptor_id": "2X6M",
+    "receptor": "GQLVESGGGSVQAGGSLRLSCAASGIDSSSYCMGWFRQRPGKEREGVARINGLGGVKTAYADSVKDRFTISRDNAENTVYLQMNSLKPEDTAIYYCAAKFSPGYCGGSWSNFGYWGQGTQVTVSSH",
+    "peptide": "STWEILADDDD",
+    "label": "decoy",
+    "peptide_from": "8TGF",
+    "name": "pair_349",
+    "score": 0.25413981080055237
+  },
+  {
+    "receptor_id": "2X6M",
+    "receptor": "GQLVESGGGSVQAGGSLRLSCAASGIDSSSYCMGWFRQRPGKEREGVARINGLGGVKTAYADSVKDRFTISRDNAENTVYLQMNSLKPEDTAIYYCAAKFSPGYCGGSWSNFGYWGQGTQVTVSSH",
+    "peptide": "RQVNFLGKIN",
+    "label": "decoy",
+    "peptide_from": "2FNT",
+    "name": "pair_350",
+    "score": 0.18980534374713898
+  },
+  {
+    "receptor_id": "2X6M",
+    "receptor": "GQLVESGGGSVQAGGSLRLSCAASGIDSSSYCMGWFRQRPGKEREGVARINGLGGVKTAYADSVKDRFTISRDNAENTVYLQMNSLKPEDTAIYYCAAKFSPGYCGGSWSNFGYWGQGTQVTVSSH",
+    "peptide": "SYRKAIDAATQTEE",
+    "label": "decoy",
+    "peptide_from": "5E0L",
+    "name": "pair_351",
+    "score": 0.20283758640289307
+  },
+  {
+    "receptor_id": "2X6M",
+    "receptor": "GQLVESGGGSVQAGGSLRLSCAASGIDSSSYCMGWFRQRPGKEREGVARINGLGGVKTAYADSVKDRFTISRDNAENTVYLQMNSLKPEDTAIYYCAAKFSPGYCGGSWSNFGYWGQGTQVTVSSH",
+    "peptide": "QEEYDYPAG",
+    "label": "scrambled",
+    "peptide_from": "2X6M",
+    "name": "pair_352",
+    "score": 0.24902833998203278
+  },
+  {
+    "receptor_id": "2X6M",
+    "receptor": "GQLVESGGGSVQAGGSLRLSCAASGIDSSSYCMGWFRQRPGKEREGVARINGLGGVKTAYADSVKDRFTISRDNAENTVYLQMNSLKPEDTAIYYCAAKFSPGYCGGSWSNFGYWGQGTQVTVSSH",
+    "peptide": "GDYEAEPQY",
+    "label": "scrambled",
+    "peptide_from": "2X6M",
+    "name": "pair_353",
+    "score": 0.20468689501285553
+  }
+]

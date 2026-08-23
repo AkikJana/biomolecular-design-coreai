@@ -184,13 +184,29 @@ def main():
                          "everything else is held fixed")
     ap.add_argument("--work-dir", default=str(REPO_ROOT / "artifacts" / "pdb_binders"))
     ap.add_argument("--skip-predict", action="store_true")
+    ap.add_argument("--panel", default=None,
+                    help="JSON list of PDB IDs, or discover_pdb_binders.py "
+                         "output, to fold instead of the built-in panel. Folding "
+                         "an extension and the original together in one run beats "
+                         "merging folds taken months apart on different hardware.")
     args = ap.parse_args()
 
     work = Path(args.work_dir)
     work.mkdir(parents=True, exist_ok=True)
 
     complexes = {}
-    for pid in PDB_IDS:
+    panel = PDB_IDS
+    if args.panel:
+        raw = json.loads(Path(args.panel).read_text())
+        items = raw if isinstance(raw, list) else (
+            raw.get("candidates") or next(iter(raw.values())))
+        found = [e["pdb_id"] if isinstance(e, dict) else e for e in items]
+        # Union, order preserved, so the original panel stays comparable.
+        panel = PDB_IDS + [p for p in found if p not in PDB_IDS]
+        print(f"panel: {len(PDB_IDS)} built-in + {len(panel) - len(PDB_IDS)} "
+              f"from {args.panel} = {len(panel)} receptors")
+
+    for pid in panel:
         rec, pep, rn, pn = fetch_complex(pid, work / "sequences")
         complexes[pid] = {"receptor": rec, "peptide": pep}
         print(f"  {pid}: receptor {len(rec)}aa ({rn}) | peptide {len(pep)}aa ({pn}) {pep}")

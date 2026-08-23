@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# The full run: expanded panel at full settings, then the Chai-1 comparison arm.
+# Resumable -- the runners skip folds already scored, so re-running after an
+# interruption picks up where it stopped. Safe on spot instances.
+set -euo pipefail
+REPO="${REPO:-$HOME/BiomolecularDesign}"
+cd "$REPO"; set -a; . ./.remote_env; set +a
+
+BATCH="${BATCH:-12}"
+log() { echo "[$(date +%H:%M:%S)] $*"; }
+
+# Alignments first, folding second. The MSA probe runs --accelerator cpu against
+# the ColabFold server, so while it works the GPU sits at 0%. Interleaving fetch
+# and fold means renting a GPU to wait on a web service -- roughly 45s per
+# receptor of dead time. --msa-only fetches the lot, then folding runs flat out.
+log "0/2 fetching alignments (CPU and network only -- GPU idle by design)"
+BOLTZ_NO_KERNELS=1 $PY src/heldout_panel.py --msa-only --base boltz1 || true
+
+log "1/2 expanded panel, full settings"
+BOLTZ_NO_KERNELS=1 $PY src/settings_confound.py \
+    --batch-size "$BATCH" --sampling-steps 200 --recycling-steps 3 --msa-depth 0 \
+    --run-tag expanded --per-fold-budget 1800 --min-free-gib 4
+
+log "2/2 held-out panel, full settings, third draw"
+BOLTZ_NO_KERNELS=1 $PY src/heldout_panel.py \
+    --batch-size "$BATCH" --sampling-steps 200 --recycling-steps 3 --msa-depth 0 \
+    --base boltz1 --run-tag full3
+
+log "done. pull results with sync.sh down"

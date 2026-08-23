@@ -76,6 +76,13 @@ def main():
     ap.add_argument("--scrambles", type=int, default=2)
     ap.add_argument("--batch-size", type=int, default=6)
     ap.add_argument("--seed", type=int, default=0)
+    # 7.19.5 names a full-settings repeat as an outstanding limitation: the
+    # original ran DeCAF at ten sampling steps, and 7.16 measured that the
+    # sampling budget carries most of the available effect. These make that
+    # repeat runnable rather than aspirational.
+    ap.add_argument("--base", default="decaf", choices=("decaf", "boltz1", "boltz2"))
+    ap.add_argument("--sampling-steps", type=int, default=10)
+    ap.add_argument("--recycling-steps", type=int, default=1)
     ap.add_argument("--out", default=str(ART / "scramble_wetlab.json"))
     args = ap.parse_args()
 
@@ -150,8 +157,9 @@ def main():
                 f"  - protein:\n      id: A\n      sequence: {rec}\n{line}"
                 f"  - protein:\n      id: B\n      sequence: {binder}\n"
                 f"      msa: empty\n")
-        res, el = fold(inputs, bdir, str(Path.home() / ".boltz" / "decaf" /
-                                         "decaf_conf_ckpt.ckpt"), 10, 1, "decaf")
+        ckpt = str(Path.home() / ".boltz" / "decaf" / "decaf_conf_ckpt.ckpt")
+        res, el = fold(inputs, bdir, ckpt, args.sampling_steps,
+                       args.recycling_steps, args.base)
         got = 0
         for name, _, binder in chunk:
             f = res / "predictions" / name / f"{name}_model_0.pdb"

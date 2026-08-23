@@ -1,0 +1,94 @@
+{
+  "n_structures": 144,
+  "source_glob": "pdb_binders_b2_n22/**/predictions/**/*.pdb",
+  "checks": [
+    {
+      "check": "all_atoms_connected",
+      "pass_rate": 0.0,
+      "n_pass": 0,
+      "n": 144
+    },
+    {
+      "check": "internal_steric_clash",
+      "pass_rate": 9.027777777777777,
+      "n_pass": 13,
+      "n": 144
+    },
+    {
+      "check": "mol_pred_loaded",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "sanitization",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "inchi_convertible",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "no_radicals",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "bond_lengths",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "bond_angles",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "aromatic_ring_flatness",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "non-aromatic_ring_non-flatness",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "double_bond_flatness",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    },
+    {
+      "check": "internal_energy",
+      "pass_rate": 100.0,
+      "n_pass": 144,
+      "n": 144
+    }
+  ],
+  "all_pass_rate": 0.0,
+  "vacuous_checks": [
+    "aromatic_ring_flatness",
+    "bond_angles",
+    "bond_lengths",
+    "double_bond_flatness",
+    "internal_energy",
+    "non-aromatic_ring_non-flatness"
+  ],
+  "connectivity": {
+    "single_fragment": 0,
+    "n": 144,
+    "median_fragments": 41
+  },
+  "peptide_len_min": 5,
+  "peptide_len_max": 23
+}
