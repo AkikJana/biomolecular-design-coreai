@@ -17,8 +17,10 @@ configs:
 # Scramble-control panels for cofolding confidence metrics
 
 Per-fold confidence scores for peptide–protein complexes, folded under Boltz-1,
-Boltz-2 and a few-step-distilled model, with each cognate peptide scored against
-**permutations of itself** as well as against unrelated decoys.
+Boltz-2, Chai-1 and a few-step-distilled model, with each cognate peptide scored
+against **permutations of itself** as well as against unrelated decoys.
+
+**2,456 folds across 16 inference arms and 75 receptors.**
 
 A permutation — a *scramble* — preserves amino-acid composition and length
 exactly and destroys only sequence order. Decoy comparisons cannot separate a
@@ -31,11 +33,12 @@ permutations in fact outscore decoys.
 
 | file | rows | what |
 | :--- | ---: | :--- |
-| `folds.csv` | 1,416 | every fold, every arm, one row each |
+| `folds.csv` | 2,456 | every fold, every arm, one row each |
 | `scores/<arm>.csv` | 96–132 | the same rows split by inference arm |
 | `sequences.csv` | 132 | receptor and peptide sequences **as folded** |
-| `panels.csv` | 44 | the two panels by PDB ID |
-| `posebusters.csv` | 144 | PoseBusters validity per structure |
+| `panels.csv` | 103 | every panel by PDB ID, 75 unique receptors |
+| `posebusters_reduced.csv` | 144 | structural validity, 10 sampling steps |
+| `posebusters_converged.csv` | 354 | structural validity, 200 sampling steps |
 | `posebusters_summary.json` | — | pass rates per check |
 
 ## Arms
@@ -56,6 +59,18 @@ permutations in fact outscore decoys.
 | `heldout_full_draw1` | held-out | 200 | 3 | full |
 | `heldout_full_draw2` | held-out | 200 | 3 | full |
 | `decaf_replicates` | in-training | 10 | 1 | 32 |
+| `boltz1_full_gpu` | in-training | 200 | 3 | full |
+| `heldout_full_draw3` | held-out | 200 | 3 | full |
+| `panel59_full` | extended (59 rec.) | 200 | 3 | full |
+| `panel59_reduced` | extended (59 rec.) | 10 | 1 | 32 |
+| `chai1_full` | in-training | 200 | 3 | full |
+
+The last five were folded on a rented RTX 4090 in August 2026. `chai1_full` is
+**Chai-1**, not Boltz: the same panel and the same readout code, so the model is
+the only variable. It carries cognates and scrambles only — its decoys were not
+folded, so the ranking test is Boltz-only. Its interface pLDDT is calibrated
+differently (near 95 where Boltz-1 sits near 90 on the same complexes), so only
+standardised effects compare across the two.
 
 Settings are taken from each run's own recorded configuration where it kept one;
 the three arms without a settings block are labelled from the run that produced
@@ -101,13 +116,16 @@ that receptor negative.
   These postdate the training cutoff and appear in both.
 - **Three arms do not record a per-fold `name`**, so their rows join on
   `receptor_id` and `label` rather than on fold identity.
-- **PoseBusters covers the reduced-settings regime only**, for the same reason:
-  the converged structures are gone. Its `bond_lengths`, `bond_angles` and
-  flatness checks are **vacuously satisfied** here — RDKit perceives bonds in a
-  PDB by distance, so a backbone bond stretched past bonding range is not
-  perceived as a bond and cannot fail a length check. The interpretable results
-  are `all_atoms_connected` (0% pass) and the fragment counts: 0 of 144 peptides
-  is a single connected fragment, median 41 fragments.
+- **PoseBusters is not usable at face value on peptides.** Its `bond_lengths`,
+  `bond_angles` and flatness checks are **vacuous** here: RDKit perceives bonds
+  in a PDB by distance, so a backbone bond stretched past bonding range is never
+  perceived as a bond and cannot fail a length test. Those checks report 100%
+  pass on structures that are in forty pieces. Worse, `all_atoms_connected`
+  reports 0% pass on the *converged* set while RDKit's own `GetMolFrags` returns
+  one fragment for the identical molecule. **Use the fragment counts and nothing
+  else.** They are unambiguous: at 10 sampling steps 0 of 144 peptides is a
+  single connected fragment (median 41); at 200 steps it is 354 of 354
+  (median 1).
 
 ## Licence
 

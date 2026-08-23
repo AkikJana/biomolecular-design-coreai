@@ -42,6 +42,18 @@ ARMS = [
     ("decaf_replicate_result",      "decaf_replicates",      "in-training", "7.5"),
 ]
 
+# The 23 August GPU run. Kept in a separate list because these live under
+# results/ rather than artifacts/: they are committed to the repository, where
+# the reduced-settings arms above are reproducible but not stored.
+GPU_ARMS = [
+    ("panel59_readouts",       "panel59_full",     "extended",    "2.8"),
+    ("panel59_reduced_scores", "panel59_reduced",  "extended",    "2.8"),
+    ("chai_arm",               "chai1_full",       "in-training", "2.9"),
+    ("heldout_panel_resultfull3", "heldout_full_draw3", "held-out", "7.10.6"),
+    ("settings_confoundexpanded", "boltz1_full_gpu",    "in-training", "2.6"),
+]
+GPU_DIR = REPO_ROOT / "results" / "gpu_run_2026-08-23"
+
 COLS = ["arm", "panel", "section", "sampling_steps", "recycling", "msa_depth",
         "receptor_id", "name", "label", "peptide_from",
         "iptm", "iface_plddt", "receptor_side", "peptide_side", "peptide_whole",
@@ -114,6 +126,27 @@ def main():
         print(f"  {arm:24s} {len(df):>4} folds  "
               f"{df.receptor_id.nunique()} receptors  -> scores/{arm}.csv")
 
+    for stem, arm, panel, section in GPU_ARMS:
+        q = GPU_DIR / f"{stem}.json"
+        if not q.exists():
+            print(f"  skipped {arm}: {q} absent")
+            continue
+        d = json.loads(q.read_text())
+        recs = d if isinstance(d, list) else (d.get("per_fold") or d.get("per_complex") or [])
+        rows = []
+        for r in recs:
+            row = {c: r.get(c) for c in COLS}
+            # panel59's reduced arm scored a single rank-key, stored as "score".
+            if row.get("iptm") is None and r.get("score") is not None:
+                row["iptm"] = r["score"]
+            row.update(arm=arm, panel=panel, section=section)
+            rows.append(row)
+        df = pd.DataFrame(rows, columns=COLS)
+        df.to_csv(out / "scores" / f"{arm}.csv", index=False)
+        frames.append(df)
+        print(f"  {arm:24s} {len(df):>4} folds  "
+              f"{df.receptor_id.nunique()} receptors  -> scores/{arm}.csv")
+
     allf = pd.concat(frames, ignore_index=True)
     allf.to_csv(out / "folds.csv", index=False)
     print(f"\n  combined: {len(allf)} folds, {allf.arm.nunique()} arms -> folds.csv")
@@ -135,13 +168,21 @@ def main():
     print(f"  panels:   {len(panels)} rows, {panels.receptor_id.nunique()} unique "
           f"receptors ({both} in both panels) -> panels.csv")
 
+    conv = GPU_DIR / "posebusters_converged.json"
+    if conv.exists():
+        d = json.loads(conv.read_text())
+        pd.DataFrame(d["per_structure"]).to_csv(
+            out / "posebusters_converged.csv", index=False)
+        print(f"  posebusters 200 steps: {d['n_structures']} structures"
+              f" -> posebusters_converged.csv")
+
     pb = ART / "posebusters.json"
     if pb.exists():
         d = json.loads(pb.read_text())
-        pd.DataFrame(d["per_structure"]).to_csv(out / "posebusters.csv", index=False)
+        pd.DataFrame(d["per_structure"]).to_csv(out / "posebusters_reduced.csv", index=False)
         (out / "posebusters_summary.json").write_text(
             json.dumps({k: v for k, v in d.items() if k != "per_structure"}, indent=2))
-        print(f"  posebusters: {d['n_structures']} structures -> posebusters.csv")
+        print(f"  posebusters: {d['n_structures']} structures -> posebusters_reduced.csv")
 
     return out, allf
 
