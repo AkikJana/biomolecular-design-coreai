@@ -43,7 +43,10 @@ was measured: the permutation correction adds nothing (ΔAUC −0.023, 95% CI
 [−0.065, +0.006]), and not because it is inert — its margin separates binders from
 non-binders at p = 4 × 10⁻¹² but correlates with the raw score at r = 0.81, so the
 correction is redundant rather than constant. Use the control where a permutation
-of the candidate remains a candidate.
+of the candidate remains a candidate. Applying what the controls leave standing —
+a converged sampler and interface pLDDT rather than ipTM — ranks the true binder
+first for 64% of 44 held-out receptors against a 25% chance rate, up from 41–50%
+under the common default.
 
 **Keywords:** protein structure prediction, cofolding, confidence metrics,
 benchmarking, negative controls, peptide binders, data contamination
@@ -690,6 +693,41 @@ margins under both model families; each point is one receptor, the bar is the
 mean, and the dashed line is the no-order-sensitivity null. Chai-1 gives a smaller
 margin than Boltz-1 and clears zero on 20 of 21 receptors.</p>
 
+### 2.10 What the recommendations are worth
+
+The controls above are diagnostic, and a reader could reasonably ask what is left
+once they have been applied. This section answers it: the same panel, ranking each
+cognate peptide against its own decoys, under the configuration a practitioner
+would actually adopt.
+
+**Table 18. Ranking a cognate against its own decoys. Chance is 25% top-1.**
+
+| configuration | mean rank | top-1 | P(cognate > a decoy) |
+| :--- | ---: | ---: | ---: |
+| 10 steps, ipTM — *the common default* | 1.86 | 11/22 (50%) | 0.712 |
+| 10 steps, interface pLDDT | 1.91 | 9/22 (41%) | 0.697 |
+| 200 steps, ipTM | 1.41 | 15/22 (68%) | 0.864 |
+| **200 steps, interface pLDDT** | **1.27** | **17/22 (77%)** | **0.909** |
+| the same, 59 receptors | 1.58 | 37/59 (63%) | 0.808 |
+| the same, **held out**, 44 receptors | 1.70 | **28/44 (64%)** | 0.765 |
+
+Two changes — converge the sampler, and read interface pLDDT rather than ipTM —
+take top-1 accuracy from **41–50% to 77%** on the panel where both were developed.
+The honest figures are the lower ones: **63%** on the larger panel, and **64% on
+44 receptors the model was never trained on**. Against a 25% chance rate, the true
+binder is ranked first roughly two times in three on a novel target.
+
+That is the constructive result of this work, and it is not in tension with §2.1.
+The readouts are near chance on *designed miniproteins* whose binding was measured
+in the wet lab; they rank *cognate peptides* against decoys well above chance.
+Those are different molecules, different positives and different questions. What
+the two together say is that a peptide screen guided this way is worth running,
+and that its published accuracy should be read after the discount §2.5 measures,
+not before.
+
+Neither change costs anything to adopt. Interface pLDDT is computed from output
+the model already writes. The sampling budget is the expensive half, and §2.6
+shows where to spend it: sampling first, alignment second, recycling not at all.
 ---
 
 ## 3. Discussion
@@ -715,6 +753,14 @@ significance but at *d* = 0.90 against 1.43. **Both corrections point the same w
 the phenomenon is robust, our estimates of its size were not.** We would rather
 report that than the larger numbers we started with.
 
+**What survives is a usable screen.** It would be easy to read the foregoing as
+purely destructive, and §2.10 is the correction: the two changes the controls
+leave standing — converge the sampler, read interface pLDDT rather than ipTM —
+rank the true binder first for 64% of held-out receptors against a 25% chance
+rate, up from 41–50% under the configuration most benchmarks use. The controls
+are not an argument that cofolding confidence is useless. They are an argument
+about which configuration to use and how far to trust the number it produces.
+
 We draw three recommendations.
 
 **Report a composition-matched control wherever a permutation of the candidate
@@ -723,6 +769,11 @@ distinguishes a metric that tracks binding from one that tracks composition. For
 designed miniproteins it does not, and the raw readout is the better of the two.
 The condition is not a technicality: it is the difference between a null that
 isolates one variable and a null that destroys the molecule.
+
+**Converge the sampler before reading its confidence, and prefer interface pLDDT
+to ipTM.** These are the two changes that turn a marginal screen into a working
+one — 41–50% to 64–77% top-1 — and neither costs anything beyond compute already
+budgeted for folding. §2.6 gives the ordering when that compute is constrained.
 
 **Fold each candidate more than once.** Sampler noise on these readouts is large
 enough that a single unseeded fold does not reproduce its own ranking. Where
