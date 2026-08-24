@@ -86,7 +86,11 @@ def fold(inputs, out, ckpt, sampling, recycling, base="decaf", write_pae=False,
     if msa_depth:
         cmd += ["--subsample_msa", "--num_subsampled_msa", str(msa_depth),
                 "--max_msa_seqs", str(msa_depth)]
-    if base == "decaf":
+    # DeCAF always needs this; on a CUDA host every base does, because Boltz's
+    # fused triangle-attention kernels import cuequivariance_ops_torch, which is
+    # not a dependency of this project -- the MPS path never touches them. It
+    # fails at call time, so nothing catches it until a fold dies.
+    if base == "decaf" or os.environ.get("BOLTZ_NO_KERNELS"):
         cmd.append("--no_kernels")
     if write_pae:
         # PAE-derived readouts (mPAE, ipSAE, pDockQ2) need the full matrix,

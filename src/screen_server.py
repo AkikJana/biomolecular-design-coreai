@@ -297,6 +297,8 @@ def fold_batch(pairs, job_dir, mode, msa_path, budget_per_fold, progress=None):
         watcher = threading.Thread(target=watch, daemon=True)
         watcher.start()
     try:
+        if os.environ.get("BOLTZ_NO_KERNELS") and "--no_kernels" not in cmd:
+            cmd.append("--no_kernels")
         proc = subprocess.run(cmd, capture_output=True, text=True, env=env,
                               timeout=max(900, 300 + len(pairs) * budget_per_fold * 3))
     finally:

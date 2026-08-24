@@ -87,7 +87,7 @@
   "connectivity": {
     "single_fragment": 354,
     "n": 354,
-    "median_fragments": 1
+    "median_fragments": 1.0
   },
   "per_structure": [
     {

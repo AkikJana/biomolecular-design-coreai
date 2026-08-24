@@ -64,6 +64,8 @@ def fold(inputs, out, device, sampling, recycling):
            "--subsample_msa", "--num_subsampled_msa", "32", "--max_msa_seqs", "32"]
     env = dict(os.environ, PYTORCH_ENABLE_MPS_FALLBACK="1")
     t0 = time.perf_counter()
+    if os.environ.get("BOLTZ_NO_KERNELS") and "--no_kernels" not in cmd:
+        cmd.append("--no_kernels")
     proc = subprocess.run(cmd, capture_output=True, text=True, env=env)
     if proc.returncode != 0:
         print((proc.stdout + proc.stderr)[-1500:], file=sys.stderr)

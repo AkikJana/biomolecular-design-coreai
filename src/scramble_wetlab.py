@@ -71,6 +71,10 @@ def target_constructs():
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--targets", default="",
+                    help="comma-separated target names, or 'all' for every "
+                         "target with a single-chain construct. Default is the "
+                         "four of the original run.")
     ap.add_argument("--per-class", type=int, default=6,
                     help="designs sampled per target per label")
     ap.add_argument("--scrambles", type=int, default=2)
@@ -96,15 +100,26 @@ def main():
     d = pd.read_csv(BINDER_DATA / "design_summary.csv", low_memory=False)
     d = d[d["binder_final"].isin([True, False])]
 
+    if args.targets.strip().lower() == "all":
+        targets = sorted(cons)
+        print(f"  all {len(targets)} targets with a single-chain construct")
+    elif args.targets.strip():
+        targets = [x.strip() for x in args.targets.split(",") if x.strip()]
+    else:
+        targets = TARGETS
+
     picks = []
-    for t in TARGETS:
+    for t in targets:
         if t not in cons:
             print(f"  {t}: no single-chain construct, skipped")
             continue
         g = d[d["target"] == t]
         for label in (True, False):
             sub = g[g["binder_final"] == label]
-            take = sub.sample(min(args.per_class, len(sub)), random_state=args.seed)
+            # per-class 0 means take everything; the original run capped at 6
+            # because the machine could not fold more.
+            n = len(sub) if args.per_class <= 0 else min(args.per_class, len(sub))
+            take = sub.sample(n, random_state=args.seed)
             for _, r in take.iterrows():
                 picks.append({"uuid": r["uuid"], "target": t, "y": int(label),
                               "seq": r["sequence"], "receptor": cons[t],
