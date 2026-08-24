@@ -1,0 +1,178 @@
+[
+  {
+    "pdb_id": "9W2N",
+    "receptor_len": 131,
+    "peptide_len": 11,
+    "peptide": "SGGDDDWTHLS",
+    "receptor_name": "Microtubule-associated protein 1 light c",
+    "peptide_name": "Sequestosome-1"
+  },
+  {
+    "pdb_id": "8CQY",
+    "receptor_len": 114,
+    "peptide_len": 12,
+    "peptide": "RQNRVDSKETEC",
+    "receptor_name": "Tyrosine-protein phosphatase non-recepto",
+    "peptide_name": "Disintegrin and metalloproteinase domain"
+  },
+  {
+    "pdb_id": "9HFW",
+    "receptor_len": 139,
+    "peptide_len": 17,
+    "peptide": "NDDDVQKADVSSTGQGV",
+    "receptor_name": "Speckle type BTB/POZ protein",
+    "peptide_name": "Nuclear receptor coactivator 3"
+  },
+  {
+    "pdb_id": "7TRL",
+    "receptor_len": 94,
+    "peptide_len": 12,
+    "peptide": "ARTKQTARKSTG",
+    "receptor_name": "Baculoviral IAP repeat-containing protei",
+    "peptide_name": "Histone H3"
+  },
+  {
+    "pdb_id": "9OSC",
+    "receptor_len": 67,
+    "peptide_len": 11,
+    "peptide": "RKVPRVSLERL",
+    "receptor_name": "Chromobox protein homolog 3",
+    "peptide_name": "Transcription intermediary factor 1-beta"
+  },
+  {
+    "pdb_id": "7FAX",
+    "receptor_len": 111,
+    "peptide_len": 18,
+    "peptide": "GSTLEDLFGPLFYVDKSL",
+    "receptor_name": "TbLW",
+    "peptide_name": "TbLeo1 peptide"
+  },
+  {
+    "pdb_id": "8U1Z",
+    "receptor_len": 125,
+    "peptide_len": 14,
+    "peptide": "SHKHDPLPYPHFLL",
+    "receptor_name": "Mitochondrial fission 1 protein",
+    "peptide_name": "inhibitor peptide"
+  },
+  {
+    "pdb_id": "7QTP",
+    "receptor_len": 117,
+    "peptide_len": 10,
+    "peptide": "KMARTIESKV",
+    "receptor_name": "Protein scribble homolog",
+    "peptide_name": "Non-structural protein 1"
+  },
+  {
+    "pdb_id": "8IA5",
+    "receptor_len": 90,
+    "peptide_len": 9,
+    "peptide": "DLENLYFQG",
+    "receptor_name": "Protein Mdm4",
+    "peptide_name": "9-mer peptide"
+  },
+  {
+    "pdb_id": "7RMA",
+    "receptor_len": 88,
+    "peptide_len": 20,
+    "peptide": "RGQQEEEDLQRILQLSLTEH",
+    "receptor_name": "Ubiquitin Variant",
+    "peptide_name": "Ankyrin repeat domain-containing protein"
+  },
+  {
+    "pdb_id": "8GQP",
+    "receptor_len": 62,
+    "peptide_len": 20,
+    "peptide": "DEHELLETAARWFYEIAKRA",
+    "receptor_name": "D-binder",
+    "peptide_name": "L-pep1"
+  },
+  {
+    "pdb_id": "8S6U",
+    "receptor_len": 68,
+    "peptide_len": 15,
+    "peptide": "STLSPNASVFKPSRS",
+    "receptor_name": "Polyadenylate-binding protein 1",
+    "peptide_name": "FYVE zinc finger domain protein UPA1"
+  },
+  {
+    "pdb_id": "9JUI",
+    "receptor_len": 130,
+    "peptide_len": 10,
+    "peptide": "SEEEFFDAHE",
+    "receptor_name": "Vesicle-associated membrane protein-asso",
+    "peptide_name": "Nir2 FFAT motif"
+  },
+  {
+    "pdb_id": "9G7U",
+    "receptor_len": 124,
+    "peptide_len": 20,
+    "peptide": "DDVESRPRTPSPPRNIDWHS",
+    "receptor_name": "LD36051p",
+    "peptide_name": "PIH1 domain containing 1, isoform D"
+  },
+  {
+    "pdb_id": "9NK9",
+    "receptor_len": 132,
+    "peptide_len": 10,
+    "peptide": "SFEDFWKGED",
+    "receptor_name": "Nanobody",
+    "peptide_name": "SER-PHE-GLU-ASP-PHE-TRP-LYS-GLY-GLU-ASP"
+  },
+  {
+    "pdb_id": "9EF3",
+    "receptor_len": 88,
+    "peptide_len": 9,
+    "peptide": "EITIPVTFE",
+    "receptor_name": "Heat shock protein beta-1",
+    "peptide_name": "Heat shock protein beta-1"
+  },
+  {
+    "pdb_id": "9VXG",
+    "receptor_len": 131,
+    "peptide_len": 16,
+    "peptide": "GRNDPCPCGSGKKFKK",
+    "receptor_name": "UPF0225 protein YchJ",
+    "peptide_name": "UPF0225 protein YchJ"
+  },
+  {
+    "pdb_id": "7UI8",
+    "receptor_len": 128,
+    "peptide_len": 23,
+    "peptide": "GDTKHEVRHENPQDEAQTIVVNK",
+    "receptor_name": "Split ester bond-containing adhesin repe",
+    "peptide_name": "GLY-ASP-THR-LYS-HIS-GLU-VAL-ARG-HIS-GLU-"
+  },
+  {
+    "pdb_id": "8E2C",
+    "receptor_len": 70,
+    "peptide_len": 7,
+    "peptide": "NRLFRKR",
+    "receptor_name": "Cell cycle protein GpsB",
+    "peptide_name": "PBP4"
+  },
+  {
+    "pdb_id": "9LXG",
+    "receptor_len": 101,
+    "peptide_len": 13,
+    "peptide": "ARIKAINTFFAKN",
+    "receptor_name": "Filamin-A",
+    "peptide_name": "La-related protein 4"
+  },
+  {
+    "pdb_id": "7YXW",
+    "receptor_len": 131,
+    "peptide_len": 18,
+    "peptide": "PPSNPPPRPPAEARKKPS",
+    "receptor_name": "Neutrophil cytosol factor 1",
+    "peptide_name": "Cytochrome b-245 light chain"
+  },
+  {
+    "pdb_id": "8B9T",
+    "receptor_len": 96,
+    "peptide_len": 10,
+    "peptide": "SSRTRRETQL",
+    "receptor_name": "Protein scribble homolog",
+    "peptide_name": "Protein E6"
+  }
+]

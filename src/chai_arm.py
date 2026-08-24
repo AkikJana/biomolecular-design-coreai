@@ -88,6 +88,9 @@ def main():
     ap.add_argument("--steps", type=int, default=200)
     ap.add_argument("--recycles", type=int, default=3)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--arm", default="boltz2_reduced",
+                    help="which arm to take labels from when the labels file "
+                         "contains more than one")
     ap.add_argument("--labels-keep", default="cognate,scrambled",
                     help="which classes to fold. The scramble control needs only "
                          "cognate and scrambled; decoys serve the ranking test, "
@@ -101,7 +104,11 @@ def main():
 
     seqs = pd.read_csv(args.panel)
     lab = pd.read_csv(args.labels)
-    lab = lab[lab.arm == "boltz2_reduced"][["name", "receptor_id", "label"]]
+    # The combined folds.csv carries every arm, so one must be selected; a
+    # purpose-built labels file carries one already and must not be filtered.
+    if "arm" in lab.columns and lab["arm"].nunique() > 1:
+        lab = lab[lab.arm == args.arm]
+    lab = lab[["name", "receptor_id", "label"]]
     panel = seqs.merge(lab, on="name", how="inner")
     keep = [x.strip() for x in args.labels_keep.split(",") if x.strip()]
     panel = panel[panel.label.isin(keep)]

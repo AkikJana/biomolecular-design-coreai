@@ -25,8 +25,9 @@ above unrelated decoys (mean rank 2.00 against chance 2.50) while failing to
 separate a cognate from its own permutation; permutations in fact outscore decoys.
 Of six interface readouts on identical structures, only interface pLDDT passes.
 Replicate folding shows single unseeded folds do not reproduce their own ranking,
-which forced two retractions in our own work. A training-cutoff split leaves
-38–40% of the standardised effect. Reducing sampling from 200 steps to 10
+which forced two retractions in our own work. A training-cutoff split leaves 39–65% of the
+standardised effect on a 44-receptor held-out panel, and under a second model
+family Boltz-1's in-training advantage disappears entirely. Reducing sampling from 200 steps to 10
 suppresses every effect threefold to sevenfold, and at ten steps the predicted
 peptide backbone is not a connected chain at all; a full factorial over the three
 inference settings shows alignment depth matters only once the sampler has
@@ -305,7 +306,7 @@ conclusions we had drawn from single-draw comparisons did not survive replicatio
 and were retracted. A benchmark that folds each candidate once is reporting a
 sample of size one from a distribution wide enough to reverse its ordering.
 
-### 2.5 A training-cutoff split removes about two thirds of the standardised effect
+### 2.5 A training-cutoff split removes between a third and two thirds of the effect
 
 Panels drawn from the PDB overlap the training data of every model trained on the
 PDB. We assembled a second panel of 22 receptors released after the model's
@@ -324,11 +325,35 @@ varying between them is whether the model has seen the complex.
 | Receptor side | +5.13 | +2.95 | 0.00075 | 57.6% | **37.9%** |
 
 All three readouts remain significant on complexes the model was never trained
-on, and roughly half the raw effect survives. Standardised, however, retention is
+on, and roughly half the raw effect survives. Standardised, retention is
 **37.6% to 40.4%** — materially worse than raw retention, because full settings
 raise absolute confidence across the board and a raw difference is therefore
 partly scale. Any figure quoted for a novel target should use the standardised
 retention.
+
+**At twice the panel the penalty is smaller than that.** Twenty-two receptors a
+side is thin for a difference of differences, so we screened the PDB again for
+post-cutoff entries and found 22 more that pass the identical filter, taking the
+held-out panel to **44 receptors** (earliest release 2021-10-06).
+
+**Table 7. The contamination penalty at 22 and 44 held-out receptors.**
+
+| Readout | held out, *d* @22 | @44 | retained @22 | retained @44 | *p* @44 |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| ipTM | 0.59 | 0.76 | 51% | **65%** | 2.0e-06 |
+| Interface pLDDT | 0.64 | 0.75 | 44% | **53%** | 2.8e-06 |
+| Receptor side | 0.44 | 0.65 | 27% | **39%** | 3.0e-05 |
+
+All three remain significant, and every retention figure rises. The honest
+statement is now **39% to 65% of the standardised effect survives** — closer to
+a half than the third this section originally reported, and the 22-receptor
+figures were the pessimistic end.
+
+Two caveats belong with that. The 22 added receptors are more recent and skew
+toward shorter peptides, so part of the gain may be panel composition rather than
+sample size. And this cuts the same way as §2.8, where a larger panel made the
+scramble control's effect sizes *smaller*: the 22-receptor panel exaggerated
+whichever direction a result pointed in. Small panels do not merely add noise.
 
 ![Sampling budget sets the effect size; training exposure sets how much survives](assets/fig_contamination.png)
 
@@ -348,7 +373,7 @@ a reduction adopted for throughput on consumer hardware. We folded the same pane
 on the same model and device at full settings to measure what that reduction had
 cost.
 
-**Table 7. Permutation control at reduced and full settings.**
+**Table 8. Permutation control at reduced and full settings.**
 
 | Metric | reduced | full | Cohen's *d* | within-receptor z |
 | :--- | ---: | ---: | :--- | ---: |
@@ -374,7 +399,7 @@ plausible.
 To locate the cost we folded the full factorial: each setting alone, each pair,
 and both endpoints — eight cells over the same 22 receptors, 1,056 folds.
 
-**Table 8. The full factorial, order-sensitivity test on interface pLDDT.**
+**Table 9. The full factorial, order-sensitivity test on interface pLDDT.**
 
 | Arm | steps / recycles / MSA | effect | Cohen's *d* | share of full gain |
 | :--- | :--- | ---: | ---: | ---: |
@@ -398,7 +423,7 @@ matter. It does — but only in company. Combined with sampling it reaches
 *d* = 1.46, which is 96% of the full effect from two knobs rather than three, and
 the interaction is genuinely positive:
 
-**Table 9. Each pair against the sum of its two single knobs, standardised.**
+**Table 10. Each pair against the sum of its two single knobs, standardised.**
 
 | pair | observed gain | additive prediction | interaction | |
 | :--- | ---: | ---: | ---: | :--- |
@@ -438,7 +463,7 @@ registered a prediction in source, committed before any fold ran:
 Thirty-eight designs across four targets (RBX1, PD-L1, TrkA, BHRF1) were folded
 as delivered and against two permutations of each.
 
-**Table 10. Interface pLDDT of a design and of its own permutations, by measured outcome.**
+**Table 11. Interface pLDDT of a design and of its own permutations, by measured outcome.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -463,7 +488,7 @@ at converged settings and we simply could not see it. We therefore repeated the
 experiment at 200 sampling steps and 3 recycling passes, on the full 48 designs
 rather than the 38 the first attempt reached.
 
-**Table 11. The same experiment at converged settings, 48 designs.**
+**Table 12. The same experiment at converged settings, 48 designs.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -488,7 +513,7 @@ claim. We therefore folded every design on every target whose construct fits a
 24 GB card — **720 designs across 8 targets, 234 of them measured binders**,
 2,160 folds at converged settings.
 
-**Table 12. The boundary test at 720 designs.**
+**Table 13. The boundary test at 720 designs.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -539,7 +564,7 @@ post-translational modification (43), receptor redundancy (20), or a peptide too
 close to one already accepted (20). The combined 59 receptors were folded together
 in one run at converged settings, so nothing is merged across hardware or dates.
 
-**Table 13. The permutation control at 22 and 59 receptors, folded identically.**
+**Table 14. The permutation control at 22 and 59 receptors, folded identically.**
 
 | readout | n = 22 | n = 59 | *d* at 22 | *d* at 59 | receptors where cognate wins |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -574,7 +599,7 @@ permutations — under Chai-1 [14], and scored the output with the identical
 interface-pLDDT implementation used throughout this paper. The readout code is
 shared, so the model is the only thing that varies.
 
-**Table 14. The permutation control under two independent models.**
+**Table 15. The permutation control under two independent models.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -597,7 +622,7 @@ What replicates is the direction and the significance, not the magnitude.
 against its own decoys is the question a screen actually asks, and on it the two
 models are indistinguishable:
 
-**Table 15. Ranking a cognate against its own decoys, under two model families.**
+**Table 16. Ranking a cognate against its own decoys, under two model families.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -617,7 +642,37 @@ transfers between model families almost perfectly, and the permutation control
 transfers in direction but at 60% of the effect size.** The two tests are asking
 different questions — one about a candidate against its competitors, the other
 about a candidate against itself — and the second is the more model-dependent of
-them. Note
+them.
+
+#### On complexes neither model was trained on, the gap closes
+
+The comparison above is measured on a panel that is largely Boltz-1's training
+data, which is exactly the confound §2.5 is about. We therefore folded the
+held-out panel under Chai-1 as well — the same 22 post-cutoff receptors, the same
+readout code.
+
+**Table 17. The permutation control in and out of training, both families.**
+
+| | Boltz-1 | Chai-1 |
+| :--- | ---: | ---: |
+| in-training *d* | **1.43** | 0.90 |
+| held-out *d* | 0.64 | **0.76** |
+| held-out *p* | 3.3 × 10⁻³ | 1.2 × 10⁻³ |
+| standardised retention | 44% | 84% |
+
+**Boltz-1's advantage does not survive the split.** In training it leads by a
+wide margin, 1.43 against 0.90. On complexes released after the cutoff the
+ordering reverses and the two are comparable — 0.64 against 0.76, both
+significant. Some of what looks like a better confidence head in-training is
+training exposure.
+
+**The retention difference itself is not established, and we do not claim it.**
+44% against 84% is a ratio of two effect sizes each estimated from about twenty
+receptors, and bootstrapping it gives 95% intervals of [17%, 79%] and
+[31%, 224%] — the difference is +48 points with an interval of [−25, +183],
+spanning zero at P = 0.86. What the data support is the held-out comparison,
+which requires no division: **on novel targets the two models are close, and
+Boltz-1 is not ahead.** Note
 also that Chai-1's interface pLDDT sits near 95 where Boltz-1's sits near 90 on
 the same complexes, so the two models are differently calibrated and only the
 standardised comparison is meaningful; the raw margins are not comparable.
@@ -692,8 +747,9 @@ targets the model has not seen. The gap between 0.943 on a training-adjacent
 panel and 0.626 against measured binding is the size of that divergence in the
 one case where we could measure both.
 
-**Limitations.** The main panel is now 59 receptors, but the training-cutoff split
-of §2.5 still rests on 22 a side and has not been extended to match. The factorial
+**Limitations.** The main panel is 59 receptors and the held-out panel 44, so the
+two sides of the training-cutoff split are still not the same size; the in-training
+arm of §2.5 remains the 22-receptor panel. The factorial
 of §2.6 is complete for interface pLDDT on the in-training panel at one draw per
 cell; the interactions it reports are of the same order as §2.4's run-to-run
 spread, so the sign of the sampling-alignment synergy is better supported than its
@@ -703,9 +759,11 @@ with the 48-design version at both sampling budgets. Those 8 are the targets who
 construct fits a 24 GB card: Cas9 (1,368 residues), EGFR and Nipah-G were excluded
 for size, not for anything biological, as were the four oligomeric targets without
 a single-chain construct. The second-model arm of §2.9
-covers 21 receptors and now carries both the permutation control and the ranking
-test, but a single model beyond Boltz: whether a third family behaves like either
-is untested. Chai-1's interface pLDDT is calibrated differently enough that only
+covers 21 receptors and now carries the permutation control, the ranking test and
+a held-out split, but a single model beyond Boltz: whether a third family behaves
+like either is untested. The retention comparison in Table 15 divides two effect
+sizes each estimated from about twenty receptors, and its interval spans zero; the
+held-out effect sizes are the supported claim, not the ratio. Chai-1's interface pLDDT is calibrated differently enough that only
 standardised effects compare across the two. The external comparison in §2.1 differs from our internal panels in panel,
 positives and readout simultaneously, so it supports an ordering rather than a
 numerical correction. Interface pLDDT is read from the same confidence head as

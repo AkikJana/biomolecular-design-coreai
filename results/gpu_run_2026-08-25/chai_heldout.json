@@ -1,0 +1,919 @@
+[
+ {
+  "name": "ho_001",
+  "receptor_id": "9F6S",
+  "label": "decoy",
+  "iface_plddt": 84.30852110489555,
+  "receptor_side": 92.82166595458985
+ },
+ {
+  "name": "ho_002",
+  "receptor_id": "9F6S",
+  "label": "decoy",
+  "iface_plddt": 81.95684623718262,
+  "receptor_side": 91.2572945987477
+ },
+ {
+  "name": "ho_003",
+  "receptor_id": "9F6S",
+  "label": "decoy",
+  "iface_plddt": 82.80544507061994,
+  "receptor_side": 91.23061201307509
+ },
+ {
+  "name": "ho_004",
+  "receptor_id": "9F6S",
+  "label": "scrambled",
+  "iface_plddt": 88.34183332655165,
+  "receptor_side": 94.27191670735677
+ },
+ {
+  "name": "ho_005",
+  "receptor_id": "9F6S",
+  "label": "scrambled",
+  "iface_plddt": 94.64684295654297,
+  "receptor_side": 97.1182861328125
+ },
+ {
+  "name": "ho_006",
+  "receptor_id": "8KDX",
+  "label": "cognate",
+  "iface_plddt": 80.15466677347818,
+  "receptor_side": 89.26883358425565
+ },
+ {
+  "name": "ho_007",
+  "receptor_id": "8KDX",
+  "label": "decoy",
+  "iface_plddt": 82.58864683263442,
+  "receptor_side": 92.03479919433593
+ },
+ {
+  "name": "ho_008",
+  "receptor_id": "8KDX",
+  "label": "decoy",
+  "iface_plddt": 86.72329352883732,
+  "receptor_side": 93.15608978271484
+ },
+ {
+  "name": "ho_009",
+  "receptor_id": "8KDX",
+  "label": "decoy",
+  "iface_plddt": 87.25682631782864,
+  "receptor_side": 91.6190668741862
+ },
+ {
+  "name": "ho_010",
+  "receptor_id": "8KDX",
+  "label": "scrambled",
+  "iface_plddt": 81.7194995880127,
+  "receptor_side": 89.14746653238932
+ },
+ {
+  "name": "ho_011",
+  "receptor_id": "8KDX",
+  "label": "scrambled",
+  "iface_plddt": 91.0575658162435,
+  "receptor_side": 94.03438822428386
+ },
+ {
+  "name": "ho_012",
+  "receptor_id": "9GRF",
+  "label": "cognate",
+  "iface_plddt": 91.13670043945312,
+  "receptor_side": 94.24142892020089
+ },
+ {
+  "name": "ho_013",
+  "receptor_id": "9GRF",
+  "label": "decoy",
+  "iface_plddt": 82.5609125883683,
+  "receptor_side": 91.22658284505208
+ },
+ {
+  "name": "ho_014",
+  "receptor_id": "9GRF",
+  "label": "decoy",
+  "iface_plddt": 84.27053862351637,
+  "receptor_side": 91.25800018310547
+ },
+ {
+  "name": "ho_015",
+  "receptor_id": "9GRF",
+  "label": "decoy",
+  "iface_plddt": 80.73688327564912,
+  "receptor_side": 94.6640923239968
+ },
+ {
+  "name": "ho_016",
+  "receptor_id": "9GRF",
+  "label": "scrambled",
+  "iface_plddt": 80.0959226168119,
+  "receptor_side": 91.1922858101981
+ },
+ {
+  "name": "ho_017",
+  "receptor_id": "9GRF",
+  "label": "scrambled",
+  "iface_plddt": 81.78333536783855,
+  "receptor_side": 90.0722885131836
+ },
+ {
+  "name": "ho_018",
+  "receptor_id": "7S7J",
+  "label": "cognate",
+  "iface_plddt": 89.88200083086568,
+  "receptor_side": 91.96979000693874
+ },
+ {
+  "name": "ho_019",
+  "receptor_id": "7S7J",
+  "label": "decoy",
+  "iface_plddt": 80.07128579275948,
+  "receptor_side": 87.74350013732911
+ },
+ {
+  "name": "ho_020",
+  "receptor_id": "7S7J",
+  "label": "decoy",
+  "iface_plddt": 84.23311749626609,
+  "receptor_side": 93.21133359273274
+ },
+ {
+  "name": "ho_021",
+  "receptor_id": "7S7J",
+  "label": "decoy",
+  "iface_plddt": 85.14306085759944,
+  "receptor_side": 89.37221759298573
+ },
+ {
+  "name": "ho_022",
+  "receptor_id": "7S7J",
+  "label": "scrambled",
+  "iface_plddt": 85.14871978759766,
+  "receptor_side": 90.04553809532753
+ },
+ {
+  "name": "ho_023",
+  "receptor_id": "7S7J",
+  "label": "scrambled",
+  "iface_plddt": 86.64025693620954,
+  "receptor_side": 88.23452395484561
+ },
+ {
+  "name": "ho_024",
+  "receptor_id": "8HLO",
+  "label": "cognate",
+  "iface_plddt": 97.06195213681175,
+  "receptor_side": 98.0148328145345
+ },
+ {
+  "name": "ho_025",
+  "receptor_id": "8HLO",
+  "label": "decoy",
+  "iface_plddt": 91.11004098256429,
+  "receptor_side": 94.52813313802083
+ },
+ {
+  "name": "ho_026",
+  "receptor_id": "8HLO",
+  "label": "decoy",
+  "iface_plddt": 79.22357764610878,
+  "receptor_side": 85.9655896355124
+ },
+ {
+  "name": "ho_027",
+  "receptor_id": "8HLO",
+  "label": "decoy",
+  "iface_plddt": 79.63392228346605,
+  "receptor_side": 89.40799903869629
+ },
+ {
+  "name": "ho_028",
+  "receptor_id": "8HLO",
+  "label": "scrambled",
+  "iface_plddt": 89.15330439028533,
+  "receptor_side": 91.71807152884347
+ },
+ {
+  "name": "ho_029",
+  "receptor_id": "8HLO",
+  "label": "scrambled",
+  "iface_plddt": 85.24118215387517,
+  "receptor_side": 90.6597506205241
+ },
+ {
+  "name": "ho_030",
+  "receptor_id": "7OKL",
+  "label": "cognate",
+  "iface_plddt": 90.55635724748883,
+  "receptor_side": 96.4461259841919
+ },
+ {
+  "name": "ho_031",
+  "receptor_id": "7OKL",
+  "label": "decoy",
+  "iface_plddt": 73.32130362770774,
+  "receptor_side": 85.35855611165364
+ },
+ {
+  "name": "ho_032",
+  "receptor_id": "7OKL",
+  "label": "decoy",
+  "iface_plddt": 73.83000074114118,
+  "receptor_side": 76.90225124359131
+ },
+ {
+  "name": "ho_033",
+  "receptor_id": "7OKL",
+  "label": "decoy",
+  "iface_plddt": 75.48594665527344,
+  "receptor_side": 86.7817985534668
+ },
+ {
+  "name": "ho_034",
+  "receptor_id": "7OKL",
+  "label": "scrambled",
+  "iface_plddt": 94.1255369919997,
+  "receptor_side": 96.75362396240234
+ },
+ {
+  "name": "ho_035",
+  "receptor_id": "7OKL",
+  "label": "scrambled",
+  "iface_plddt": 83.36838912963867,
+  "receptor_side": 96.62550036112468
+ },
+ {
+  "name": "ho_036",
+  "receptor_id": "8OP0",
+  "label": "cognate",
+  "iface_plddt": 69.04159970964704,
+  "receptor_side": 75.49643441905145
+ },
+ {
+  "name": "ho_037",
+  "receptor_id": "8OP0",
+  "label": "decoy",
+  "iface_plddt": 67.84037899148875,
+  "receptor_side": 76.63580939883278
+ },
+ {
+  "name": "ho_038",
+  "receptor_id": "8OP0",
+  "label": "decoy",
+  "iface_plddt": 71.00989287240165,
+  "receptor_side": 76.33021043476306
+ },
+ {
+  "name": "ho_039",
+  "receptor_id": "8OP0",
+  "label": "decoy",
+  "iface_plddt": 67.65934295654297,
+  "receptor_side": 72.54900016784669
+ },
+ {
+  "name": "ho_040",
+  "receptor_id": "8OP0",
+  "label": "scrambled",
+  "iface_plddt": 76.14189585049947,
+  "receptor_side": 80.47476488001206
+ },
+ {
+  "name": "ho_041",
+  "receptor_id": "8OP0",
+  "label": "scrambled",
+  "iface_plddt": 70.04448709732446,
+  "receptor_side": 76.0547200012207
+ },
+ {
+  "name": "ho_042",
+  "receptor_id": "7RUP",
+  "label": "cognate",
+  "iface_plddt": 91.81926701863607,
+  "receptor_side": 96.43943786621094
+ },
+ {
+  "name": "ho_043",
+  "receptor_id": "7RUP",
+  "label": "decoy",
+  "iface_plddt": 83.18105049133301,
+  "receptor_side": 90.24813385009766
+ },
+ {
+  "name": "ho_044",
+  "receptor_id": "7RUP",
+  "label": "decoy",
+  "iface_plddt": 85.82754516601562,
+  "receptor_side": 90.47060038248698
+ },
+ {
+  "name": "ho_045",
+  "receptor_id": "7RUP",
+  "label": "decoy",
+  "iface_plddt": 82.2956661042713,
+  "receptor_side": 90.20692770821708
+ },
+ {
+  "name": "ho_046",
+  "receptor_id": "7RUP",
+  "label": "scrambled",
+  "iface_plddt": 79.1923439502716,
+  "receptor_side": 87.85115774054276
+ },
+ {
+  "name": "ho_047",
+  "receptor_id": "7RUP",
+  "label": "scrambled",
+  "iface_plddt": 82.58407129560199,
+  "receptor_side": 89.12235260009766
+ },
+ {
+  "name": "ho_048",
+  "receptor_id": "8JJV",
+  "label": "cognate",
+  "iface_plddt": 88.97526885241997,
+  "receptor_side": 91.86217907496861
+ },
+ {
+  "name": "ho_049",
+  "receptor_id": "8JJV",
+  "label": "decoy",
+  "iface_plddt": 68.67739012183213,
+  "receptor_side": 81.78887462615967
+ },
+ {
+  "name": "ho_050",
+  "receptor_id": "8JJV",
+  "label": "decoy",
+  "iface_plddt": 66.00985649653843,
+  "receptor_side": 75.56105465359158
+ },
+ {
+  "name": "ho_051",
+  "receptor_id": "8JJV",
+  "label": "decoy",
+  "iface_plddt": 75.18966674804688,
+  "receptor_side": 86.62235031127929
+ },
+ {
+  "name": "ho_052",
+  "receptor_id": "8JJV",
+  "label": "scrambled",
+  "iface_plddt": 70.11545181274414,
+  "receptor_side": 84.3797146025158
+ },
+ {
+  "name": "ho_053",
+  "receptor_id": "8JJV",
+  "label": "scrambled",
+  "iface_plddt": 65.50215198682702,
+  "receptor_side": 77.40499985218048
+ },
+ {
+  "name": "ho_054",
+  "receptor_id": "8PEF",
+  "label": "cognate",
+  "iface_plddt": 80.22666708628337,
+  "receptor_side": 89.12560902471128
+ },
+ {
+  "name": "ho_055",
+  "receptor_id": "8PEF",
+  "label": "decoy",
+  "iface_plddt": 82.65222252739801,
+  "receptor_side": 92.68853877140926
+ },
+ {
+  "name": "ho_056",
+  "receptor_id": "8PEF",
+  "label": "decoy",
+  "iface_plddt": 83.15583938598633,
+  "receptor_side": 90.63936775609066
+ },
+ {
+  "name": "ho_057",
+  "receptor_id": "8PEF",
+  "label": "decoy",
+  "iface_plddt": 83.10644998550416,
+  "receptor_side": 90.80013326009114
+ },
+ {
+  "name": "ho_058",
+  "receptor_id": "8PEF",
+  "label": "scrambled",
+  "iface_plddt": 72.11178588867188,
+  "receptor_side": 85.97731256484985
+ },
+ {
+  "name": "ho_059",
+  "receptor_id": "8PEF",
+  "label": "scrambled",
+  "iface_plddt": 84.15929997762045,
+  "receptor_side": 90.19931552284642
+ },
+ {
+  "name": "ho_060",
+  "receptor_id": "7E0B",
+  "label": "cognate",
+  "iface_plddt": 98.8936812660911,
+  "receptor_side": 98.97319946289062
+ },
+ {
+  "name": "ho_061",
+  "receptor_id": "7E0B",
+  "label": "decoy",
+  "iface_plddt": 92.05507114955357,
+  "receptor_side": 95.21640664559824
+ },
+ {
+  "name": "ho_062",
+  "receptor_id": "7E0B",
+  "label": "decoy",
+  "iface_plddt": 91.32864854142473,
+  "receptor_side": 96.0285415649414
+ },
+ {
+  "name": "ho_063",
+  "receptor_id": "7E0B",
+  "label": "decoy",
+  "iface_plddt": 73.3928337097168,
+  "receptor_side": 91.31806325912476
+ },
+ {
+  "name": "ho_064",
+  "receptor_id": "7E0B",
+  "label": "scrambled",
+  "iface_plddt": 98.42695840199788,
+  "receptor_side": 98.84323568905101
+ },
+ {
+  "name": "ho_065",
+  "receptor_id": "7E0B",
+  "label": "scrambled",
+  "iface_plddt": 86.4648256716521,
+  "receptor_side": 95.18749952316284
+ },
+ {
+  "name": "ho_066",
+  "receptor_id": "7JZQ",
+  "label": "cognate",
+  "iface_plddt": 97.24848203305845,
+  "receptor_side": 98.6613685206363
+ },
+ {
+  "name": "ho_067",
+  "receptor_id": "7JZQ",
+  "label": "decoy",
+  "iface_plddt": 86.07826333296926,
+  "receptor_side": 92.37838510366586
+ },
+ {
+  "name": "ho_068",
+  "receptor_id": "7JZQ",
+  "label": "decoy",
+  "iface_plddt": 88.47533247205946,
+  "receptor_side": 94.2312494913737
+ },
+ {
+  "name": "ho_069",
+  "receptor_id": "7JZQ",
+  "label": "decoy",
+  "iface_plddt": 93.64843797683716,
+  "receptor_side": 95.99550039117986
+ },
+ {
+  "name": "ho_070",
+  "receptor_id": "7JZQ",
+  "label": "scrambled",
+  "iface_plddt": 95.42249952043805,
+  "receptor_side": 97.33819961547852
+ },
+ {
+  "name": "ho_071",
+  "receptor_id": "7JZQ",
+  "label": "scrambled",
+  "iface_plddt": 94.23999944226495,
+  "receptor_side": 96.87339935302734
+ },
+ {
+  "name": "ho_072",
+  "receptor_id": "7F3S",
+  "label": "cognate",
+  "iface_plddt": 74.09809339046478,
+  "receptor_side": 83.6003148932206
+ },
+ {
+  "name": "ho_073",
+  "receptor_id": "7F3S",
+  "label": "decoy",
+  "iface_plddt": 71.56402882167271,
+  "receptor_side": 82.66384245219983
+ },
+ {
+  "name": "ho_074",
+  "receptor_id": "7F3S",
+  "label": "decoy",
+  "iface_plddt": 79.50126912043645,
+  "receptor_side": 87.29922231038411
+ },
+ {
+  "name": "ho_075",
+  "receptor_id": "7F3S",
+  "label": "decoy",
+  "iface_plddt": 85.47791719436646,
+  "receptor_side": 91.34340006510416
+ },
+ {
+  "name": "ho_076",
+  "receptor_id": "7F3S",
+  "label": "scrambled",
+  "iface_plddt": 72.12189698830629,
+  "receptor_side": 83.66720771789551
+ },
+ {
+  "name": "ho_077",
+  "receptor_id": "7F3S",
+  "label": "scrambled",
+  "iface_plddt": 80.35426510081572,
+  "receptor_side": 86.87276240757534
+ },
+ {
+  "name": "ho_078",
+  "receptor_id": "9C66",
+  "label": "cognate",
+  "iface_plddt": 92.23087549209595,
+  "receptor_side": 95.28563690185547
+ },
+ {
+  "name": "ho_079",
+  "receptor_id": "9C66",
+  "label": "decoy",
+  "iface_plddt": 92.24321365356445,
+  "receptor_side": 95.34105512830946
+ },
+ {
+  "name": "ho_080",
+  "receptor_id": "9C66",
+  "label": "decoy",
+  "iface_plddt": 92.73299991383271,
+  "receptor_side": 96.5214545510032
+ },
+ {
+  "name": "ho_081",
+  "receptor_id": "9C66",
+  "label": "decoy",
+  "iface_plddt": 74.36948776245117,
+  "receptor_side": 88.31496136005109
+ },
+ {
+  "name": "ho_082",
+  "receptor_id": "9C66",
+  "label": "scrambled",
+  "iface_plddt": 85.25747846520466,
+  "receptor_side": 93.84535707746234
+ },
+ {
+  "name": "ho_083",
+  "receptor_id": "9C66",
+  "label": "scrambled",
+  "iface_plddt": 82.44827235828747,
+  "receptor_side": 90.71556186676025
+ },
+ {
+  "name": "ho_084",
+  "receptor_id": "8VGC",
+  "label": "cognate",
+  "iface_plddt": 84.92392290555514,
+  "receptor_side": 86.31762456893921
+ },
+ {
+  "name": "ho_085",
+  "receptor_id": "8VGC",
+  "label": "decoy",
+  "iface_plddt": 82.9662217034234,
+  "receptor_side": 88.25745461203836
+ },
+ {
+  "name": "ho_086",
+  "receptor_id": "8VGC",
+  "label": "decoy",
+  "iface_plddt": 84.18833273428457,
+  "receptor_side": 90.98737335205078
+ },
+ {
+  "name": "ho_087",
+  "receptor_id": "8VGC",
+  "label": "decoy",
+  "iface_plddt": 73.05379918416341,
+  "receptor_side": 78.55289878845215
+ },
+ {
+  "name": "ho_088",
+  "receptor_id": "8VGC",
+  "label": "scrambled",
+  "iface_plddt": 82.93386355313388,
+  "receptor_side": 87.86691602071126
+ },
+ {
+  "name": "ho_089",
+  "receptor_id": "8VGC",
+  "label": "scrambled",
+  "iface_plddt": 78.00472675670277,
+  "receptor_side": 82.40141614278157
+ },
+ {
+  "name": "ho_090",
+  "receptor_id": "7UHE",
+  "label": "cognate",
+  "iface_plddt": 87.63341585795085,
+  "receptor_side": 90.46362431844075
+ },
+ {
+  "name": "ho_091",
+  "receptor_id": "7UHE",
+  "label": "decoy",
+  "iface_plddt": 68.1302502155304,
+  "receptor_side": 81.52000003390842
+ },
+ {
+  "name": "ho_092",
+  "receptor_id": "7UHE",
+  "label": "decoy",
+  "iface_plddt": 83.21103431438577,
+  "receptor_side": 88.96657923648232
+ },
+ {
+  "name": "ho_093",
+  "receptor_id": "7UHE",
+  "label": "decoy",
+  "iface_plddt": 80.59903109073639,
+  "receptor_side": 84.03360864390497
+ },
+ {
+  "name": "ho_094",
+  "receptor_id": "7UHE",
+  "label": "scrambled",
+  "iface_plddt": 79.59055934232823,
+  "receptor_side": 85.36212571461995
+ },
+ {
+  "name": "ho_095",
+  "receptor_id": "7UHE",
+  "label": "scrambled",
+  "iface_plddt": 80.56140934337269,
+  "receptor_side": 87.25433349609375
+ },
+ {
+  "name": "ho_096",
+  "receptor_id": "7PVX",
+  "label": "cognate",
+  "iface_plddt": 97.12371499197823,
+  "receptor_side": 96.7662230597602
+ },
+ {
+  "name": "ho_097",
+  "receptor_id": "7PVX",
+  "label": "decoy",
+  "iface_plddt": 83.95246658325195,
+  "receptor_side": 87.8933531817268
+ },
+ {
+  "name": "ho_098",
+  "receptor_id": "7PVX",
+  "label": "decoy",
+  "iface_plddt": 80.74015848260177,
+  "receptor_side": 87.75509158047763
+ },
+ {
+  "name": "ho_099",
+  "receptor_id": "7PVX",
+  "label": "decoy",
+  "iface_plddt": 74.85918760299683,
+  "receptor_side": 84.68122185601129
+ },
+ {
+  "name": "ho_100",
+  "receptor_id": "7PVX",
+  "label": "scrambled",
+  "iface_plddt": 93.41533374786377,
+  "receptor_side": 95.62857219151088
+ },
+ {
+  "name": "ho_101",
+  "receptor_id": "7PVX",
+  "label": "scrambled",
+  "iface_plddt": 94.78522699529475,
+  "receptor_side": 95.22528566632953
+ },
+ {
+  "name": "ho_102",
+  "receptor_id": "7TZK",
+  "label": "cognate",
+  "iface_plddt": 90.99836314808239,
+  "receptor_side": 92.83016649881999
+ },
+ {
+  "name": "ho_103",
+  "receptor_id": "7TZK",
+  "label": "decoy",
+  "iface_plddt": 85.97600016874425,
+  "receptor_side": 92.37399991353352
+ },
+ {
+  "name": "ho_104",
+  "receptor_id": "7TZK",
+  "label": "decoy",
+  "iface_plddt": 72.59161747203154,
+  "receptor_side": 86.25352598491467
+ },
+ {
+  "name": "ho_105",
+  "receptor_id": "7TZK",
+  "label": "decoy",
+  "iface_plddt": 87.18742888314384,
+  "receptor_side": 92.17350053787231
+ },
+ {
+  "name": "ho_106",
+  "receptor_id": "7TZK",
+  "label": "scrambled",
+  "iface_plddt": 86.00226915799655,
+  "receptor_side": 90.42039998372395
+ },
+ {
+  "name": "ho_107",
+  "receptor_id": "7TZK",
+  "label": "scrambled",
+  "iface_plddt": 85.21541595458984,
+  "receptor_side": 88.7978744506836
+ },
+ {
+  "name": "ho_108",
+  "receptor_id": "8YTG",
+  "label": "cognate",
+  "iface_plddt": 84.65950043996175,
+  "receptor_side": 89.92875003814697
+ },
+ {
+  "name": "ho_109",
+  "receptor_id": "8YTG",
+  "label": "decoy",
+  "iface_plddt": 80.05048251974172,
+  "receptor_side": 88.3140998840332
+ },
+ {
+  "name": "ho_110",
+  "receptor_id": "8YTG",
+  "label": "decoy",
+  "iface_plddt": 83.69078135490417,
+  "receptor_side": 86.4299545288086
+ },
+ {
+  "name": "ho_111",
+  "receptor_id": "8YTG",
+  "label": "decoy",
+  "iface_plddt": 70.73124440511067,
+  "receptor_side": 80.59755551373517
+ },
+ {
+  "name": "ho_112",
+  "receptor_id": "8YTG",
+  "label": "scrambled",
+  "iface_plddt": 88.4113670349121,
+  "receptor_side": 91.80250029130416
+ },
+ {
+  "name": "ho_113",
+  "receptor_id": "8YTG",
+  "label": "scrambled",
+  "iface_plddt": 84.03426666259766,
+  "receptor_side": 88.06539993286133
+ },
+ {
+  "name": "ho_114",
+  "receptor_id": "8TFU",
+  "label": "cognate",
+  "iface_plddt": 85.9241874217987,
+  "receptor_side": 92.4186004638672
+ },
+ {
+  "name": "ho_115",
+  "receptor_id": "8TFU",
+  "label": "decoy",
+  "iface_plddt": 78.45548796042418,
+  "receptor_side": 84.06979195276897
+ },
+ {
+  "name": "ho_116",
+  "receptor_id": "8TFU",
+  "label": "decoy",
+  "iface_plddt": 74.73216650221083,
+  "receptor_side": 81.43610000610352
+ },
+ {
+  "name": "ho_117",
+  "receptor_id": "8TFU",
+  "label": "decoy",
+  "iface_plddt": 69.35288102286202,
+  "receptor_side": 80.47385180438006
+ },
+ {
+  "name": "ho_118",
+  "receptor_id": "8TFU",
+  "label": "scrambled",
+  "iface_plddt": 83.27000045776367,
+  "receptor_side": 89.42681815407492
+ },
+ {
+  "name": "ho_119",
+  "receptor_id": "8TFU",
+  "label": "scrambled",
+  "iface_plddt": 79.652764488669,
+  "receptor_side": 88.41181807084517
+ },
+ {
+  "name": "ho_120",
+  "receptor_id": "7XV0",
+  "label": "cognate",
+  "iface_plddt": 85.76794754831414,
+  "receptor_side": 91.48391723632812
+ },
+ {
+  "name": "ho_121",
+  "receptor_id": "7XV0",
+  "label": "decoy",
+  "iface_plddt": 74.44413134926243,
+  "receptor_side": 84.88856506347656
+ },
+ {
+  "name": "ho_122",
+  "receptor_id": "7XV0",
+  "label": "decoy",
+  "iface_plddt": 78.91228485107422,
+  "receptor_side": 85.22252554642527
+ },
+ {
+  "name": "ho_123",
+  "receptor_id": "7XV0",
+  "label": "decoy",
+  "iface_plddt": 72.40155893213608,
+  "receptor_side": 86.45119094848633
+ },
+ {
+  "name": "ho_124",
+  "receptor_id": "7XV0",
+  "label": "scrambled",
+  "iface_plddt": 79.02038181529326,
+  "receptor_side": 88.79095204671223
+ },
+ {
+  "name": "ho_125",
+  "receptor_id": "7XV0",
+  "label": "scrambled",
+  "iface_plddt": 77.46211482456752,
+  "receptor_side": 85.90765056610107
+ },
+ {
+  "name": "ho_126",
+  "receptor_id": "8X8A",
+  "label": "cognate",
+  "iface_plddt": 94.06335694449288,
+  "receptor_side": 97.10923497817096
+ },
+ {
+  "name": "ho_127",
+  "receptor_id": "8X8A",
+  "label": "decoy",
+  "iface_plddt": 87.54716714223225,
+  "receptor_side": 93.68293809890747
+ },
+ {
+  "name": "ho_128",
+  "receptor_id": "8X8A",
+  "label": "decoy",
+  "iface_plddt": 97.09847823433255,
+  "receptor_side": 98.37012434005737
+ },
+ {
+  "name": "ho_129",
+  "receptor_id": "8X8A",
+  "label": "decoy",
+  "iface_plddt": 85.74350063617413,
+  "receptor_side": 90.72653452555339
+ },
+ {
+  "name": "ho_130",
+  "receptor_id": "8X8A",
+  "label": "scrambled",
+  "iface_plddt": 76.17328934920461,
+  "receptor_side": 88.3536085045856
+ },
+ {
+  "name": "ho_131",
+  "receptor_id": "8X8A",
+  "label": "scrambled",
+  "iface_plddt": 79.31131573727257,
+  "receptor_side": 89.81704313858695
+ }
+]

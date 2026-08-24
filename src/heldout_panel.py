@@ -265,6 +265,10 @@ def main():
                          "compare the *pose* across draws rather than the "
                          "score: a real binder should land in the same place "
                          "each time and a non-binder should scatter.")
+    ap.add_argument("--extra", default=None,
+                    help="JSON from discover_pdb_binders.py --released-after, "
+                         "appended to the built-in post-cutoff panel. Every id is "
+                         "still checked against the cutoff before folding.")
     ap.add_argument("--run-tag", default="",
                     help="suffix for the score store, so a repeat run is a new "
                          "independent draw rather than a no-op resume. Folds "
@@ -281,6 +285,14 @@ def main():
     args = ap.parse_args()
 
     ids = ALREADY + NEW
+    if args.extra:
+        raw = json.loads(Path(args.extra).read_text())
+        items = raw if isinstance(raw, list) else next(iter(raw.values()))
+        found = [e["pdb_id"] if isinstance(e, dict) else e for e in items]
+        added = [i for i in found if i not in ids]
+        ids = ids + added
+        print(f"  {len(added)} receptors added from {args.extra}; "
+              f"panel is now {len(ids)}")
     work = Path(args.work); work.mkdir(parents=True, exist_ok=True)
     dates = verify_post_cutoff(ids)
     print(f"{len(ids)} receptors, all released after {CUTOFF} "
