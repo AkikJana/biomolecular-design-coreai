@@ -37,9 +37,11 @@ our original panel was a favourable draw. Under Chai-1, an independent model
 family scored with the same readout code, a cognate beats its own permutation on
 20 of 21 receptors, and the ranking test transfers almost exactly (top-1 76%
 against 77%): order sensitivity is a property of cofolding confidence, not of one
-model. Finally we bound the control itself — on 60–120 residue designed
-proteins it carries no information at either sampling budget, because permuting a
-folded protein destroys binders and non-binders alike. Use it where a permutation
+model. Finally we bound the control itself on 720 designed proteins whose binding
+was measured: the permutation correction adds nothing (ΔAUC −0.023, 95% CI
+[−0.065, +0.006]), and not because it is inert — its margin separates binders from
+non-binders at p = 4 × 10⁻¹² but correlates with the raw score at r = 0.81, so the
+correction is redundant rather than constant. Use the control where a permutation
 of the candidate remains a candidate.
 
 **Keywords:** protein structure prediction, cofolding, confidence metrics,
@@ -474,14 +476,54 @@ the control informative.
 
 Two details are worth stating rather than smoothing. At converged settings the
 non-binder margin is marginally the *larger* of the two, so the point estimate
-changes sign relative to the reduced-settings run — nowhere near significance,
-but it reinforces the reading that the subtraction is a constant rather than a
-weak signal. And the raw readout itself performs worse on this panel at converged
+changes sign relative to the reduced-settings run — nowhere near significance at
+this size. And the raw readout itself performs worse on this panel at converged
 settings (within-target AUC 0.543 against 0.672), which widens the interval
 considerably; the interval, not the point estimate, is the result.
 
-The mechanism is the one predicted. A permutation of a fifteen-residue peptide is
-still a fifteen-residue peptide, plausibly able to occupy the same groove, so the
+#### At 720 designs the conclusion holds and the explanation does not
+
+Forty-eight designs leave an interval wide enough to accommodate almost any
+claim. We therefore folded every design on every target whose construct fits a
+24 GB card — **720 designs across 8 targets, 234 of them measured binders**,
+2,160 folds at converged settings.
+
+**Table 12. The boundary test at 720 designs.**
+
+| | n | design | its permutations | margin |
+| :--- | ---: | ---: | ---: | ---: |
+| measured binders | 234 | 83.75 | 60.08 | **+23.67** |
+| measured non-binders | 486 | 79.84 | 61.61 | **+18.23** |
+
+**The primary result stands and tightens by a factor of five.** Raw interface
+pLDDT reaches within-target AUC 0.599, the permutation-corrected margin 0.576:
+ΔAUC = **−0.023, 95% CI [−0.065, +0.006]**, against [−0.330, +0.071] at 48
+designs. The control adds nothing, and that is now a bound rather than an absence
+of evidence.
+
+**The mechanism we gave for it is wrong.** Both the earlier version of this
+section and §2.7's opening prediction say the permutations are *equally ruined*
+for binders and non-binders, so the subtraction is close to a constant. At 720
+designs that is false. The margins differ by 5.4 points at p = 4 × 10⁻¹², and the
+permutation scores themselves differ (p = 0.010). The subtraction is not a
+constant; it carries real signal about binding.
+
+It carries no *additional* signal, which is a different thing. The margin
+correlates with the raw score at **r = 0.813**, and a model given both scores
+0.596 against 0.599 for the raw score alone — the correction is redundant, not
+inert. A permutation of a designed protein does not fold, but how far its score
+falls still tracks how good the original was, so subtracting it removes roughly
+as much signal as it adds.
+
+That distinction matters for when to use the control. Against a *constant*
+offset, the subtraction would be harmless and one might apply it anywhere. Against
+a *redundant* one it is a coin flip that costs two extra folds per candidate, and
+the raw readout is the better choice on any candidate class where a permutation
+is not itself a plausible candidate.
+
+The mechanism is partly the one predicted — §2.7.1 shows the "equally ruined"
+half of it does not survive a larger sample. A permutation of a fifteen-residue
+peptide is still a fifteen-residue peptide, plausibly able to occupy the same groove, so the
 comparison isolates order from composition. A permutation of a hundred-residue
 designed protein is not a protein: it does not fold, so its low score reflects the
 destruction of tertiary structure rather than the loss of a binding-competent
@@ -497,7 +539,7 @@ post-translational modification (43), receptor redundancy (20), or a peptide too
 close to one already accepted (20). The combined 59 receptors were folded together
 in one run at converged settings, so nothing is merged across hardware or dates.
 
-**Table 12. The permutation control at 22 and 59 receptors, folded identically.**
+**Table 13. The permutation control at 22 and 59 receptors, folded identically.**
 
 | readout | n = 22 | n = 59 | *d* at 22 | *d* at 59 | receptors where cognate wins |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -532,7 +574,7 @@ permutations — under Chai-1 [14], and scored the output with the identical
 interface-pLDDT implementation used throughout this paper. The readout code is
 shared, so the model is the only thing that varies.
 
-**Table 13. The permutation control under two independent models.**
+**Table 14. The permutation control under two independent models.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -555,7 +597,7 @@ What replicates is the direction and the significance, not the magnitude.
 against its own decoys is the question a screen actually asks, and on it the two
 models are indistinguishable:
 
-**Table 14. Ranking a cognate against its own decoys, under two model families.**
+**Table 15. Ranking a cognate against its own decoys, under two model families.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -656,9 +698,11 @@ of §2.6 is complete for interface pLDDT on the in-training panel at one draw pe
 cell; the interactions it reports are of the same order as §2.4's run-to-run
 spread, so the sign of the sampling-alignment synergy is better supported than its
 magnitude. The boundary
-test covers 48 designs across four targets, and has now been run at both reduced
-and converged settings with the same answer, which retires the sampling-budget
-caveat that stood in an earlier version of this work. The second-model arm of §2.9
+test now covers 720 designs across 8 targets at converged settings, and agrees
+with the 48-design version at both sampling budgets. Those 8 are the targets whose
+construct fits a 24 GB card: Cas9 (1,368 residues), EGFR and Nipah-G were excluded
+for size, not for anything biological, as were the four oligomeric targets without
+a single-chain construct. The second-model arm of §2.9
 covers 21 receptors and now carries both the permutation control and the ranking
 test, but a single model beyond Boltz: whether a third family behaves like either
 is untested. Chai-1's interface pLDDT is calibrated differently enough that only

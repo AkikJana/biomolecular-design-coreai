@@ -52,3 +52,38 @@ Those two tests ask different questions — a candidate against its competitors,
 versus a candidate against itself — and the second is the more model-dependent.
 
 One fold of 132 is missing: a transient ColabFold error on `pair_000`.
+
+## The boundary test at 720 designs — the conclusion holds, the explanation does not
+
+Every design on every target whose construct fits a 24 GB card: 720 designs, 8
+targets, 234 measured binders, 2,160 folds at converged settings. Cas9 (1,368
+residues), EGFR and Nipah-G were excluded for size, not biology, as were the four
+oligomeric targets with no single-chain construct.
+
+                  n     design   scrambles    margin
+  binders       234      83.75       60.08    +23.67
+  non-binders   486      79.84       61.61    +18.23
+
+**The primary result stands and tightens fivefold.** Raw interface pLDDT reaches
+within-target AUC 0.599, the corrected margin 0.576: dAUC -0.023, 95% CI
+[-0.065, +0.006], against [-0.330, +0.071] at 48 designs. The control adds
+nothing, and that is now a bound rather than an absence of evidence.
+
+**The mechanism in the paper was wrong.** Both the pre-registered prediction and
+Section 2.7 said the permutations are *equally ruined* for binders and
+non-binders, so the subtraction is close to a constant. At 720 designs that is
+false: the margins differ by 5.4 points at p = 4e-12, and the permutation scores
+themselves differ at p = 0.010.
+
+The subtraction carries real signal. It carries no *additional* signal, which is
+a different claim: margin correlates with raw at r = 0.813, and a model given
+both scores 0.596 against 0.599 for raw alone. A permutation of a designed
+protein does not fold, but how far its score falls still tracks how good the
+original was.
+
+That distinction changes when to use the control. Against a constant offset the
+subtraction is harmless. Against a redundant one it is a coin flip costing two
+extra folds per candidate.
+
+Recovered after the pod was stopped mid-transfer; /workspace persisted and the
+file was intact.
