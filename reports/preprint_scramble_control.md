@@ -280,8 +280,18 @@ own fragment count on the identical molecule returns one. **The fragment counts
 in Table 4 are the trustworthy quantity**; we report no other PoseBusters
 column. Every
 contact-derived row of Table 3 should be read as describing point clouds rather
-than complexes. The ipTM and interface-pLDDT rows are unaffected, both being read
-from the confidence head rather than from coordinates.
+than complexes. **ipTM** is unaffected: it is a single scalar from the confidence
+head with no coordinate dependence at all. **Interface pLDDT** is only partly
+insulated, and we had previously described it as fully insulated. Its values come
+from the head, but the residues it averages over are chosen by a distance cutoff
+on the same coordinates PoseBusters faults — so it inherits their instability at
+one remove. Across the 528 identical re-runs of §2.4, the receptor-side interface
+averages 18.5 residues with a run-to-run SD of 6.35, a third of its own size:
+the quantity is a head average taken over a membership that reshuffles between
+folds. This does not affect the direction of any result reported here — interface
+pLDDT remains the readout with the largest effect-to-noise ratio in Table 5 — but
+it is the reason its run-to-run spread is hardware-sensitive where ipTM's is not
+(below).
 
 ### 2.4 Single folds do not reproduce their own ranking
 
@@ -308,6 +318,23 @@ We emphasise the practical consequence, because it applied to our own work: two
 conclusions we had drawn from single-draw comparisons did not survive replication
 and were retracted. A benchmark that folds each candidate once is reporting a
 sample of size one from a distribution wide enough to reverse its ordering.
+
+**The spread in Table 5 was measured on four receptors, and we have since widened
+it.** Repeating the design on all 22 receptors — 528 folds — moves the pooled SD
+by 4% for interface pLDDT (2.479 → 2.376) and 2% for ipTM (0.0636 → 0.0646). The four receptors
+were chosen to span the outcome range, and selecting extremes first is a
+mechanism for inflating a spread, so this was worth checking; it did not happen.
+
+The same experiment surfaced something we did not anticipate. Table 5's folds ran
+on CPU; the widened run ran on CUDA. On *the same four receptors*, ipTM's spread
+reproduces to within 1.3% across that change, while interface pLDDT's is 29% larger
+(1.917 → 2.479). The asymmetry follows from §2.3: ipTM is a coordinate-free
+scalar, whereas interface pLDDT averages head values over a coordinate-selected
+residue set, and inherits whatever the backend does to the geometry. Table 5
+therefore retains the CPU-measured SD, because the effect it divides is also
+CPU-measured and the two must describe the same regime. The practical reading is
+that a run-to-run spread is a property of a metric *and a backend*, not of the
+metric alone, and should be re-measured rather than carried across hardware.
 
 ### 2.5 A training-cutoff split removes between a third and two thirds of the effect
 
@@ -815,7 +842,11 @@ covers 21 receptors and now carries the permutation control, the ranking test an
 a held-out split, but a single model beyond Boltz: whether a third family behaves
 like either is untested. The retention comparison in Table 15 divides two effect
 sizes each estimated from about twenty receptors, and its interval spans zero; the
-held-out effect sizes are the supported claim, not the ratio. Chai-1's interface pLDDT is calibrated differently enough that only
+held-out effect sizes are the supported claim, not the ratio. The run-to-run
+spread in Table 5 is CPU-measured, and §2.4 shows interface pLDDT's spread is 29%
+larger on CUDA while ipTM's is unchanged; the effect-to-noise ratios therefore
+describe our CPU regime, and we have not measured whether the widened CPU spread
+matches the four-receptor one. Chai-1's interface pLDDT is calibrated differently enough that only
 standardised effects compare across the two. The external comparison in §2.1 differs from our internal panels in panel,
 positives and readout simultaneously, so it supports an ordering rather than a
 numerical correction. Interface pLDDT is read from the same confidence head as

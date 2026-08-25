@@ -960,8 +960,15 @@ in the table above — inter-chain contacts, contact density, buried surface are
 pDockQ — is computed from CB–CB distances on a backbone that is not connected,
 and should be read as describing point clouds rather than complexes. Replacing
 pDockQ's contact term with a PAE-derived one (pDockQ2) repairs it on the same
-structures, from p = 0.797 to p = 0.00026. The ipTM and interface-pLDDT rows are
-unaffected: both come from the confidence head rather than the coordinates.
+structures, from p = 0.797 to p = 0.00026. ipTM is unaffected: it is a single
+scalar from the confidence head with no coordinate dependence. Interface pLDDT is
+only partly insulated. Its values come from the head, but the residues it
+averages over are selected by a distance cutoff on the same coordinates, so it
+inherits their instability at one remove — across 528 identical re-runs the
+receptor-side interface averages 18.5 residues with a run-to-run SD of 6.35, a
+third of its own size. No result in this dissertation changes direction as a
+consequence; interface pLDDT still carries the largest effect-to-noise ratio of
+the readouts tested.
 
 **The result survives the reproducibility test that demoted ipTM.** The 96
 replicate folds of Section 7.5 were re-scored the same way to obtain a
