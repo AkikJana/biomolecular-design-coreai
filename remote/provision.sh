@@ -71,8 +71,16 @@ else
     NO_KERNELS=1
 fi
 
-echo "== caches on the big volume =="
-VOL="${VOL:-$REPO/.cache}"
+# The venv goes on local disk for speed; so must the caches, and for a sharper
+# reason. Boltz2's CCD store is mols.tar unpacked into 45,228 one-molecule files,
+# and every fold reads from it. RunPod's /workspace is MooseFS over FUSE, which
+# is fine for streaming (385 MB/s here) and ruinous for small files (24 ms each,
+# against 0.045 ms on the overlay -- 543x). Unpacking there took 35 minutes and
+# left every subsequent fold reading components across the network; unpacking on
+# local disk takes 2.8 seconds. This defaulted to $REPO/.cache, which is on the
+# network volume, and the first widened replicate run stalled on it.
+echo "== caches on local disk =="
+VOL="${VOL:-/root/.cache-boltz}"
 mkdir -p "$VOL"/{torch,hf,boltz}
 {
   echo "PY=$PY"
