@@ -61,6 +61,11 @@ def main():
     ap.add_argument("--msa-dir", default=str(REPO_ROOT / "artifacts" /
                                              "pdb_binders_b2_n22" / "msa_cache"))
     ap.add_argument("--work-dir", default=str(REPO_ROOT / "artifacts" / "seed_variance"))
+    # The summary path used to be hardcoded, so a second run with a different
+    # --receptors set wrote its SD over the 4-receptor one it was meant to be
+    # compared against. Default is unchanged; widened runs pass their own.
+    ap.add_argument("--summary", default=str(REPO_ROOT / "artifacts" /
+                                             "seed_variance_summary.json"))
     ap.add_argument("--model", default="boltz2")
     ap.add_argument("--sampling-steps", type=int, default=10)
     ap.add_argument("--recycling-steps", type=int, default=1)
@@ -176,11 +181,13 @@ def report(records, sel):
             flips = "STABLE" if len(set(seq)) == 1 else f"FLIPS {min(seq)}-{max(seq)}"
             print(f"    {rid}: ranks {seq}   {flips}")
 
-    out = REPO_ROOT / "artifacts" / "seed_variance_summary.json"
+    out = Path(args.summary)
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
         "pooled_sd": float(pooled), "median_sd": float(np.median(sds)),
         "median_range": float(np.median(ranges)),
         "n_complexes": int(len(sds)), "n_replicates": len(reps),
+        "receptors": sorted(args.receptors), "n_receptors": len(args.receptors),
         "per_complex": {n: {"mean": float(np.nanmean(v)),
                             "sd": float(np.nanstd(v, ddof=1))}
                         for n, v in by_name.items() if len(v) > 1},
