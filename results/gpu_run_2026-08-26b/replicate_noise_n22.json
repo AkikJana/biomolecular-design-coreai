@@ -1,0 +1,84 @@
+{
+  "work_dir": "artifacts/seed_variance_n22",
+  "per_metric": {
+    "iptm": {
+      "pooled_sd": 0.06460617616110234,
+      "n_complexes": 132,
+      "section_7_5": 0.0628,
+      "ratio_to_7_5": 1.0287607668965342
+    },
+    "iface_plddt": {
+      "pooled_sd": 2.376230666766405,
+      "n_complexes": 132,
+      "section_7_5": 1.9172,
+      "ratio_to_7_5": 1.239427637578972
+    },
+    "n_pep_iface": {
+      "pooled_sd": 1.5447859516333116,
+      "n_complexes": 132
+    },
+    "n_rec_iface": {
+      "pooled_sd": 6.35457959413381,
+      "n_complexes": 132
+    },
+    "peptide_side": {
+      "pooled_sd": 2.905217794012171,
+      "n_complexes": 132
+    },
+    "peptide_whole": {
+      "pooled_sd": 2.938683912723388,
+      "n_complexes": 132
+    },
+    "receptor_side": {
+      "pooled_sd": 2.3106731412214323,
+      "n_complexes": 132
+    },
+    "pdockq": {
+      "pooled_sd": null,
+      "n_complexes": 0,
+      "section_7_5": 0.1498,
+      "note": "not returned by sides(); left at its published value"
+    }
+  },
+  "n_receptors": 22,
+  "section_7_5_receptor_subset": {
+    "receptors": [
+      "1YCR",
+      "9F6S",
+      "8KDX",
+      "6YOO"
+    ],
+    "per_metric": {
+      "iptm": {
+        "pooled_sd": 0.06363184812885803,
+        "n_complexes": 24
+      },
+      "iface_plddt": {
+        "pooled_sd": 2.4786868598862344,
+        "n_complexes": 24
+      },
+      "n_pep_iface": {
+        "pooled_sd": 1.5844294451526286,
+        "n_complexes": 24
+      },
+      "n_rec_iface": {
+        "pooled_sd": 6.286007388548703,
+        "n_complexes": 24
+      },
+      "peptide_side": {
+        "pooled_sd": 3.074678672444133,
+        "n_complexes": 24
+      },
+      "peptide_whole": {
+        "pooled_sd": 3.0785708031735886,
+        "n_complexes": 24
+      },
+      "receptor_side": {
+        "pooled_sd": 2.5419214629940705,
+        "n_complexes": 24
+      }
+    }
+  },
+  "n_structures": 528,
+  "n_replicates_seen": 4
+}

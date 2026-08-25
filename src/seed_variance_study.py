@@ -125,10 +125,10 @@ def main():
             print(f"  rep {rep} batch {start // args.batch_size}: "
                   f"{len(chunk)} in {el:.0f}s", flush=True)
 
-    report(records, sel)
+    report(records, sel, Path(args.summary), sorted(args.receptors))
 
 
-def report(records, sel):
+def report(records, sel, summary_path, receptors):
     print("\n" + "=" * 72)
     print("Run-to-run spread of ipTM (identical inputs, unseeded sampling)")
     print("=" * 72)
@@ -181,13 +181,13 @@ def report(records, sel):
             flips = "STABLE" if len(set(seq)) == 1 else f"FLIPS {min(seq)}-{max(seq)}"
             print(f"    {rid}: ranks {seq}   {flips}")
 
-    out = Path(args.summary)
+    out = summary_path
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
         "pooled_sd": float(pooled), "median_sd": float(np.median(sds)),
         "median_range": float(np.median(ranges)),
         "n_complexes": int(len(sds)), "n_replicates": len(reps),
-        "receptors": sorted(args.receptors), "n_receptors": len(args.receptors),
+        "receptors": receptors, "n_receptors": len(receptors),
         "per_complex": {n: {"mean": float(np.nanmean(v)),
                             "sd": float(np.nanstd(v, ddof=1))}
                         for n, v in by_name.items() if len(v) > 1},
