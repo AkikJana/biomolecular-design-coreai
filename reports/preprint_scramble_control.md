@@ -805,8 +805,8 @@ cell; the interactions it reports are of the same order as §2.4's run-to-run
 spread, so the sign of the sampling-alignment synergy is better supported than its
 magnitude. The boundary
 test now covers 900 designs across 10 targets at converged settings, and agrees
-with the 48-design version at both sampling budgets. Those 8 are the targets whose
-we could fold. Only **Cas9** is excluded on size — its 1,463-residue complex
+with the 48-design version at both sampling budgets. Those 10 are every target in
+the release we could fold as a single chain. Only **Cas9** is excluded on size — its 1,463-residue complex
 exhausts a 24 GB card, which we measured rather than assumed. An earlier version
 of this work also excluded EGFR and Nipah-G on a construct-length threshold; both
 fold without difficulty and are included here. The remaining four targets are
