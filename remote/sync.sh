@@ -21,11 +21,15 @@ LOCAL="$(cd "$(dirname "$0")/.." && pwd)"
 
 case "${1:-}" in
   up)
-    echo "pushing code to $GPU_HOST:$REMOTE_DIR"
+    # boltz/ used to be excluded here to save 6 MB. provision.sh then had
+    # nothing to install and fell back to `pip install boltz`, which is a
+    # different codebase -- 46 of 106 shared files differ. That saved transfer
+    # cost the attribution of a published number (preprint 2.4). It ships now.
+    echo "pushing code to $GPU_HOST:$REMOTE_DIR (including the boltz fork, ~6 MB)"
     rsync -rlptz --stats -e "$SSH" \
       --exclude '.git' --exclude '.venv*' --exclude 'artifacts' \
       --exclude '*.pdf' --exclude '*.docx' --exclude '*.pptx' \
-      --exclude 'boltz/' --exclude '.pb_work' --exclude 'hf_dataset' \
+      --exclude '.pb_work' --exclude 'hf_dataset' \
       --exclude 'compiled_surrogate*' --exclude '.worktrees' --exclude '.agents' \
       --exclude 'boltz_results_*' --exclude '.venv-gpu' --exclude '.cache' \
       "$LOCAL/" "$GPU_HOST:$REMOTE_DIR/"

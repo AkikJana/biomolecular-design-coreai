@@ -46,7 +46,41 @@ fi
 TORCH_BEFORE=$($PY -c "import torch; print(torch.__version__)")
 echo "  torch before installs: $TORCH_BEFORE"
 
-$PY -m pip install -q boltz gemmi biopython scipy scikit-learn pandas pyyaml numpy
+# The model comes from the source tree, never from PyPI.
+#
+# This line used to read `pip install boltz`, which fetches 2.0.3 from the index.
+# The fork in ./boltz is not published there, and its version string (2.2.1) is
+# higher than anything that is, so nothing about the substitution looked wrong.
+# The two differ in 46 of 106 shared source files, including main.py,
+# model/models/boltz2.py, model/loss/diffusionv2.py and
+# model/layers/confidence_utils.py.
+#
+# The cost was not hypothetical: the widened replicate study ran against 2.0.3
+# while every earlier fold used the fork, interface pLDDT's run-to-run SD came
+# out 29% apart between them, and because the hardware changed at the same time
+# the difference cannot be attributed to either. Section 2.4 of the preprint
+# records it as unattributed because of this line.
+#
+# --no-deps so the fork's own pins cannot move the torch chosen above.
+if [ ! -f boltz/pyproject.toml ]; then
+    echo "no boltz/ in $REPO -- run remote/sync.sh up from your machine first" >&2
+    exit 1
+fi
+$PY -m pip install -q --no-deps -e ./boltz
+$PY -m pip install -q gemmi biopython scipy scikit-learn pandas pyyaml numpy
+
+# Fail here rather than after 500 folds if the wrong boltz is importable.
+$PY - <<'PYCHECK'
+import importlib.util as u
+import pathlib
+import sys
+src = pathlib.Path(u.find_spec("boltz").origin).resolve()
+if "boltz/src/boltz" not in str(src):
+    sys.exit(f"  boltz resolves to {src}, not the vendored fork")
+if not u.find_spec("boltz.model.layers.low_rank_pair_representation"):
+    sys.exit("  fork-specific layers missing -- this is upstream, not the fork")
+print(f"  boltz -> {src}")
+PYCHECK
 
 # Boltz's fused triangle-attention kernels import cuequivariance_ops_torch, a
 # CUDA-only wheel that is not a dependency of this project because the MPS path
