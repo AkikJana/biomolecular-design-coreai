@@ -290,7 +290,7 @@ averages 18.5 residues with a run-to-run SD of 6.35, a third of its own size:
 the quantity is a head average taken over a membership that reshuffles between
 folds. This does not affect the direction of any result reported here — interface
 pLDDT remains the readout with the largest effect-to-noise ratio in Table 5 — but
-it is the reason its run-to-run spread is hardware-sensitive where ipTM's is not
+it is why its run-to-run spread moves between environments where ipTM's does not
 (below).
 
 ### 2.4 Single folds do not reproduce their own ranking
@@ -325,16 +325,27 @@ by 4% for interface pLDDT (2.479 → 2.376) and 2% for ipTM (0.0636 → 0.0646).
 were chosen to span the outcome range, and selecting extremes first is a
 mechanism for inflating a spread, so this was worth checking; it did not happen.
 
-The same experiment surfaced something we did not anticipate. Table 5's folds ran
-on CPU; the widened run ran on CUDA. On *the same four receptors*, ipTM's spread
-reproduces to within 1.3% across that change, while interface pLDDT's is 29% larger
-(1.917 → 2.479). The asymmetry follows from §2.3: ipTM is a coordinate-free
+The same experiment surfaced something we did not anticipate, and which we can
+report but not explain. On *the same four receptors*, ipTM's spread reproduces to
+within 1.3% of the original measurement, while interface pLDDT's is 29% larger
+(1.917 → 2.479). The two runs differ in two ways at once, and we cannot separate
+them: the original folded on Apple Silicon CPU and the widened run on CUDA, and
+the two environments also carried different builds of the model code — a local
+development fork against a released version, differing in 46 of 106 shared source
+files including the confidence and diffusion modules. Either could produce the
+gap. We record it as unattributed rather than assign it to the backend, which an
+earlier version of this manuscript did on the strength of the hardware difference
+alone.
+
+What the asymmetry is at least consistent with is §2.3: ipTM is a coordinate-free
 scalar, whereas interface pLDDT averages head values over a coordinate-selected
-residue set, and inherits whatever the backend does to the geometry. Table 5
-therefore retains the CPU-measured SD, because the effect it divides is also
-CPU-measured and the two must describe the same regime. The practical reading is
-that a run-to-run spread is a property of a metric *and a backend*, not of the
-metric alone, and should be re-measured rather than carried across hardware.
+residue set, so any change that perturbs sampled geometry should move the second
+and not the first. Table 5 retains its original SD, because the effect it divides
+was measured in the same environment and the two must describe the same regime.
+The practical reading does not depend on which cause is operative: a run-to-run
+spread is a property of a metric *and* the environment that produced it, and
+should be re-measured rather than carried across environments. This is the
+argument for pinning the environment, which we now do (§4.1).
 
 ### 2.5 A training-cutoff split removes between a third and two thirds of the effect
 
@@ -843,10 +854,12 @@ a held-out split, but a single model beyond Boltz: whether a third family behave
 like either is untested. The retention comparison in Table 15 divides two effect
 sizes each estimated from about twenty receptors, and its interval spans zero; the
 held-out effect sizes are the supported claim, not the ratio. The run-to-run
-spread in Table 5 is CPU-measured, and §2.4 shows interface pLDDT's spread is 29%
-larger on CUDA while ipTM's is unchanged; the effect-to-noise ratios therefore
-describe our CPU regime, and we have not measured whether the widened CPU spread
-matches the four-receptor one. Chai-1's interface pLDDT is calibrated differently enough that only
+spread in Table 5 was measured in one environment, and §2.4 finds interface
+pLDDT's spread 29% larger in another while ipTM's is unchanged. Those two
+environments differ in both hardware and model build, so the cause is
+unidentified; the effect-to-noise ratios should be read as describing the
+environment that produced them, and we have not re-measured the widened spread in
+the original one. Chai-1's interface pLDDT is calibrated differently enough that only
 standardised effects compare across the two. The external comparison in §2.1 differs from our internal panels in panel,
 positives and readout simultaneously, so it supports an ordering rather than a
 numerical correction. Interface pLDDT is read from the same confidence head as
@@ -858,6 +871,25 @@ untested here.
 ---
 
 ## 4. Methods
+
+### 4.1 Environment
+
+Folds were produced in two environments, and the difference between them is a
+finding of this work rather than an incidental detail (§2.4). The original runs
+used a local development build of the model code on Apple Silicon; the widened
+replicate study used a rented CUDA device on which the setup script installed the
+released package from PyPI. Those builds differ in 46 of 106 shared source files,
+including the confidence and diffusion modules, and the substitution went
+unnoticed because the fork is not published and carries a higher version string
+than anything released.
+
+We therefore pin the environment in a container image (`Dockerfile` in the
+repository). It installs the model from the source tree and never from the
+package index, and the build fails if the import resolves anywhere else. A
+run-to-run spread is a property of a metric and the environment that produced it;
+the image is what makes the second half of that reproducible. It does not
+reproduce the Apple Silicon environment, which containers cannot reach.
+
 
 **Panel construction.** Receptor–peptide complexes were selected programmatically
 from the PDB [10]: peptide chains of 5–25 residues, receptor chains of at least

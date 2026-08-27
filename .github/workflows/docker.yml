@@ -1,0 +1,74 @@
+# Build the pinned image so the Dockerfile is tested rather than asserted.
+#
+# The CPU variant is built, not the CUDA one: runners have no GPU, so a cu128
+# build would download ~3 GB of wheels to prove only that pip can resolve them.
+# Everything this needs to catch -- the vendored-fork guard, the layer order,
+# the dependency set -- is identical across variants.
+name: Docker
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'requirements.txt'
+      - 'boltz/**'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'boltz/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build the CPU image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Free some disk
+        # torch plus the vendored fork does not fit comfortably beside the
+        # runner's preinstalled toolchains.
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          df -h / | tail -1
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: boltz-fast:cpu
+          build-args: |
+            TORCH_VARIANT=cpu
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: The image must carry the fork, not PyPI boltz
+        # This is the whole reason the image exists: `pip install boltz` gets
+        # 2.0.3 from PyPI, which differs from the vendored fork in 46 of 106
+        # shared files. The build already asserts it; this proves it from
+        # outside, so a future edit that drops the guard still fails here.
+        run: |
+          docker run --rm boltz-fast:cpu python - <<'PY'
+          import boltz, pathlib
+          p = pathlib.Path(boltz.__file__).resolve()
+          assert "/work/boltz/" in str(p), f"WRONG BOLTZ: {p}"
+          import importlib.util as u
+          assert u.find_spec("boltz.model.layers.low_rank_pair_representation"), \
+              "fork-specific layer missing -- this is upstream, not the fork"
+          print(f"ok: {p}")
+          PY
+
+      - name: Torch is the pinned build
+        run: |
+          docker run --rm boltz-fast:cpu python -c "
+          import torch
+          assert torch.__version__.startswith('2.8.0'), torch.__version__
+          print('torch', torch.__version__)"

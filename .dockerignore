@@ -1,0 +1,16 @@
+# artifacts/ is tens of gigabytes of folds and is bind-mounted at run time, not
+# baked in. Copying it would make the build context larger than the image.
+artifacts/
+.venv/
+.worktrees/
+*-worktrees/
+.git/
+hf_dataset/
+results/*/[a-z]*.json
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.pdf
+*.pptx
+*.docx
