@@ -1,0 +1,155 @@
+{
+  "report": "final_dissertation_report.md",
+  "figures": [
+    {
+      "table": 7,
+      "label": "cognate mean ipTM",
+      "printed": 0.5015,
+      "tol": 0.0001
+    },
+    {
+      "table": 7,
+      "label": "decoy mean ipTM",
+      "printed": 0.4317,
+      "tol": 0.0001
+    },
+    {
+      "table": 7,
+      "label": "scrambled mean ipTM",
+      "printed": 0.4888,
+      "tol": 0.0001
+    },
+    {
+      "table": 8,
+      "label": "interface pLDDT, cognate",
+      "printed": 49.6,
+      "tol": 0.02
+    },
+    {
+      "table": 8,
+      "label": "interface pLDDT, decoy",
+      "printed": 45.93,
+      "tol": 0.02
+    },
+    {
+      "table": 8,
+      "label": "interface pLDDT, scrambled",
+      "printed": 46.31,
+      "tol": 0.02
+    },
+    {
+      "table": 8,
+      "label": "ipTM mean rank",
+      "printed": 2.0,
+      "tol": 0.01
+    },
+    {
+      "table": 22,
+      "label": "held-out ipTM (mean of 5 draws)",
+      "printed": 0.137,
+      "tol": 0.001
+    },
+    {
+      "table": 22,
+      "label": "in-training ipTM",
+      "printed": 0.287,
+      "tol": 0.01
+    },
+    {
+      "table": 27,
+      "label": "iface_plddt Cohen's d retained",
+      "printed": 37.6,
+      "tol": 0.05
+    },
+    {
+      "table": 27,
+      "label": "iptm Cohen's d retained",
+      "printed": 40.4,
+      "tol": 0.05
+    },
+    {
+      "table": 27,
+      "label": "receptor_side Cohen's d retained",
+      "printed": 37.9,
+      "tol": 0.05
+    },
+    {
+      "table": 37,
+      "label": "ipTM effect, full",
+      "printed": 0.287,
+      "tol": 0.001
+    },
+    {
+      "table": 37,
+      "label": "ipTM effect, reduced",
+      "printed": 0.039,
+      "tol": 0.001
+    },
+    {
+      "table": 38,
+      "label": "interface pLDDT first, full",
+      "printed": 17,
+      "tol": 0.5
+    },
+    {
+      "table": 38,
+      "label": "interface pLDDT mean rank, full",
+      "printed": 1.27,
+      "tol": 0.005
+    },
+    {
+      "table": 50,
+      "label": "interface pLDDT, alignment arm",
+      "printed": 0.83,
+      "tol": 0.01
+    },
+    {
+      "table": 50,
+      "label": "interface pLDDT, recycling arm",
+      "printed": 1.4,
+      "tol": 0.01
+    },
+    {
+      "table": 50,
+      "label": "interface pLDDT, sampling arm",
+      "printed": 8.82,
+      "tol": 0.01
+    },
+    {
+      "table": 55,
+      "label": "Chai-1 macro-AP",
+      "printed": 0.512,
+      "tol": 0.001
+    },
+    {
+      "table": 55,
+      "label": "OpenDDE macro-AP",
+      "printed": 0.532,
+      "tol": 0.001
+    },
+    {
+      "table": 55,
+      "label": "Protenix v2 macro-AP",
+      "printed": 0.524,
+      "tol": 0.001
+    },
+    {
+      "table": 55,
+      "label": "RoseTTAFold3 macro-AP",
+      "printed": 0.509,
+      "tol": 0.001
+    },
+    {
+      "table": 55,
+      "label": "base rate",
+      "printed": 0.268,
+      "tol": 0.001
+    },
+    {
+      "table": 55,
+      "label": "n designs",
+      "printed": 1320,
+      "tol": 0.5
+    }
+  ]
+}

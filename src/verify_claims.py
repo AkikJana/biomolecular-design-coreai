@@ -202,7 +202,18 @@ def main():
     ap.add_argument("--report", default=str(REPO_ROOT / "reports" /
                                             "final_dissertation_report.md"))
     ap.add_argument("--verbose", action="store_true")
+    # A recomputed figure is only checkable on a machine that has artifacts/,
+    # which is 200 GB of folds and will never be in a clone. --emit freezes what
+    # the artifacts said into a committed file so CI can at least hold the report
+    # to it; --check is the CI half and needs no artifacts at all.
+    ap.add_argument("--emit", metavar="PATH", default=None,
+                    help="write the recomputed figures to a lock file")
+    ap.add_argument("--check", metavar="PATH", default=None,
+                    help="verify the report against a lock file (no artifacts needed)")
     args = ap.parse_args()
+
+    if args.check:
+        return check_against_lock(Path(args.check), Path(args.report))
 
     text = Path(args.report).read_text()
     checks = build_checks()
@@ -227,10 +238,20 @@ def main():
                   f"printed {c['printed']:>9} got {got:>9.4f}")
 
     # A printed figure that appears nowhere in the report is a stale check.
+    #
+    # The renderings have to cover how the report actually writes numbers, not
+    # just repr(). Counts above a thousand are written with a separator, so
+    # `1320` was reported stale for eighteen commits while the report said
+    # "1,320" -- a warning that is wrong is worse than no warning, because it
+    # teaches you to skip the line it prints on.
+    def renderings(v):
+        out = {str(v), f"{v:.2f}", f"{v:.3f}"}
+        if float(v) == int(v):
+            out |= {f"{int(v)}", f"{int(v):,}"}
+        return out
+
     missing = [c for c in checks
-               if str(c["printed"]) not in text
-               and f"{c['printed']:.2f}" not in text
-               and f"{c['printed']:.3f}" not in text]
+               if not any(r in text for r in renderings(c["printed"]))]
 
     print(f"\n  reproduced : {ok}/{len(checks)}")
     print(f"  failed     : {fail}")
@@ -239,7 +260,66 @@ def main():
               f"(check may be stale)")
     for t, lab, want, got in failures:
         print(f"\n  Table {t}: {lab}\n    report says {want}, artifact gives {got:.4f}")
+
+    if args.emit:
+        out = Path(args.emit)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({
+            "report": Path(args.report).name,
+            "figures": sorted(
+                ({"table": c["table"], "label": c["label"],
+                  "printed": c["printed"], "tol": c["tol"]}
+                 for c in checks),
+                key=lambda r: (r["table"], r["label"])),
+        }, indent=2) + "\n")
+        print(f"\n  wrote {out} ({len(checks)} figures)")
+
     return 1 if fail else 0
+
+
+def check_against_lock(lock_path, report_path):
+    """Hold the report to a frozen set of figures, without recomputing anything.
+
+    This is the half that can run in CI. It cannot tell you the artifacts still
+    say what the lock says -- only a machine with artifacts/ can -- but it does
+    catch the failure this project keeps having, which is a number changing in
+    one place and not the other. Three separate corrections in this repository
+    were a figure edited in the report while something else still said the old
+    value, or a sentence left describing data that had been replaced.
+    """
+    if not lock_path.exists():
+        print(f"  no lock file at {lock_path}; run --emit on a machine with artifacts/")
+        return 1
+    lock = json.loads(lock_path.read_text())
+    text = report_path.read_text()
+
+    def renderings(v):
+        """Only how the report could legitimately write THIS value.
+
+        Not truncations. An earlier version accepted f"{v:.2f}", so a locked
+        0.5015 was satisfied by the string "0.50" -- which occurs on nearly every
+        page of a forty-page report. The check passed a deliberately corrupted
+        report and would have passed anything. The lock stores the figure exactly
+        as the report prints it, so an exact match is the right test, plus the
+        thousands separator for counts.
+        """
+        out = {str(v)}
+        if float(v) == int(v):
+            out |= {f"{int(v)}", f"{int(v):,}"}
+        return out
+
+    figs = lock["figures"]
+    missing = [f for f in figs if not any(r in text for r in renderings(f["printed"]))]
+    print(f"  checking {len(figs)} locked figures against {report_path.name}")
+    for f in missing:
+        print(f"  MISSING  T{f['table']:<3} {f['label']:38s} locked at {f['printed']}")
+    if missing:
+        print(f"\n  {len(missing)} locked figure(s) no longer appear in the report.")
+        print("  Either the report changed and the lock is stale (re-run --emit on a")
+        print("  machine with artifacts/), or a number was edited by hand.")
+        return 1
+    print(f"  all {len(figs)} present")
+    return 0
 
 
 if __name__ == "__main__":

@@ -32,6 +32,19 @@ jobs:
       # pyflakes (F), so a failure here is a real defect, not a style opinion.
       run: ruff check .
 
+    - name: Claims match the lock file
+      # verify_claims.py recomputes 25 load-bearing figures from artifacts/,
+      # which is 200 GB of folds and is never in a clone. --check holds the
+      # report to a committed snapshot of what those artifacts said instead.
+      #
+      # It cannot confirm the artifacts still agree -- only a machine with them
+      # can, via --emit. What it catches is the failure this repository keeps
+      # having: a number changed in one place and not the other. The stale
+      # 43-page PDF, the "median 41 fragments" that was 40.5, and the sentence
+      # still describing 8 targets after the run covered 10 were all this, and
+      # all found by hand.
+      run: python src/verify_claims.py --check results/claims_lock.json
+
     - name: Run Tests
       # The suite is pytest-based (bare `def test_*` functions), which
       # `unittest discover` cannot collect. Paths come from
