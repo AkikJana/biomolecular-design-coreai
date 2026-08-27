@@ -95,3 +95,8 @@ weights/*
 # output a reader needs to check a claim, not the multi-GB prediction cache
 # that /artifacts/ holds. Small, and worth keeping under version control.
 !results/**/*.json
+
+# Nested git worktrees. Committed as a gitlink by accident, which made every
+# CI checkout emit "No url found for submodule path" because there is no
+# .gitmodules and never was one -- it is a worktree, not a submodule.
+/.worktrees/
