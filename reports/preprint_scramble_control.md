@@ -258,7 +258,7 @@ peptide chain is treated as the molecule under test.
 | median fragments per peptide | **40.5** | **1** |
 
 The two columns come from structures folded in different environments (§4.1),
-which is worth stating and does not matter here: Table 20 bounds that difference
+which is worth stating and does not matter here: Table 21 bounds that difference
 at a few percent on continuous readouts, and this contrast is 0% against 100%.
 
 At ten steps the backbone is not connected at all — a fifteen-residue peptide
@@ -312,7 +312,7 @@ against its own run-to-run spread.
 | pDockQ | +0.008 | 0.1498 | 0.05× |
 | **Interface pLDDT** | **+3.30** | **1.917** | **1.72×** |
 
-Interface pLDDT carries roughly **8.6 times** ipTM's effect-to-noise ratio on the
+Interface pLDDT carries roughly **9 times** ipTM's effect-to-noise ratio on the
 test that matters. Simulating the full benchmark under the measured noise gives a
 cognate-minus-permutation effect of +3.30 pLDDT (95% CI [+2.13, +4.47]) that
 reproduces at p < 0.05 in **100%** of re-runs, and a within-receptor rank of 1.91
@@ -329,27 +329,48 @@ by 4% for interface pLDDT (2.479 → 2.376) and 2% for ipTM (0.0636 → 0.0646).
 were chosen to span the outcome range, and selecting extremes first is a
 mechanism for inflating a spread, so this was worth checking; it did not happen.
 
-The same experiment surfaced something we did not anticipate, and which we can
-report but not explain. On *the same four receptors*, ipTM's spread reproduces to
-within 1.3% of the original measurement, while interface pLDDT's is 29% larger
-(1.917 → 2.479). The two runs differ in two ways at once, and we cannot separate
-them: the original folded on Apple Silicon CPU and the widened run on CUDA, and
-the two environments also carried different builds of the model code — a local
-development fork against a released version, differing in 46 of 106 shared source
-files including the confidence and diffusion modules. Either could produce the
-gap. We record it as unattributed rather than assign it to the backend, which an
-earlier version of this manuscript did on the strength of the hardware difference
-alone.
+The same experiment surfaced an apparent discrepancy that, on investigation,
+turned out to be our own imprecision. Repeating the study on CUDA gave interface
+pLDDT a spread 29% larger than the original (1.917 → 2.479) on the same four
+receptors, while ipTM moved 1.3%. The two runs differed in two ways at once — CPU
+against CUDA, and a local development build against a released one, differing in
+46 of 106 shared source files — and we initially reported the gap as real but
+unattributed.
 
-What the asymmetry is at least consistent with is §2.3: ipTM is a coordinate-free
-scalar, whereas interface pLDDT averages head values over a coordinate-selected
-residue set, so any change that perturbs sampled geometry should move the second
-and not the first. Table 5 retains its original SD, because the effect it divides
-was measured in the same environment and the two must describe the same regime.
-The practical reading does not depend on which cause is operative: a run-to-run
-spread is a property of a metric *and* the environment that produced it, and
-should be re-measured rather than carried across environments. This is the
-argument for pinning the environment, which we now do (§4.1).
+It is neither. We refolded the original design a third time in the original
+environment, and put an interval on the estimate:
+
+**Table 6. Four estimates of the same quantity, and what one estimate is worth.**
+
+| interface pLDDT run-to-run SD | environment | panel |
+| ---: | :--- | :--- |
+| 1.917 | CPU, development build | 4 receptors |
+| **2.192** | **CPU, development build (refold)** | **4 receptors** |
+| 2.479 | CUDA, released build | same 4 receptors |
+| 2.376 | CUDA, released build | 22 receptors |
+
+The refold's bootstrap 95% interval is **[1.877, 2.514]**, which contains every
+other estimate in the table, including both values whose difference we had been
+trying to explain. A pooled SD from 24 complexes folded four times carries about
+**±8.3%** relative standard error, and the full 1.917–2.479 spread is a little
+over two of those.
+
+So there is no environment effect on the noise to explain. There is a noise floor
+we measured too imprecisely to compare against itself. The four ipTM estimates
+(0.0628, 0.0616, 0.0636, 0.0646) span 4.8% and tell the same story from the
+stable side.
+
+This is worth stating plainly because we made the error in the manuscript before
+catching it: we measured a run-to-run spread, then compared two such spreads,
+without ever putting an interval on the spread itself. §2.4's own conclusion — a
+single draw does not pin a quantity — applies to the quantity in §2.4. Pinning an
+SD to better than 10% needs more than 96 folds.
+
+Table 5 retains its original SD. The asymmetry between the two readouts is still
+consistent with §2.3 — ipTM is coordinate-free, interface pLDDT averages head
+values over a coordinate-selected residue set — but on this evidence the
+asymmetry is not established either, since neither estimate is precise enough to
+separate from the other.
 
 ### 2.5 A training-cutoff split removes between a third and two thirds of the effect
 
@@ -361,7 +382,7 @@ were then folded at the model's intended settings (200 sampling steps, 3
 recycling passes, undiminished alignment depth), so that the only quantity
 varying between them is whether the model has seen the complex.
 
-**Table 6. The contamination penalty at full settings.**
+**Table 7. The contamination penalty at full settings.**
 
 | Readout | in-training | held out | *p* held out | effect retained | Cohen's *d* retained |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -381,7 +402,7 @@ side is thin for a difference of differences, so we screened the PDB again for
 post-cutoff entries and found 22 more that pass the identical filter, taking the
 held-out panel to **44 receptors** (earliest release 2021-10-06).
 
-**Table 7. The contamination penalty at 22 and 44 held-out receptors.**
+**Table 8. The contamination penalty at 22 and 44 held-out receptors.**
 
 | Readout | held out, *d* @22 | @44 | retained @22 | retained @44 | *p* @44 |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -418,7 +439,7 @@ a reduction adopted for throughput on consumer hardware. We folded the same pane
 on the same model and device at full settings to measure what that reduction had
 cost.
 
-**Table 8. Permutation control at reduced and full settings.**
+**Table 9. Permutation control at reduced and full settings.**
 
 | Metric | reduced | full | Cohen's *d* | within-receptor z |
 | :--- | ---: | ---: | :--- | ---: |
@@ -444,7 +465,7 @@ plausible.
 To locate the cost we folded the full factorial: each setting alone, each pair,
 and both endpoints — eight cells over the same 22 receptors, 1,056 folds.
 
-**Table 9. The full factorial, order-sensitivity test on interface pLDDT.**
+**Table 10. The full factorial, order-sensitivity test on interface pLDDT.**
 
 | Arm | steps / recycles / MSA | effect | Cohen's *d* | share of full gain |
 | :--- | :--- | ---: | ---: | ---: |
@@ -468,7 +489,7 @@ matter. It does — but only in company. Combined with sampling it reaches
 *d* = 1.46, which is 96% of the full effect from two knobs rather than three, and
 the interaction is genuinely positive:
 
-**Table 10. Each pair against the sum of its two single knobs, standardised.**
+**Table 11. Each pair against the sum of its two single knobs, standardised.**
 
 | pair | observed gain | additive prediction | interaction | |
 | :--- | ---: | ---: | ---: | :--- |
@@ -479,7 +500,7 @@ the interaction is genuinely positive:
 One caveat on how this table is assembled. The three single-knob arms and both
 endpoints were folded in the local environment; the three pairs were folded on
 the rented device (§4.1). Each interaction is therefore an observed pair minus an
-additive prediction built from arms folded elsewhere. Table 20 bounds what that
+additive prediction built from arms folded elsewhere. Table 21 bounds what that
 can do: standardised effects run 6–7% lower in the released build, so the
 observed column here is if anything slightly understated relative to the
 predictions it is differenced against. Correcting for it moves the sampling ×
@@ -519,7 +540,7 @@ registered a prediction in source, committed before any fold ran:
 Thirty-eight designs across four targets (RBX1, PD-L1, TrkA, BHRF1) were folded
 as delivered and against two permutations of each.
 
-**Table 11. Interface pLDDT of a design and of its own permutations, by measured outcome.**
+**Table 12. Interface pLDDT of a design and of its own permutations, by measured outcome.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -544,7 +565,7 @@ at converged settings and we simply could not see it. We therefore repeated the
 experiment at 200 sampling steps and 3 recycling passes, on the full 48 designs
 rather than the 38 the first attempt reached.
 
-**Table 12. The same experiment at converged settings, 48 designs.**
+**Table 13. The same experiment at converged settings, 48 designs.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -569,7 +590,7 @@ claim. We therefore folded every design on every target we could fold —
 **900 designs across 10 of the release's 15 targets, 263 of them measured
 binders**, 2,700 folds at converged settings.
 
-**Table 13. The boundary test at 900 designs across 10 targets.**
+**Table 14. The boundary test at 900 designs across 10 targets.**
 
 | | n | design | its permutations | margin |
 | :--- | ---: | ---: | ---: | ---: |
@@ -619,7 +640,7 @@ post-translational modification (43), receptor redundancy (20), or a peptide too
 close to one already accepted (20). The combined 59 receptors were folded together
 in one run at converged settings, so nothing is merged across hardware or dates.
 
-**Table 14. The permutation control at 22 and 59 receptors, folded identically.**
+**Table 15. The permutation control at 22 and 59 receptors, folded identically.**
 
 Both arms were folded on the same device in the same session: the 22-receptor
 panel was refolded there rather than carried over from the original run, so the
@@ -646,7 +667,7 @@ a single unseeded run does not pin a per-receptor quantity, and §8.2 of the
 underlying work recommends replicate averaging for exactly this reason. Three
 independent folds of these 22 receptors at converged settings exist:
 
-**Table 15. Cohen's *d* at 22 receptors, across three independent folds.**
+**Table 16. Cohen's *d* at 22 receptors, across three independent folds.**
 
 | fold | *d* ipTM | *d* interface pLDDT | *d* receptor side |
 | :--- | ---: | ---: | ---: |
@@ -688,7 +709,7 @@ permutations — under Chai-1 [14], and scored the output with the identical
 interface-pLDDT implementation used throughout this paper. The readout code is
 shared, so the model is the only thing that varies.
 
-**Table 16. The permutation control under two independent models.**
+**Table 17. The permutation control under two independent models.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -711,7 +732,7 @@ What replicates is the direction and the significance, not the magnitude.
 against its own decoys is the question a screen actually asks, and on it the two
 models are indistinguishable:
 
-**Table 17. Ranking a cognate against its own decoys, under two model families.**
+**Table 18. Ranking a cognate against its own decoys, under two model families.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -740,7 +761,7 @@ data, which is exactly the confound §2.5 is about. We therefore folded the
 held-out panel under Chai-1 as well — the same 22 post-cutoff receptors, the same
 readout code.
 
-**Table 18. The permutation control in and out of training, both families.**
+**Table 19. The permutation control in and out of training, both families.**
 
 | | Boltz-1 | Chai-1 |
 | :--- | ---: | ---: |
@@ -786,7 +807,7 @@ once they have been applied. This section answers it: the same panel, ranking ea
 cognate peptide against its own decoys, under the configuration a practitioner
 would actually adopt.
 
-**Table 19. Ranking a cognate against its own decoys. Chance is 25% top-1.**
+**Table 20. Ranking a cognate against its own decoys. Chance is 25% top-1.**
 
 | configuration | mean rank | top-1 | P(cognate > a decoy) |
 | :--- | ---: | ---: | ---: |
@@ -902,15 +923,15 @@ fold without difficulty and are included here. The remaining four targets are
 oligomeric and have no single-chain construct. The second-model arm of §2.9
 covers 21 receptors and now carries the permutation control, the ranking test and
 a held-out split, but a single model beyond Boltz: whether a third family behaves
-like either is untested. The retention comparison in Table 16 divides two effect
+like either is untested. The retention comparison in Table 17 divides two effect
 sizes each estimated from about twenty receptors, and its interval spans zero; the
 held-out effect sizes are the supported claim, not the ratio. The run-to-run
-spread in Table 5 was measured in one environment, and §2.4 finds interface
-pLDDT's spread 29% larger in another while ipTM's is unchanged. Those two
-environments differ in both hardware and model build, so the cause is
-unidentified; the effect-to-noise ratios should be read as describing the
-environment that produced them, and we have not re-measured the widened spread in
-the original one. Chai-1's interface pLDDT is calibrated differently enough that only
+run-to-run spread in Table 5 is itself imprecise. §2.4 estimates it four times
+and finds a 1.917–2.479 range on interface pLDDT, with a bootstrap interval on
+any one estimate wide enough to contain all of them; a pooled SD from 96 folds
+carries about ±8.3% relative standard error. The effect-to-noise ratios inherit
+that, so **1.7× and 9× should be read to one significant figure**. Pinning
+them further needs more replicate folds, not a different analysis. Chai-1's interface pLDDT is calibrated differently enough that only
 standardised effects compare across the two. The external comparison in §2.1 differs from our internal panels in panel,
 positives and readout simultaneously, so it supports an ordering rather than a
 numerical correction. Interface pLDDT is read from the same confidence head as
@@ -946,7 +967,7 @@ in both, which bounds it directly: the 22-receptor panel at 200 sampling steps, 
 recycling passes and undiminished alignment, folded locally and then refolded on
 the rented device.
 
-**Table 20. The same arm and receptors in both environments.**
+**Table 21. The same arm and receptors in both environments.**
 
 | readout | local build | released build | ratio |
 | :--- | ---: | ---: | ---: |

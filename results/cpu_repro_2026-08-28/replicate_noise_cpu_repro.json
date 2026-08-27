@@ -1,0 +1,96 @@
+{
+  "work_dir": "artifacts/seed_variance_cpu_repro",
+  "per_metric": {
+    "iptm": {
+      "pooled_sd": 0.06156165936252351,
+      "n_complexes": 24,
+      "section_7_5": 0.0628,
+      "ratio_to_7_5": 0.9802812000401834
+    },
+    "iface_plddt": {
+      "pooled_sd": 2.1918373639782263,
+      "n_complexes": 24,
+      "section_7_5": 1.9172,
+      "ratio_to_7_5": 1.1432491988202724
+    },
+    "n_contacts": {
+      "pooled_sd": 12.635103218151142,
+      "n_complexes": 24
+    },
+    "n_pep_iface": {
+      "pooled_sd": 1.7129003992578722,
+      "n_complexes": 24
+    },
+    "n_rec_iface": {
+      "pooled_sd": 6.304760106459246,
+      "n_complexes": 24
+    },
+    "pdockq": {
+      "pooled_sd": 0.15705539927978765,
+      "n_complexes": 24,
+      "section_7_5": 0.1498,
+      "ratio_to_7_5": 1.048433907074684
+    },
+    "peptide_side": {
+      "pooled_sd": 3.1500244765826024,
+      "n_complexes": 24
+    },
+    "peptide_whole": {
+      "pooled_sd": 2.9044636430519875,
+      "n_complexes": 24
+    },
+    "receptor_side": {
+      "pooled_sd": 2.162305903614749,
+      "n_complexes": 24
+    }
+  },
+  "n_receptors": 4,
+  "section_7_5_receptor_subset": {
+    "receptors": [
+      "1YCR",
+      "9F6S",
+      "8KDX",
+      "6YOO"
+    ],
+    "per_metric": {
+      "iptm": {
+        "pooled_sd": 0.06156165936252351,
+        "n_complexes": 24
+      },
+      "iface_plddt": {
+        "pooled_sd": 2.1918373639782263,
+        "n_complexes": 24
+      },
+      "n_contacts": {
+        "pooled_sd": 12.635103218151142,
+        "n_complexes": 24
+      },
+      "n_pep_iface": {
+        "pooled_sd": 1.7129003992578722,
+        "n_complexes": 24
+      },
+      "n_rec_iface": {
+        "pooled_sd": 6.304760106459246,
+        "n_complexes": 24
+      },
+      "pdockq": {
+        "pooled_sd": 0.15705539927978765,
+        "n_complexes": 24
+      },
+      "peptide_side": {
+        "pooled_sd": 3.1500244765826024,
+        "n_complexes": 24
+      },
+      "peptide_whole": {
+        "pooled_sd": 2.9044636430519875,
+        "n_complexes": 24
+      },
+      "receptor_side": {
+        "pooled_sd": 2.162305903614749,
+        "n_complexes": 24
+      }
+    }
+  },
+  "n_structures": 96,
+  "n_replicates_seen": 4
+}

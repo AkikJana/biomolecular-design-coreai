@@ -1,0 +1,770 @@
+[
+  {
+    "receptor_id": "1YCR",
+    "label": "cognate",
+    "name": "pair_000",
+    "peptide_from": "1YCR",
+    "replicate": 0,
+    "score": 0.49525943398475647
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_001",
+    "peptide_from": "8KDX",
+    "replicate": 0,
+    "score": 0.3867563307285309
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_002",
+    "peptide_from": "6YOO",
+    "replicate": 0,
+    "score": 0.2625983953475952
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_003",
+    "peptide_from": "1BE9",
+    "replicate": 0,
+    "score": 0.529209315776825
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_004",
+    "peptide_from": "1YCR",
+    "replicate": 0,
+    "score": 0.33122149109840393
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_005",
+    "peptide_from": "1YCR",
+    "replicate": 0,
+    "score": 0.42297229170799255
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "cognate",
+    "name": "pair_072",
+    "peptide_from": "9F6S",
+    "replicate": 0,
+    "score": 0.573303759098053
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_073",
+    "peptide_from": "1D4T",
+    "replicate": 0,
+    "score": 0.4088011085987091
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_074",
+    "peptide_from": "4Z8J",
+    "replicate": 0,
+    "score": 0.6141912341117859
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_075",
+    "peptide_from": "1BE9",
+    "replicate": 0,
+    "score": 0.6904124021530151
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_076",
+    "peptide_from": "9F6S",
+    "replicate": 0,
+    "score": 0.4856020510196686
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_077",
+    "peptide_from": "9F6S",
+    "replicate": 0,
+    "score": 0.5656704902648926
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "cognate",
+    "name": "pair_078",
+    "peptide_from": "8KDX",
+    "replicate": 0,
+    "score": 0.41496002674102783
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_079",
+    "peptide_from": "7S7J",
+    "replicate": 0,
+    "score": 0.33545559644699097
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_080",
+    "peptide_from": "7OKL",
+    "replicate": 0,
+    "score": 0.33923450112342834
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_081",
+    "peptide_from": "1SEM",
+    "replicate": 0,
+    "score": 0.4856283366680145
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_082",
+    "peptide_from": "8KDX",
+    "replicate": 0,
+    "score": 0.4721939265727997
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_083",
+    "peptide_from": "8KDX",
+    "replicate": 0,
+    "score": 0.44841983914375305
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "cognate",
+    "name": "pair_084",
+    "peptide_from": "6YOO",
+    "replicate": 0,
+    "score": 0.5511004328727722
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_085",
+    "peptide_from": "1D4T",
+    "replicate": 0,
+    "score": 0.4359951913356781
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_086",
+    "peptide_from": "2FNT",
+    "replicate": 0,
+    "score": 0.4097321331501007
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_087",
+    "peptide_from": "4Z8J",
+    "replicate": 0,
+    "score": 0.5231747627258301
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_088",
+    "peptide_from": "6YOO",
+    "replicate": 0,
+    "score": 0.4403989911079407
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_089",
+    "peptide_from": "6YOO",
+    "replicate": 0,
+    "score": 0.49130678176879883
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "cognate",
+    "name": "pair_000",
+    "peptide_from": "1YCR",
+    "replicate": 1,
+    "score": 0.497271329164505
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_001",
+    "peptide_from": "8KDX",
+    "replicate": 1,
+    "score": 0.4069148302078247
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_002",
+    "peptide_from": "6YOO",
+    "replicate": 1,
+    "score": 0.26499122381210327
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_003",
+    "peptide_from": "1BE9",
+    "replicate": 1,
+    "score": 0.3234703838825226
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_004",
+    "peptide_from": "1YCR",
+    "replicate": 1,
+    "score": 0.3782879710197449
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_005",
+    "peptide_from": "1YCR",
+    "replicate": 1,
+    "score": 0.49465256929397583
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "cognate",
+    "name": "pair_072",
+    "peptide_from": "9F6S",
+    "replicate": 1,
+    "score": 0.7527117133140564
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_073",
+    "peptide_from": "1D4T",
+    "replicate": 1,
+    "score": 0.4796210825443268
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_074",
+    "peptide_from": "4Z8J",
+    "replicate": 1,
+    "score": 0.5024310946464539
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_075",
+    "peptide_from": "1BE9",
+    "replicate": 1,
+    "score": 0.6065354347229004
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_076",
+    "peptide_from": "9F6S",
+    "replicate": 1,
+    "score": 0.5699589848518372
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_077",
+    "peptide_from": "9F6S",
+    "replicate": 1,
+    "score": 0.6491571664810181
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "cognate",
+    "name": "pair_078",
+    "peptide_from": "8KDX",
+    "replicate": 1,
+    "score": 0.37072062492370605
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_079",
+    "peptide_from": "7S7J",
+    "replicate": 1,
+    "score": 0.33720922470092773
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_080",
+    "peptide_from": "7OKL",
+    "replicate": 1,
+    "score": 0.4497614800930023
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_081",
+    "peptide_from": "1SEM",
+    "replicate": 1,
+    "score": 0.43984782695770264
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_082",
+    "peptide_from": "8KDX",
+    "replicate": 1,
+    "score": 0.5242713689804077
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_083",
+    "peptide_from": "8KDX",
+    "replicate": 1,
+    "score": 0.4778088331222534
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "cognate",
+    "name": "pair_084",
+    "peptide_from": "6YOO",
+    "replicate": 1,
+    "score": 0.577914297580719
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_085",
+    "peptide_from": "1D4T",
+    "replicate": 1,
+    "score": 0.5549336075782776
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_086",
+    "peptide_from": "2FNT",
+    "replicate": 1,
+    "score": 0.45767292380332947
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_087",
+    "peptide_from": "4Z8J",
+    "replicate": 1,
+    "score": 0.555162250995636
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_088",
+    "peptide_from": "6YOO",
+    "replicate": 1,
+    "score": 0.45017364621162415
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_089",
+    "peptide_from": "6YOO",
+    "replicate": 1,
+    "score": 0.5137925744056702
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "cognate",
+    "name": "pair_000",
+    "peptide_from": "1YCR",
+    "replicate": 2,
+    "score": 0.5554664134979248
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_001",
+    "peptide_from": "8KDX",
+    "replicate": 2,
+    "score": 0.27404850721359253
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_002",
+    "peptide_from": "6YOO",
+    "replicate": 2,
+    "score": 0.386019229888916
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_003",
+    "peptide_from": "1BE9",
+    "replicate": 2,
+    "score": 0.3914946913719177
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_004",
+    "peptide_from": "1YCR",
+    "replicate": 2,
+    "score": 0.4011891186237335
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_005",
+    "peptide_from": "1YCR",
+    "replicate": 2,
+    "score": 0.5539143085479736
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "cognate",
+    "name": "pair_072",
+    "peptide_from": "9F6S",
+    "replicate": 2,
+    "score": 0.6507652401924133
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_073",
+    "peptide_from": "1D4T",
+    "replicate": 2,
+    "score": 0.4974589943885803
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_074",
+    "peptide_from": "4Z8J",
+    "replicate": 2,
+    "score": 0.5197853446006775
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_075",
+    "peptide_from": "1BE9",
+    "replicate": 2,
+    "score": 0.5802865028381348
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_076",
+    "peptide_from": "9F6S",
+    "replicate": 2,
+    "score": 0.3428618609905243
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_077",
+    "peptide_from": "9F6S",
+    "replicate": 2,
+    "score": 0.6968851089477539
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "cognate",
+    "name": "pair_078",
+    "peptide_from": "8KDX",
+    "replicate": 2,
+    "score": 0.4714212715625763
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_079",
+    "peptide_from": "7S7J",
+    "replicate": 2,
+    "score": 0.3533826172351837
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_080",
+    "peptide_from": "7OKL",
+    "replicate": 2,
+    "score": 0.3859331011772156
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_081",
+    "peptide_from": "1SEM",
+    "replicate": 2,
+    "score": 0.6105592846870422
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_082",
+    "peptide_from": "8KDX",
+    "replicate": 2,
+    "score": 0.4454317092895508
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_083",
+    "peptide_from": "8KDX",
+    "replicate": 2,
+    "score": 0.5260400772094727
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "cognate",
+    "name": "pair_084",
+    "peptide_from": "6YOO",
+    "replicate": 2,
+    "score": 0.4632068872451782
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_085",
+    "peptide_from": "1D4T",
+    "replicate": 2,
+    "score": 0.5206013917922974
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_086",
+    "peptide_from": "2FNT",
+    "replicate": 2,
+    "score": 0.3911903202533722
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_087",
+    "peptide_from": "4Z8J",
+    "replicate": 2,
+    "score": 0.6043938994407654
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_088",
+    "peptide_from": "6YOO",
+    "replicate": 2,
+    "score": 0.5173583030700684
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_089",
+    "peptide_from": "6YOO",
+    "replicate": 2,
+    "score": 0.4409772753715515
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "cognate",
+    "name": "pair_000",
+    "peptide_from": "1YCR",
+    "replicate": 3,
+    "score": 0.545633852481842
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_001",
+    "peptide_from": "8KDX",
+    "replicate": 3,
+    "score": 0.3802085816860199
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_002",
+    "peptide_from": "6YOO",
+    "replicate": 3,
+    "score": 0.296766996383667
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "decoy",
+    "name": "pair_003",
+    "peptide_from": "1BE9",
+    "replicate": 3,
+    "score": 0.46608689427375793
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_004",
+    "peptide_from": "1YCR",
+    "replicate": 3,
+    "score": 0.2811520993709564
+  },
+  {
+    "receptor_id": "1YCR",
+    "label": "scrambled",
+    "name": "pair_005",
+    "peptide_from": "1YCR",
+    "replicate": 3,
+    "score": 0.4714348614215851
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "cognate",
+    "name": "pair_072",
+    "peptide_from": "9F6S",
+    "replicate": 3,
+    "score": 0.6339829564094543
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_073",
+    "peptide_from": "1D4T",
+    "replicate": 3,
+    "score": 0.3820737600326538
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_074",
+    "peptide_from": "4Z8J",
+    "replicate": 3,
+    "score": 0.6104401350021362
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "decoy",
+    "name": "pair_075",
+    "peptide_from": "1BE9",
+    "replicate": 3,
+    "score": 0.724550724029541
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_076",
+    "peptide_from": "9F6S",
+    "replicate": 3,
+    "score": 0.6142802238464355
+  },
+  {
+    "receptor_id": "9F6S",
+    "label": "scrambled",
+    "name": "pair_077",
+    "peptide_from": "9F6S",
+    "replicate": 3,
+    "score": 0.5018137097358704
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "cognate",
+    "name": "pair_078",
+    "peptide_from": "8KDX",
+    "replicate": 3,
+    "score": 0.44784122705459595
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_079",
+    "peptide_from": "7S7J",
+    "replicate": 3,
+    "score": 0.35983023047447205
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_080",
+    "peptide_from": "7OKL",
+    "replicate": 3,
+    "score": 0.5009579062461853
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "decoy",
+    "name": "pair_081",
+    "peptide_from": "1SEM",
+    "replicate": 3,
+    "score": 0.5626540780067444
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_082",
+    "peptide_from": "8KDX",
+    "replicate": 3,
+    "score": 0.519370973110199
+  },
+  {
+    "receptor_id": "8KDX",
+    "label": "scrambled",
+    "name": "pair_083",
+    "peptide_from": "8KDX",
+    "replicate": 3,
+    "score": 0.49904167652130127
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "cognate",
+    "name": "pair_084",
+    "peptide_from": "6YOO",
+    "replicate": 3,
+    "score": 0.47362372279167175
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_085",
+    "peptide_from": "1D4T",
+    "replicate": 3,
+    "score": 0.5886403322219849
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_086",
+    "peptide_from": "2FNT",
+    "replicate": 3,
+    "score": 0.4115433692932129
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "decoy",
+    "name": "pair_087",
+    "peptide_from": "4Z8J",
+    "replicate": 3,
+    "score": 0.6451457142829895
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_088",
+    "peptide_from": "6YOO",
+    "replicate": 3,
+    "score": 0.5264084339141846
+  },
+  {
+    "receptor_id": "6YOO",
+    "label": "scrambled",
+    "name": "pair_089",
+    "peptide_from": "6YOO",
+    "replicate": 3,
+    "score": 0.5507358908653259
+  }
+]
