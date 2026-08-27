@@ -61,3 +61,24 @@ Docker CI fork guard must stay green as a required check.
 **Auto-merge on green.** CI here proves the report is internally consistent and
 the image builds. It cannot tell whether a claim is *true*. Nothing in this
 repository should merge without someone reading it.
+
+## The open questions
+
+They live as issues, on the board **Boltz-Fast: open questions**:
+
+<https://github.com/users/AkikJana/projects/1>
+
+Labels say what each is blocked on, which is the only distinction that changes
+what you can do next:
+
+| label | meaning |
+| :-- | :-- |
+| `needs-compute` | GPU time, nothing else |
+| `needs-decision` | judgement; no folds required |
+| `reproducibility` | guards a silent substitution or a stale number |
+| `second-model` | extending the controls beyond the Boltz family |
+
+The three `needs-decision` items are the ones worth doing first. None needs a
+device, and all three are places the paper currently claims more precision than
+the data supports — which is the failure mode this project has been most careful
+about everywhere else.
