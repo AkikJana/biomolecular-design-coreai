@@ -37,19 +37,22 @@ warnings.filterwarnings("ignore")
 
 from Bio.PDB import PDBParser  # noqa: E402
 from interface_side_split import sides  # noqa: E402
+from rescore_interface_metrics import interface as iface_metrics  # noqa: E402
+from rescore_interface_metrics import pdockq  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # Section 7.5, on 4 receptors -- what this run is compared against.
 #
-# pDockQ is listed for completeness and is not recomputed here. It is not one of
-# the quantities interface_side_split.sides returns, so the 0.1498 came from some
-# other path that left no artifact behind; variance_decomposition.noise_sd would
-# raise KeyError if asked for it. That row of Table 5 stays at its published
-# value, and it is the row the dissertation already discounts -- pDockQ is
-# computed from CB-CB distances on backbones that are not connected.
+# pDockQ is recomputed here after all. An earlier version of this script declared
+# it unrecoverable because interface_side_split.sides does not return it -- true,
+# but the wrong place to look. pDockQ is a function of interface pLDDT and the
+# number of contacting residue PAIRS, and rescore_interface_metrics.interface
+# computes exactly that at the same 8.0 A cutoff sides uses. "Not returned by the
+# function I happened to be calling" is not the same as "left no artifact behind",
+# and the difference cost this figure a row marked unreproducible.
 SECTION_7_5 = {"iptm": 0.0628, "pdockq": 0.1498, "iface_plddt": 1.9172}
-NOT_RECOMPUTED = {"pdockq"}
+NOT_RECOMPUTED = set()
 
 # The 4 receptors Section 7.5 measured, chosen to span the outcome range: cognate
 # ranked #1, #2, #3 and #4 among its own decoys. A widened store contains them,
@@ -126,6 +129,16 @@ def main():
         key = pdb.parent.name
         for metric, val in s.items():
             by_struct.setdefault(metric, {}).setdefault(key, []).append(val)
+        # pDockQ needs the contact-pair count, which sides() does not carry.
+        try:
+            m = iface_metrics(parser.get_structure("y", str(pdb))[0])
+        except Exception:
+            m = None
+        if m:
+            by_struct.setdefault("pdockq", {}).setdefault(key, []).append(
+                pdockq(m["iface_plddt"], m["n_contacts"]))
+            by_struct.setdefault("n_contacts", {}).setdefault(key, []).append(
+                float(m["n_contacts"]))
 
     for metric, by in sorted(by_struct.items()):
         sd, n = pooled_sd(by)

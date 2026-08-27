@@ -258,7 +258,7 @@ peptide chain is treated as the molecule under test.
 | median fragments per peptide | **40.5** | **1** |
 
 The two columns come from structures folded in different environments (§4.1),
-which is worth stating and does not matter here: Table 19 bounds that difference
+which is worth stating and does not matter here: Table 20 bounds that difference
 at a few percent on continuous readouts, and this contrast is 0% against 100%.
 
 At ten steps the backbone is not connected at all — a fifteen-residue peptide
@@ -479,7 +479,7 @@ the interaction is genuinely positive:
 One caveat on how this table is assembled. The three single-knob arms and both
 endpoints were folded in the local environment; the three pairs were folded on
 the rented device (§4.1). Each interaction is therefore an observed pair minus an
-additive prediction built from arms folded elsewhere. Table 19 bounds what that
+additive prediction built from arms folded elsewhere. Table 20 bounds what that
 can do: standardised effects run 6–7% lower in the released build, so the
 observed column here is if anything slightly understated relative to the
 predictions it is differenced against. Correcting for it moves the sampling ×
@@ -641,13 +641,32 @@ and the larger panel gives the better estimate. We report the smaller numbers as
 the ones to use. The receptor-side readout in particular should not be quoted at
 its 22-receptor value; at 59 it is a moderate effect, not a large one.
 
-One caveat on the *d* column specifically. Refolding the same 22 receptors at the
-same settings a second time, within the same environment, moves the receptor-side
-*d* from 1.67 to 0.89 — a swing comparable to the 22 → 59 decline this table
-reports. The raw margins are stable across that refold (within 5%); the
-standardised ones are not. §2.4 is the reason, and it applies here: a single run
-does not pin a per-receptor *d*. The direction of the 22 → 59 decline is
-supported by both refolds; its magnitude on the receptor side is not.
+**The *d* column needs more than one draw, so here are all of them.** §2.4 shows
+a single unseeded run does not pin a per-receptor quantity, and §8.2 of the
+underlying work recommends replicate averaging for exactly this reason. Three
+independent folds of these 22 receptors at converged settings exist:
+
+**Table 15. Cohen's *d* at 22 receptors, across three independent folds.**
+
+| fold | *d* ipTM | *d* interface pLDDT | *d* receptor side |
+| :--- | ---: | ---: | ---: |
+| first run | 1.25 | 1.52 | 1.45 |
+| refold | 1.16 | 1.43 | 1.67 |
+| within the 59-receptor run | 1.10 | 1.22 | 0.89 |
+| **mean** | **1.17** | **1.39** | **1.34** |
+| spread | 0.15 | 0.30 | **0.78** |
+
+Against the single-draw *n* = 59 values (0.99, 1.04, 0.77), the decline survives
+averaging on every readout. But the spread across draws scales with how much the
+readout depends on interface geometry: 0.15 for the coordinate-free ipTM, 0.30
+for interface pLDDT, and 0.78 for the receptor side — which is as large as the
+decline being measured.
+
+So the 22 → 59 decline is real in direction on all three readouts and pinned in
+magnitude on none of them, because the *n* = 59 column is itself one draw. Fixing
+that needs replicate folds of the 59-receptor panel, not a reanalysis. The first
+two folds sit in different environments (§4.1), which contributes at most 6% and
+is not what drives the receptor-side spread.
 
 The settings confound of §2.6 was re-measured on the same 59 receptors, both arms.
 Reduced sampling suppresses the ipTM effect **12.0× in raw terms and 3.4× in
@@ -669,7 +688,7 @@ permutations — under Chai-1 [14], and scored the output with the identical
 interface-pLDDT implementation used throughout this paper. The readout code is
 shared, so the model is the only thing that varies.
 
-**Table 15. The permutation control under two independent models.**
+**Table 16. The permutation control under two independent models.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -692,7 +711,7 @@ What replicates is the direction and the significance, not the magnitude.
 against its own decoys is the question a screen actually asks, and on it the two
 models are indistinguishable:
 
-**Table 16. Ranking a cognate against its own decoys, under two model families.**
+**Table 17. Ranking a cognate against its own decoys, under two model families.**
 
 | | Chai-1 | Boltz-1 |
 | :--- | ---: | ---: |
@@ -721,7 +740,7 @@ data, which is exactly the confound §2.5 is about. We therefore folded the
 held-out panel under Chai-1 as well — the same 22 post-cutoff receptors, the same
 readout code.
 
-**Table 17. The permutation control in and out of training, both families.**
+**Table 18. The permutation control in and out of training, both families.**
 
 | | Boltz-1 | Chai-1 |
 | :--- | ---: | ---: |
@@ -767,7 +786,7 @@ once they have been applied. This section answers it: the same panel, ranking ea
 cognate peptide against its own decoys, under the configuration a practitioner
 would actually adopt.
 
-**Table 18. Ranking a cognate against its own decoys. Chance is 25% top-1.**
+**Table 19. Ranking a cognate against its own decoys. Chance is 25% top-1.**
 
 | configuration | mean rank | top-1 | P(cognate > a decoy) |
 | :--- | ---: | ---: | ---: |
@@ -883,7 +902,7 @@ fold without difficulty and are included here. The remaining four targets are
 oligomeric and have no single-chain construct. The second-model arm of §2.9
 covers 21 receptors and now carries the permutation control, the ranking test and
 a held-out split, but a single model beyond Boltz: whether a third family behaves
-like either is untested. The retention comparison in Table 15 divides two effect
+like either is untested. The retention comparison in Table 16 divides two effect
 sizes each estimated from about twenty receptors, and its interval spans zero; the
 held-out effect sizes are the supported claim, not the ratio. The run-to-run
 spread in Table 5 was measured in one environment, and §2.4 finds interface
@@ -927,7 +946,7 @@ in both, which bounds it directly: the 22-receptor panel at 200 sampling steps, 
 recycling passes and undiminished alignment, folded locally and then refolded on
 the rented device.
 
-**Table 19. The same arm and receptors in both environments.**
+**Table 20. The same arm and receptors in both environments.**
 
 | readout | local build | released build | ratio |
 | :--- | ---: | ---: | ---: |

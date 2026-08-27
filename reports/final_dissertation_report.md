@@ -1334,6 +1334,23 @@ Repeating Section 7.5's design exactly — same 24 complexes, same 4 receptors,
 | ipTM | 0.0981 | 0.0628 | **1.56** |
 | Interface pLDDT | 3.029 | 1.917 | **1.58** |
 
+Two later measurements bound how precisely these ratios can be read. Both sides
+were measured on the same 4 receptors, so the comparison is like-for-like and its
+direction is sound. But the Boltz-2 denominators are single-draw estimates on a
+4-receptor panel, and neither has held up as a precise quantity.
+
+Repeating the replicate study on 22 receptors reproduced the ipTM denominator to
+within 2% (0.0628 against 0.0646) and did not reproduce the interface-pLDDT one:
+2.376 across 22 receptors, and 2.479 on these same 4. Separately, refolding a
+converged 22-receptor panel twice at identical settings moved a standardised
+effect from 1.67 to 0.89 while its raw margin held within 5%.
+
+The ipTM denominator survives both checks; the interface-pLDDT one survives
+neither. **Read the 1.58 as "roughly one and a half" rather than to three
+significant figures**, and the 1.56 as the better-supported of the two. The
+qualitative claim — that the distilled model is noisier than its teacher, by
+something like half again — is what these numbers support.
+
 Fewer, larger jumps move further per draw, so run-to-run spread grows. Correcting
 the decomposition accordingly:
 
