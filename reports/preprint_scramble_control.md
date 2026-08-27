@@ -257,6 +257,10 @@ peptide chain is treated as the molecule under test.
 | peptides that are a single connected fragment | **0 (0%)** | **354 (100%)** |
 | median fragments per peptide | **40.5** | **1** |
 
+The two columns come from structures folded in different environments (§4.1),
+which is worth stating and does not matter here: Table 19 bounds that difference
+at a few percent on continuous readouts, and this contrast is 0% against 100%.
+
 At ten steps the backbone is not connected at all — a fifteen-residue peptide
 comes back as roughly forty disjoint pieces — and at two hundred it is a single
 chain in every structure. This is the physical form of the objection, in the
@@ -472,6 +476,17 @@ the interaction is genuinely positive:
 | **sampling + alignment** | **+1.18** | +0.74 | **+0.44** | **synergy** |
 | recycling + alignment | +0.01 | −0.17 | +0.19 | weak synergy |
 
+One caveat on how this table is assembled. The three single-knob arms and both
+endpoints were folded in the local environment; the three pairs were folded on
+the rented device (§4.1). Each interaction is therefore an observed pair minus an
+additive prediction built from arms folded elsewhere. Table 19 bounds what that
+can do: standardised effects run 6–7% lower in the released build, so the
+observed column here is if anything slightly understated relative to the
+predictions it is differenced against. Correcting for it moves the sampling ×
+alignment interaction from +0.44 to roughly +0.51 and the sampling × recycling
+one from −0.01 to +0.04 — neither changes a verdict, and the synergy would grow
+rather than shrink. We report the uncorrected values.
+
 Deep alignments do nothing while the sampler has not converged and contribute
 substantially once it has. That is a coherent mechanism rather than a share: the
 coevolutionary signal in a deep alignment can only express itself through a
@@ -606,6 +621,10 @@ in one run at converged settings, so nothing is merged across hardware or dates.
 
 **Table 14. The permutation control at 22 and 59 receptors, folded identically.**
 
+Both arms were folded on the same device in the same session: the 22-receptor
+panel was refolded there rather than carried over from the original run, so the
+comparison is within one environment (§4.1).
+
 | readout | n = 22 | n = 59 | *d* at 22 | *d* at 59 | receptors where cognate wins |
 | :--- | ---: | ---: | ---: | ---: | ---: |
 | ipTM | +0.287 | +0.268 | 1.16 | 0.99 | 48 / 59 |
@@ -622,11 +641,22 @@ and the larger panel gives the better estimate. We report the smaller numbers as
 the ones to use. The receptor-side readout in particular should not be quoted at
 its 22-receptor value; at 59 it is a moderate effect, not a large one.
 
+One caveat on the *d* column specifically. Refolding the same 22 receptors at the
+same settings a second time, within the same environment, moves the receptor-side
+*d* from 1.67 to 0.89 — a swing comparable to the 22 → 59 decline this table
+reports. The raw margins are stable across that refold (within 5%); the
+standardised ones are not. §2.4 is the reason, and it applies here: a single run
+does not pin a per-receptor *d*. The direction of the 22 → 59 decline is
+supported by both refolds; its magnitude on the receptor side is not.
+
 The settings confound of §2.6 was re-measured on the same 59 receptors, both arms.
-Reduced sampling suppresses the ipTM effect **12× in raw terms and 3.6× in
-standardised terms** (+0.022, *d* = 0.29 against +0.268, *d* = 0.99), against 7.4×
-and 2.8× at 22 receptors. That conclusion strengthens with panel size rather than
-weakening.
+Reduced sampling suppresses the ipTM effect **12.0× in raw terms and 3.4× in
+standardised terms** (+0.022, *d* = 0.29 against +0.268, *d* = 0.99). On the
+22-receptor subset of the same run it is 10.0× and 3.2×, so the conclusion
+strengthens slightly with panel size. An earlier version compared these against
+7.4× and 2.8× from the original 22-receptor run, which implied a much steeper
+trend; that comparison spanned two environments (§4.1) and the within-run one
+replaces it.
 
 ### 2.9 The control on a second model family
 
@@ -843,7 +873,9 @@ cell; the interactions it reports are of the same order as §2.4's run-to-run
 spread, so the sign of the sampling-alignment synergy is better supported than its
 magnitude. The boundary
 test now covers 900 designs across 10 targets at converged settings, and agrees
-with the 48-design version at both sampling budgets. Those 10 are every target in
+with the 48-design version at both sampling budgets — an agreement that also
+spans the two environments of §4.1, which makes it slightly stronger evidence of
+robustness than a within-environment replication would be. Those 10 are every target in
 the release we could fold as a single chain. Only **Cas9** is excluded on size — its 1,463-residue complex
 exhausts a 24 GB card, which we measured rather than assumed. An earlier version
 of this work also excluded EGFR and Nipah-G on a construct-length threshold; both
@@ -889,6 +921,33 @@ package index, and the build fails if the import resolves anywhere else. A
 run-to-run spread is a property of a metric and the environment that produced it;
 the image is what makes the second half of that reproducible. It does not
 reproduce the Apple Silicon environment, which containers cannot reach.
+
+**How large is the difference between the two environments?** One arm was folded
+in both, which bounds it directly: the 22-receptor panel at 200 sampling steps, 3
+recycling passes and undiminished alignment, folded locally and then refolded on
+the rented device.
+
+**Table 19. The same arm and receptors in both environments.**
+
+| readout | local build | released build | ratio |
+| :--- | ---: | ---: | ---: |
+| ipTM | +0.2873 | +0.2868 | 1.00 |
+| Interface pLDDT | +11.851 | +11.894 | 1.00 |
+| Receptor side | +5.129 | +5.273 | 1.03 |
+| *d* (ipTM) | 1.25 | 1.16 | 0.93 |
+| *d* (interface pLDDT) | 1.52 | 1.43 | 0.94 |
+
+Raw effects agree to within 3% and are identical to three decimals on two of the
+three readouts. Standardised effects run 6–7% lower in the released build, which
+is the same order as the run-to-run instability of *d* documented in §2.4 and is
+not separable from it on one refold.
+
+This is the number to apply to any comparison in this paper that spans the two
+environments. It is small enough that no conclusion here turns on it, and it is
+worth stating precisely because the interface-pLDDT *noise* discrepancy of §2.4
+is 29% — an order of magnitude larger than anything visible in the effects
+themselves. Whatever differs between these builds moves the spread of the
+measurement far more than its centre.
 
 
 **Panel construction.** Receptor–peptide complexes were selected programmatically
