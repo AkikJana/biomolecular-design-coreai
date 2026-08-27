@@ -1,0 +1,63 @@
+# Publish hf_space/ to the Hugging Face Space on every merge to main.
+#
+# Deliberately NOT triggered by pull_request. Secrets are not exposed to fork PRs
+# anyway, but a same-repo PR would have them -- and a workflow that publishes
+# from an unmerged branch means any PR can change what the public site says
+# before anyone approves it. Publishing follows main, nothing else.
+name: Sync HF Space
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'hf_space/**'
+      - 'src/push_hf_space.py'
+      - '.github/workflows/hf-space.yml'
+  workflow_dispatch:
+
+# Two merges in quick succession would otherwise race to upload the same folder
+# and the loser's commit would be the one that stuck.
+concurrency:
+  group: hf-space
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Push hf_space to the Hub
+    runs-on: ubuntu-latest
+    # Skip on forks: they have no token, and the failure would be noise on
+    # somebody else's fork rather than a signal to us.
+    if: github.repository == 'AkikJana/biomolecular-design-coreai'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install huggingface_hub
+        run: pip install --upgrade huggingface_hub
+
+      - name: Check the token is present
+        # Without this the run fails inside whoami with an auth error that reads
+        # like the Space is broken rather than like a missing repository secret.
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "::error::HF_TOKEN is not set. Add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Show what would be pushed
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python src/push_hf_space.py --dry-run
+
+      - name: Push
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_COMMIT_MESSAGE: "Sync from GitHub ${{ github.sha }}"
+        run: python src/push_hf_space.py
